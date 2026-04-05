@@ -1,0 +1,1646 @@
+{
+  "shared": {
+    "header": {
+      "languageSelector": {
+        "ariaLabel": "Select language",
+        "searchPlaceholder": "Search language...",
+        "noLanguageFound": "No language found."
+      },
+      "search": {
+        "placeholder": "Search...",
+        "commandPlaceholder": "Type a command or search...",
+        "noResults": "No results found."
+      },
+      "userMenu": {
+        "defaultName": "User",
+        "defaultEmail": "user@example.com",
+        "myAccount": "My Account",
+        "accountSettings": "Account Settings",
+        "notifications": "Notifications",
+        "upgrade": "Upgrade to Pro",
+        "logout": "Log out"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "empty": "You have no notifications yet",
+        "viewAll": "View all",
+        "accept": "Accept",
+        "decline": "Decline"
+      }
+    },
+    "sidebar": {
+      "navigation": {
+        "welcome": "Welcome",
+        "projectsManagement": "Projects Management",
+        "kanban": "Kanban",
+        "runningProjects": "Running Projects",
+        "todoList": "Todo List",
+        "calendar": "Calendar",
+        "meetings": "Meetings",
+        "events": "Events",
+        "infrastructure": "Infrastructure",
+        "servers": "Servers Management",
+        "services": "Services Management",
+        "personalCalendar": "My Personal Calendar",
+        "usersManagement": "Users Management",
+        "users": "Users",
+        "teams": "Teams",
+        "accountSettings": "Account Settings",
+        "account": "Account",
+        "passwords": "Passwords",
+        "appearance": "Appearance",
+        "notifications": "Notifications",
+        "viewAllNotifications": "View all notifications",
+        "notificationsSettings": "Notifications settings",
+        "myProfile": "My Profile"
+      }
+    },
+    "welcome": {
+      "pleaseLogIn": "Please log in",
+      "needSignIn": "You need to be signed in to access this page.",
+      "userDefault": "User",
+      "companyDefault": "Your Company",
+      "welcome": "Welcome <name></name>",
+      "hopeEnjoyDay": "Hope you enjoy your day in"
+    },
+    "theme": {
+      "dark": "Dark",
+      "light": "Light",
+      "changement": {
+        "title": "Theme",
+        "subtitle": "Select the theme for the dashboard."
+      }
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "selected": "Page {page} of {pages} ({records} total records)"
+    },
+    "filesUpload": {
+      "uploadAriaLabel": "Upload image file",
+      "defaultImageAlt": "Default image preview",
+      "dropHere": "Drop your image here",
+      "selectImage": "Select an image",
+      "selectImages": "Select images",
+      "uploadedFiles": "Uploaded Files ({count})",
+      "addMore": "Add more",
+      "imageAlt": "Item image {index}"
+    },
+    "dialogs": {
+      "deletion": {
+        "confirm": "Delete",
+        "cancel": "Cancel",
+        "deleting": "Deleting..."
+      }
+    },
+    "forms": {
+      "textEditor": {
+        "link": {
+          "labels": {
+            "title": "Link",
+            "url": "URL",
+            "cancel": "Cancel",
+            "save": "Save"
+          },
+          "tooltip": "Insert link"
+        },
+        "unlink": {
+          "tooltip": "Remove link"
+        }
+      }
+    },
+    "errors": {
+      "fileUploads": {
+        "maxSize": "File size must not exceed {size}.",
+        "maxSizeMultipleFilesUpload": "Some files exceed the maximum size of {size}.",
+        "invalidType": "The file \"{name}\" is not a supported format.",
+        "maxFiles": "You can upload a maximum of {max} files."
+      },
+      "deletion": {
+        "serverError": "A server error occurred. Please try again later."
+      },
+      "permissionDenied": "You don’t have permission to perform this action."
+    },
+    "success": {
+      "deletion": "Successfully deleted."
+    }
+  },
+  "modules": {
+    "auth": {
+      "externalAuth": {
+        "emailLinkedWithAnAccount": "Authentication Error",
+        "generalError": "Google Authentication Failed",
+        "tryAgainOrUseAnotherMethod": "This email is already linked with another account. Try using the login form instead."
+      },
+      "signUp": {
+        "title": "Create your account",
+        "description": "Enter your information below to create an account.",
+        "fields": {
+          "fullName": {
+            "label": "Full Name",
+            "placeholder": "John Doe"
+          },
+          "email": {
+            "label": "Email address",
+            "placeholder": "example@domain.com"
+          },
+          "phone": {
+            "label": "Phone Number",
+            "placeholder": "+21629123456"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "Enter your password",
+            "forgot": "Forgot password?"
+          }
+        },
+        "actions": {
+          "signingUp": "Creating account...",
+          "signup": "Create account",
+          "signUpWithGoogle": "Sign up with Google",
+          "login": "Log in"
+        },
+        "orContinueWith": "Or continue with",
+        "hasAccount": "Already have an account?",
+        "linkText": "Already have an account? <link>Log in</link>"
+      },
+      "signIn": {
+        "title": "Log in to your account",
+        "description": "Enter your email address to log in.",
+        "subtitle": "Enter your email address to log in.",
+        "requestDescription": "Enter your email or phone number to receive a login code.",
+        "fields": {
+          "email": {
+            "label": "Email",
+            "placeholder": "example@domain.com"
+          },
+          "password": {
+            "label": "Password",
+            "placeholder": "Enter your password",
+            "forgot": "Forgot password?"
+          }
+        },
+        "orContinueWith": "Or continue with",
+        "actions": {
+          "login": "Log in",
+          "loggingIn": "Logging in...",
+          "loginWithGoogle": "Log in with Google",
+          "signup": "Sign up",
+          "back": "Back"
+        },
+        "noAccount": "Don't have an account?",
+        "noAccountText": "Don't have an account?",
+        "createNow": "create now",
+        "linkText": "Don't have an account? <link>create now</link>"
+      },
+      "resetPassword": {
+        "title": "Forgot Password",
+        "description": "Enter your email address and we'll send you instructions to reset your password.",
+        "fields": {
+          "email": {
+            "label": "Email address",
+            "placeholder": "Enter your email address"
+          }
+        },
+        "actions": {
+          "sendResetInstructions": "Send Reset Instructions",
+          "sending": "Sending...",
+          "login": "Log in"
+        },
+        "rememberPassword": "Remember your password?",
+        "success": "Reset instructions sent! Check your email.",
+        "alreadyHaveAccount": "Already have an account?",
+        "comebackButton": "Sign in",
+        "steps": {
+          "email": {
+            "label": "Email",
+            "placeholder": "m@example.com",
+            "button": {
+              "default": "Send email",
+              "loading": "Sending..."
+            },
+            "successMessage": "A verification code has been sent to your email address.",
+            "description": "Enter your email address to receive a reset link."
+          },
+          "otp": {
+            "title": "Enter verification code",
+            "description": "Please enter the 6-digit code sent to your email address.",
+            "label": "Verification code",
+            "placeholder": "123456",
+            "button": {
+              "default": "Verify code",
+              "loading": "Verifying..."
+            }
+          },
+          "newPassword": {
+            "title": "Set a new password",
+            "description": "Enter your new password below.",
+            "passwordLabel": "New password",
+            "passwordPlaceholder": "••••••••",
+            "confirmPasswordLabel": "Confirm new password",
+            "confirmPasswordPlaceholder": "••••••••",
+            "button": {
+              "default": "Reset password",
+              "loading": "Resetting..."
+            }
+          },
+          "success": {
+            "title": "Password reset successfully!",
+            "description": "Your password has been changed. You can now log in with your new password.",
+            "button": "Go to home"
+          }
+        }
+      },
+      "account": {
+        "personalInfoChangement": {
+          "fields": {
+            "name": {
+              "label": "Name",
+              "placeholder": "Your name",
+              "description": "This is the name that will be displayed on your profile and in emails."
+            },
+            "phone": {
+              "label": "Phone",
+              "placeholder": "Your phone",
+              "description": "This is the phone number that will be displayed on your profile"
+            },
+            "image": {
+              "label": "Profile Image"
+            },
+            "email": {
+              "label": "Email",
+              "placeholder": "your.email@example.com",
+              "description": "Your email address cannot be changed."
+            },
+            "language": {
+              "label": "Language"
+            }
+          },
+          "actions": {
+            "update": "Update account",
+            "updating": "Updating..."
+          }
+        },
+        "passwordChangement": {
+          "currentPassword": "Current Password",
+          "currentPasswordPlaceholder": "Enter current password",
+          "currentPasswordDescription": "Enter your current password to verify.",
+          "newPassword": "New Password",
+          "newPasswordPlaceholder": "Enter new password",
+          "newPasswordDescription": "Your new password must be at least 8 characters long.",
+          "confirmationPassword": "Confirm Password",
+          "confirmationPasswordPlaceholder": "Confirm new password",
+          "confirmationPasswordDescription": "Re-enter your new password to confirm.",
+          "updateButton": "Update password",
+          "updatingButton": "Updating..."
+        }
+      },
+      "validations": {
+        "fullName": {
+          "required": "Your name is required.",
+          "invalid": "Full name is invalid"
+        },
+        "email": {
+          "invalid": "Email address is invalid.",
+          "required": "Email address is required."
+        },
+        "phone": {
+          "invalid": "Phone number is invalid.",
+          "required": "Phone number is required."
+        },
+        "password": {
+          "passwordRequired": "Password is required",
+          "passwordTooShort": "Password must be at least 8 characters",
+          "mismatch": "Passwords do not match."
+        },
+        "image": {
+          "invalid": "Only JPEG/PNG/WEBP images allowed.",
+          "required": "Profile image is required."
+        },
+        "otp": {
+          "exactLength": "Code must be exactly {length} digits.",
+          "required": {
+            "title": "Code required",
+            "description": "The code is required to sign in"
+          }
+        },
+        "emailOrPasswordRequired": {
+          "title": "Email or phone number required",
+          "description": "Please provide either an email address or phone number to continue."
+        },
+        "resetPasswordEmail": {
+          "invalid": "Please enter a valid email address"
+        }
+      },
+      "success": {
+        "updatedInfo": "Information Updated Successfully",
+        "passwordUpdated": "Password Updated Successfully"
+      },
+      "errors": {
+        "serverError": "An unexpected server error occurred. Please try again later.",
+        "incorrectEmailOrPassword": "Incorrect email or password.",
+        "invalidData": "Please check the information entered.",
+        "notFound": "User not found.",
+        "userNotFound": "User not found.",
+        "accountCreatedWithSocialLogin": "Account created with Facebook or Google.",
+        "technicalIssue": "A technical error occurred. Please try again later.",
+        "emailAlreadyExist": "This email already exists.",
+        "invalidCode": "The code you entered is invalid.",
+        "signInAfterSignUpFailed": "Account created successfully but automatic login failed. Please try to login manually.",
+        "invalidOrExpiredCode": "The two factor authentication code is invalid or expired!",
+        "exceededAttempts": "Exceeded maximum number of attempts for two factor auth!",
+        "unexpectedError": "An unexpected error occurred.",
+        "passwordChangementFailed": "Password Changement Failed",
+        "resetPasswordFailedToSend": "Failed to send reset instructions. Please try again.",
+        "invalidPassword": "Your current password is invalid. Please try to put the right password or try to logout and reset your password."
+      },
+      "warnings": {
+        "incorrectEmailOrPassword": "Incorrect email or password.",
+        "invalidData": "Invalid data provided.",
+        "userNotFound": "User not found.",
+        "accountCreatedWithFacebookOrGoogle": "This account was created with Facebook or Google.",
+        "unexpectedError": "An unexpected error occurred.",
+        "emailAlreadyExist": "This email already exists.",
+        "featureNotAvailableForFacebookOrGoogle": "This feature is not available for accounts created with Facebook or Google.",
+        "oldPasswordIncorrect": "The current password you entered is incorrect.",
+        "serverError": "A server error occurred. Please try again later.",
+        "yourTokenHasExpired": "Your token has expired. Please request a new one.",
+        "tokenIsInvalid": "The token is invalid.",
+        "passwordMinLengthError": "Password must be at least 8 characters.",
+        "passwordsDoNotMatchError": "Passwords do not match.",
+        "nameMinLengthError": "Name must be at least 2 characters.",
+        "fillAllFields": "Please fill in all required fields.",
+        "emailPasswordError": "Email and password are required.",
+        "emailError": "Please enter a valid email address.",
+        "passwordError": "Password is required."
+      }
+    },
+    "users": {
+      "title": "Users",
+      "usersExtractionInput": {
+        "labels": {
+          "users": "Users"
+        },
+        "placeholders": {
+          "users": "Search users..."
+        },
+        "noResults": {
+          "users": "No users found"
+        }
+      },
+      "profile": {
+        "userProfile": "User Profile",
+        "profile": "Profile",
+        "about": "About",
+        "contacts": "Contact Details",
+        "experienceAndMetrics": "Experience & Metrics",
+        "employedSince": "Employed Since",
+        "totalTimeWorked": "Total Time Worked",
+        "workedOnProjects": "Worked on Projects",
+        "projectsNumber": "{count, plural, one {# project} other {# projects}}",
+        "averageSession": "Average Session",
+        "avgDailyMood": "Average Daily Mood",
+        "avgRatedPerformance": "Average Performance Rating",
+        "employeePerformance": "Employee Performance"
+      },
+      "connections": {
+        "title": "Connections"
+      },
+      "teams": {
+        "title": "Teams",
+        "members": "Members {count}",
+        "upload": {
+          "createTeam": {
+            "button": "Create team",
+            "title": "Create a new team",
+            "description": "Fill in the details below to create a new team and assign members and managers."
+          },
+          "updateTeam": {
+            "button": "Update team",
+            "title": "Update team",
+            "description": "Update the team information, members, or managers."
+          },
+          "form": {
+            "labels": {
+              "name": "Team name",
+              "managers": "Managers",
+              "members": "Members"
+            },
+            "placeholders": {
+              "name": "Enter team name",
+              "managers": "Search managers...",
+              "members": "Search members..."
+            },
+            "noResults": {
+              "managers": "No managers found",
+              "members": "No members found"
+            }
+          }
+        },
+        "actions": {
+          "create": "Create team",
+          "creating": "Creating...",
+          "createTeam": "Create team",
+          "updateTeam": "Update Team",
+          "cancel": "Cancel"
+        },
+        "table": {
+          "loading": "Loading teams...",
+          "noResults": "No results found.",
+          "headers": {
+            "name": "Team name",
+            "members": "Members",
+            "managers": "Managers",
+            "actions": "Actions"
+          },
+          "actions": {
+            "view": "View details",
+            "edit": "Edit",
+            "delete": "Delete"
+          },
+          "filters": {
+            "columns": "Columns",
+            "search": {
+              "placeholder": "Search teams ..."
+            }
+          }
+        },
+        "deletion": {
+          "title": "Delete teams",
+          "description": "Are you sure you want to delete the selected teams?"
+        },
+        "success": {
+          "upload": "Team Uploaded Successfully"
+        }
+      },
+      "table": {
+        "more": "+{count} more",
+        "headers": {
+          "name": "Full name",
+          "createdAt": "Member Since",
+          "workedProjects": "Worked Projects",
+          "workedHours": "Worked Hours",
+          "avgSession": "AVG. Session",
+          "role": "Role",
+          "email": "Email",
+          "performance": "Performance",
+          "avgPerformanceRating": "AVG. Performance Rating",
+          "avgDailyMood": "AVG. Daily Mood",
+          "teams": "Teams",
+          "notifications": "Notifications Settings"
+        },
+        "notifications": {
+          "email": {
+            "enabled": "Email notifications enabled",
+            "disabled": "Email notifications disabled"
+          },
+          "telegram": {
+            "enabled": "Telegram notifications enabled",
+            "disabled": "Telegram notifications disabled"
+          },
+          "ntfy": {
+            "enabled": "NTFY notifications enabled",
+            "disabled": "NTFY notifications disabled"
+          }
+        },
+        "filters": {
+          "search": {
+            "placeholder": "Search users...",
+            "by": "By:",
+            "name": "Name",
+            "email": "Email"
+          },
+          "roles": {
+            "label": "Roles",
+            "placeholder": "Select role",
+            "noResults": "No results found."
+          },
+          "columns": "Columns"
+        },
+        "actions": {
+          "title": "Actions",
+          "viewDetails": "View details",
+          "viewProjects": "View Worked Projects",
+          "viewWorkedTimeHistory": "View Worked Time History",
+          "edit": "Edit",
+          "ntfyTopic": {
+            "copy": "Copy NTFY App Topic",
+            "copied": "Copied to clipboard!"
+          },
+          "delete": "Delete"
+        },
+        "loading": "Loading...",
+        "noResults": "No results."
+      },
+      "roles": {
+        "ceo": "Chief Executive Officer",
+        "cto": "Chief Technology Officer",
+        "cmo": "Chief Marketing Officer",
+        "tawerCreativeProjectManager": "Creative Project Manager",
+        "graphicDesigner": "Graphic Designer",
+        "socialMediaManager": "Social Media Manager",
+        "contentWriter": "Content Writer",
+        "videoEditor": "Video Editor",
+        "uiUxDesigner": "UI / UX Designer",
+        "tawerDevProjectManager": "Development Project Manager",
+        "softwareEngineer": "Software Engineer",
+        "dataEngineer": "Data Engineer",
+        "devopsEngineer": "DevOps Engineer",
+        "qualityAssuranceEngineer": "Quality Assurance Engineer",
+        "productOwner": "Product Owner",
+        "scrumMaster": "Scrum Master",
+        "businessAnalyst": "Business Analyst",
+        "mobileAppDeveloper": "Mobile App Developer",
+        "frontendDeveloper": "Frontend Developer",
+        "backendDeveloper": "Backend Developer",
+        "fullStackDeveloper": "Full Stack Developer",
+        "databaseAdministrator": "Database Administrator",
+        "systemsArchitect": "Systems Architect",
+        "networkEngineer": "Network Engineer",
+        "cyberSecuritySpecialist": "Cyber Security Specialist",
+        "seoSpecialist": "SEO Specialist",
+        "customerSupport": "Customer Support",
+        "hrManager": "HR Manager",
+        "pendingApproval": "Pending Approval",
+        "tawerCreativeIntern": "Creative Intern",
+        "tawerDevIntern": "Development Intern"
+      },
+      "deletion": {
+        "confirmation": {
+          "title": "Delete User",
+          "message": "Are you sure you want to delete this user? This action cannot be undone.",
+          "cancel": "Cancel",
+          "delete": "Delete",
+          "deleting": "Deleting..."
+        }
+      },
+      "upload": {
+        "createUser": {
+          "title": "Create New User",
+          "description": "Add a new user to the system. Fill in the required information below.",
+          "button": "Create User"
+        },
+        "updateUser": {
+          "title": "Update User",
+          "description": "Update the user in the system. Fill in the required information below.",
+          "button": "Update User"
+        },
+        "form": {
+          "labels": {
+            "fullName": "Full Name",
+            "email": "Email",
+            "phone": "Phone",
+            "password": "Password",
+            "roles": "User Roles",
+            "image": "User Image",
+            "notificationMethod": "Notification Preferences",
+            "telegramChatId": "Telegram Chat ID"
+          },
+          "placeholders": {
+            "fullName": "John Doe",
+            "email": "john.doe@example.com",
+            "phone": "+21621232932",
+            "password": "Enter a strong password",
+            "role": "Select roles",
+            "telegramChatId": "Enter your Telegram chat ID"
+          },
+          "ariaLabels": {
+            "hidePassword": "Hide password",
+            "showPassword": "Show password"
+          },
+          "options": {
+            "email": "Email Notifications",
+            "telegram": "Telegram Notifications",
+            "ntfy": "NTFY Push Notifications"
+          },
+          "descriptions": {
+            "notificationMethod": "Choose how you would like to receive notifications.",
+            "telegramChatId": "Paste your Telegram chat ID to receive notifications via Telegram."
+          },
+          "hints": {
+            "telegramChatId": "You can get your chat ID using the @userinfobot on Telegram."
+          },
+          "cancel": "Cancel",
+          "creating": "Creating...",
+          "createUser": "Create User"
+        }
+      },
+      "success": {
+        "upload": "User Uploaded Successfully",
+        "ntfyTopicCopied": "NTFY App Topic Copied to Clipboard!"
+      },
+      "validations": {
+        "teams": {
+          "name": {
+            "required": "Team name is required",
+            "invalid": "Team name is invalid"
+          },
+          "members": {
+            "required": "At least one member should be added",
+            "cannotContainManagers": "Managers cannot be selected as team members"
+          },
+          "managers": {
+            "required": "At least one manager should be added",
+            "cannotBeMembers": "Managers cannot also be team members"
+          }
+        },
+        "fullName": {
+          "required": "Your name is required.",
+          "invalid": "Full name is invalid"
+        },
+        "email": {
+          "invalid": "Email address is invalid.",
+          "required": "Email address is required."
+        },
+        "phone": {
+          "invalid": "Phone number is invalid.",
+          "required": "Phone number is required."
+        },
+        "password": {
+          "required": "Password is required",
+          "tooShort": "Password must be at least 8 characters",
+          "mismatch": "Passwords do not match."
+        },
+        "image": {
+          "invalid": "Only JPEG/PNG/WEBP images allowed.",
+          "required": "Profile image is required."
+        },
+        "roles": {
+          "required": "At least one role should be selected"
+        },
+        "notificationsSettings": {
+          "noNotificationsReceivedWithoutTelegramChatId": "No notifications received without Telegram chat ID"
+        }
+      },
+      "errors": {
+        "teamAlreadyExist": "A team with this information already exists.",
+        "userAlreadyExist": "A user with this information already exists.",
+        "invalidFormat": "The provided data format is invalid. Please review and try again.",
+        "updateUserFailed": "Failed to update the user. Please try again later.",
+        "updateTeamFailed": "Failed to update the team. Please try again later.",
+        "serverError": "An unexpected server error occurred. Please try again later."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "creating": "Creating...",
+        "createUser": "Create User",
+        "updateUser": "Update User"
+      }
+    },
+    "tracking": {
+      "welcome": {
+        "daily": {
+          "title": "Welcome!",
+          "description": "Hope that you enjoy your day in <company></company>"
+        }
+      },
+      "workedDaysTracking": {
+        "loadingTitle": "Loading worked days...",
+        "loadingSubtitle": "Please wait while we fetch the data.",
+        "noWorkedDaysTitle": "No worked days recorded",
+        "noWorkedDaysSubtitle": "There are no records available for this year.",
+        "overviewTitle": "Worked Days Overview",
+        "calendar": {
+          "office": "Office",
+          "remote": "Remote",
+          "total": "Total",
+          "hours": "h",
+          "legend": {
+            "office": "Office",
+            "remote": "Remote",
+            "mixed": "Mixed",
+            "none": "No work"
+          }
+        }
+      },
+      "workerRating": {
+        "title": "Daily Performance Review",
+        "description": "Please take a moment to rate today’s performance. Your feedback helps us track progress, identify strengths, and provide better support over time.",
+        "performanceRating": "Performance rating",
+        "managerNotes": "Manager notes",
+        "managerNotesPlaceholder": "Add a short note about today’s performance, achievements, or areas to improve.",
+        "closeButton": "Close",
+        "submitButton": "Submit rating",
+        "success": {
+          "upload": "Your worker rating have been uploaded successfully"
+        }
+      },
+      "userActivity": {
+        "period": "from {from} to {to}",
+        "activityTimelineTitle": "Activity Timeline",
+        "activityTimelineSubtitle": "Track your work sessions, mood, and daily notes",
+        "loadingTitle": "Loading Activity",
+        "loadingSubtitle": "Please wait while we fetch your activity data",
+        "noActivityTitle": "No Activity Yet",
+        "noActivitySubtitle": "Start logging your work sessions to see them here",
+        "workSession": "Work Session",
+        "sessions": "{count} Sessions",
+        "workedTime": "Worked time",
+        "rateWorkerDay": "Rate your worker day",
+        "start": "Start",
+        "end": "End",
+        "mood": "Daily Mood",
+        "workerNotes": "Worker Notes",
+        "managerRating": "Manager rating",
+        "managerNotes": "Manager notes",
+        "deviceType": {
+          "desktop": "Desktop",
+          "mobile": "Mobile",
+          "tablet": "Tablet",
+          "other": "Other"
+        }
+      },
+      "checkIn": {
+        "title": "<company></company>",
+        "subtitle": "Welcome back! Ready to start your work?",
+        "checkIn": "Check In",
+        "checkingIn": "Checking In...",
+        "remoteCheckIn": "Check In Remotely",
+        "officeCheckIn": "Check In Onsite",
+        "joinPlatformWithoutCheckIn": "Join Platform (without check-in)",
+        "joiningPlatform": "Joining platform...",
+        "viewerTooltip": "You will join the platform as a viewer. Your time will not be tracked and you will not be considered as working."
+      },
+      "journeyNotes": {
+        "title": "Daily Reflection",
+        "description": "Take a moment to reflect on your day. Sharing your mood and what you worked on helps us better understand your experience and support your growth.",
+        "moodLabel": "How did your day feel?",
+        "moodDescriptions": {
+          "0": "Very difficult",
+          "1": "Challenging",
+          "2": "Neutral",
+          "3": "Productive",
+          "4": "Very good",
+          "5": "Excellent"
+        },
+        "workNoteLabel": "What did you work on today?",
+        "workNotePlaceholder": "A short note about what you worked on or achieved today. Every effort counts.",
+        "skipButton": "Skip for now",
+        "submitButton": "Share my day",
+        "success": {
+          "upload": "Thank you for taking the time to share your journey notes with us. Your effort means a lot, and we truly appreciate it."
+        }
+      },
+      "checkout": "Check Out",
+      "viewerExitHint": "You are in viewer mode. Exit to check in.",
+      "success": {
+        "checkout": "Your checkout has been recorded successfully.",
+        "viewerCheckout": "Viewer-mode checkout completed successfully."
+      },
+      "warnings": {
+        "joinedViewerMode": "You're now in viewer mode. This does not count as active working time."
+      },
+      "errors": {
+        "checkOutFailed": "Failed to check out. Please try again or contact the technical team if the issue persists.",
+        "checkInFailed": "Failed to check in. Please try again or contact the technical team if the issue persists.",
+        "failedToUploadWorkerRating": "Failed to upload your rating. Please try again or contact the technical team.",
+        "workSessionTrackingFailed": "Failed to track your work session status. Please try again!",
+        "failedToSubmitJourneyNotes": "Thank you for trying to submit your end-of-day journey and work notes, we truly appreciate your effort. Unfortunately, we weren’t able to upload your submission due to a technical issue. You can skip this for now and inform the technical team so they can handle the issue.",
+        "workSessionAlreadyOpenned": "Your work session is already openned. Try to close it, if it is openeed in another work space."
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Manage your notifications and stay updated with the latest news and updates. Here you can view all your notifications and customize your notification preferences.",
+      "empty": "You have no notifications yet",
+      "viewAll": "View All Notifications",
+      "settings": {
+        "title": "Notification Settings",
+        "subtitle": "Here you can customize your notification preferences. Choose how you want to receive updates and stay informed about important events and updates.",
+        "button": {
+          "saveChanges": "Save Changes",
+          "saving": "Saving..."
+        },
+        "email": {
+          "label": "Email Notifications",
+          "description": "Receive notifications via email",
+          "details": "By enabling email notifications, you will automatically receive updates on your company email associated with the platform."
+        },
+        "telegram": {
+          "label": "Telegram Notifications",
+          "description": "Receive notifications via Telegram",
+          "details": "By enabling Telegram notifications, you will automatically receive notifications on your Telegram account. Simply enter your Telegram chat ID to start receiving notifications.",
+          "chatId": {
+            "label": "Telegram Chat ID",
+            "placeholder": "Enter your chat ID here",
+            "hint": "You can get your chat ID using @get_id_bot on Telegram",
+            "error": "Please enter a valid Telegram chat ID."
+          }
+        },
+        "ntfy": {
+          "label": "NTFY App Notifications",
+          "description": "How can I subscribe to receive push notifications on my phone through the NTFY app?",
+          "toggle": {
+            "label": "ntfy Notifications",
+            "description": "Receive real-time notifications on your phone via the ntfy app.",
+            "details": "By enabling ntfy notifications, you will receive instant updates on your phone for important events and updates. To get started, simply subscribe to the provided notification topic using the ntfy app, and you'll be notified immediately whenever there are relevant updates or changes in your projects."
+          },
+          "steps": {
+            "step1": "Download NTFY app from App Store or Google Play <link>here</link>",
+            "step2": "Click the '+' button to add a new subscription",
+            "step3": "Choose 'Set another server' and enter this server URL: <url></url>",
+            "step4": "Copy and paste your notification topic below",
+            "step5": "Tap 'Subscribe' - you'll receive notifications immediately"
+          },
+          "topic": {
+            "label": "Your Notification Topic",
+            "copy": "Copy Topic",
+            "copied": "Copied to clipboard!"
+          }
+        },
+        "support": "For more information about setting up email and Telegram notifications, please contact our support team."
+      },
+      "errors": {
+        "noNotificationsReceivedWithoutTelegramChatId": "You have enabled Telegram notifications but haven't provided a valid chat ID. Please enter your Telegram chat ID in the notification settings to start receiving notifications via Telegram.",
+        "technicalIssue": "A technical error occured during the update of your notification settings. Please try again or contact the technical team if the issue persists."
+      },
+      "success": {
+        "settingsUpdated": "Your notification settings have been updated successfully."
+      }
+    },
+    "events": {
+      "notifications": {
+        "eventAdded": "Event \"{title}\" added",
+        "eventUpdated": "Event \"{title}\" updated",
+        "eventDeleted": "Event \"{title}\" deleted",
+        "eventMoved": "Event \"{title}\" moved"
+      },
+      "calendar": {
+        "actions": {
+          "today": "Today",
+          "previous": "Previous",
+          "next": "Next",
+          "newEvent": "New event",
+          "newMeeting": "New meeting"
+        },
+        "views": {
+          "month": {
+            "name": "Month",
+            "more": "more"
+          },
+          "week": {
+            "name": "Week",
+            "allDay": "All day"
+          },
+          "day": {
+            "name": "Day",
+            "allDay": "All day"
+          },
+          "agenda": {
+            "name": "Agenda",
+            "noEvents": {
+              "title": "No events found",
+              "description": "There are no events scheduled for this time period."
+            }
+          }
+        }
+      },
+      "upload": {
+        "dialog": {
+          "title": {
+            "edit": "Edit Event",
+            "create": "Create Event"
+          },
+          "description": {
+            "edit": "Edit the details of this event",
+            "create": "Add a new event to your calendar"
+          },
+          "fields": {
+            "title": "Title",
+            "description": "Description",
+            "startDate": "Start Date",
+            "startTime": "Start Time",
+            "endDate": "End Date",
+            "endTime": "End Time",
+            "allDay": "All day",
+            "location": "Location",
+            "color": "Color",
+            "allUsers": "Assign to all users",
+            "getNotified": "Receive notification",
+            "participants": "Participants",
+            "participantsDescription": "Specific users who will see this event."
+          },
+          "placeholders": {
+            "selectDate": "Pick a date",
+            "selectTime": "Select time",
+            "addParticipant": "Select participants..."
+          },
+          "actions": {
+            "cancel": "Cancel",
+            "save": "Save",
+            "delete": "Delete event"
+          },
+          "colors": {
+            "sky": "Sky",
+            "amber": "Amber",
+            "violet": "Violet",
+            "rose": "Rose",
+            "emerald": "Emerald",
+            "orange": "Orange"
+          },
+          "defaultTitle": "(no title)",
+          "errors": {
+            "timeRange": "Selected time must be between {startHour}:00 and {endHour}:00",
+            "endBeforeStart": "End date cannot be before start date"
+          }
+        }
+      },
+      "popup": {
+        "noEvents": "No events",
+        "close": "Close"
+      },
+      "success": {
+        "eventCreated": "Event created successfully.",
+        "eventUpdated": "Event updated successfully.",
+        "eventDeleted": "Event deleted successfully."
+      },
+      "errors": {
+        "eventCreationFailed": "Failed to create event. Please Check your submitted data or contact support team.",
+        "eventUpdateFailed": "Failed to update event. Please Check your submitted data or contact support team.",
+        "eventDeletionFailed": "Failed to delete event. Please Check your submitted data or contact support team.",
+        "serverError": "Failed to create your event please try again or contact the technical team."
+      },
+      "validations": {
+        "title": {
+          "required": "Title is required"
+        },
+        "startTime": {
+          "isRequired": "Start time is required"
+        },
+        "endTime": {
+          "isRequired": "End time is required"
+        },
+        "timeRange": {
+          "invalid": "Start time must be before or equal to end time"
+        }
+      }
+    },
+    "projects": {
+      "title": "Projects Management",
+      "tasks": {
+        "title": "Tasks List",
+        "deletion": {
+          "tasks": {
+            "confirmation": {
+              "title": "Delete Task",
+              "message": "Are you sure you want to delete this task? This action cannot be undone.",
+              "cancel": "Cancel",
+              "delete": "Delete",
+              "deleting": "Deleting..."
+            }
+          },
+          "subtasks": {
+            "confirmation": {
+              "title": "Delete Subtask",
+              "message": "Are you sure you want to delete this subtask? This action cannot be undone.",
+              "cancel": "Cancel",
+              "delete": "Delete",
+              "deleting": "Deleting..."
+            }
+          },
+          "comments": {
+            "confirmation": {
+              "title": "Delete Comment",
+              "message": "Are you sure you want to delete this comment? This action cannot be undone.",
+              "cancel": "Cancel",
+              "delete": "Delete",
+              "deleting": "Deleting..."
+            }
+          }
+        },
+        "status": {
+          "pending": "Pending",
+          "inProgress": "In Progress",
+          "completed": "Completed"
+        },
+        "priority": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
+        },
+        "upload": {
+          "form": {
+            "labels": {
+              "parentTaskId": "Parent Task ID",
+              "status": "Status",
+              "priority": "Priority",
+              "title": "Title",
+              "description": "Description",
+              "details": "Details",
+              "dueDate": "Due Date",
+              "dueTime": "Due Time",
+              "reminderDate": "Reminder Date",
+              "reminderTime": "Reminder Time",
+              "isArchived": "Archived",
+              "isFavorite": "Favorite",
+              "attachments": "Attachments",
+              "comments": "Comments",
+              "upload": "Upload",
+              "noAttachments": "No attachments yet",
+              "subTasks": "Subtasks",
+              "createdAt": "Created At",
+              "noComments": "No comments yet",
+              "noSubTasks": "No subtasks yet",
+              "noTasks": "No tasks found",
+              "allTasks": "All Tasks"
+            },
+            "placeholders": {
+              "parentTaskId": "Parent Task ID",
+              "status": "Status of the task",
+              "priority": "Priority of the task",
+              "title": "Title of the task",
+              "description": "Description of the task",
+              "details": "Details of the task",
+              "date": "Select a date",
+              "comment": "Add a comment",
+              "search": "Search tasks ...",
+              "dragDropFiles": "Drag & drop files here, or click to select"
+            },
+            "ariaLabels": {
+              "hidePassword": "Hide password",
+              "showPassword": "Show password"
+            },
+            "cancel": "Cancel",
+            "creating": "Creating..."
+          }
+        },
+        "success": {
+          "taskCreated": "Task created successfully.",
+          "subTaskCreated": "Subtask created successfully.",
+          "taskUpdated": "Task updated successfully.",
+          "taskDeleted": "Task deleted successfully.",
+          "commentDeleted": "Comment deleted successfully.",
+          "commentCreated": "Comment created successfully.",
+          "commentUpdated": "Comment updated successfully.",
+          "attachmentsUpdated": "Attachments updated successfully."
+        },
+        "validations": {
+          "title": {
+            "required": "Title is required"
+          },
+          "parentTaskId": {
+            "invalid": "Invalid parent task identifier"
+          },
+          "status": {
+            "invalid": "Invalid status selected"
+          },
+          "priority": {
+            "invalid": "Invalid priority selected"
+          },
+          "dueTime": {
+            "required": "Due Time is required"
+          },
+          "reminderTime": {
+            "required": "Reminder date is required"
+          },
+          "timeRange": {
+            "invalid": "Reminder must be before due time"
+          },
+          "attachments": {
+            "invalidImageFormat": "Only JPEG, PNG or WEBP images are allowed"
+          },
+          "taskId": {
+            "invalid": "Invalid task identifier",
+            "required": "Task ID is required"
+          },
+          "comment": {
+            "required": "Comment is required"
+          },
+          "reordered": "The to-do items have been reordered successfully.",
+          "fileAdded": "{{fileName}} has been added to the task"
+        },
+        "errors": {
+          "invalidFormat": "The provided data format is invalid. Please review and try again.",
+          "taskUploadFailed": "Failed to upload your task. Please try again later.",
+          "serverError": "An unexpected server error occurred. Please try again later.",
+          "loadTasksFailed": "Failed to load tasks. Please try again.",
+          "loadTaskFailed": "Failed to load task. Please try again."
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "creating": "Creating...",
+          "createTask": "Create Task",
+          "updateTask": "Update Task",
+          "deleteTask": "Delete Task",
+          "createComment": "Create Comment",
+          "createSubTask": "Create Subtask"
+        },
+        "filters": {
+          "priority": "Priority",
+          "sortBy": "Sort By",
+          "selectSortOption": "Select sort option",
+          "statusAscending": "Status Ascending",
+          "statusDescending": "Status Descending",
+          "priorityAscending": "Priority Ascending",
+          "priorityDescending": "Priority Descending",
+          "dueDateAscending": "Due Date Ascending",
+          "dueDateDescending": "Due Date Descending",
+          "clearFilters": "Clear Filters"
+        },
+        "loading": {
+          "tasks": "Loading tasks...",
+          "task": "Loading task...",
+          "button": "Loading...",
+          "uploading": "Uploading..."
+        },
+        "edit": "Edit",
+        "noDescription": "No description provided.",
+        "enterSubTaskTitle": "Enter subtask title",
+        "addTask": "Add Task",
+        "filePreview": "File Preview"
+      },
+      "project": {
+        "details": {
+          "period": "from {from} to {to}",
+          "timeProgressLabel": "Time progress",
+          "viewProject": "View project",
+          "deleteProject": "Delete project"
+        },
+        "deletionDialog": {
+          "title": "Delete Project",
+          "description": "Are you sure you want to delete this project? This action cannot be undone.",
+          "confirm": "Delete",
+          "cancel": "Cancel"
+        }
+      },
+      "upload": {
+        "createProject": {
+          "title": "Create New Project",
+          "description": "Add a new project to the system. Fill in the required information below.",
+          "button": "Create Project"
+        },
+        "updateProject": {
+          "title": "Update Project",
+          "description": "Update the project information. Modify the fields below as needed.",
+          "button": "Update Project"
+        },
+        "form": {
+          "labels": {
+            "name": "Project Name",
+            "description": "Description",
+            "repositoryUrl": "Repository URL",
+            "liveUrl": "Live URL",
+            "projectColor": "Project Color",
+            "startDate": "Start Date",
+            "endDate": "End Date",
+            "startTime": "Start Time",
+            "endTime": "End Time"
+          },
+          "placeholders": {
+            "name": "Your project name",
+            "description": "Describe the project briefly...",
+            "repositoryUrl": "Your project repository if it exists",
+            "liveUrl": "Your project live URL in preprod environment",
+            "projectColor": "Select a color"
+          },
+          "cancel": "Cancel",
+          "creating": "Creating...",
+          "updating": "Updating...",
+          "createProject": "Create Project",
+          "updateProject": "Update Project"
+        }
+      }
+    },
+    "infrastructure": {
+      "servers": {
+        "title": "Servers",
+        "list": {
+          "title": "Servers",
+          "noResults": "No servers found"
+        },
+        "serverDetails": {
+          "modal": {
+            "title": "Server Details",
+            "description": "View detailed information about this server",
+            "close": "Close",
+            "edit": "Edit Server"
+          },
+          "details": {
+            "name": "Server Name",
+            "status": "Status",
+            "description": "Description",
+            "networkInfo": "Network Information",
+            "domain": "Domain",
+            "ip": "IP Address",
+            "hardwareInfo": "Hardware Information",
+            "cpus": "CPUs",
+            "ram": "RAM",
+            "storage": "Storage",
+            "bandwidth": "Bandwidth",
+            "backupCloudProvider": "Cloud Backup",
+            "enabled": "Enabled",
+            "disabled": "Disabled",
+            "managers": "Server Managers",
+            "billingInfo": "Billing Information",
+            "paymentStatus": "Payment Status",
+            "paidStatus": "Paid",
+            "unpaidStatus": "Unpaid",
+            "paidAt": "Payment Date",
+            "expiredAt": "Expiration Date",
+            "createdAt": "Created At",
+            "updatedAt": "Last Updated"
+          }
+        },
+        "filters": {
+          "searchPlaceholder": "Search servers...",
+          "statusButton": "Status",
+          "statusSearchPlaceholder": "Search status...",
+          "noStatusFound": "No status found"
+        },
+        "columnsDropdown": {
+          "label": "Columns"
+        },
+        "search": {
+          "placeholder": "Search servers..."
+        },
+        "statuses": {
+          "running": "Running",
+          "stopped": "Stopped",
+          "maintenance": "Maintenance"
+        },
+        "table": {
+          "headers": {
+            "select": "Select",
+            "name": "Name",
+            "domain": "Domain",
+            "ip": "IP Address",
+            "cpus": "CPUs",
+            "ram": "RAM",
+            "storage": "Storage",
+            "status": "Status",
+            "paid": "Payment"
+          },
+          "paid": "Paid",
+          "unpaid": "Unpaid",
+          "noResults": "No servers found.",
+          "actionsMenu": {
+            "label": "Actions",
+            "viewDetails": "View details",
+            "edit": "Edit",
+            "copyId": "Copy ID",
+            "delete": "Delete"
+          }
+        },
+        "upload": {
+          "createServer": {
+            "button": "Add Server",
+            "title": "Create Server",
+            "description": "Fill in the information below to create a new server."
+          },
+          "updateServer": {
+            "button": "Edit Server",
+            "title": "Update Server",
+            "description": "Update the server information below."
+          },
+          "form": {
+            "labels": {
+              "name": "Server Name",
+              "domain": "Domain",
+              "description": "Description",
+              "ip": "IP Address",
+              "cpus": "CPU Cores",
+              "ram": "RAM",
+              "storage": "Storage",
+              "bandwidth": "Bandwidth",
+              "status": "Status",
+              "backupCloudProvider": "Backup by Cloud Provider",
+              "paid": "Payment Completed",
+              "managers": "Server Managers",
+              "paidDate": "Payment Date",
+              "paidTime": "Payment Time",
+              "expiredDate": "Expiration Date",
+              "expiredTime": "Expiration Time"
+            },
+            "placeholders": {
+              "name": "Enter server name",
+              "domain": "example.com",
+              "description": "Short description of the server",
+              "ip": "192.168.1.1",
+              "cpus": "Number of CPU cores",
+              "ram": "RAM size (e.g. 16GB)",
+              "storage": "Storage size (e.g. 500GB)",
+              "bandwidth": "Bandwidth limit",
+              "managers": "Select a manager"
+            },
+            "statuses": {
+              "running": "Running",
+              "stopped": "Stopped",
+              "maintenance": "Maintenance"
+            },
+            "noResults": {
+              "managers": "No users found"
+            },
+            "actions": {
+              "cancel": "Cancel",
+              "createServer": "Create Server",
+              "updateServer": "Update Server",
+              "creating": "Saving..."
+            }
+          },
+          "success": "Server saved successfully"
+        },
+        "deletion": {
+          "confirmation": {
+            "title": "Delete server",
+            "message": "Are you sure you want to delete this server? This action cannot be undone."
+          }
+        }
+      },
+      "services": {
+        "title": "Services",
+        "upload": {
+          "success": "Service saved successfully",
+          "createService": {
+            "button": "Add Service",
+            "title": "Create Service",
+            "description": "Fill in the information below to create a new service."
+          },
+          "updateService": {
+            "button": "Edit Service",
+            "title": "Update Service",
+            "description": "Update the service information below."
+          },
+          "form": {
+            "labels": {
+              "name": "Service Name",
+              "domain": "Domain",
+              "description": "Description",
+              "status": "Status",
+              "sslCertificate": "SSL Certificate",
+              "sslCertificateByCloudProvider": "SSL by Cloud Provider",
+              "hasBackup": "Backup Enabled",
+              "backupDestination": "Backup Destination",
+              "paid": "Payment Completed",
+              "paidDate": "Payment Date",
+              "paidTime": "Payment Time",
+              "expiredDate": "Expiration Date",
+              "expiredTime": "Expiration Time",
+              "serverId": "Server"
+            },
+            "placeholders": {
+              "name": "Enter service name",
+              "domain": "example.com",
+              "description": "Short description of the service",
+              "backupDestination": "Backup destination",
+              "serverId": "Select a server"
+            },
+            "statuses": {
+              "running": "Running",
+              "stopped": "Stopped",
+              "maintenance": "Maintenance"
+            },
+            "noResults": {
+              "serverId": "No servers found"
+            },
+            "actions": {
+              "cancel": "Cancel",
+              "createService": "Create Service",
+              "updateService": "Update Service",
+              "creating": "Saving..."
+            }
+          }
+        },
+        "filters": {
+          "searchPlaceholder": "Search services...",
+          "statusButton": "Status",
+          "statusSearchPlaceholder": "Search status...",
+          "noStatusFound": "No status found"
+        },
+        "columnsDropdown": {
+          "label": "Columns"
+        },
+        "statuses": {
+          "running": "Running",
+          "stopped": "Stopped",
+          "maintenance": "Maintenance"
+        },
+        "table": {
+          "headers": {
+            "select": "Select",
+            "name": "Service Name",
+            "domain": "Domain",
+            "status": "Status",
+            "paid": "Payment Status"
+          },
+          "paid": "Paid",
+          "unpaid": "Unpaid",
+          "noResults": "No services found.",
+          "actionsMenu": {
+            "label": "Actions",
+            "viewDetails": "View Details",
+            "edit": "Edit Service",
+            "delete": "Delete Service"
+          }
+        },
+        "serviceDetails": {
+          "modal": {
+            "title": "Service Details",
+            "description": "View detailed information about this service",
+            "close": "Close",
+            "edit": "Edit Service"
+          },
+          "sections": {
+            "basicInfo": "Basic Information",
+            "sslAndBackup": "SSL & Backup",
+            "billing": "Status & Billing",
+            "timestamps": "Timestamps",
+            "server": "Server Information"
+          },
+          "fields": {
+            "name": "Service Name",
+            "serviceDomain": "Service Domain",
+            "serverName": "Server Name",
+            "serverIp": "Server IP",
+            "serverDomain": "Server Domain",
+            "domain": "Domain",
+            "description": "Description",
+            "status": "Status",
+            "sslCertificate": "SSL Certificate",
+            "sslCertificateByCloudProvider": "SSL by Cloud Provider",
+            "hasBackup": "Backup Enabled",
+            "backupDestination": "Backup Destination",
+            "paidAt": "Paid At",
+            "expiredAt": "Expires At",
+            "createdAt": "Created At",
+            "updatedAt": "Last Updated"
+          },
+          "details": {
+            "paid": "Payment Status",
+            "paidStatus": "Paid",
+            "unpaidStatus": "Unpaid"
+          },
+          "common": {
+            "yes": "Yes",
+            "no": "No"
+          }
+        },
+        "deletion": {
+          "confirmation": {
+            "title": "Delete service",
+            "message": "Are you sure you want to delete this service? This action cannot be undone."
+          }
+        }
+      },
+      "validations": {
+        "servers": {
+          "name": {
+            "required": "Server name is required"
+          },
+          "domain": {
+            "required": "Domain is required"
+          },
+          "description": {
+            "required": "Description is required"
+          },
+          "ip": {
+            "required": "IP address is required"
+          },
+          "cpus": {
+            "required": "CPU information is required"
+          },
+          "ram": {
+            "required": "RAM information is required"
+          },
+          "storage": {
+            "required": "Storage information is required"
+          },
+          "bandwidth": {
+            "required": "Bandwidth information is required"
+          },
+          "status": {
+            "required": "Server status is required",
+            "invalid": "Invalid server status"
+          },
+          "managers": {
+            "required": "At least one manager must be selected"
+          }
+        },
+        "services": {
+          "name": {
+            "required": "Service name is required"
+          },
+          "sslCertificate": {
+            "required": "Please specify whether the service has an SSL certificate"
+          },
+          "sslCertificateByCloudProvider": {
+            "required": "Please specify whether the SSL certificate is provided by the cloud provider"
+          },
+          "hasBackup": {
+            "required": "Please specify whether the service has a backup"
+          },
+          "status": {
+            "required": "Service status is required",
+            "invalid": "Invalid service status"
+          },
+          "paymentStatus": {
+            "required": "Please specify the payment status"
+          },
+          "serverId": {
+            "required": "Server selection is required"
+          }
+        }
+      },
+      "errors": {
+        "servers": {
+          "serverAlreadyExist": "A server with this name or domain already exists",
+          "invalidFormat": "Some fields have an invalid format",
+          "serverError": "A server error occurred. Please try again later",
+          "uploadServerFailed": "Failed to upload server. Please try again"
+        },
+        "services": {
+          "serviceAlreadyExist": "A service with this name already exists",
+          "invalidFormat": "Some fields have an invalid format",
+          "serverError": "A server error occurred. Please try again later",
+          "uploadServiceFailed": "Failed to upload service. Please try again"
+        }
+      }
+    }
+  },
+  "rules": {
+    "title": "Company Rules & Internal Policies",
+    "company": "Tawer Digital Group (TDG)",
+    "sections": {
+      "generalPrinciples": {
+        "title": "General Principles",
+        "description": "Tawer Digital Group (TDG) establishes the following internal rules to ensure discipline, transparency, productivity, and organizational clarity.",
+        "important": "All employees are required to read, understand, and strictly comply with these rules."
+      },
+      "workMode": {
+        "title": "Work Mode Policy (Remote & On-Site)",
+        "mandatory": "Each employee is entitled to ONE (1) remote working day per week.",
+        "details": "All other working days must be ON-SITE.",
+        "note": "The remote day must be planned and approved according to team needs.",
+        "warning": "Unauthorized remote work is not permitted."
+      },
+      "workingHours": {
+        "title": "Working Hours",
+        "tawerDev": {
+          "name": "Tawer Dev",
+          "days": "Monday to Friday",
+          "morning": "08:30 → 12:30",
+          "break": "12:30 → 13:15",
+          "afternoon": "13:15 → 17:15"
+        },
+        "tawerCRV": {
+          "name": "Tawer CRV",
+          "weekday": "Monday to Friday",
+          "weekdayMorning": "08:30 → 12:30",
+          "weekdayBreak": "12:30 → 13:15",
+          "weekdayAfternoon": "13:15 → 17:15",
+          "saturday": "Saturday",
+          "saturdayHours": "08:30 → 13:30"
+        },
+        "mandatory": "Respect of working hours and punctuality is mandatory."
+      },
+      "platform": {
+        "title": "Management Platform (Mandatory)",
+        "description": "TDG uses an internal management platform to track attendance, working time, and breaks.",
+        "critical": "Platform usage is MANDATORY for all employees",
+        "checkIn": "Check-in is required at the start of work",
+        "checkOut": "Check-out is required at the end of work",
+        "breakRules": "Any break taken during working hours MUST be recorded",
+        "breakCheckOut": "Check-out when starting a break",
+        "breakCheckIn": "Check-in when resuming work",
+        "warning": "Failure to comply with platform usage rules may lead to administrative or disciplinary action."
+      },
+      "leaves": {
+        "title": "Leaves & Holidays",
+        "paidLeave": {
+          "title": "Paid Annual Leave",
+          "mandatory": "Employees earn 1.5 days of paid leave per month",
+          "annual": "Annual total: 1.5 × 12 = 18 paid leave days per year",
+          "note": "Leave is accumulated monthly",
+          "planning": "Leave planning must respect team organization and business needs"
+        },
+        "sickLeave": {
+          "title": "Sick Leave",
+          "requirement": "A medical certificate must be provided within 48 hours",
+          "verification": "The company may request medical verification if necessary"
+        },
+        "specialLeave": {
+          "title": "Special Paid Leave (Family Events)",
+          "marriage": "3 working days: Employee marriage",
+          "birth": "2 working days: Birth of a child",
+          "circumcision": "1 working day: Circumcision or marriage of an employee's child"
+        },
+        "publicHolidays": {
+          "title": "Paid Public Holidays",
+          "dates": [
+            "March 20 – Independence Day",
+            "May 1 – Labour Day",
+            "July 25 – Republic Day",
+            "December 17 – Revolution Day",
+            "Mawlid nabawi sherif",
+            "Eid El Fitr (2 days)",
+            "Eid El Adha (2 days)"
+          ]
+        }
+      },
+      "compliance": {
+        "title": "Compliance",
+        "mandatory": "All employees of Tawer Digital Group must comply with these rules.",
+        "warning": "Any violation may result in disciplinary measures in accordance with company policy and applicable labor laws."
+      }
+    }
+  }
+}
