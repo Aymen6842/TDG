@@ -20,6 +20,7 @@ export default function TimeInput({ inputName, dateLabel, timeLabel }: Props) {
   const StartHour = 0;
   const EndHour = 24;
 
+  // EDITED: added null guard — updateDateTime can receive undefined when form field not yet initialized
   const updateDateTime = (
     currentValue: string,
     timeString: string

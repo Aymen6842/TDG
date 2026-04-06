@@ -1,10 +1,17 @@
+// ─── MOCK CONFIG ─────────────────────────────────────────────────────────────
+// Delete this file for prod. Also delete src/lib/mock-toggle.tsx.
+// ─────────────────────────────────────────────────────────────────────────────
+
+import { useMockStore } from "@/lib/mock-toggle";
 import { UserType } from "@/modules/users/types/users";
 
-// ─── MOCK TOGGLE ────────────────────────────────────────────────────────────
-// Set to `true` to use mock data (bypasses auth + firebase).
-// Set to `false` to use the real backend API.
-export const USE_MOCK = true;
-// ────────────────────────────────────────────────────────────────────────────
+// Runtime getter — reads from Zustand store so the floating button can toggle it
+export function getUseMock(): boolean {
+  return useMockStore.getState().isMock;
+}
+
+// Keep USE_MOCK as a convenience alias for non-reactive contexts (services)
+export const USE_MOCK = getUseMock;
 
 export const MOCK_USER: UserType = {
   id: "mock-001",

@@ -2,11 +2,11 @@
 import React from "react";
 import { useTodoStore } from "@/modules/tasks/store/tasks";
 
-import TasksList from "@/modules/tasks/tasks-list";
-import TaskDetailSheet from "@/modules/tasks/task-details-sheet";
+import TasksList from "@/modules/tasks/components/tasks-list";
+import TaskDetailSheet from "@/modules/tasks/components/task-details-sheet";
 import { useTranslations } from "next-intl";
-import TaskUploadForm from "./uploads/task-upload";
-import { TaskType } from "./types/tasks";
+import TaskUploadForm from "../uploads/task-upload";
+import { TaskType } from "../types/tasks";
 
 export default function Tasks() {
   const {
@@ -49,7 +49,7 @@ export default function Tasks() {
     setSelectedTodoId(null);
   };
 
-  const t = useTranslations("modules.projects.tasks");
+  const t = useTranslations("modules.tasks");
 
   return (
     <div className="space-y-4">

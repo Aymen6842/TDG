@@ -1,5 +1,4 @@
 "use client";;
-import UploadUserDialog from "@/modules/users/components/upload";
 import { useTranslations } from "next-intl";
 import useCurrentUser from "@/modules/auth/hooks/users/use-user";
 import Loading from "@/components/page-loader";
@@ -16,14 +15,11 @@ export default function ProjectsPageRender() {
   if (user && !hasPermissions(user.roles, "projectsManagement", "view")) return <AccessDenied />;
 
   return (
-    <>
-      <div className="flex items-center justify-between space-y-2">
+    <div className="space-y-4">
+      <header className="mb-4">
         <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-        {user && hasPermissions(user.roles, "projectsManagement", "add") && <UploadUserDialog />}
-      </div>
-      <div className="pt-5">
-        <ProjectsList />
-      </div>
-    </>
+      </header>
+      <ProjectsList />
+    </div>
   );
 }

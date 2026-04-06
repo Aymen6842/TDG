@@ -19,9 +19,9 @@ export default function useCommentUpload({ comment, taskId }: Params) {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  const t = useTranslations("modules.projects.tasks");
-  const tValidations = useTranslations("modules.projects.tasks.validations");
-  const tErrors = useTranslations("modules.projects.tasks.errors");
+  const t = useTranslations("modules.tasks");
+  const tValidations = useTranslations("modules.tasks.validations");
+  const tErrors = useTranslations("modules.tasks.errors");
 
   const schema = getCommentFormSchema({ t: tValidations });
 

@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FilterTab } from "@/modules/tasks/types/tasks";
 import { EnumTaskStatus } from "@/modules/tasks/types/tasks";
 import { useTranslations } from "next-intl";
-import { taskStatusNamed } from "./utils/enum";
+import { taskStatusNamed } from "../utils/enum";
 
 interface StatusTabsProps {
   onTabChange: (tab: FilterTab) => void;
@@ -11,7 +11,7 @@ interface StatusTabsProps {
 }
 
 const StatusTabs: React.FC<StatusTabsProps> = ({ onTabChange, activeTab }) => {
-  const t = useTranslations("modules.projects.tasks");
+  const t = useTranslations("modules.tasks");
   return (
     <Tabs
       defaultValue={activeTab}

@@ -3,7 +3,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar, FileIcon, Star, BellIcon } from "lucide-react";
-import { priorityClasses, statusClasses } from "@/modules/tasks/utils/enum";
+import { priorityClasses, statusClasses, favoriteActiveClasses } from "@/modules/tasks/utils/enum";
 import { TaskType } from "@/modules/tasks/types/tasks";
 import { CSS } from "@dnd-kit/utilities";
 import { useSortable } from "@dnd-kit/sortable";
@@ -15,7 +15,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ErrorBanner } from "@/components/error-banner";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
-import useTaskUpload from "./hooks/tasks/use-task-upload";
+import useTaskUpload from "../hooks/tasks/use-task-upload";
 
 interface taskItemProps {
   task: TaskType;
@@ -31,7 +31,7 @@ export function TaskItem({
   viewMode,
   isDraggingOverlay = false
 }: taskItemProps) {
-  const t = useTranslations("modules.projects.tasks");
+  const t = useTranslations("modules.tasks");
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: task.id
@@ -99,7 +99,7 @@ export function TaskItem({
                       className={cn(
                         "size-5 transition-colors",
                         task.isFavorite
-                          ? "fill-yellow-400 text-yellow-400"
+                          ? "fill-chart-3 text-chart-3"
                           : "text-muted-foreground/50 hover:text-muted-foreground"
                       )}
                     />
@@ -201,7 +201,7 @@ export function TaskItem({
                       className={cn(
                         "size-5 transition-colors",
                         task.isFavorite
-                          ? "fill-yellow-400 text-yellow-400"
+                          ? "fill-chart-3 text-chart-3"
                           : "text-muted-foreground/50 hover:text-muted-foreground"
                       )}
                     />

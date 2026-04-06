@@ -13,7 +13,7 @@ interface Params {
 }
 
 export default async function retrieveTaskFromServerSide({ id }: Params) {
-  if (USE_MOCK) {
+  if (USE_MOCK()) {
     const found = (mockTasks as TaskDetailsInResponseType[]).find(t => t.id === id);
     return found ? castToTaskDetailsType(found) : null;
   }

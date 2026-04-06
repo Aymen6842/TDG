@@ -14,13 +14,15 @@ export default function useNotificationsTokenSetup() {
   const queryClient = useQueryClient();
   const fcmToken = useNotificationsTokensStore(store => store.fcmToken);
 
+  // EDITED: added USE_MOCK early return and null guard for messaging
   useEffect(() => {
-    if (USE_MOCK) return;
+    if (USE_MOCK()) return;
 
     const setupToken = async () => {
       try {
         if (!user || fcmToken !== null) return;
-        if (!messaging) return;
+  // EDITED: added null guard for messaging before getToken call
+  if (!messaging) return;
 
         const permission = await Notification.requestPermission();
         if (permission !== "granted") return;
@@ -46,9 +48,9 @@ export default function useNotificationsTokenSetup() {
     if (user)
       setupToken();
 
-    // Handle foreground messages
-    if (!messaging) return;
-    const unsubscribe = onMessage(messaging, (payload) => {
+  // EDITED: added null guard — messaging can be null during SSR
+  if (!messaging) return;
+  const unsubscribe = onMessage(messaging, (payload) => {
       queryClient.invalidateQueries({
         queryKey: ["notifications"],
         exact: false

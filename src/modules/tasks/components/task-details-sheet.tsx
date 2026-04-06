@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import useTaskInfo from "./hooks/tasks/extraction/use-task";
+import useTaskInfo from "../hooks/tasks/extraction/use-task";
 import { FormField, FormItem, FormControl, FormMessage, Form } from "@/components/ui/form";
 import DeletionConfirmationDialog from "@/modules/users/components/deletion/deletion-confirmation-dialog";
 import useElementsDeletion from "@/hooks/use-elements-deletion";
@@ -19,9 +19,9 @@ import { useTranslations } from "next-intl";
 import Loading from "@/components/page-loader";
 import { ErrorBanner } from "@/components/error-banner";
 import AttachementPreview from "./attachement-preview";
-import { TaskType } from "./types/tasks";
-import useTaskUpload from "./hooks/tasks/use-task-upload";
-import useCommentUpload from "./hooks/tasks/use-comment-upload";
+import { TaskType } from "../types/tasks";
+import useTaskUpload from "../hooks/tasks/use-task-upload";
+import useCommentUpload from "../hooks/tasks/use-comment-upload";
 import { formatDateToFrontendFormat } from "@/utils/date";
 
 interface TodoDetailSheetProps {
@@ -37,7 +37,7 @@ export function TaskDetailSheet({
   taskId,
   onEditClick
 }: TodoDetailSheetProps) {
-  const t = useTranslations("modules.projects.tasks");
+  const t = useTranslations("modules.tasks");
 
   const deletionHooks = {
     comment: useElementsDeletion("comment"),

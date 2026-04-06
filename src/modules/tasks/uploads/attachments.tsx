@@ -4,7 +4,7 @@ import { useFileUpload } from "@/hooks/use-file-upload";
 import { FileIcon, Upload, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useFormContext } from "react-hook-form";
-import AttachementPreview from "../attachement-preview";
+import AttachementPreview from "../components/attachement-preview";
 import CustomDialog from "@/components/custom-dialog";
 import FilePreview from "reactjs-file-preview";
 import { useEffect, useState } from "react";
@@ -17,7 +17,7 @@ interface Props {
 }
 
 export default function AttachmentsUpload({ inputName, previews, resetTrigger }: Props) {
-  const t = useTranslations("modules.projects.tasks");
+  const t = useTranslations("modules.tasks");
   const form = useFormContext();
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);

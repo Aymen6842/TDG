@@ -5,6 +5,7 @@ import useCurrentUser from "@/modules/auth/hooks/users/use-user";
 import { redirect } from "next/navigation";
 import React from "react";
 
+
 export default function GuestLayout({
   children
 }: Readonly<{

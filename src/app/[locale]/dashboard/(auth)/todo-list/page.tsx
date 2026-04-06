@@ -1,6 +1,6 @@
 import { generateMeta } from "@/lib/utils";
 
-import Tasks from "@/modules/tasks";
+import Tasks from "@/modules/tasks/components";
 
 
 export async function generateMetadata() {

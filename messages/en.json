@@ -975,9 +975,7 @@
         }
       }
     },
-    "projects": {
-      "title": "Projects Management",
-      "tasks": {
+    "tasks": {
         "title": "Tasks List",
         "deletion": {
           "tasks": {
@@ -1149,19 +1147,404 @@
         "addTask": "Add Task",
         "filePreview": "File Preview"
       },
+    "projects": {
+      "title": "Projects Management",
+      "tasks": {
+        "title": "Tasks List",
+        "duplicateTask": "Duplicate this task",
+        "deletion": {
+          "tasks": {
+            "confirmation": {
+              "title": "Delete Task",
+              "message": "Are you sure you want to delete this task? This action cannot be undone.",
+              "cancel": "Cancel",
+              "delete": "Delete",
+              "deleting": "Deleting..."
+            }
+          },
+          "subtasks": {
+            "confirmation": {
+              "title": "Delete Subtask",
+              "message": "Are you sure you want to delete this subtask? This action cannot be undone.",
+              "cancel": "Cancel",
+              "delete": "Delete",
+              "deleting": "Deleting..."
+            }
+          },
+          "comments": {
+            "confirmation": {
+              "title": "Delete Comment",
+              "message": "Are you sure you want to delete this comment? This action cannot be undone.",
+              "cancel": "Cancel",
+              "delete": "Delete",
+              "deleting": "Deleting..."
+            }
+          }
+        },
+        "status": {
+          "pending": "Pending",
+          "inProgress": "In Progress",
+          "completed": "Completed"
+        },
+        "priority": {
+          "low": "Low",
+          "medium": "Medium",
+          "high": "High"
+        },
+        "upload": {
+          "form": {
+            "labels": {
+              "parentTaskId": "Parent Task ID",
+              "status": "Status",
+              "priority": "Priority",
+              "title": "Title",
+              "description": "Description",
+              "details": "Details",
+              "dueDate": "Due Date",
+              "dueTime": "Due Time",
+              "reminderDate": "Reminder Date",
+              "reminderTime": "Reminder Time",
+              "isArchived": "Archived",
+              "isFavorite": "Favorite",
+              "attachments": "Attachments",
+              "comments": "Comments",
+              "upload": "Upload",
+              "noAttachments": "No attachments yet",
+              "subTasks": "Subtasks",
+              "createdAt": "Created At",
+              "noComments": "No comments yet",
+              "noSubTasks": "No subtasks yet",
+              "noTasks": "No tasks found",
+              "allTasks": "All Tasks",
+              "type": "Type",
+              "points": "Story Points"
+            },
+            "placeholders": {
+              "parentTaskId": "Parent Task ID",
+              "status": "Status of the task",
+              "priority": "Priority of the task",
+              "title": "Title of the task",
+              "description": "Description of the task",
+              "details": "Details of the task",
+              "date": "Select a date",
+              "comment": "Add a comment",
+              "search": "Search tasks ...",
+              "dragDropFiles": "Drag & drop files here, or click to select",
+              "selectType": "Select a type",
+              "selectPriority": "Select a priority",
+              "selectStatus": "Select a status",
+              "points": "Story Points"
+            },
+            "ariaLabels": {
+              "hidePassword": "Hide password",
+              "showPassword": "Show password"
+            },
+            "cancel": "Cancel",
+            "creating": "Creating..."
+          }
+        },
+        "success": {
+          "taskCreated": "Task created successfully.",
+          "subTaskCreated": "Subtask created successfully.",
+          "taskUpdated": "Task updated successfully.",
+          "taskDeleted": "Task deleted successfully.",
+          "commentDeleted": "Comment deleted successfully.",
+          "commentCreated": "Comment created successfully.",
+          "commentUpdated": "Comment updated successfully.",
+          "attachmentsUpdated": "Attachments updated successfully."
+        },
+        "validations": {
+          "title": {
+            "required": "Title is required"
+          },
+          "parentTaskId": {
+            "invalid": "Invalid parent task identifier"
+          },
+          "status": {
+            "invalid": "Invalid status selected"
+          },
+          "priority": {
+            "invalid": "Invalid priority selected"
+          },
+          "dueTime": {
+            "required": "Due Time is required"
+          },
+          "reminderTime": {
+            "required": "Reminder date is required"
+          },
+          "timeRange": {
+            "invalid": "Reminder must be before due time"
+          },
+          "attachments": {
+            "invalidImageFormat": "Only JPEG, PNG or WEBP images are allowed"
+          },
+          "taskId": {
+            "invalid": "Invalid task identifier",
+            "required": "Task ID is required"
+          },
+          "comment": {
+            "required": "Comment is required"
+          },
+          "reordered": "The to-do items have been reordered successfully.",
+          "fileAdded": "{{fileName}} has been added to the task"
+        },
+        "errors": {
+          "invalidFormat": "The provided data format is invalid. Please review and try again.",
+          "taskUploadFailed": "Failed to upload your task. Please try again later.",
+          "serverError": "An unexpected server error occurred. Please try again later.",
+          "loadTasksFailed": "Failed to load tasks. Please try again.",
+          "loadTaskFailed": "Failed to load task. Please try again."
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "creating": "Creating...",
+          "createTask": "Create Task",
+          "updateTask": "Update Task",
+          "deleteTask": "Delete Task",
+          "createComment": "Create Comment",
+          "createSubTask": "Create Subtask"
+        },
+        "filters": {
+          "title": "Filters",
+          "all": "All",
+          "type": "Type",
+          "status": "Status",
+          "priority": "Priority",
+          "manager": "Manager",
+          "milestones": "Milestones",
+          "epics": "Epics",
+          "sortBy": "Sort By",
+          "selectSortOption": "Select sort option",
+          "statusAscending": "Status Ascending",
+          "statusDescending": "Status Descending",
+          "priorityAscending": "Priority Ascending",
+          "priorityDescending": "Priority Descending",
+          "dueDateAscending": "Due Date Ascending",
+          "dueDateDescending": "Due Date Descending",
+          "clearFilters": "Clear Filters"
+        },
+        "types": {
+          "story": "Story",
+          "task": "Task",
+          "bug": "Bug",
+          "spike": "Spike",
+          "epic": "Epic"
+        },
+        "statusLabels": {
+          "backlog": "Backlog",
+          "todo": "To Do",
+          "in_progress": "In Progress",
+          "testing": "Testing",
+          "in_review": "In Review",
+          "done": "Done"
+        },
+        "priorityLabels": {
+          "urgent": "Urgent",
+          "high": "High",
+          "medium": "Medium",
+          "low": "Low"
+        },
+        "points": "Story Points",
+        "loading": {
+          "tasks": "Loading tasks...",
+          "task": "Loading task...",
+          "button": "Loading...",
+          "uploading": "Uploading..."
+        },
+        "edit": "Edit",
+        "noDescription": "No description provided.",
+        "enterSubTaskTitle": "Enter subtask title",
+        "addTask": "Add Task",
+        "filePreview": "File Preview",
+        "displaySettings": {
+          "title": "Display Settings",
+          "showAttributes": "Show Attributes",
+          "attributes": {
+            "key": "Task Key",
+            "type": "Type",
+            "priority": "Priority",
+            "status": "Status",
+            "assignee": "Assignee",
+            "milestone": "Milestone",
+            "epic": "Epic",
+            "points": "Story Points"
+          }
+        },
+        "kanban": {
+          "addColumn": "Add Column",
+          "deleteColumn": "Delete Column",
+          "deleteColumnConfirm": "Are you sure? Tasks in this column will be moved to \"No Status\".",
+          "newColumnTitle": "New Column",
+          "enterColumnName": "Enter column name...",
+          "noStatus": "No Status",
+          "noTasks": "No tasks in this column",
+          "cancel": "Cancel",
+          "confirm": "Confirm"
+        }
+      },
       "project": {
         "details": {
           "period": "from {from} to {to}",
           "timeProgressLabel": "Time progress",
           "viewProject": "View project",
-          "deleteProject": "Delete project"
+          "deleteProject": "Delete project",
+          "endDate": "End Date: {date}",
+          "members": "{count} Members",
+          "member": "{count} Member",
+          "tabs": {
+            "tasks": "Tasks",
+            "members": "Members & Invitations",
+            "details": "Details"
+          },
+          "membersList": {
+            "title": "Project Members",
+            "description": "Users who have access to this project.",
+            "invite": "Invite Member",
+            "manager": "Manager",
+            "member": "Member",
+            "joined": "Joined",
+            "actions": "Actions",
+            "remove": "Remove"
+          },
+          "invitationsList": {
+            "title": "Pending Invitations",
+            "description": "Invitations sent to users to join this project.",
+            "email": "Email",
+            "role": "Role",
+            "expires": "Expires",
+            "status": "Status",
+            "cancel": "Cancel Invite"
+          },
+          "settings": {
+            "title": "Project Details",
+            "description": "Configuration and general information about this project.",
+            "general": "General Information",
+            "status": "Current Status",
+            "timeline": "Timeline",
+            "name": "Project Name",
+            "desc": "Description",
+            "businessUnit": "Business Unit",
+            "type": "Project Type",
+            "paid": "Paid Project",
+            "archived": "Archived"
+          },
+          "placeholders": {
+            "members": "This section will show project members and pending invitations.",
+            "details": "This section will show the full project configuration and details."
+          }
         },
         "deletionDialog": {
           "title": "Delete Project",
           "description": "Are you sure you want to delete this project? This action cannot be undone.",
           "confirm": "Delete",
           "cancel": "Cancel"
+        },
+        "status": {
+          "running": "Running",
+          "pending": "Pending",
+          "completed": "Completed"
+        },
+        "projectType": {
+          "agile": "Agile",
+          "freestyle": "Freestyle"
+        },
+        "taskAttributes": {
+          "key": "Key",
+          "type": "Type",
+          "priority": "Priority",
+          "status": "Status",
+          "assignee": "Assignee",
+          "reporter": "Reporter",
+          "points": "Points",
+          "deletion": {
+            "title": "Delete Project Task",
+            "description": "Are you sure you want to delete this project task? This action cannot be undone."
+          },
+          "subtasks": {
+            "deletion": {
+              "title": "Delete Subtask",
+              "description": "Are you sure you want to delete this subtask?"
+            }
+          },
+          "comments": {
+            "deletion": {
+              "title": "Delete Comment",
+              "description": "Are you sure you want to delete this comment?"
+            }
+          },
+          "validations": {
+            "title": {
+              "required": "Title is required"
+            },
+            "type": {
+              "invalid": "Invalid task type"
+            },
+            "status": {
+              "invalid": "Invalid status"
+            },
+            "priority": {
+              "invalid": "Invalid priority"
+            }
+          },
+          "form": {
+            "createTask": "Create Project Task",
+            "updateTask": "Update Project Task",
+            "labels": {
+              "title": "Title",
+              "description": "Description",
+              "type": "Type",
+              "status": "Status",
+              "priority": "Priority",
+              "points": "Story Points",
+              "dueDate": "Due Date"
+            },
+            "placeholders": {
+              "title": "Enter task title",
+              "description": "Enter task description",
+              "points": "e.g. 5",
+              "selectType": "Select type",
+              "selectStatus": "Select status",
+              "selectPriority": "Select priority"
+            }
+          }
+        },
+        "tooltips": {
+          "view": "View Project",
+          "edit": "Edit Project",
+          "archive": "Archive Project",
+          "delete": "Delete Project"
         }
+      },
+      "list": {
+        "searchPlaceholder": "Search projects...",
+        "addProject": "Add Project",
+        "noProjects": "No projects found.",
+        "filters": {
+          "sortBy": "Sort By",
+          "selectSortOption": "Select sorting option",
+          "nameAscending": "Name (A-Z)",
+          "nameDescending": "Name (Z-A)",
+          "startDateAscending": "Start Date (Oldest)",
+          "startDateDescending": "Start Date (Newest)",
+          "projectType": "Project Type",
+          "businessUnit": "Business Unit",
+          "isArchived": "Archived",
+          "paid": "Paid",
+          "clearFilters": "Clear Filters"
+        },
+        "tabs": {
+          "all": "All Projects",
+          "running": "Running",
+          "pending": "Pending",
+          "completed": "Completed"
+        },
+        "deleteDialog": {
+          "title": "Delete Project",
+          "description": "Are you sure you want to delete this project? This action cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete"
+        }
+
       },
       "upload": {
         "createProject": {
@@ -1184,14 +1567,28 @@
             "startDate": "Start Date",
             "endDate": "End Date",
             "startTime": "Start Time",
-            "endTime": "End Time"
+            "endTime": "End Time",
+            "status": "Status",
+            "projectType": "Project Type",
+            "businessUnit": "Business Unit",
+            "details": "Details",
+            "paid": "Paid Project",
+            "isArchived": "Archived",
+            "displayOrder": "Display Order",
+            "language": "Language"
           },
           "placeholders": {
             "name": "Your project name",
             "description": "Describe the project briefly...",
             "repositoryUrl": "Your project repository if it exists",
             "liveUrl": "Your project live URL in preprod environment",
-            "projectColor": "Select a color"
+            "projectColor": "Select a color",
+            "status": "Select status",
+            "projectType": "Select type",
+            "businessUnit": "Select business unit",
+            "details": "Add detailed project information...",
+            "displayOrder": "0",
+            "language": "e.g. English"
           },
           "cancel": "Cancel",
           "creating": "Creating...",

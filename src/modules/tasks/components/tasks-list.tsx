@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Toggle } from "@/components/ui/toggle";
 import { useTodoStore } from "@/modules/tasks/store/tasks";
-import StatusTabs from "@/modules/tasks/status-tabs";
+import StatusTabs from "@/modules/tasks/components/status-tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import {
   DndContext,
@@ -33,14 +33,14 @@ import {
   sortableKeyboardCoordinates,
   rectSortingStrategy
 } from "@dnd-kit/sortable";
-import usePersonalTasks from "./hooks/tasks/extraction/use-tasks";
+import usePersonalTasks from "../hooks/tasks/extraction/use-tasks";
 import { cn } from "@/lib/utils";
 import Loading from "@/components/page-loader";
 import { useTranslations } from "next-intl";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { priorityDotColors } from "./utils/enum";
+import { priorityDotColors } from "../utils/enum";
 import TaskItem from "./task-item";
-import useTasksOrdersUpdates from "./hooks/tasks/use-tasks-orders-updates";
+import useTasksOrdersUpdates from "../hooks/tasks/use-tasks-orders-updates";
 import Error500 from "@/components/error/500";
 
 interface TodoListProps {
@@ -50,7 +50,7 @@ interface TodoListProps {
 }
 
 export default function TaskList({ activeTab, onSelectTask, onAddTodoClick }: TodoListProps) {
-  const t = useTranslations("modules.projects.tasks");
+  const t = useTranslations("modules.tasks");
 
   const { updateTasksOrders } = useTasksOrdersUpdates({});
   const { tasks, tasksAreLoading, tasksError, statusState, priorityState, sortByState, setDisplayedTasks, searchState } = usePersonalTasks();

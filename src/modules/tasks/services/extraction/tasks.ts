@@ -18,7 +18,7 @@ interface Params {
 }
 
 export default async function retrieveTasks(params: Params) {
-  if (USE_MOCK) return (mockTasks as TaskInResponseType[]).map(castToTaskType);
+  if (USE_MOCK()) return (mockTasks as TaskInResponseType[]).map(castToTaskType);
 
   const { access } = extractJWTokens();
   const headers = {

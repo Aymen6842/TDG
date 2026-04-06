@@ -36,7 +36,7 @@ interface TaskCreationOrUpdateFormProps {
 }
 
 export default function TaskUploadForm({ isOpen, onClose, task }: TaskCreationOrUpdateFormProps) {
-  const t = useTranslations("modules.projects.tasks");
+  const t = useTranslations("modules.tasks");
 
   const [resetFilesTrigger, setResetFilesTrigger] = useState(0)
   const { form, isPending, onSubmit, error } = useTaskUpload({

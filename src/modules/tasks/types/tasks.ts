@@ -27,7 +27,7 @@ export interface TaskDetailsType {
   id: string;
   title: string;
   description?: string;
-  details?: string;
+  details?: string | null;
   archived: boolean;
   isFavorite: boolean;
   status: TaskStatus;
@@ -46,12 +46,12 @@ export interface TaskDetailsInResponseType {
   id: string;
   title: string;
   description?: string;
-  details?: string;
+  details?: string | null;
   archived: boolean;
   isFavorite: boolean;
   status: TaskStatus;
   priority: TaskPriority;
-  parentTaskId?: string;
+  parentTaskId?: string | null;
   attachments?: string[];
   comments?: TaskCommentType[];
   subTasks?: SubTaskType[];
@@ -136,12 +136,12 @@ export interface TaskInResponseType {
   id: string;
   title: string;
   description?: string;
-  details?: string;
+  details?: string | null;
   archived: boolean;
   isFavorite: boolean;
   status: TaskStatus;
   priority: TaskPriority;
-  parentTaskId?: string;
+  parentTaskId?: string | null;
   attachments?: string[];
   dueDate: string;
   reminderDate: string;
