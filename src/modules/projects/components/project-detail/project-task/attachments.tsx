@@ -30,7 +30,7 @@ export default function AttachmentsUpload({ inputName, previews, resetTrigger }:
     const newFiles = files
       .filter(f => f.file instanceof File)
       .map(f => f.file as File);
-    form.setValue('attachments', newFiles);
+    setTimeout(() => form.setValue('attachments', newFiles), 0);
   }, [form]);
 
   const [fileState, fileActions] = useFileUpload({

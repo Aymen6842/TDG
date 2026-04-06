@@ -32,7 +32,7 @@ interface Props {
 }
 
 export default function TiptapToolbar({ editor }: Props) {
-  const iconSize = "sm";
+  const iconSize = "16";
   const iconStyle = `h-4 w-4`;
   const [color, setColor] = useState("");
   const [colorPickerIsOpen, setColorPickerIsOpen] = useState(false);
