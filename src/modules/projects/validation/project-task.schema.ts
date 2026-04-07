@@ -19,6 +19,8 @@ export const getProjectTaskFormSchema = ({ t }: Params) =>
     }),
     storyPoints: z.coerce.number().min(0).optional(),
     dueDate: z.string().optional(),
+    attachments: z.array(z.instanceof(File)).optional(),
+    deletedAttachments: z.string().optional(),
   });
 
 export type ProjectTaskFormSchema = z.infer<ReturnType<typeof getProjectTaskFormSchema>>;

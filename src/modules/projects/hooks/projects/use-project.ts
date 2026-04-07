@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { ProjectType } from "@/modules/projects/types/projects";
-import retrieveProjectBySlug from "../../services/extraction/project";
+import retrieveProjectById from "../../services/extraction/project";
 
-export default function useProject(slug: string) {
+export default function useProject(id: string) {
   const { data, isLoading, isError } = useQuery<ProjectType | null>({
-    queryKey: ["project", slug],
-    queryFn: () => retrieveProjectBySlug(slug),
-    enabled: !!slug,
+    queryKey: ["project", id],
+    queryFn: () => retrieveProjectById(id),
+    enabled: !!id,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false
   });

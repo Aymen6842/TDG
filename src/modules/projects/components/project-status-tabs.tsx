@@ -18,8 +18,9 @@ const ProjectStatusTabs: React.FC<StatusTabsProps> = ({ onTabChange, activeTab }
       value={activeTab}>
       <TabsList>
         <TabsTrigger value="all">{t("all")}</TabsTrigger>
-        <TabsTrigger value="Running">{t("running")}</TabsTrigger>
         <TabsTrigger value="Pending">{t("pending")}</TabsTrigger>
+        <TabsTrigger value="Running">{t("running")}</TabsTrigger>
+        <TabsTrigger value="Stopped">{t("stopped", { defaultValue: "Stopped" })}</TabsTrigger>
         <TabsTrigger value="Completed">{t("completed")}</TabsTrigger>
       </TabsList>
     </Tabs>

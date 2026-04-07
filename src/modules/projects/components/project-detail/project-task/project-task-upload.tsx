@@ -189,18 +189,16 @@ export default function ProjectTaskUploadSheet({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.values(EnumProjectTaskStatus).map((s) => (
-                          <SelectItem key={s} value={s}>
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={cn(
-                                  "size-2 rounded-full",
-                                  projectTaskStatusDotColors[s.toUpperCase()]
-                                )}></span>
-                              {t(`statusLabels.${s.toLowerCase()}`)}
-                            </div>
-                          </SelectItem>
-                        ))}
+                        {Object.values(EnumProjectTaskStatus)
+                          .filter((s) => isAgile || !["TESTING", "IN_REVIEW"].includes(s))
+                          .map((s) => (
+                            <SelectItem key={s} value={s}>
+                              <div className="flex items-center gap-2">
+                                <span className={cn("size-2 rounded-full", projectTaskStatusDotColors[s.toUpperCase()])} />
+                                {t(`statusLabels.${s.toLowerCase()}`)}
+                              </div>
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -224,6 +222,20 @@ export default function ProjectTaskUploadSheet({
                 />
               )}
             </div>
+
+            <FormField
+              control={form.control}
+              name="dueDate"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("upload.form.labels.dueDate", { defaultValue: "Due Date" })}</FormLabel>
+                  <FormControl>
+                    <Input type="datetime-local" {...field} value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""} onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value).toISOString() : "")} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <AttachementUpload
               inputName="attachments"

@@ -15,7 +15,8 @@ export function castProjectToFrontend(raw: ProjectInResponseType): ProjectType {
     projectId: m.projectId,
     userId: m.userId,
     createdAt: new Date(m.createdAt),
-    updatedAt: new Date(m.updatedAt),
+    updatedAt: m.updatedAt ? new Date(m.updatedAt) : undefined,
+    user: m.user,
   }));
 
   const invitations: ProjectInvitation[] = (raw.invitations || []).map((inv) => ({
@@ -27,7 +28,7 @@ export function castProjectToFrontend(raw: ProjectInResponseType): ProjectType {
     projectId: inv.projectId,
     invitedById: inv.invitedById,
     createdAt: new Date(inv.createdAt),
-    updatedAt: new Date(inv.updatedAt),
+    updatedAt: inv.updatedAt ? new Date(inv.updatedAt) : undefined,
     isManager: inv.isManager,
   }));
 
@@ -40,7 +41,7 @@ export function castProjectToFrontend(raw: ProjectInResponseType): ProjectType {
     language: c.language,
     projectId: c.projectId,
     createdAt: new Date(c.createdAt),
-    updatedAt: new Date(c.updatedAt),
+    updatedAt: c.updatedAt ? new Date(c.updatedAt) : undefined,
   }));
 
   return {
@@ -48,10 +49,12 @@ export function castProjectToFrontend(raw: ProjectInResponseType): ProjectType {
     slug: content?.name?.toLowerCase().replace(/ /g, "-") || raw.id,
     name: content?.name || "Unnamed Project",
     description: content?.description,
-    repositoryUrl: raw.repositoryUrl || "",
-    liveUrl: raw.liveUrl || "",
+    repositoryUrl: raw.repositoryUrl,
+    liveUrl: raw.liveUrl,
     startTime: new Date(raw.startDate),
     endTime: new Date(raw.endDate),
+    estimatedStartDate: raw.estimatedStartDate ? new Date(raw.estimatedStartDate) : undefined,
+    estimatedEndDate: raw.estimatedEndDate ? new Date(raw.estimatedEndDate) : undefined,
     createdAt: new Date(raw.createdAt),
     updatedAt: new Date(raw.updatedAt),
     status: raw.status,
@@ -61,6 +64,9 @@ export function castProjectToFrontend(raw: ProjectInResponseType): ProjectType {
     paid: raw.paid ?? false,
     businessUnit: raw.businessUnit,
     isFavorite: raw.isFavorite,
+    kanbanSettings: raw.kanbanSettings,
+    createdById: raw.createdById,
+    createdBy: raw.createdBy,
     members,
     invitations,
     contents,

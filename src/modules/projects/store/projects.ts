@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ProjectFilterTab = "all" | "Running" | "Pending" | "Completed";
+export type ProjectFilterTab = "all" | "Running" | "Pending" | "Stopped" | "Completed";
 export type ViewMode = "list" | "grid";
 
 interface ProjectStore {

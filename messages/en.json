@@ -1442,6 +1442,7 @@
         "status": {
           "running": "Running",
           "pending": "Pending",
+          "stopped": "Stopped",
           "completed": "Completed"
         },
         "projectType": {
@@ -1512,7 +1513,11 @@
           "view": "View Project",
           "edit": "Edit Project",
           "archive": "Archive Project",
-          "delete": "Delete Project"
+          "restore": "Restore Project",
+          "delete": "Delete Project",
+          "start": "Start Project",
+          "stop": "Stop Project",
+          "complete": "Mark as Completed"
         }
       },
       "list": {
@@ -1522,21 +1527,33 @@
         "filters": {
           "sortBy": "Sort By",
           "selectSortOption": "Select sorting option",
+          "defaultOrder": "Default",
+          "displayOrder": "Display Order",
           "nameAscending": "Name (A-Z)",
           "nameDescending": "Name (Z-A)",
           "startDateAscending": "Start Date (Oldest)",
           "startDateDescending": "Start Date (Newest)",
+          "estimatedStartAsc": "Est. Start (Oldest)",
+          "estimatedStartDesc": "Est. Start (Newest)",
+          "estimatedEndAsc": "Est. End (Oldest)",
+          "estimatedEndDesc": "Est. End (Newest)",
+          "createdAtAscending": "Created (Oldest)",
+          "createdAtDescending": "Created (Newest)",
           "projectType": "Project Type",
           "businessUnit": "Business Unit",
           "isArchived": "Archived",
           "paid": "Paid",
+          "createdBy": "Created By",
+          "allCreators": "All creators",
+          "createdByMe": "Created by me",
           "clearFilters": "Clear Filters"
         },
         "tabs": {
           "all": "All Projects",
           "running": "Running",
           "pending": "Pending",
-          "completed": "Completed"
+          "completed": "Completed",
+          "stopped": "Stopped"
         },
         "deleteDialog": {
           "title": "Delete Project",
@@ -1575,7 +1592,16 @@
             "paid": "Paid Project",
             "isArchived": "Archived",
             "displayOrder": "Display Order",
-            "language": "Language"
+            "language": "Language",
+            "estimatedStartDate": "Estimated start date",
+            "estimatedEndDate": "Estimated end date",
+            "estimatedStartTime": "Estimated start time",
+            "estimatedEndTime": "Estimated end time",
+            "manager": "Manager"
+          },
+          "hints": {
+            "paid": "This project is a paid engagement",
+            "isArchived": "Hide this project from the active list"
           },
           "placeholders": {
             "name": "Your project name",
@@ -1588,7 +1614,8 @@
             "businessUnit": "Select business unit",
             "details": "Add detailed project information...",
             "displayOrder": "0",
-            "language": "e.g. English"
+            "language": "e.g. English",
+            "manager": "Select manager..."
           },
           "cancel": "Cancel",
           "creating": "Creating...",

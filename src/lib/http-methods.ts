@@ -2,7 +2,10 @@ import axios, { RawAxiosRequestHeaders } from "axios";
 
 const apiClient = axios.create({
   baseURL: process.env.BACKEND_ADDRESS,
-  timeout: 40000 //40 seconds
+  timeout: 40000, //40 seconds
+  headers: {
+    "ngrok-skip-browser-warning": "true"
+  }
 });
 
 export function GET(uri: string, headers: RawAxiosRequestHeaders, params?: any) {

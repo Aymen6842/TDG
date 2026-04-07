@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getProjectTaskFormSchema, ProjectTaskFormSchema } from "../../validation/project-task.schema";
-import uploadProjectTask from "../../services/mutations/project-task-upload";
+import uploadProjectTask, { ProjectTaskPayload } from "../../services/mutations/project-task-upload";
 import { ProjectTaskType } from "@/modules/projects/types/project-tasks";
 
 interface Params {
@@ -68,10 +68,22 @@ export default function useProjectTaskUpload({ projectId, task, onSuccess }: Par
     if (error) setError("");
 
     try {
+      const payload: ProjectTaskPayload = {
+        title: data.title,
+        description: data.description,
+        type: data.type,
+        status: data.status,
+        priority: data.priority,
+        storyPoints: data.storyPoints,
+        dueDate: data.dueDate,
+      };
+
       await uploadProjectTask({
-        task: data,
+        task: payload,
         id: task?.id,
-        projectId
+        projectId,
+        attachments: data.attachments,
+        deletedAttachments: data.deletedAttachments,
       });
 
       toast.success(task?.id ? "Project task updated" : "Project task created");
