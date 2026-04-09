@@ -1,12 +1,8 @@
-import { USE_MOCK } from "@/lib/mock-config"; // REMOVE THIS LINE FOR PROD
 import { POST, DELETE } from "@/lib/http-methods";
 import extractJWTokens from "@/modules/auth/utils/jwt/extract-tokens";
 import { refreshToken } from "@/modules/auth/services/refresh-token";
-import { mockAddProjectTaskComment, mockDeleteProjectTaskComment } from "../mock/mutations.mock"; // REMOVE THIS LINE FOR PROD
 
 export async function addProjectTaskComment(projectId: string, taskId: string, comment: string): Promise<void> {
-  if (USE_MOCK()) return mockAddProjectTaskComment(); // REMOVE THIS LINE FOR PROD
-
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
 
@@ -21,8 +17,6 @@ export async function addProjectTaskComment(projectId: string, taskId: string, c
 }
 
 export async function deleteProjectTaskComment(projectId: string, taskId: string, commentId: string): Promise<void> {
-  if (USE_MOCK()) return mockDeleteProjectTaskComment(); // REMOVE THIS LINE FOR PROD
-
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
 

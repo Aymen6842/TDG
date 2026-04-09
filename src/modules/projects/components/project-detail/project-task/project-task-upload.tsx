@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
 import { ErrorBanner } from "@/components/error-banner";
+import { DotBadgeSelectItem } from "../../shared/dot-badge-option";
 import { ProjectTaskType, EnumProjectTaskType, EnumProjectTaskStatus, EnumProjectTaskPriority } from "@/modules/projects/types/project-tasks";
 import useProjectTaskUpload from "../../../hooks/tasks/use-project-task-upload";
 import { projectTaskStatusDotColors, projectTaskPriorityDotColors, projectTaskTypeDotColors } from "../../../utils/badges/project-task-badges";
@@ -124,16 +125,12 @@ export default function ProjectTaskUploadSheet({
                       </FormControl>
                       <SelectContent>
                         {Object.values(EnumProjectTaskType).map((type) => (
-                          <SelectItem key={type} value={type}>
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={cn(
-                                  "size-2 rounded-full",
-                                  projectTaskTypeDotColors[type.toUpperCase()]
-                                )}></span>
-                              {t(`types.${type.toLowerCase()}`)}
-                            </div>
-                          </SelectItem>
+                          <DotBadgeSelectItem
+                            key={type}
+                            value={type}
+                            dotColorClass={projectTaskTypeDotColors[type.toUpperCase()]}
+                            label={t(`types.${type.toLowerCase()}`)}
+                          />
                         ))}
                       </SelectContent>
                     </Select>
@@ -156,16 +153,12 @@ export default function ProjectTaskUploadSheet({
                       </FormControl>
                       <SelectContent>
                         {Object.values(EnumProjectTaskPriority).map((p) => (
-                          <SelectItem key={p} value={p}>
-                            <div className="flex items-center gap-2">
-                              <span
-                                className={cn(
-                                  "size-2 rounded-full",
-                                  projectTaskPriorityDotColors[p.toUpperCase()]
-                                )}></span>
-                              {t(`priorityLabels.${p.toLowerCase()}`)}
-                            </div>
-                          </SelectItem>
+                          <DotBadgeSelectItem
+                            key={p}
+                            value={p}
+                            dotColorClass={projectTaskPriorityDotColors[p.toUpperCase()]}
+                            label={t(`priorityLabels.${p.toLowerCase()}`)}
+                          />
                         ))}
                       </SelectContent>
                     </Select>
@@ -192,12 +185,12 @@ export default function ProjectTaskUploadSheet({
                         {Object.values(EnumProjectTaskStatus)
                           .filter((s) => isAgile || !["TESTING", "IN_REVIEW"].includes(s))
                           .map((s) => (
-                            <SelectItem key={s} value={s}>
-                              <div className="flex items-center gap-2">
-                                <span className={cn("size-2 rounded-full", projectTaskStatusDotColors[s.toUpperCase()])} />
-                                {t(`statusLabels.${s.toLowerCase()}`)}
-                              </div>
-                            </SelectItem>
+                            <DotBadgeSelectItem
+                              key={s}
+                              value={s}
+                              dotColorClass={projectTaskStatusDotColors[s.toUpperCase()]}
+                              label={t(`statusLabels.${s.toLowerCase()}`)}
+                            />
                           ))}
                       </SelectContent>
                     </Select>

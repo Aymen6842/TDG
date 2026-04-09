@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ProjectType, ProjectTypeEnum, BusinessUnit } from "@/modules/projects/types/projects";
 import { useProjectStore } from "../../store/projects";
 import useUser from "@/modules/auth/hooks/users/use-user";
-import retrieveProjects from "../../services/extraction/projects";
-import retrieveProjectCreators from "../../services/extraction/project-creators";
+import { retrieveProjects, retrieveProjectCreators } from "../../services";
 
 const BACKEND_PAGE_SIZE = 12;
 const DISPLAY_PAGE_SIZE = 12;

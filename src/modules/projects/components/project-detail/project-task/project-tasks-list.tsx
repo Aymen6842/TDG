@@ -21,6 +21,7 @@ import ProjectTaskUploadSheet from "./project-task-upload";
 import ProjectTaskDetailSheet from "./project-task-details-sheet";
 import ProjectTasksToolbar from "./project-tasks-toolbar";
 import ProjectTasksKanbanBoard from "./project-tasks-kanban-board";
+import { EmptyState } from "../../shared/empty-state";
 
 const NO_STATUS_KEY = "NO_STATUS";
 
@@ -190,9 +191,7 @@ export default function ProjectTasksList({ project }: Props) {
           {tasksAreLoading ? (
             <Loading />
           ) : tasks.length === 0 ? (
-            <div className="flex h-[calc(100vh-12rem)] flex-col items-center justify-center py-12 text-center">
-              <h3 className="text-xl font-medium">{tTasks("upload.form.labels.noTasks")}</h3>
-            </div>
+            <EmptyState message={tTasks("upload.form.labels.noTasks")} />
           ) : viewMode === "grid" ? (
             <TooltipProvider>
               <ProjectTasksKanbanBoard

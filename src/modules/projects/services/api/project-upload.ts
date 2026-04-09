@@ -1,16 +1,12 @@
-import { USE_MOCK } from "@/lib/mock-config"; // REMOVE THIS LINE FOR PROD
 import { POST, PATCH } from "@/lib/http-methods";
 import extractJWTokens from "@/modules/auth/utils/jwt/extract-tokens";
 import { refreshToken } from "@/modules/auth/services/refresh-token";
 import { CreateProjectPayload, UpdateProjectPayload } from "@/modules/projects/types/projects";
-import { mockUploadProject } from "../mock/mutations.mock"; // REMOVE THIS LINE FOR PROD
 
 export async function uploadProject(
   data: CreateProjectPayload | UpdateProjectPayload,
   id?: string
 ): Promise<void> {
-  if (USE_MOCK()) return mockUploadProject(); // REMOVE THIS LINE FOR PROD
-
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
 

@@ -8,10 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import {
-  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
-  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+import { ConfirmDialog } from "../../shared/confirm-dialog";
 import { useTranslations } from "next-intl";
 import * as Kanban from "@/components/ui/kanban";
 import { ProjectTaskType } from "@/modules/projects/types/project-tasks";
@@ -162,23 +159,16 @@ export default function ProjectTasksKanbanBoard({
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={!!columnToDelete} onOpenChange={(open) => !open && setColumnToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{tTasks("kanban.deleteColumn")}</AlertDialogTitle>
-            <AlertDialogDescription>{tTasks("kanban.deleteColumnConfirm")}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{tTasks("kanban.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-              onClick={() => { if (columnToDelete) { onDeleteColumn(columnToDelete); setColumnToDelete(null); } }}
-            >
-              {tTasks("kanban.confirm")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={!!columnToDelete}
+        onOpenChange={(open) => !open && setColumnToDelete(null)}
+        title={tTasks("kanban.deleteColumn")}
+        description={tTasks("kanban.deleteColumnConfirm")}
+        onConfirm={() => { if (columnToDelete) { onDeleteColumn(columnToDelete); setColumnToDelete(null); } }}
+        onCancel={() => setColumnToDelete(null)}
+        confirmLabel={tTasks("kanban.confirm")}
+        cancelLabel={tTasks("kanban.cancel")}
+      />
     </>
   );
 }

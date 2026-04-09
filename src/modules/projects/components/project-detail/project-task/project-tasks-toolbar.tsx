@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Search, SlidersHorizontal, Settings2, X, ListIcon, SquareKanban } from "lucide-react";
+import { Search, SlidersHorizontal, Settings2, ListIcon, SquareKanban } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,14 +13,16 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Toggle } from "@/components/ui/toggle";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Toggle } from "@/components/ui/toggle";import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTranslations } from "next-intl";
 import { EnumProjectTaskPriority, EnumProjectTaskType } from "@/modules/projects/types/project-tasks";
 import { projectTaskPriorityDotColors, projectTaskTypeDotColors } from "../../../utils/badges/project-task-badges";
 import { ProjectType } from "../../../types/projects";
 import { useProjectTasksStore } from "@/modules/projects/store/project-tasks";
+import { FilterPanel } from "../../shared/filter-panel";
+import { FilterSection } from "../../shared/filter-section";
+import { DotBadgeToggle } from "../../shared/dot-badge-option";
 
 interface Props {
   project: ProjectType;
@@ -56,37 +58,41 @@ export default function ProjectTasksToolbar({
   const hasActiveFilters = !!(priority || type || assigneeId || milestoneId || epicId);
 
   const filterContent = (
-    <div className="space-y-6 p-4">
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium">{tTasks("filters.type", { defaultValue: "Type" })}</h4>
+    <FilterPanel
+      hasActiveFilters={hasActiveFilters}
+      onClear={() => { setPriority(undefined); setType(undefined); setAssigneeId(undefined); setMilestoneId(undefined); setEpicId(undefined); }}
+    >
+      <FilterSection label={tTasks("filters.type", { defaultValue: "Type" })}>
         <div className="flex flex-wrap gap-2">
           {Object.values(EnumProjectTaskType).map((t) => (
-            <Toggle key={t} variant="outline" size="sm" pressed={type === t}
+            <DotBadgeToggle
+              key={t}
+              value={t}
+              dotColorClass={projectTaskTypeDotColors[t.toUpperCase()]}
+              label={tTasks(`types.${t.toLowerCase()}`, { defaultValue: t })}
+              pressed={type === t}
               onPressedChange={() => setType(type === t ? undefined : t)}
-              className="flex items-center gap-2 px-3 text-xs capitalize">
-              <span className={cn("size-2 rounded-full", projectTaskTypeDotColors[t.toUpperCase()])} />
-              {tTasks(`types.${t.toLowerCase()}`, { defaultValue: t })}
-            </Toggle>
+            />
           ))}
         </div>
-      </div>
+      </FilterSection>
 
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium">{tTasks("filters.priority", { defaultValue: "Priority" })}</h4>
+      <FilterSection label={tTasks("filters.priority", { defaultValue: "Priority" })}>
         <div className="flex flex-wrap gap-2">
           {Object.values(EnumProjectTaskPriority).map((p) => (
-            <Toggle key={p} variant="outline" size="sm" pressed={priority === p}
+            <DotBadgeToggle
+              key={p}
+              value={p}
+              dotColorClass={projectTaskPriorityDotColors[p.toUpperCase()]}
+              label={tTasks(`priorityLabels.${p.toLowerCase()}`, { defaultValue: p })}
+              pressed={priority === p}
               onPressedChange={() => setPriority(priority === p ? undefined : p)}
-              className="flex items-center gap-2 px-3 text-xs capitalize">
-              <span className={cn("size-2 rounded-full", projectTaskPriorityDotColors[p.toUpperCase()])} />
-              {tTasks(`priorityLabels.${p.toLowerCase()}`, { defaultValue: p })}
-            </Toggle>
+            />
           ))}
         </div>
-      </div>
+      </FilterSection>
 
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium">{tTasks("filters.manager", { defaultValue: "Manager" })}</h4>
+      <FilterSection label={tTasks("filters.manager", { defaultValue: "Manager" })}>
         <Select value={assigneeId || "all"} onValueChange={(v) => setAssigneeId(v === "all" ? undefined : v)}>
           <SelectTrigger className="w-full"><SelectValue placeholder={tTasks("filters.all", { defaultValue: "All" })} /></SelectTrigger>
           <SelectContent>
@@ -96,10 +102,9 @@ export default function ProjectTasksToolbar({
             ))}
           </SelectContent>
         </Select>
-      </div>
+      </FilterSection>
 
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium">{tTasks("filters.milestones", { defaultValue: "Milestones" })}</h4>
+      <FilterSection label={tTasks("filters.milestones", { defaultValue: "Milestones" })}>
         <Select value={milestoneId || "all"} onValueChange={(v) => setMilestoneId(v === "all" ? undefined : v)}>
           <SelectTrigger className="w-full"><SelectValue placeholder={tTasks("filters.all", { defaultValue: "All" })} /></SelectTrigger>
           <SelectContent>
@@ -109,11 +114,10 @@ export default function ProjectTasksToolbar({
             ))}
           </SelectContent>
         </Select>
-      </div>
+      </FilterSection>
 
       {project.projectType === "AGILE" && (project as any).epics && (
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium">{tTasks("filters.epics", { defaultValue: "Epics" })}</h4>
+        <FilterSection label={tTasks("filters.epics", { defaultValue: "Epics" })}>
           <Select value={epicId || "all"} onValueChange={(v) => setEpicId(v === "all" ? undefined : v)}>
             <SelectTrigger className="w-full"><SelectValue placeholder={tTasks("filters.all", { defaultValue: "All" })} /></SelectTrigger>
             <SelectContent>
@@ -123,21 +127,9 @@ export default function ProjectTasksToolbar({
               ))}
             </SelectContent>
           </Select>
-        </div>
+        </FilterSection>
       )}
-
-      {hasActiveFilters && (
-        <div className="text-end">
-          <Button variant="link" size="sm" className="px-0!" onClick={() => {
-            setPriority(undefined); setType(undefined);
-            setAssigneeId(undefined); setMilestoneId(undefined); setEpicId(undefined);
-          }}>
-            {tTasks("filters.clearFilters", { defaultValue: "Clear Filters" })}
-            <X className="ms-2 size-4" />
-          </Button>
-        </div>
-      )}
-    </div>
+    </FilterPanel>
   );
 
   return (

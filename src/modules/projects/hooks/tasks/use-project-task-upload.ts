@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { getProjectTaskFormSchema, ProjectTaskFormSchema } from "../../validation/project-task.schema";
-import uploadProjectTask, { ProjectTaskPayload } from "../../services/mutations/project-task-upload";
+import { uploadProjectTask, ProjectTaskPayload } from "../../services";
 import { ProjectTaskType } from "@/modules/projects/types/project-tasks";
 
 interface Params {

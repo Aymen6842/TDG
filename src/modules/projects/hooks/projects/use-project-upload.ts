@@ -4,8 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { projectSchema, ProjectFormValues } from "../../validation/project.schema";
-import { uploadProject } from "../../services/mutations/project-upload";
-import { archiveProject, restoreProject } from "../../services/mutations/project-lifecycle";
+import { uploadProject, archiveProject, restoreProject } from "../../services";
 import { ProjectType, CreateProjectPayload, UpdateProjectPayload, ProjectContentPayload } from "../../types/projects";
 
 function buildDefaults(project?: ProjectType | null): ProjectFormValues {

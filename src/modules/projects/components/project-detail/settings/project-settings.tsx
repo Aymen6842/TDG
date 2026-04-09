@@ -17,6 +17,7 @@ import { ProjectType } from "../../../types/projects";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
+import { SectionHeader } from "../../shared/section-header";
 
 interface Props {
   project: ProjectType;
@@ -31,10 +32,7 @@ export default function ProjectSettings({ project }: Props) {
 
   return (
     <div className="space-y-6">
-      <div>
-         <h2 className="text-xl font-semibold tracking-tight">{t("title")}</h2>
-         <p className="text-sm text-muted-foreground">{t("description")}</p>
-      </div>
+      <SectionHeader title={t("title")} description={t("description")} />
 
       <div className="grid gap-6 md:grid-cols-2">
          {/* General Information */}

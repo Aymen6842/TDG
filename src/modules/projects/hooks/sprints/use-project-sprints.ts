@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { SprintType } from "@/modules/projects/types/project-sprints";
-import retrieveProjectSprints from "../../services/extraction/project-sprints";
+import { retrieveProjectSprints } from "../../services";
 
 export default function useProjectSprints(projectId: string) {
   const [status, setStatus] = useState<string | undefined>(undefined);

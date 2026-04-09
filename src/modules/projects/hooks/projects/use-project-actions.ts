@@ -2,8 +2,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ProjectType, ProjectStatus } from "../../types/projects";
-import { archiveProject, restoreProject, deleteProject } from "../../services/mutations/project-lifecycle";
-import { uploadProject } from "../../services/mutations/project-upload";
+import { archiveProject, restoreProject, deleteProject, uploadProject } from "../../services";
 
 export default function useProjectActions(refresh: () => void) {
   const queryClient = useQueryClient();

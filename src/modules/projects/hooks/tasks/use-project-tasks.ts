@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { ProjectTaskType } from "@/modules/projects/types/project-tasks";
-import retrieveProjectTasks from "../../services/extraction/project-tasks";
+import { retrieveProjectTasks } from "../../services";
 
 export default function useProjectTasks(projectId: string) {
   const [search, setSearch] = useState("");

@@ -5,7 +5,7 @@ import {
   addProjectMember,
   updateProjectMemberRole,
   removeProjectMember,
-} from "../../services/mutations/project-members";
+} from "../../services";
 import { AddMemberPayload, UpdateMemberRolePayload } from "../../types/projects";
 
 export default function useProjectMembers(projectId: string) {

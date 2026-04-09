@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { sprintSchema, SprintFormValues } from "../../validation/sprint.schema";
-import { uploadSprint } from "../../services/mutations/sprint-upload";
+import { uploadSprint } from "../../services";
 import { SprintType, SprintContentPayload } from "../../types/project-sprints";
 
 function buildDefaults(sprint?: SprintType | null): SprintFormValues {

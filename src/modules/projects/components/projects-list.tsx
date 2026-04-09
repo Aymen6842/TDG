@@ -1,63 +1,35 @@
 import React from "react";
-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Plus, X, Search, SlidersHorizontal, GridIcon, ListIcon, ChevronLeft, ChevronRight } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useProjectStore } from "@/modules/projects/store/projects";
-import ProjectStatusTabs from "@/modules/projects/components/project-status-tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragStartEvent,
-  type DragEndEvent,
-  type DragCancelEvent,
-  DragOverlay
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  rectSortingStrategy
-} from "@dnd-kit/sortable";
+import { useSensor, useSensors, PointerSensor, KeyboardSensor, type DragStartEvent, type DragEndEvent, type DragCancelEvent } from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import { useTranslations } from "next-intl";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+import { useProjectStore } from "@/modules/projects/store/projects";
 import useProjects from "../hooks/projects/use-projects";
 import useProjectActions from "../hooks/projects/use-project-actions";
-import Loading from "@/components/page-loader";
-import { useTranslations } from "next-intl";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import ProjectContainer from "./project";
-import Error500 from "@/components/error/500";
 import { ProjectType, ProjectStatus } from "../types/projects";
+import { Toolbar } from "./shared/toolbar";
+import { ConfirmDialog } from "./shared/confirm-dialog";
+import { EmptyState } from "./shared/empty-state";
+import { ProjectsFilterPanel } from "./projects-filter-panel";
+import { ProjectsBulkBar } from "./projects-bulk-bar";
+import { ProjectsDndGrid } from "./projects-dnd-grid";
+import { ProjectsDndList } from "./projects-dnd-list";
+import ProjectStatusTabs from "./project-status-tabs";
 import ProjectUploadSheet from "./project-upload-sheet";
+import Loading from "@/components/page-loader";
+import Error500 from "@/components/error/500";
 
 export default function ProjectsList() {
   const t = useTranslations("modules.projects.list");
+  const paginationContent = useTranslations("shared.pagination");
 
   const { projects, projectsAreLoading, projectsPageLoading, projectsError, page, setPage, pagesNumber, records, currentUserId, creators, refresh, searchState, projectTypeState, businessUnitState, isArchivedState, paidState, sortByState, createdByState } = useProjects();
   const { handleStatusChange, handleArchiveProject, handleDeleteProject } = useProjectActions(refresh);
-  const paginationContent = useTranslations("shared.pagination");
+
   const [search, setSearch] = searchState;
   const [projectType, setProjectType] = projectTypeState;
   const [businessUnit, setBusinessUnit] = businessUnitState;
@@ -66,544 +38,131 @@ export default function ProjectsList() {
   const [sortBy, setSortBy] = sortByState;
   const [createdById, setCreatedById] = createdByState;
 
-  const [activeId, setActiveId] = React.useState<string | null>(null);
-
-  const {
-    viewMode,
-    setViewMode,
-    activeTab,
-    setActiveTab,
-    isAddDialogOpen,
-    setAddDialogOpen
-  } = useProjectStore();
-
+  const { viewMode, setViewMode, activeTab, setActiveTab, isAddDialogOpen, setAddDialogOpen } = useProjectStore();
   const [editProject, setEditProject] = React.useState<ProjectType | null>(null);
   const [projectToDelete, setProjectToDelete] = React.useState<ProjectType | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
-
-  // ── Multi-selection ──────────────────────────────────────────────────────
-  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
   const [isBulkDeleteOpen, setIsBulkDeleteOpen] = React.useState(false);
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
+  const [activeId, setActiveId] = React.useState<string | null>(null);
 
-  const toggleSelect = (id: string) =>
-    setSelectedIds(prev => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-
-  const allPageSelected = (projects?.length ?? 0) > 0 && projects?.every(p => selectedIds.has(p.id));
-  const somePageSelected = projects?.some(p => selectedIds.has(p.id)) && !allPageSelected;
-
-  const toggleSelectAll = () => {
-    if (allPageSelected) {
-      setSelectedIds(prev => {
-        const next = new Set(prev);
-        projects?.forEach(p => next.delete(p.id));
-        return next;
-      });
-    } else {
-      setSelectedIds(prev => {
-        const next = new Set(prev);
-        projects?.forEach(p => next.add(p.id));
-        return next;
-      });
-    }
-  };
-
+  const toggleSelect = (id: string) => setSelectedIds(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
   const clearSelection = () => setSelectedIds(new Set());
 
   const handleBulkStatusChange = async (status: ProjectStatus) => {
-    await Promise.all(
-      Array.from(selectedIds).map(id => {
-        const project = projects?.find(p => p.id === id);
-        return project ? handleStatusChange(project, status) : Promise.resolve();
-      })
-    );
+    await Promise.all(Array.from(selectedIds).map(id => { const p = projects?.find(x => x.id === id); return p ? handleStatusChange(p, status) : Promise.resolve(); }));
     clearSelection();
   };
+  const handleBulkArchive = async () => { await Promise.all(Array.from(selectedIds).map(id => { const p = projects?.find(x => x.id === id); return p && !p.isArchived ? handleArchiveProject(p) : Promise.resolve(); })); clearSelection(); };
+  const handleBulkRestore = async () => { await Promise.all(Array.from(selectedIds).map(id => { const p = projects?.find(x => x.id === id); return p && p.isArchived ? handleArchiveProject(p) : Promise.resolve(); })); clearSelection(); };
+  const handleBulkDelete = async () => { await Promise.all(Array.from(selectedIds).map(id => { const p = projects?.find(x => x.id === id); return p ? handleDeleteProject(p) : Promise.resolve(); })); clearSelection(); setIsBulkDeleteOpen(false); };
+  const handleDelete = async () => { if (!projectToDelete) return; await handleDeleteProject(projectToDelete); setProjectToDelete(null); setIsDeleteOpen(false); };
 
-  const handleBulkArchive = async () => {
-    await Promise.all(
-      Array.from(selectedIds).map(id => {
-        const project = projects?.find(p => p.id === id);
-        return project && !project.isArchived ? handleArchiveProject(project) : Promise.resolve();
-      })
-    );
-    clearSelection();
+  const allPageSelected = (projects?.length ?? 0) > 0 && projects?.every(p => selectedIds.has(p.id));
+  const toggleSelectAll = () => {
+    if (allPageSelected) { setSelectedIds(prev => { const n = new Set(prev); projects?.forEach(p => n.delete(p.id)); return n; }); }
+    else { setSelectedIds(prev => { const n = new Set(prev); projects?.forEach(p => n.add(p.id)); return n; }); }
   };
 
-  const handleBulkRestore = async () => {
-    await Promise.all(
-      Array.from(selectedIds).map(id => {
-        const project = projects?.find(p => p.id === id);
-        return project && project.isArchived ? handleArchiveProject(project) : Promise.resolve();
-      })
-    );
-    clearSelection();
-  };
-
-  const handleBulkDelete = async () => {
-    await Promise.all(
-      Array.from(selectedIds).map(id => {
-        const project = projects?.find(p => p.id === id);
-        return project ? handleDeleteProject(project) : Promise.resolve();
-      })
-    );
-    clearSelection();
-    setIsBulkDeleteOpen(false);
-  };
-  // ────────────────────────────────────────────────────────────────────────
-
-
-  const handleDelete = async () => {
-    if (!projectToDelete) return;
-    await handleDeleteProject(projectToDelete);
-    setProjectToDelete(null);
-    setIsDeleteOpen(false);
-  };
+  const clearFilters = () => { setSearch(""); setProjectType(undefined); setBusinessUnit(undefined); setIsArchived(false); setPaid(undefined); setSortBy(undefined); setCreatedById(undefined); setActiveTab("all"); };
+  const activeFilterCount = (projectType ? 1 : 0) + (businessUnit ? 1 : 0) + (isArchived === true ? 1 : 0) + (paid !== undefined ? 1 : 0) + (sortBy ? 1 : 0) + (createdById ? 1 : 0);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 3
-      }
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
+    useSensor(PointerSensor, { activationConstraint: { distance: 3 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+  const onDragStart = (e: DragStartEvent) => setActiveId(e.active.id as string);
+  const onDragEnd = (e: DragEndEvent) => { setActiveId(null); };
+  const onDragCancel = (e: DragCancelEvent) => setActiveId(null);
+
+  const dndProps = { projects, sensors, activeId, selectedIds, selectionActive: selectedIds.size > 0, onSelect: toggleSelect, onEdit: (p: ProjectType) => { setEditProject(p); setAddDialogOpen(true); }, onDelete: (p: ProjectType) => { setProjectToDelete(p); setIsDeleteOpen(true); }, onArchive: handleArchiveProject, onStatusChange: handleStatusChange, onDragStart, onDragEnd, onDragCancel };
+
+  const filterContent = (
+    <ProjectsFilterPanel
+      sortBy={sortBy} setSortBy={setSortBy}
+      projectType={projectType} setProjectType={setProjectType}
+      businessUnit={businessUnit} setBusinessUnit={setBusinessUnit}
+      isArchived={isArchived} setIsArchived={setIsArchived}
+      paid={paid} setPaid={setPaid}
+      createdById={createdById} setCreatedById={setCreatedById}
+      currentUserId={currentUserId} creators={creators}
+      onClear={clearFilters}
+    />
   );
 
-  const handleTabChange = (tab: any) => {
-    setActiveTab(tab);
-  };
-
-  const handleDragStart = (event: DragStartEvent) => {
-    setActiveId(event.active.id as string);
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    // Visual reorder only — server-side order is managed via displayOrder on PATCH
-    const oldIndex = projects?.findIndex((item: any) => item.id === active.id);
-    const newIndex = projects?.findIndex((item: any) => item.id === over.id);
-    if (oldIndex === -1 || newIndex === -1 || oldIndex === undefined || newIndex === undefined) return;
-    arrayMove(projects ?? [], oldIndex, newIndex);
-  };
-
-  const handleDragCancel = (event: DragCancelEvent) => {
-    setActiveId(null);
-  };
-
-  const clearFilters = () => {
-    setSearch("");
-    setProjectType(undefined);
-    setBusinessUnit(undefined);
-    setIsArchived(false);
-    setPaid(undefined);
-    setSortBy(undefined);
-    setCreatedById(undefined);
-    handleTabChange("all");
-  };
-
-
-  const renderFilterContent = () => (
-    <div className="space-y-6 p-4">
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium">{t("filters.sortBy", { defaultValue: "Sort By" })}</h4>
-        <Select value={sortBy ?? "default"} onValueChange={(v) => setSortBy(v === "default" ? undefined : v)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder={t("filters.selectSortOption", { defaultValue: "Select sorting option" })} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="default">{t("filters.defaultOrder", { defaultValue: "Default" })}</SelectItem>
-            <SelectItem value="displayOrderAsc">{t("filters.displayOrder", { defaultValue: "Display Order" })}</SelectItem>
-            <SelectItem value="startDateAsc">{t("filters.startDateAscending", { defaultValue: "Start Date (Oldest)" })}</SelectItem>
-            <SelectItem value="startDateDesc">{t("filters.startDateDescending", { defaultValue: "Start Date (Newest)" })}</SelectItem>
-            <SelectItem value="estimatedStartDateAsc">{t("filters.estimatedStartAsc", { defaultValue: "Est. Start (Oldest)" })}</SelectItem>
-            <SelectItem value="estimatedStartDateDesc">{t("filters.estimatedStartDesc", { defaultValue: "Est. Start (Newest)" })}</SelectItem>
-            <SelectItem value="estimatedEndDateAsc">{t("filters.estimatedEndAsc", { defaultValue: "Est. End (Oldest)" })}</SelectItem>
-            <SelectItem value="estimatedEndDateDesc">{t("filters.estimatedEndDesc", { defaultValue: "Est. End (Newest)" })}</SelectItem>
-            <SelectItem value="createdAtAsc">{t("filters.createdAtAscending", { defaultValue: "Created (Oldest)" })}</SelectItem>
-            <SelectItem value="createdAtDesc">{t("filters.createdAtDescending", { defaultValue: "Created (Newest)" })}</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium">{t("filters.projectType", { defaultValue: "Project Type" })}</h4>
-        <Select value={projectType || "all"} onValueChange={(v) => setProjectType(v === "all" ? undefined : v as any)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="All Types" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="AGILE">Agile</SelectItem>
-            <SelectItem value="FREESTYLE">Freestyle</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium">{t("filters.businessUnit", { defaultValue: "Business Unit" })}</h4>
-        <Select value={businessUnit || "all"} onValueChange={(v) => setBusinessUnit(v === "all" ? undefined : v as import("../types/projects").BusinessUnit)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="All Units" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Units</SelectItem>
-            <SelectItem value="TawerDev">Tawer Dev</SelectItem>
-            <SelectItem value="TawerCreative">Tawer Creative</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium">{t("filters.isArchived", { defaultValue: "Archived" })}</h4>          <Select value={isArchived === undefined ? "all" : isArchived ? "true" : "false"} onValueChange={(v) => setIsArchived(v === "all" ? undefined : v === "true")}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="true">Archived</SelectItem>
-              <SelectItem value="false">Active</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-3">
-          <h4 className="text-sm font-medium">{t("filters.paid", { defaultValue: "Paid" })}</h4>
-            <Select value={paid === undefined ? "all" : paid ? "true" : "false"} onValueChange={(v) => setPaid(v === "all" ? undefined : v === "true")}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="All" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="true">Paid</SelectItem>
-              <SelectItem value="false">Free</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-3">
-        <h4 className="text-sm font-medium">{t("filters.createdBy", { defaultValue: "Created By" })}</h4>
-        <Select value={createdById || "all"} onValueChange={(v) => setCreatedById(v === "all" ? undefined : v)}>
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder={t("filters.allCreators", { defaultValue: "All creators" })} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">{t("filters.allCreators", { defaultValue: "All creators" })}</SelectItem>
-            {currentUserId && (
-              <SelectItem value={currentUserId}>
-                {t("filters.createdByMe", { defaultValue: "Created by me" })}
-              </SelectItem>
-            )}
-            {creators
-              .filter(c => c.id !== currentUserId)
-              .map(c => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name}
-                </SelectItem>
-              ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {(projectType || businessUnit || isArchived === true || paid !== undefined || sortBy || createdById) && (
-
-        <div className="text-end">
-          <Button variant="link" size="sm" className="px-0!" onClick={clearFilters}>
-            {t("filters.clearFilters")}
-            <X />
+  const addButton = (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button size="icon" onClick={() => setAddDialogOpen(true)} className="fixed end-6 bottom-6 z-10 rounded-full! md:size-14">
+            <Plus className="md:size-6" />
           </Button>
-        </div>
-      )}
-    </div>
+        </TooltipTrigger>
+        <TooltipContent side="left"><p>{t("addProject")}</p></TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 
-  const renderProjectItems = () => {
-    if (viewMode === "grid") {
-      return (
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-          onDragCancel={handleDragCancel}>
-          <SortableContext items={projects || []} strategy={rectSortingStrategy}>
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {projects?.map((project: any) => (
-                <ProjectContainer
-                  key={project.id}
-                  project={project as ProjectType & { status?: string }}
-                  viewMode="grid"
-                  isSelected={selectedIds.has(project.id)}
-                  selectionActive={selectedIds.size > 0}
-                  onSelect={toggleSelect}
-                  onEdit={(p) => {
-                    setEditProject(p);
-                    setAddDialogOpen(true);
-                  }}
-                  onDelete={(p) => {
-                    setProjectToDelete(p);
-                    setIsDeleteOpen(true);
-                  }}
-                  onArchive={(p) => {
-                    handleArchiveProject(p);
-                  }}
-                  onStatusChange={handleStatusChange}
-                />
-              ))}
-            </div>
-          </SortableContext>
-          <DragOverlay>
-            {activeId ? (
-              <ProjectContainer
-                project={projects?.find((p: any) => p.id === activeId) as ProjectType & { status?: string }}
-                viewMode="grid"
-                isDraggingOverlay
-              />
-            ) : null}
-          </DragOverlay>
-
-        </DndContext>
-      );
-    }
-
-    return (
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        onDragCancel={handleDragCancel}
-        modifiers={[restrictToVerticalAxis]}>
-        <SortableContext items={projects || []} strategy={rectSortingStrategy}>
-          <div className="grid grid-cols-1 space-y-4">
-            {projects?.map((project: any) => (
-              <ProjectContainer
-                key={project.id}
-                project={project as ProjectType & { status?: string }}
-                viewMode="list"
-                isSelected={selectedIds.has(project.id)}
-                selectionActive={selectedIds.size > 0}
-                onSelect={toggleSelect}
-                onEdit={(p) => {
-                  setEditProject(p);
-                  setAddDialogOpen(true);
-                }}
-                onDelete={(p) => {
-                  setProjectToDelete(p);
-                  setIsDeleteOpen(true);
-                }}
-                onArchive={(p) => {
-                  handleArchiveProject(p);
-                }}
-                onStatusChange={handleStatusChange}
-              />
-            ))}
-          </div>
-        </SortableContext>
-        <DragOverlay>
-          {activeId ? (
-            <ProjectContainer
-              project={projects?.find((p: any) => p.id === activeId) as ProjectType & { status?: string }}
-              viewMode="list"
-              isDraggingOverlay
-            />
-          ) : null}
-        </DragOverlay>
-
-      </DndContext>
-    );
-  };
+  if (projectsError) return <Error500 />;
 
   return (
     <>
-      {projectsError ? (
-        <Error500 />
+      <Toolbar
+        tabs={<ProjectStatusTabs activeTab={activeTab} onTabChange={setActiveTab} />}
+        search={search} onSearchChange={setSearch}
+        searchPlaceholder={t("searchPlaceholder")}
+        filterContent={filterContent}
+        activeFilterCount={activeFilterCount}
+        viewMode={viewMode} onViewModeChange={setViewMode}
+        actions={addButton}
+      />
+
+      {projectsAreLoading || projectsPageLoading ? <Loading /> : projects?.length === 0 ? (
+        <EmptyState message={t("noProjects")} />
       ) : (
         <>
-          <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
-            <ProjectStatusTabs activeTab={activeTab} onTabChange={handleTabChange} />
+          <ProjectsBulkBar
+            projects={projects} selectedIds={selectedIds}
+            onToggleSelectAll={toggleSelectAll} onClearSelection={clearSelection}
+            onBulkStatusChange={handleBulkStatusChange}
+            onBulkArchive={handleBulkArchive} onBulkRestore={handleBulkRestore}
+            onBulkDelete={() => setIsBulkDeleteOpen(true)}
+          />
 
-            <div className="flex w-full items-center gap-2 lg:w-auto">              <div className="relative w-auto">
-                <Search className="absolute top-2.5 left-3 size-4 opacity-50" />
-                <Input
-                  placeholder={t("searchPlaceholder")}
-                  className="ps-10"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
+          {viewMode === "grid" ? <ProjectsDndGrid {...dndProps} /> : <ProjectsDndList {...dndProps} />}
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="icon" variant="outline" className="relative">
-                    <SlidersHorizontal />
-                    {(projectType || businessUnit || isArchived === true || paid !== undefined || sortBy || createdById) && (
-                      <Badge
-                        variant="secondary"
-                        className="absolute -end-1.5 -top-1.5 size-4 rounded-full p-0 flex items-center justify-center text-[10px]">
-                        {(projectType ? 1 : 0) + (businessUnit ? 1 : 0) + (isArchived === true ? 1 : 0) + (paid !== undefined ? 1 : 0) + (sortBy ? 1 : 0) + (createdById ? 1 : 0)}
-                      </Badge>
-                    )}
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-80" align="end">
-                  {renderFilterContent()}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <ToggleGroup
-                type="single"
-                variant="outline"
-                value={viewMode}
-                onValueChange={(value) => value && setViewMode(value as "list" | "grid")}>
-                <ToggleGroupItem value="list" aria-label="List view">
-                  <ListIcon />
-                </ToggleGroupItem>
-                <ToggleGroupItem value="grid" aria-label="Grid view">
-                  <GridIcon />
-                </ToggleGroupItem>
-              </ToggleGroup>
-
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      size="icon"
-                      onClick={() => setAddDialogOpen(true)}
-                      className="fixed end-6 bottom-6 z-10 rounded-full! md:size-14">
-                      <Plus className="md:size-6" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent side="left">
-                    <p>{t("addProject")}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+          <div className="flex items-center justify-end space-x-2 pt-4 border-t">
+            <div className="text-muted-foreground flex-1 text-sm">
+              {records !== undefined ? paginationContent.rich("selected", { page, pages: pagesNumber, records }) : `Page ${page}`}
+            </div>
+            <div className="space-x-2">
+              <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
+                <ChevronLeft className="size-4 mr-1" />{paginationContent("previous")}
+              </Button>
+              <Button variant="outline" size="sm" disabled={page >= pagesNumber} onClick={() => setPage(page + 1)}>
+                {paginationContent("next")}<ChevronRight className="size-4 ml-1" />
+              </Button>
             </div>
           </div>
-
-          {projectsAreLoading ? <Loading /> : projectsPageLoading ? <Loading /> : projects?.length === 0 ? (
-            <div className="flex h-[calc(100vh-12rem)] flex-col items-center justify-center py-12 text-center">
-              <h3 className="text-xl font-medium">{t("noProjects")}</h3>
-            </div>
-          ) : (
-            <>
-              {/* Unified selection bar */}
-              <div className="flex items-center gap-3 rounded-lg border bg-background px-4 py-2 text-sm">
-                <Checkbox
-                  checked={allPageSelected}
-                  data-state={somePageSelected ? "indeterminate" : allPageSelected ? "checked" : "unchecked"}
-                  onCheckedChange={toggleSelectAll}
-                  aria-label={t("selection.selectAll")}
-                />
-                {selectedIds.size === 0 ? (
-                  <span className="text-muted-foreground flex-1">{t("selection.selectAll")}</span>
-                ) : (
-                  <>
-                    <span className="flex-1 font-medium">{t("selection.selected", { count: selectedIds.size })}</span>
-                    <Select onValueChange={(v) => {
-                      if (v === "__delete__") {
-                        setIsBulkDeleteOpen(true);
-                      } else if (v === "__archive__") {
-                        handleBulkArchive();
-                      } else if (v === "__restore__") {
-                        handleBulkRestore();
-                      } else {
-                        handleBulkStatusChange(v as ProjectStatus);
-                      }
-                    }}>
-                      <SelectTrigger className="h-7 w-44 text-xs">
-                        <SelectValue placeholder={t("selection.applyAction")} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Pending">{t("selection.statusPending")}</SelectItem>
-                        <SelectItem value="Running">{t("selection.statusRunning")}</SelectItem>
-                        <SelectItem value="Stopped">{t("selection.statusStopped")}</SelectItem>
-                        <SelectItem value="Completed">{t("selection.statusCompleted")}</SelectItem>
-                        <SelectItem value="__archive__">{t("selection.archiveSelected")}</SelectItem>
-                        <SelectItem value="__restore__">{t("selection.restoreSelected")}</SelectItem>
-                        <SelectItem value="__delete__" className="text-destructive focus:text-destructive">
-                          {t("selection.deleteSelected")}
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button size="icon" variant="ghost" className="size-7" onClick={clearSelection} aria-label={t("selection.clearSelection")}>
-                      <X className="size-3.5" />
-                    </Button>
-                  </>
-                )}
-              </div>
-
-              {renderProjectItems()}
-
-              <div className="flex items-center justify-end space-x-2 pt-4 border-t">
-                <div className="text-muted-foreground flex-1 text-sm">
-                  {records !== undefined
-                    ? paginationContent.rich("selected", { page, pages: pagesNumber, records })
-                    : `Page ${page}`}
-                </div>
-                <div className="space-x-2">
-                  <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>
-                    <ChevronLeft className="size-4 mr-1" />
-                    {paginationContent("previous")}
-                  </Button>
-                  <Button variant="outline" size="sm" disabled={page >= pagesNumber} onClick={() => setPage(page + 1)}>
-                    {paginationContent("next")}
-                    <ChevronRight className="size-4 ml-1" />
-                  </Button>
-                </div>
-              </div>
-            </>
-          )}
-          <div><br/><br/></div>
         </>
       )}
 
       <ProjectUploadSheet
         isOpen={isAddDialogOpen}
-        onClose={() => {
-          setAddDialogOpen(false);
-          setEditProject(null);
-          refresh();
-        }}
+        onClose={() => { setAddDialogOpen(false); setEditProject(null); refresh(); }}
         project={editProject as ProjectType}
       />
 
-      <AlertDialog open={isDeleteOpen || isBulkDeleteOpen} onOpenChange={(open) => {
-        if (!open) { setIsDeleteOpen(false); setIsBulkDeleteOpen(false); setProjectToDelete(null); }
-      }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>
-              {isBulkDeleteOpen
-                ? t("deleteDialog.bulkTitle", { count: selectedIds.size })
-                : t("deleteDialog.title")}
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              {isBulkDeleteOpen
-                ? t("deleteDialog.bulkDescription")
-                : t("deleteDialog.description")}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("deleteDialog.cancel")}</AlertDialogCancel>
-            <AlertDialogAction
-              className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-              onClick={isBulkDeleteOpen ? handleBulkDelete : handleDelete}
-            >
-              {isBulkDeleteOpen ? t("deleteDialog.confirmBulk") : t("deleteDialog.confirm")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
+      <ConfirmDialog
+        open={isDeleteOpen || isBulkDeleteOpen}
+        onOpenChange={(open) => { if (!open) { setIsDeleteOpen(false); setIsBulkDeleteOpen(false); setProjectToDelete(null); } }}
+        title={isBulkDeleteOpen ? t("deleteDialog.bulkTitle", { count: selectedIds.size }) : t("deleteDialog.title")}
+        description={isBulkDeleteOpen ? t("deleteDialog.bulkDescription") : t("deleteDialog.description")}
+        onConfirm={isBulkDeleteOpen ? handleBulkDelete : handleDelete}
+        onCancel={() => { setIsDeleteOpen(false); setIsBulkDeleteOpen(false); setProjectToDelete(null); }}
+        confirmLabel={isBulkDeleteOpen ? t("deleteDialog.confirmBulk") : t("deleteDialog.confirm")}
+        cancelLabel={t("deleteDialog.cancel")}
+      />
     </>
   );
 }

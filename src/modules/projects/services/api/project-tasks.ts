@@ -1,10 +1,8 @@
-import { USE_MOCK } from "@/lib/mock-config"; // REMOVE THIS LINE FOR PROD
 import { GET } from "@/lib/http-methods";
 import extractJWTokens from "@/modules/auth/utils/jwt/extract-tokens";
 import { refreshToken } from "@/modules/auth/services/refresh-token";
 import { ProjectTaskType, ProjectTaskInResponseType } from "@/modules/projects/types/project-tasks";
 import { castProjectTaskToFrontend } from "@/modules/projects/types/cast-project-task";
-import { mockRetrieveProjectTasks } from "../mock/project-tasks.mock"; // REMOVE THIS LINE FOR PROD
 
 interface Params {
   projectId: string;
@@ -18,8 +16,6 @@ interface Params {
 }
 
 export default async function retrieveProjectTasks(params: Params): Promise<ProjectTaskType[]> {
-  if (USE_MOCK()) return mockRetrieveProjectTasks(params); // REMOVE THIS LINE FOR PROD
-
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
 

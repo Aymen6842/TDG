@@ -5,7 +5,7 @@ import {
   createProjectInvitation,
   deleteProjectInvitation,
   resendProjectInvitation,
-} from "../../services/mutations/project-members";
+} from "../../services";
 import { CreateInvitationPayload } from "../../types/projects";
 
 export default function useProjectInvitations(projectId: string) {

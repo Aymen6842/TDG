@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { ProjectType } from "@/modules/projects/types/projects";
-import retrieveProjectById from "../../services/extraction/project";
+import { retrieveProjectById } from "../../services";
 
 export default function useProject(id: string) {
   const { data, isLoading, isError } = useQuery<ProjectType | null>({

@@ -1,10 +1,7 @@
-import { USE_MOCK } from "@/lib/mock-config"; // REMOVE THIS LINE FOR PROD
 import { POST, PATCH } from "@/lib/http-methods";
 import extractJWTokens from "@/modules/auth/utils/jwt/extract-tokens";
 import { refreshToken } from "@/modules/auth/services/refresh-token";
-import { mockUploadProjectTask } from "../mock/mutations.mock"; // REMOVE THIS LINE FOR PROD
 
-// Clean API payload — only fields the backend accepts
 export interface ProjectTaskPayload {
   title: string;
   description?: string;
@@ -29,12 +26,9 @@ interface Params {
 }
 
 export default async function uploadProjectTask({ task, id, projectId, attachments, deletedAttachments }: Params) {
-  if (USE_MOCK()) return mockUploadProjectTask(); // REMOVE THIS LINE FOR PROD
-
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
 
-  // If there are file attachments, use multipart/form-data
   if (attachments && attachments.length > 0) {
     const formData = new FormData();
     Object.entries(task).forEach(([key, value]) => {

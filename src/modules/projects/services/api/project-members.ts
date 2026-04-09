@@ -1,4 +1,3 @@
-import { USE_MOCK } from "@/lib/mock-config"; // REMOVE THIS LINE FOR PROD
 import { POST, PATCH, DELETE } from "@/lib/http-methods";
 import extractJWTokens from "@/modules/auth/utils/jwt/extract-tokens";
 import { refreshToken } from "@/modules/auth/services/refresh-token";
@@ -11,13 +10,10 @@ import {
   UpdatedProjectMemberDto,
 } from "@/modules/projects/types/projects";
 
-// POST /projects/:projectId/members — direct add or invitation path
 export async function addProjectMember(
   projectId: string,
   data: AddMemberPayload
 ): Promise<CreatedProjectMemberDto | CreatedInvitationDto> {
-  if (USE_MOCK()) return { id: "mock", isManager: data.isManager, projectId, userId: data.userId || "", createdAt: new Date().toISOString() }; // REMOVE THIS LINE FOR PROD
-
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
 
@@ -30,7 +26,6 @@ export async function addProjectMember(
   }
 }
 
-// PATCH /projects/:projectId/members/:memberId
 export async function updateProjectMemberRole(
   projectId: string,
   memberId: string,
@@ -48,7 +43,6 @@ export async function updateProjectMemberRole(
   }
 }
 
-// DELETE /projects/:projectId/members/:memberId
 export async function removeProjectMember(projectId: string, memberId: string): Promise<void> {
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
@@ -61,7 +55,6 @@ export async function removeProjectMember(projectId: string, memberId: string): 
   }
 }
 
-// POST /projects/:projectId/invitations
 export async function createProjectInvitation(
   projectId: string,
   data: CreateInvitationPayload
@@ -78,7 +71,6 @@ export async function createProjectInvitation(
   }
 }
 
-// DELETE /projects/:projectId/invitations/:invitationId
 export async function deleteProjectInvitation(projectId: string, invitationId: string): Promise<void> {
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
@@ -91,7 +83,6 @@ export async function deleteProjectInvitation(projectId: string, invitationId: s
   }
 }
 
-// POST /projects/:projectId/invitations/:invitationId/resend
 export async function resendProjectInvitation(
   projectId: string,
   invitationId: string
