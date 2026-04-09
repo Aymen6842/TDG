@@ -9,6 +9,7 @@ import { hasPermissions } from "@/modules/auth/utils/users-permissions";
 import AccessDenied from "@/components/error/access-denied";
 import ProjectMembers from "@/modules/projects/components/project-detail/members/project-members";
 import ProjectSettings from "@/modules/projects/components/project-detail/settings/project-settings";
+import ProjectSprints from "@/modules/projects/components/project-detail/sprints/project-sprints";
 
 interface Props {
   slug: string;
@@ -53,6 +54,14 @@ export default function ProjectDetailRender({ slug }: Props) {
             >
               {t("tabs.members")}
             </TabsTrigger>
+            {project.projectType === "AGILE" && (
+              <TabsTrigger 
+                value="sprints" 
+                className="relative h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
+              >
+                {t("tabs.sprints")}
+              </TabsTrigger>
+            )}
             <TabsTrigger 
               value="details" 
               className="relative h-10 rounded-none border-b-2 border-b-transparent bg-transparent px-4 pb-3 pt-2 font-medium text-muted-foreground shadow-none transition-none data-[state=active]:border-b-primary data-[state=active]:text-foreground data-[state=active]:shadow-none"
@@ -68,6 +77,11 @@ export default function ProjectDetailRender({ slug }: Props) {
         <TabsContent value="members" className="outline-none!">
           <ProjectMembers project={project} />
         </TabsContent>
+        {project.projectType === "AGILE" && (
+          <TabsContent value="sprints" className="outline-none!">
+            <ProjectSprints project={project} />
+          </TabsContent>
+        )}
         <TabsContent value="details" className="outline-none!">
           <ProjectSettings project={project} />
         </TabsContent>

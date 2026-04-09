@@ -12,3 +12,7 @@ export async function mockDeleteProjectTask(): Promise<void> { return; }
 export async function mockAddProjectTaskComment(): Promise<void> { return; }
 
 export async function mockDeleteProjectTaskComment(): Promise<void> { return; }
+
+export async function mockUploadSprint(): Promise<void> { return; }
+
+export async function mockDeleteSprint(): Promise<void> { return; }

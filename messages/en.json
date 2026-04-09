@@ -1394,6 +1394,7 @@
           "tabs": {
             "tasks": "Tasks",
             "members": "Members & Invitations",
+            "sprints": "Sprints",
             "details": "Details"
           },
           "membersList": {
@@ -1652,6 +1653,80 @@
           "updating": "Updating...",
           "createProject": "Create Project",
           "updateProject": "Update Project"
+        }
+      },
+      "sprints": {
+        "noSprints": "No sprints found.",
+        "addSprint": "Add Sprint",
+        "searchPlaceholder": "Search sprints...",
+        "statusTabs": {
+          "all": "All",
+          "pending": "Pending",
+          "running": "Running",
+          "stopped": "Stopped",
+          "completed": "Completed"
+        },
+        "filters": {
+          "sortBy": "Sort By",
+          "selectSortOption": "Select sorting option",
+          "defaultOrder": "Default",
+          "startDateAsc": "Start Date (Oldest)",
+          "startDateDesc": "Start Date (Newest)",
+          "endDateAsc": "End Date (Oldest)",
+          "endDateDesc": "End Date (Newest)",
+          "clearFilters": "Clear Filters"
+        },
+        "card": {
+          "startDate": "Start",
+          "endDate": "End",
+          "estimatedStart": "Est. Start",
+          "estimatedEnd": "Est. End"
+        },
+        "tooltips": {
+          "edit": "Edit Sprint",
+          "delete": "Delete Sprint"
+        },
+        "status": {
+          "pending": "Pending",
+          "running": "Running",
+          "stopped": "Stopped",
+          "completed": "Completed"
+        },
+        "deleteDialog": {
+          "title": "Delete Sprint",
+          "description": "Are you sure you want to delete this sprint? This action cannot be undone.",
+          "cancel": "Cancel",
+          "confirm": "Delete"
+        },
+        "upload": {
+          "createTitle": "Create Sprint",
+          "updateTitle": "Update Sprint",
+          "form": {
+            "labels": {
+              "name": "Sprint Name",
+              "description": "Description",
+              "details": "Details",
+              "language": "Language",
+              "status": "Status",
+              "startDate": "Start Date",
+              "startTime": "Start Time",
+              "endDate": "End Date",
+              "endTime": "End Time",
+              "estimatedStartDate": "Estimated Start Date",
+              "estimatedStartTime": "Estimated Start Time",
+              "estimatedEndDate": "Estimated End Date",
+              "estimatedEndTime": "Estimated End Time"
+            },
+            "placeholders": {
+              "name": "Sprint name...",
+              "description": "Describe this sprint..."
+            },
+            "cancel": "Cancel",
+            "creating": "Creating...",
+            "updating": "Updating...",
+            "create": "Create Sprint",
+            "update": "Update Sprint"
+          }
         }
       }
     },
