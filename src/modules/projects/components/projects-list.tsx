@@ -20,6 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useProjectStore } from "@/modules/projects/store/projects";
 import ProjectStatusTabs from "@/modules/projects/components/project-status-tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -42,6 +43,7 @@ import {
   rectSortingStrategy
 } from "@dnd-kit/sortable";
 import useProjects from "../hooks/projects/use-projects";
+import useProjectActions from "../hooks/projects/use-project-actions";
 import Loading from "@/components/page-loader";
 import { useTranslations } from "next-intl";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -49,14 +51,12 @@ import ProjectContainer from "./project";
 import Error500 from "@/components/error/500";
 import { ProjectType, ProjectStatus } from "../types/projects";
 import ProjectUploadSheet from "./project-upload-sheet";
-import { archiveProject, restoreProject, deleteProject } from "../services/mutations/project-lifecycle";
-import { uploadProject } from "../services/mutations/project-upload";
-import { toast } from "sonner";
 
 export default function ProjectsList() {
   const t = useTranslations("modules.projects.list");
 
   const { projects, projectsAreLoading, projectsPageLoading, projectsError, page, setPage, pagesNumber, records, currentUserId, creators, refresh, searchState, projectTypeState, businessUnitState, isArchivedState, paidState, sortByState, createdByState } = useProjects();
+  const { handleStatusChange, handleArchiveProject, handleDeleteProject } = useProjectActions(refresh);
   const paginationContent = useTranslations("shared.pagination");
   const [search, setSearch] = searchState;
   const [projectType, setProjectType] = projectTypeState;
@@ -81,47 +81,86 @@ export default function ProjectsList() {
   const [projectToDelete, setProjectToDelete] = React.useState<ProjectType | null>(null);
   const [isDeleteOpen, setIsDeleteOpen] = React.useState(false);
 
+  // ── Multi-selection ──────────────────────────────────────────────────────
+  const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
+  const [isBulkDeleteOpen, setIsBulkDeleteOpen] = React.useState(false);
 
-  const handleStatusChange = async (project: ProjectType, status: ProjectStatus) => {
-    try {
-      await uploadProject({ status }, project.id);
-      refresh();
-      toast.success(`Project marked as ${status.toLowerCase()}`);
-    } catch {
-      toast.error("Failed to update project status");
+  const toggleSelect = (id: string) =>
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
+  const allPageSelected = (projects?.length ?? 0) > 0 && projects?.every(p => selectedIds.has(p.id));
+  const somePageSelected = projects?.some(p => selectedIds.has(p.id)) && !allPageSelected;
+
+  const toggleSelectAll = () => {
+    if (allPageSelected) {
+      setSelectedIds(prev => {
+        const next = new Set(prev);
+        projects?.forEach(p => next.delete(p.id));
+        return next;
+      });
+    } else {
+      setSelectedIds(prev => {
+        const next = new Set(prev);
+        projects?.forEach(p => next.add(p.id));
+        return next;
+      });
     }
   };
 
-  const [archivingId, setArchivingId] = React.useState<string | null>(null);
+  const clearSelection = () => setSelectedIds(new Set());
 
-  const handleArchiveProject = async (project: ProjectType) => {
-    if (archivingId === project.id) return;
-    setArchivingId(project.id);
-    try {
-      project.isArchived
-        ? await restoreProject(project.id)
-        : await archiveProject(project.id);
-      refresh();
-      toast.success(project.isArchived ? "Project restored" : "Project archived");
-    } catch {
-      toast.error("Failed to update project");
-    } finally {
-      setArchivingId(null);
-    }
+  const handleBulkStatusChange = async (status: ProjectStatus) => {
+    await Promise.all(
+      Array.from(selectedIds).map(id => {
+        const project = projects?.find(p => p.id === id);
+        return project ? handleStatusChange(project, status) : Promise.resolve();
+      })
+    );
+    clearSelection();
   };
 
-  const handleDeleteProject = async () => {
+  const handleBulkArchive = async () => {
+    await Promise.all(
+      Array.from(selectedIds).map(id => {
+        const project = projects?.find(p => p.id === id);
+        return project && !project.isArchived ? handleArchiveProject(project) : Promise.resolve();
+      })
+    );
+    clearSelection();
+  };
+
+  const handleBulkRestore = async () => {
+    await Promise.all(
+      Array.from(selectedIds).map(id => {
+        const project = projects?.find(p => p.id === id);
+        return project && project.isArchived ? handleArchiveProject(project) : Promise.resolve();
+      })
+    );
+    clearSelection();
+  };
+
+  const handleBulkDelete = async () => {
+    await Promise.all(
+      Array.from(selectedIds).map(id => {
+        const project = projects?.find(p => p.id === id);
+        return project ? handleDeleteProject(project) : Promise.resolve();
+      })
+    );
+    clearSelection();
+    setIsBulkDeleteOpen(false);
+  };
+  // ────────────────────────────────────────────────────────────────────────
+
+
+  const handleDelete = async () => {
     if (!projectToDelete) return;
-    try {
-      await deleteProject(projectToDelete.id);
-      refresh();
-      toast.success("Project deleted");
-    } catch {
-      toast.error("Failed to delete project");
-    } finally {
-      setProjectToDelete(null);
-      setIsDeleteOpen(false);
-    }
+    await handleDeleteProject(projectToDelete);
+    setProjectToDelete(null);
+    setIsDeleteOpen(false);
   };
 
   const sensors = useSensors(
@@ -301,6 +340,9 @@ export default function ProjectsList() {
                   key={project.id}
                   project={project as ProjectType & { status?: string }}
                   viewMode="grid"
+                  isSelected={selectedIds.has(project.id)}
+                  selectionActive={selectedIds.size > 0}
+                  onSelect={toggleSelect}
                   onEdit={(p) => {
                     setEditProject(p);
                     setAddDialogOpen(true);
@@ -346,6 +388,9 @@ export default function ProjectsList() {
                 key={project.id}
                 project={project as ProjectType & { status?: string }}
                 viewMode="list"
+                isSelected={selectedIds.has(project.id)}
+                selectionActive={selectedIds.size > 0}
+                onSelect={toggleSelect}
                 onEdit={(p) => {
                   setEditProject(p);
                   setAddDialogOpen(true);
@@ -385,8 +430,7 @@ export default function ProjectsList() {
           <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
             <ProjectStatusTabs activeTab={activeTab} onTabChange={handleTabChange} />
 
-            <div className="flex w-full items-center gap-2 lg:w-auto">
-              <div className="relative w-auto">
+            <div className="flex w-full items-center gap-2 lg:w-auto">              <div className="relative w-auto">
                 <Search className="absolute top-2.5 left-3 size-4 opacity-50" />
                 <Input
                   placeholder={t("searchPlaceholder")}
@@ -451,8 +495,54 @@ export default function ProjectsList() {
             </div>
           ) : (
             <>
+              {/* Unified selection bar */}
+              <div className="flex items-center gap-3 rounded-lg border bg-background px-4 py-2 text-sm">
+                <Checkbox
+                  checked={allPageSelected}
+                  data-state={somePageSelected ? "indeterminate" : allPageSelected ? "checked" : "unchecked"}
+                  onCheckedChange={toggleSelectAll}
+                  aria-label={t("selection.selectAll")}
+                />
+                {selectedIds.size === 0 ? (
+                  <span className="text-muted-foreground flex-1">{t("selection.selectAll")}</span>
+                ) : (
+                  <>
+                    <span className="flex-1 font-medium">{t("selection.selected", { count: selectedIds.size })}</span>
+                    <Select onValueChange={(v) => {
+                      if (v === "__delete__") {
+                        setIsBulkDeleteOpen(true);
+                      } else if (v === "__archive__") {
+                        handleBulkArchive();
+                      } else if (v === "__restore__") {
+                        handleBulkRestore();
+                      } else {
+                        handleBulkStatusChange(v as ProjectStatus);
+                      }
+                    }}>
+                      <SelectTrigger className="h-7 w-44 text-xs">
+                        <SelectValue placeholder={t("selection.applyAction")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Pending">{t("selection.statusPending")}</SelectItem>
+                        <SelectItem value="Running">{t("selection.statusRunning")}</SelectItem>
+                        <SelectItem value="Stopped">{t("selection.statusStopped")}</SelectItem>
+                        <SelectItem value="Completed">{t("selection.statusCompleted")}</SelectItem>
+                        <SelectItem value="__archive__">{t("selection.archiveSelected")}</SelectItem>
+                        <SelectItem value="__restore__">{t("selection.restoreSelected")}</SelectItem>
+                        <SelectItem value="__delete__" className="text-destructive focus:text-destructive">
+                          {t("selection.deleteSelected")}
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Button size="icon" variant="ghost" className="size-7" onClick={clearSelection} aria-label={t("selection.clearSelection")}>
+                      <X className="size-3.5" />
+                    </Button>
+                  </>
+                )}
+              </div>
+
               {renderProjectItems()}
-              
+
               <div className="flex items-center justify-end space-x-2 pt-4 border-t">
                 <div className="text-muted-foreground flex-1 text-sm">
                   {records !== undefined
@@ -471,7 +561,6 @@ export default function ProjectsList() {
                 </div>
               </div>
             </>
-            
           )}
           <div><br/><br/></div>
         </>
@@ -487,25 +576,29 @@ export default function ProjectsList() {
         project={editProject as ProjectType}
       />
 
-      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+      <AlertDialog open={isDeleteOpen || isBulkDeleteOpen} onOpenChange={(open) => {
+        if (!open) { setIsDeleteOpen(false); setIsBulkDeleteOpen(false); setProjectToDelete(null); }
+      }}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t("deleteDialog.title")}</AlertDialogTitle>
+            <AlertDialogTitle>
+              {isBulkDeleteOpen
+                ? t("deleteDialog.bulkTitle", { count: selectedIds.size })
+                : t("deleteDialog.title")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              {t("deleteDialog.description")}
+              {isBulkDeleteOpen
+                ? t("deleteDialog.bulkDescription")
+                : t("deleteDialog.description")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setProjectToDelete(null)}>
-              {t("deleteDialog.cancel")}
-            </AlertDialogCancel>
+            <AlertDialogCancel>{t("deleteDialog.cancel")}</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive hover:bg-destructive/90 text-destructive-foreground"
-              onClick={() => {
-                handleDeleteProject();
-              }}
+              onClick={isBulkDeleteOpen ? handleBulkDelete : handleDelete}
             >
-              {t("deleteDialog.confirm")}
+              {isBulkDeleteOpen ? t("deleteDialog.confirmBulk") : t("deleteDialog.confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

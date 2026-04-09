@@ -92,10 +92,14 @@ export default function MockToggle() {
     if (isMockAuth) {
       toggleAuth();
       queryClient.clear();
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
       window.location.href = "/login";
     } else {
       toggleAuth();
-      queryClient.invalidateQueries();
+      queryClient.clear();
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
       window.location.href = "/dashboard";
     }
   };

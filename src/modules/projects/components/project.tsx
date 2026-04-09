@@ -20,6 +20,9 @@ interface Props {
   project: ProjectType;
   viewMode?: "grid" | "list";
   isDraggingOverlay?: boolean;
+  isSelected?: boolean;
+  selectionActive?: boolean;
+  onSelect?: (id: string) => void;
   onEdit?: (project: ProjectType) => void;
   onDelete?: (project: ProjectType) => void;
   onArchive?: (project: ProjectType) => void;
@@ -30,6 +33,9 @@ export default function ProjectContainer({
   project,
   viewMode = "grid",
   isDraggingOverlay = false,
+  isSelected = false,
+  selectionActive = false,
+  onSelect,
   onEdit,
   onDelete,
   onArchive,
@@ -53,6 +59,7 @@ export default function ProjectContainer({
   };
 
   const isCompleted = project.status === "Completed";
+  const isSelectionMode = selectionActive;
   const statusColors = projectStatusClasses[project.status] || projectStatusClasses["Pending"];
   const typeColors = projectTypeClasses[project.projectType] || projectTypeClasses["AGILE"];
   const buColors = project.businessUnit ? businessUnitClasses[project.businessUnit] || businessUnitFallbackClasses : "";
@@ -80,7 +87,11 @@ export default function ProjectContainer({
     const dx = Math.abs(e.clientX - pointerDownPos.current.x);
     const dy = Math.abs(e.clientY - pointerDownPos.current.y);
     if (dx < 5 && dy < 5) {
-      router.push(`/dashboard/projects/${project.id}`);
+      if (isSelectionMode) {
+        onSelect?.(project.id);
+      } else {
+        router.push(`/dashboard/projects/${project.id}`);
+      }
     }
     pointerDownPos.current = null;
   };
@@ -215,7 +226,10 @@ export default function ProjectContainer({
           <CardContent className="flex h-full flex-col justify-between">
             <div className="flex flex-col gap-3">
               <div className="flex items-start space-x-3">
-                <Checkbox checked={isCompleted} />
+                <Checkbox
+                  checked={isSelectionMode ? isSelected : isCompleted}
+                  onClick={(e) => { e.stopPropagation(); onSelect?.(project.id); }}
+                />
                 <h3 className={cn("text-md flex-1 leading-none font-medium", isCompleted ? "text-muted-foreground line-through" : "")}>
                   {project.name}
                 </h3>
@@ -277,7 +291,10 @@ export default function ProjectContainer({
         </div>
 
         <CardContent className="flex items-start gap-3">
-          <Checkbox checked={isCompleted} onClick={(e) => e.stopPropagation()} />
+          <Checkbox
+            checked={isSelectionMode ? isSelected : isCompleted}
+            onClick={(e) => { e.stopPropagation(); onSelect?.(project.id); }}
+          />
 
           <div className="flex grow flex-col space-y-2">
             <div className="flex flex-col items-start justify-between space-y-1 lg:flex-row lg:space-y-0">

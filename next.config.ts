@@ -6,7 +6,7 @@ const withNextIntl = createNextIntlPlugin();
 const nextConfig: NextConfig = {
   env: {
     company_name: "Tawer MNG",
-    BACKEND_ADDRESS: "https://8b5b-196-187-151-41.ngrok-free.app",
+    BACKEND_ADDRESS: "https://9e18-102-152-211-176.ngrok-free.app",
     NTFY_SERVICE_URL: "https://ntfy.tdg.tn",
     COUNTRY_CODE: "TN",
     NEXT_PUBLIC_ENV: "preprod",

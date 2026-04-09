@@ -1400,11 +1400,20 @@
             "title": "Project Members",
             "description": "Users who have access to this project.",
             "invite": "Invite Member",
+            "addMember": "Add Member",
+            "addBy": "Add by",
             "manager": "Manager",
             "member": "Member",
             "joined": "Joined",
             "actions": "Actions",
-            "remove": "Remove"
+            "remove": "Remove",
+            "removeTitle": "Remove Member",
+            "removeDescription": "Are you sure you want to remove this member from the project?",
+            "promote": "Make Manager",
+            "demote": "Remove Manager Role",
+            "emailLabel": "Email address",
+            "userIdLabel": "User ID",
+            "empty": "No active members."
           },
           "invitationsList": {
             "title": "Pending Invitations",
@@ -1412,8 +1421,13 @@
             "email": "Email",
             "role": "Role",
             "expires": "Expires",
+            "expiresInDays": "Expires in (days)",
             "status": "Status",
-            "cancel": "Cancel Invite"
+            "cancel": "Cancel Invite",
+            "resend": "Resend",
+            "revokeTitle": "Revoke Invitation",
+            "revokeDescription": "Are you sure you want to revoke this invitation?",
+            "empty": "No pending invitations."
           },
           "settings": {
             "title": "Project Details",
@@ -1558,8 +1572,24 @@
         "deleteDialog": {
           "title": "Delete Project",
           "description": "Are you sure you want to delete this project? This action cannot be undone.",
+          "bulkTitle": "Delete {count} projects?",
+          "bulkDescription": "This will permanently delete all selected projects. This action cannot be undone.",
           "cancel": "Cancel",
-          "confirm": "Delete"
+          "confirm": "Delete",
+          "confirmBulk": "Delete all"
+        },
+        "selection": {
+          "selectAll": "Select all",
+          "selected": "{count} selected",
+          "applyAction": "Apply action...",
+          "deleteSelected": "Delete selection",
+          "archiveSelected": "Archive selection",
+          "restoreSelected": "Restore selection",
+          "clearSelection": "Clear selection",
+          "statusPending": "Set as pending",
+          "statusRunning": "Set as running",
+          "statusStopped": "Set as stopped",
+          "statusCompleted": "Set as completed"
         }
 
       },
