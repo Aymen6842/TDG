@@ -1,0 +1,54 @@
+model Event {
+  id                   String             @id @default(uuid())
+  type                 EventType
+  color                EventColor
+  startTime            DateTime
+  endTime              DateTime?
+  nextNotificationTime DateTime
+  isNotified           Boolean            @default(false)
+  location             String?
+  toAllUsers           Boolean            @default(false)
+  createdById          String
+  createdAt            DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt            DateTime           @updatedAt
+  createdBy            User               @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  content              EventContent[]
+  participants         EventParticipant[]
+}
+
+model EventParticipant {
+  eventId   String
+  userId    String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([eventId, userId])
+}
+
+model EventContent {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  language    Language @default(English)
+  eventId     String
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt
+  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
+
+enum EventType {
+  Meeting
+  Event
+  PersonalEvent
+}
+
+enum EventColor {
+  Sky
+  Amber
+  Violet
+  Rose
+  Emerald
+  Orange
+}

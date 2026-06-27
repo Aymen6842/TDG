@@ -1,0 +1,87 @@
+model Server {
+  id                  String                 @id @default(uuid())
+  name                String
+  domain              String?
+  description         String?
+  ip                  String
+  cpus                String?
+  ram                 String?
+  storage             String?
+  bandwidth           String?
+  backupCloudProvider Boolean                @default(false)
+  paid                Boolean                @default(false)
+  status              ServerServiceStatus    @default(Running)
+  paidAt              DateTime?
+  expiredAt           DateTime?
+  nextNotificationAt  DateTime?
+  createdAt           DateTime               @default(now())
+  updatedAt           DateTime               @updatedAt
+  notifications       ServerNotification[]
+  services            Service[]
+  managers            UserServerManagement[]
+
+  @@index([id])
+}
+
+model ServerNotification {
+  id        String   @id @default(uuid())
+  serverId  String
+  message   String
+  isSent    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  server    Server   @relation(fields: [serverId], references: [id], onDelete: Cascade)
+}
+
+model Service {
+  id                            String                @id @default(uuid())
+  name                          String
+  domain                        String?
+  description                   String?
+  sslCertificate                Boolean               @default(false)
+  sslCertificateByCloudProvider Boolean               @default(false)
+  hasBackup                     Boolean               @default(false)
+  backupDestination             String?
+  paid                          Boolean               @default(false)
+  status                        ServerServiceStatus   @default(Running)
+  paidAt                        DateTime?
+  expiredAt                     DateTime?
+  nextNotificationAt            DateTime?
+  createdAt                     DateTime              @default(now())
+  updatedAt                     DateTime              @updatedAt
+  serverId                      String
+  server                        Server                @relation(fields: [serverId], references: [id], onDelete: Cascade)
+  notifications                 ServiceNotification[]
+
+  @@index([serverId])
+}
+
+model ServiceNotification {
+  id        String   @id @default(uuid())
+  serviceId String
+  message   String
+  isSent    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+}
+
+model UserServerManagement {
+  id        String   @id @default(uuid())
+  managerId String
+  serverId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  manager   User     @relation(fields: [managerId], references: [id], onDelete: Cascade)
+  server    Server   @relation(fields: [serverId], references: [id], onDelete: Cascade)
+
+  @@unique([managerId, serverId])
+  @@index([managerId])
+  @@index([serverId])
+}
+
+enum ServerServiceStatus {
+  Running
+  Stopped
+  Maintenance
+}

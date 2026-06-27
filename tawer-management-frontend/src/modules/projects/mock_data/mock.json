@@ -1,0 +1,405 @@
+{
+    "projects": [
+        {
+            "id": "project-1",
+            "paid": true,
+            "status": "Running",
+            "isArchived": false,
+            "businessUnit": "TawerDev",
+            "projectType": "AGILE",
+            "startDate": "2024-01-01T00:00:00Z",
+            "endDate": "2024-12-31T23:59:59Z",
+            "estimatedStartDate": "2024-01-01T00:00:00Z",
+            "estimatedEndDate": "2024-12-31T23:59:59Z",
+            "displayOrder": 1,
+            "createdById": "mock-user-id",
+            "createdAt": "2023-12-25T10:00:00Z",
+            "updatedAt": "2024-01-10T15:00:00Z",
+            "contents": [
+                {
+                    "id": "content-1",
+                    "name": "Parastore Blog System",
+                    "unaccentedName": "Parastore Blog System",
+                    "description": "Blog system with SEO-friendly URLs and admin dashboard.",
+                    "details": "A full-featured blog platform built with Next.js and Tailwind CSS.",
+                    "language": "English",
+                    "projectId": "project-1",
+                    "createdAt": "2023-12-25T10:00:00Z",
+                    "updatedAt": "2024-01-10T15:00:00Z"
+                }
+            ],
+            "members": [
+                {
+                    "id": "member-1",
+                    "isManager": true,
+                    "projectId": "project-1",
+                    "userId": "mock-user-id",
+                    "createdAt": "2023-12-25T10:00:00Z",
+                    "updatedAt": "2023-12-25T10:00:00Z"
+                },
+                {
+                    "id": "member-3",
+                    "isManager": false,
+                    "projectId": "project-1",
+                    "userId": "user-sarah",
+                    "createdAt": "2024-01-05T10:00:00Z",
+                    "updatedAt": "2024-01-05T10:00:00Z"
+                },
+                {
+                    "id": "member-4",
+                    "isManager": false,
+                    "projectId": "project-1",
+                    "userId": "user-ahmed",
+                    "createdAt": "2024-01-05T10:00:00Z",
+                    "updatedAt": "2024-01-05T10:00:00Z"
+                }
+            ],
+            "epics": [
+                {
+                    "id": "epic-1",
+                    "projectId": "project-1",
+                    "name": "Core Infrastructure",
+                    "description": "Foundational setup for the blog system.",
+                    "color": "blue",
+                    "createdAt": "2023-12-25T10:00:00Z",
+                    "updatedAt": "2023-12-25T10:00:00Z"
+                },
+                {
+                    "id": "epic-2",
+                    "projectId": "project-1",
+                    "name": "Content Management",
+                    "description": "Blog post creation, editing, and publishing features.",
+                    "color": "green",
+                    "createdAt": "2024-01-10T10:00:00Z",
+                    "updatedAt": "2024-01-10T10:00:00Z"
+                },
+                {
+                    "id": "epic-3",
+                    "projectId": "project-1",
+                    "name": "SEO & Analytics",
+                    "description": "Search engine optimization and analytics dashboard.",
+                    "color": "purple",
+                    "createdAt": "2024-02-01T10:00:00Z",
+                    "updatedAt": "2024-02-01T10:00:00Z"
+                }
+            ],
+            "milestones": [
+                {
+                    "id": "milestone-1",
+                    "projectId": "project-1",
+                    "name": "MVP Launch",
+                    "description": "First working version with auth and basic blog functionality.",
+                    "dueDate": "2024-04-30T23:59:59Z",
+                    "createdAt": "2024-01-01T10:00:00Z"
+                },
+                {
+                    "id": "milestone-2",
+                    "projectId": "project-1",
+                    "name": "Beta Release",
+                    "description": "Feature-complete with SEO and analytics.",
+                    "dueDate": "2024-08-31T23:59:59Z",
+                    "createdAt": "2024-01-01T10:00:00Z"
+                }
+            ],
+            "sprints": [
+                {
+                    "id": "sprint-1",
+                    "projectId": "project-1",
+                    "createdById": "mock-user-id",
+                    "startDate": "2024-03-01T00:00:00Z",
+                    "endDate": "2024-03-14T23:59:59Z",
+                    "estimatedStartDate": "2024-03-01T00:00:00Z",
+                    "estimatedEndDate": "2024-03-14T23:59:59Z",
+                    "status": "Running",
+                    "contents": [
+                        {
+                            "id": "sprint-content-1",
+                            "sprintId": "sprint-1",
+                            "name": "Sprint 1: Core Foundation",
+                            "unaccentedName": "Sprint 1: Core Foundation",
+                            "description": "Setting up the project structure and authentication.",
+                            "language": "English",
+                            "createdAt": "2024-02-28T10:00:00Z",
+                            "updatedAt": "2024-02-28T10:00:00Z"
+                        }
+                    ],
+                    "createdAt": "2024-02-28T10:00:00Z",
+                    "updatedAt": "2024-02-28T10:00:00Z"
+                },
+                {
+                    "id": "sprint-2",
+                    "projectId": "project-1",
+                    "createdById": "mock-user-id",
+                    "startDate": "2024-03-15T00:00:00Z",
+                    "endDate": "2024-03-28T23:59:59Z",
+                    "estimatedStartDate": "2024-03-15T00:00:00Z",
+                    "estimatedEndDate": "2024-03-28T23:59:59Z",
+                    "status": "Pending",
+                    "contents": [
+                        {
+                            "id": "sprint-content-2",
+                            "sprintId": "sprint-2",
+                            "name": "Sprint 2: Content Features",
+                            "unaccentedName": "Sprint 2: Content Features",
+                            "description": "Blog post CRUD and media uploads.",
+                            "language": "English",
+                            "createdAt": "2024-03-10T10:00:00Z",
+                            "updatedAt": "2024-03-10T10:00:00Z"
+                        }
+                    ],
+                    "createdAt": "2024-03-10T10:00:00Z",
+                    "updatedAt": "2024-03-10T10:00:00Z"
+                }
+            ],
+            "tasks": [
+                {
+                    "id": "task-1",
+                    "projectId": "project-1",
+                    "key": "PBS-1",
+                    "type": "STORY",
+                    "priority": "HIGH",
+                    "status": "IN_PROGRESS",
+                    "assigneeId": "mock-user-id",
+                    "reporterId": "mock-user-id",
+                    "sprintId": "sprint-1",
+                    "epicId": "epic-1",
+                    "milestoneId": "milestone-1",
+                    "storyPoints": 8,
+                    "title": "Implement User Authentication",
+                    "description": "Create a robust authentication system using JWT.",
+                    "estimatedHours": 16,
+                    "actualHours": 8,
+                    "displayOrder": 1,
+                    "dueDate": "2024-03-14T23:59:59Z",
+                    "createdAt": "2024-03-01T11:00:00Z",
+                    "updatedAt": "2024-03-02T09:00:00Z"
+                },
+                {
+                    "id": "task-2",
+                    "projectId": "project-1",
+                    "key": "PBS-2",
+                    "type": "TASK",
+                    "priority": "MEDIUM",
+                    "status": "TODO",
+                    "assigneeId": "user-sarah",
+                    "reporterId": "mock-user-id",
+                    "sprintId": "sprint-1",
+                    "epicId": "epic-1",
+                    "milestoneId": "milestone-1",
+                    "storyPoints": 5,
+                    "title": "Setup CI/CD Pipeline",
+                    "description": "Configure GitHub Actions for automated deployment.",
+                    "estimatedHours": 8,
+                    "actualHours": 0,
+                    "displayOrder": 2,
+                    "dueDate": "2024-03-12T23:59:59Z",
+                    "createdAt": "2024-03-01T12:00:00Z",
+                    "updatedAt": "2024-03-01T12:00:00Z"
+                },
+                {
+                    "id": "task-4",
+                    "projectId": "project-1",
+                    "key": "PBS-3",
+                    "type": "BUG",
+                    "priority": "URGENT",
+                    "status": "TESTING",
+                    "assigneeId": "user-ahmed",
+                    "reporterId": "user-sarah",
+                    "sprintId": "sprint-1",
+                    "milestoneId": "milestone-1",
+                    "storyPoints": 2,
+                    "title": "Fix Navbar Responsive Bug",
+                    "description": "The navbar overlaps on small screens during transition.",
+                    "estimatedHours": 2,
+                    "actualHours": 1.5,
+                    "displayOrder": 3,
+                    "dueDate": "2024-03-08T23:59:59Z",
+                    "createdAt": "2024-03-05T10:00:00Z",
+                    "updatedAt": "2024-03-05T14:00:00Z"
+                },
+                {
+                    "id": "task-5",
+                    "projectId": "project-1",
+                    "key": "PBS-4",
+                    "type": "STORY",
+                    "priority": "HIGH",
+                    "status": "BACKLOG",
+                    "assigneeId": "user-sarah",
+                    "reporterId": "mock-user-id",
+                    "sprintId": "sprint-2",
+                    "epicId": "epic-2",
+                    "milestoneId": "milestone-2",
+                    "storyPoints": 13,
+                    "title": "Blog Post Editor",
+                    "description": "Rich text editor with markdown support and image embedding.",
+                    "estimatedHours": 24,
+                    "actualHours": 0,
+                    "displayOrder": 4,
+                    "dueDate": "2024-03-28T23:59:59Z",
+                    "createdAt": "2024-03-10T10:00:00Z",
+                    "updatedAt": "2024-03-10T10:00:00Z"
+                },
+                {
+                    "id": "task-6",
+                    "projectId": "project-1",
+                    "key": "PBS-5",
+                    "type": "SPIKE",
+                    "priority": "LOW",
+                    "status": "DONE",
+                    "assigneeId": "mock-user-id",
+                    "reporterId": "user-ahmed",
+                    "sprintId": "sprint-1",
+                    "epicId": "epic-3",
+                    "storyPoints": 3,
+                    "title": "Research SEO Best Practices",
+                    "description": "Investigate meta tags, structured data, and sitemap generation strategies.",
+                    "estimatedHours": 6,
+                    "actualHours": 5,
+                    "displayOrder": 5,
+                    "dueDate": "2024-03-10T23:59:59Z",
+                    "createdAt": "2024-03-02T09:00:00Z",
+                    "updatedAt": "2024-03-09T16:00:00Z"
+                },
+                {
+                    "id": "task-7",
+                    "projectId": "project-1",
+                    "key": "PBS-6",
+                    "type": "EPIC",
+                    "priority": "MEDIUM",
+                    "status": "IN_REVIEW",
+                    "assigneeId": "user-ahmed",
+                    "reporterId": "mock-user-id",
+                    "sprintId": "sprint-2",
+                    "epicId": "epic-2",
+                    "milestoneId": "milestone-2",
+                    "storyPoints": 8,
+                    "title": "Media Upload System",
+                    "description": "Image and file upload with preview, drag-and-drop, and S3 integration.",
+                    "estimatedHours": 20,
+                    "actualHours": 14,
+                    "displayOrder": 6,
+                    "dueDate": "2024-03-25T23:59:59Z",
+                    "createdAt": "2024-03-12T08:00:00Z",
+                    "updatedAt": "2024-03-20T11:00:00Z"
+                },
+                {
+                    "id": "task-8",
+                    "projectId": "project-1",
+                    "key": "PBS-7",
+                    "type": "TASK",
+                    "priority": "LOW",
+                    "status": "TODO",
+                    "reporterId": "mock-user-id",
+                    "sprintId": "sprint-2",
+                    "epicId": "epic-3",
+                    "milestoneId": "milestone-2",
+                    "storyPoints": 5,
+                    "title": "Google Analytics Integration",
+                    "description": "Connect GA4 with custom event tracking for blog engagement metrics.",
+                    "estimatedHours": 10,
+                    "actualHours": 0,
+                    "displayOrder": 7,
+                    "dueDate": "2024-03-28T23:59:59Z",
+                    "createdAt": "2024-03-15T10:00:00Z",
+                    "updatedAt": "2024-03-15T10:00:00Z"
+                }
+            ],
+            "invitations": [
+                {
+                    "id": "invitation-1",
+                    "email": "john.doe@example.com",
+                    "status": "PENDING",
+                    "token": "token-xyz-123",
+                    "expiresAt": "2026-04-08T10:00:00Z",
+                    "projectId": "project-1",
+                    "invitedById": "mock-user-id",
+                    "createdAt": "2026-04-01T08:00:00Z",
+                    "updatedAt": "2026-04-01T08:00:00Z",
+                    "isManager": true
+                },
+                {
+                    "id": "invitation-2",
+                    "email": "jane.smith@example.com",
+                    "status": "PENDING",
+                    "token": "token-abc-456",
+                    "expiresAt": "2026-04-08T10:00:00Z",
+                    "projectId": "project-1",
+                    "invitedById": "mock-user-id",
+                    "createdAt": "2026-04-01T09:00:00Z",
+                    "updatedAt": "2026-04-01T09:00:00Z",
+                    "isManager": false
+                }
+            ]
+        },
+        {
+            "id": "project-2",
+            "paid": false,
+            "status": "Pending",
+            "isArchived": false,
+            "businessUnit": "TawerCreative",
+            "projectType": "FREESTYLE",
+            "startDate": "2024-04-01T00:00:00Z",
+            "endDate": "2024-06-30T23:59:59Z",
+            "estimatedStartDate": "2024-04-01T00:00:00Z",
+            "estimatedEndDate": "2024-06-30T23:59:59Z",
+            "displayOrder": 2,
+            "createdById": "mock-user-id",
+            "createdAt": "2024-03-15T09:00:00Z",
+            "updatedAt": "2024-03-15T09:00:00Z",
+            "contents": [
+                {
+                    "id": "content-2",
+                    "name": "Brand Identity Refresh",
+                    "unaccentedName": "Brand Identity Refresh",
+                    "description": "Modernizing the visual identity for Tawer Digital Group.",
+                    "language": "English",
+                    "projectId": "project-2",
+                    "createdAt": "2024-03-15T09:00:00Z",
+                    "updatedAt": "2024-03-15T09:00:00Z"
+                }
+            ],
+            "members": [
+                {
+                    "id": "member-2",
+                    "isManager": true,
+                    "projectId": "project-2",
+                    "userId": "mock-user-id",
+                    "createdAt": "2024-03-15T09:00:00Z",
+                    "updatedAt": "2024-03-15T09:00:00Z"
+                }
+            ],
+            "tasks": [
+                {
+                    "id": "task-3",
+                    "projectId": "project-2",
+                    "key": "BIR-1",
+                    "type": "TASK",
+                    "priority": "URGENT",
+                    "status": "BACKLOG",
+                    "reporterId": "mock-user-id",
+                    "title": "Logo Concept Sketches",
+                    "description": "Initial sketches for the new logo concepts.",
+                    "estimatedHours": 10,
+                    "actualHours": 0,
+                    "displayOrder": 1,
+                    "createdAt": "2024-03-16T10:00:00Z",
+                    "updatedAt": "2024-03-16T10:00:00Z"
+                }
+            ],
+            "invitations": [
+                {
+                    "id": "invitation-3",
+                    "email": "creative.lead@agency.com",
+                    "status": "PENDING",
+                    "token": "token-999",
+                    "expiresAt": "2026-04-08T10:00:00Z",
+                    "projectId": "project-2",
+                    "invitedById": "mock-user-id",
+                    "createdAt": "2026-04-01T10:00:00Z",
+                    "updatedAt": "2026-04-01T10:00:00Z",
+                    "isManager": true
+                }
+            ]
+        }
+    ]
+}

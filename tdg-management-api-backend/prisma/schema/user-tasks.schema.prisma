@@ -1,0 +1,67 @@
+model UserTask {
+  id           String               @id @default(uuid())
+  archived     Boolean              @default(false)
+  parentTaskId String?
+  isFavorite   Boolean              @default(false)
+  status       UserTaskStatus       @default(Pending)
+  priority     UserTaskPriority     @default(Medium)
+  userId       String
+  dueDate      DateTime             @db.Timestamp(6)
+  reminderDate DateTime?            @db.Timestamp(6)
+  notified     Boolean              @default(false)
+  createdAt    DateTime             @default(now()) @db.Timestamp(6)
+  updatedAt    DateTime             @updatedAt
+  displayOrder Int?                 @default(10000)
+  parentTask   UserTask?            @relation("TaskSubtasks", fields: [parentTaskId], references: [id], onDelete: Cascade)
+  subTasks     UserTask[]           @relation("TaskSubtasks")
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  attachments  UserTaskAttachment[]
+  comments     UserTaskComment[]
+  content      UserTaskContent[]
+}
+
+model UserTaskContent {
+  id          String   @id @default(uuid())
+  taskId      String
+  title       String
+  description String?
+  details     String?
+  language    Language @default(English)
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt
+  task        UserTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, language])
+}
+
+model UserTaskComment {
+  id        String   @id @default(uuid())
+  taskId    String
+  userId    String
+  comment   String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+  task      UserTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserTaskAttachment {
+  id        String   @id @default(uuid())
+  taskId    String
+  file      String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+  task      UserTask @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+enum UserTaskStatus {
+  Pending
+  InProgress
+  Completed
+}
+
+enum UserTaskPriority {
+  Low
+  Medium
+  High
+}

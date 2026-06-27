@@ -1,0 +1,27 @@
+# Dependency directories
+node_modules/
+
+# Local env files
+.env
+.env.local
+.env.*.local
+*.env
+
+# Next.js build output
+tawer-management-frontend/.next/
+tawer-management-frontend/out/
+tawer-management-frontend/build/
+
+# NestJS build output
+tdg-management-api-backend/dist/
+tdg-management-api-backend/build/
+
+# Backed up .git directories
+.git_backup/
+**/.git_backup/
+
+# Logs and OS files
+*.log
+logs/
+.DS_Store
+Thumbs.db

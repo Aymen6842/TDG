@@ -1,0 +1,15 @@
+model ErrorLog {
+  id         String    @id @default(uuid())
+  hash       String    @unique
+  type       ErrorType
+  endpoint   String?
+  message    String?
+  stackTrace String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+enum ErrorType {
+  CronJob
+  Api
+}

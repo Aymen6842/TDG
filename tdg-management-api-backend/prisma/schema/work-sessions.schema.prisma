@@ -1,0 +1,38 @@
+model WorkDay {
+  id                String        @id @default(uuid())
+  userId            String
+  performanceRating Int?
+  dailyMood         Int?
+  workerNotes       String?
+  managerNotes      String?
+  createdAt         DateTime      @default(now()) @db.Timestamp(6)
+  updatedAt         DateTime      @updatedAt
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workSessions      WorkSession[]
+}
+
+model WorkSession {
+  id                 String              @id @default(uuid())
+  startTime          DateTime            @db.Timestamp(6)
+  endTime            DateTime?           @db.Timestamp(6)
+  timeSpentInMinutes Decimal             @default(0) @db.Decimal(10, 2)
+  createdAt          DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt          DateTime            @updatedAt
+  workDayId          String
+  location           WorkSessionLocation
+  device             WorkSessionDevice
+  taskTimeEntries    TaskTimeEntry[]
+  workDay            WorkDay             @relation(fields: [workDayId], references: [id], onDelete: Cascade)
+}
+
+enum WorkSessionLocation {
+  REMOTE
+  ONSITE
+}
+
+enum WorkSessionDevice {
+  DESKTOP
+  MOBILE
+  TABLET
+  OTHER
+}

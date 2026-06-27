@@ -1,0 +1,147 @@
+"use client";
+import React from "react";
+import { dateToString } from "@/utils/date";
+import { useTranslations } from "next-intl";
+import {
+  Briefcase,
+  Settings,
+  Calendar,
+  CreditCard,
+  Archive,
+  LayoutTemplate,
+  AlignLeft,
+  CircleDot
+} from "lucide-react";
+
+import { ProjectType } from "../../../types/projects";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { SectionHeader } from "../../shared/section-header";
+import ProjectTaskStatuses from "./project-task-statuses";
+
+interface Props {
+  project: ProjectType;
+}
+
+export default function ProjectSettings({ project }: Props) {
+  const t = useTranslations("modules.projects.project.details.settings");
+
+  // name and description are mapped from contents[0] during casting
+  const projectName = project.name;
+  const projectDesc = project.description || t("noDescription");
+
+  return (
+    <div className="space-y-6">
+      <SectionHeader title={t("title")} description={t("description")} />
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* General Information */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Settings className="size-5" />
+              {t("general")}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-5">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <AlignLeft className="size-3.5" /> {t("name")}
+              </Label>
+              <p className="text-sm font-medium leading-relaxed">{projectName}</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <AlignLeft className="size-3.5" /> {t("desc")}
+              </Label>
+              <p className="text-sm leading-relaxed">{projectDesc}</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <Briefcase className="size-3.5" /> {t("businessUnit")}
+              </Label>
+              <p className="text-sm font-medium leading-relaxed">{project.businessUnit}</p>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <LayoutTemplate className="size-3.5" /> {t("type")}
+              </Label>
+              <div className="mt-1">
+                <Badge variant="outline" className="font-mono text-xs shadow-sm">
+                  {project.projectType}
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="space-y-6">
+          {/* Status & Payment */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <CircleDot className="size-5" />
+                {t("status")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <CreditCard className="size-4 text-muted-foreground" />
+                  <span>{t("paid")}</span>
+                </div>
+                <Badge variant={project.paid ? "default" : "secondary"}>
+                  {project.paid ? t("yes") : t("no")}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <Archive className="size-4 text-muted-foreground" />
+                  <span>{t("archived")}</span>
+                </div>
+                <Badge variant={project.isArchived ? "destructive" : "secondary"}>
+                  {project.isArchived ? t("yes") : t("no")}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between pt-3 border-t mt-1">
+                <span className="text-sm font-medium text-muted-foreground">{t("lifecycleStatus")}</span>
+                <Badge variant="outline" className="capitalize text-xs">{project.status.toLowerCase()}</Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Timeline */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Calendar className="size-5" />
+                {t("timeline")}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground font-medium">{t("startDate")}</span>
+                <span className="font-semibold">{dateToString(project.startTime)}</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground font-medium">{t("endDate")}</span>
+                <span className="font-semibold">{dateToString(project.endTime)}</span>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Custom Task Statuses */}
+      <Card>
+        <CardContent className="pt-6">
+          <ProjectTaskStatuses projectId={project.id} />
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

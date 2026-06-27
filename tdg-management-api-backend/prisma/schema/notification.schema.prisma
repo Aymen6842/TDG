@@ -1,0 +1,66 @@
+model UserNotification {
+  id             String        @id @default(uuid())
+  isSeen         Boolean       @default(false)
+  notificationId String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  userId         String
+  notification   Notification? @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([notificationId, userId])
+}
+
+model Notification {
+  id                 String                @id @default(uuid())
+  image              String?
+  sendBy             String?
+  createdAt          DateTime              @default(now())
+  updatedAt          DateTime              @updatedAt
+  sender             User?                 @relation(fields: [sendBy], references: [id], onDelete: Cascade)
+  content            NotificationContent[]
+  usersNotifications UserNotification[]
+}
+
+model NotificationToken {
+  id           String     @id @default(uuid())
+  userId       String?
+  token        String     @unique
+  device       String
+  deviceType   DeviceType
+  deviceHeight Decimal?   @db.Decimal(30, 3)
+  deviceWidth  Decimal?   @db.Decimal(30, 3)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  user         User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NotificationContent {
+  id             String       @id @default(uuid())
+  notificationId String
+  title          String
+  body           String
+  url            String?
+  language       Language
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+}
+
+model UserNotificationSettings {
+  id                           String   @id @default(uuid())
+  userId                       String   @unique
+  emailNotificationsEnabled    Boolean  @default(true)
+  pushNotificationsEnabled     Boolean  @default(true)
+  telegramNotificationsEnabled Boolean  @default(false)
+  createdAt                    DateTime @default(now()) @db.Timestamp(6)
+  updatedAt                    DateTime @updatedAt
+  ntfyNotificationsEnabled     Boolean  @default(false)
+  user                         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum DeviceType {
+  Ios
+  Android
+  Computer
+}

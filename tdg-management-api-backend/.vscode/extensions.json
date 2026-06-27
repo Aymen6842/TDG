@@ -1,0 +1,7 @@
+{
+  "recommendations": [
+    "orta.vscode-jest",
+    "kuscamara.remove-unused-imports",
+    "prisma.prisma"
+  ]
+}

@@ -1,0 +1,136 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
+import { toast } from "sonner";
+import { getProjectTaskFormSchema, ProjectTaskFormSchema } from "../../validation/project-task.schema";
+import { uploadProjectTask, ProjectTaskPayload } from "../../services";
+import { ProjectTaskType } from "@/modules/projects/types/project-tasks";
+
+interface Params {
+  projectId: string;
+  task?: ProjectTaskType | null;
+  onSuccess?: () => void;
+  isAgile?: boolean;
+}
+
+export default function useProjectTaskUpload({ projectId, task, onSuccess, isAgile }: Params) {
+  const queryClient = useQueryClient();
+  const t = useTranslations("modules.projects.project.taskAttributes");
+
+  const schema = getProjectTaskFormSchema({ 
+    t: (key: string) => t(`validations.${key}`)
+  });
+
+  const form = useForm<ProjectTaskFormSchema>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      title: task?.title || "",
+      description: task?.description || "",
+      type: (task?.type as any) || "TASK",
+      status: (task?.status as any) || "TODO",
+      priority: (task?.priority as any) || "MEDIUM",
+      storyPoints: task?.storyPoints || 0,
+      dueDate: task?.dueDate || "",
+      assigneeId: task?.assigneeId || "",
+      milestoneId: task?.milestoneId || "",
+      epicId: task?.epicId || "",
+      sprintId: task?.sprintId || "",
+      parentTaskId: task?.parentTaskId || "",
+    }
+  });
+
+  // Reset form when task changes
+  useEffect(() => {
+    if (task) {
+      form.reset({
+        title: task.title || "",
+        description: task.description || "",
+        type: (task.type as any) || "TASK",
+        status: (task.status as any) || "TODO",
+        priority: (task.priority as any) || "MEDIUM",
+        storyPoints: task.storyPoints || 0,
+        dueDate: task.dueDate || "",
+        assigneeId: task.assigneeId || "",
+        milestoneId: task.milestoneId || "",
+        epicId: task.epicId || "",
+        sprintId: task.sprintId || "",
+        parentTaskId: task.parentTaskId || "",
+      });
+    } else {
+      form.reset({
+        title: "",
+        description: "",
+        type: "TASK",
+        status: "TODO",
+        priority: "MEDIUM",
+        storyPoints: 0,
+        dueDate: "",
+        assigneeId: "",
+        milestoneId: "",
+        epicId: "",
+        sprintId: "",
+        parentTaskId: "",
+      });
+    }
+  }, [task, form]);
+
+  const [isPending, setIsPending] = useState(false);
+  const [error, setError] = useState("");
+
+  async function onSubmit(data: ProjectTaskFormSchema) {
+    setIsPending(true);
+    if (error) setError("");
+
+    try {
+      const payload: ProjectTaskPayload = {
+        title: data.title,
+        description: data.description,
+        type: data.type,
+        // Only send status on create — edits go through the status stepper
+        ...(task?.id ? {} : { status: data.status }),
+        priority: data.priority,
+        ...(isAgile ? { storyPoints: data.storyPoints } : {}),
+        dueDate: data.dueDate || undefined,
+        assigneeId: data.assigneeId || undefined,
+        milestoneId: data.milestoneId || undefined,
+        epicId: data.epicId || undefined,
+        sprintId: data.sprintId || undefined,
+        parentTaskId: data.parentTaskId || undefined,
+      };
+
+      // For updates, only include status if it changed to avoid invalid transition errors
+      if (task?.id && data.status === (task?.status ?? "")) {
+        delete (payload as any).status;
+      }
+
+      await uploadProjectTask({
+        task: payload,
+        id: task?.id,
+        projectId,
+        attachments: data.attachments,
+        deletedAttachments: data.deletedAttachments,
+      });
+
+      toast.success(task?.id ? "Project task updated" : "Project task created");
+
+      form.reset();
+      queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
+
+      onSuccess?.();
+    } catch (err) {
+      toast.error("Failed to save project task");
+      setError("An error occurred while saving the task.");
+    } finally {
+      setIsPending(false);
+    }
+  }
+
+  return {
+    form,
+    error,
+    isPending,
+    onSubmit
+  };
+}

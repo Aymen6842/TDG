@@ -1,0 +1,338 @@
+/// Sprint model - Time-boxed iteration for a project
+model Sprint {
+  id                 String             @id @default(dbgenerated("(gen_random_uuid())::text"))
+  projectId          String
+  createdById        String
+  startDate          DateTime           @db.Timestamp(6)
+  endDate            DateTime           @db.Timestamp(6)
+  estimatedStartDate DateTime           @db.Timestamp(6)
+  estimatedEndDate   DateTime           @db.Timestamp(6)
+  status             SprintStatus       @default(Pending)
+  createdAt          DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt          DateTime           @default(now()) @updatedAt @db.Timestamp(6)
+  capacity           Int?
+  createdBy          User               @relation("CreatedSprints", fields: [createdById], references: [id], onDelete: Cascade)
+  project            Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  attachments        SprintAttachment[]
+  contents           SprintContent[]
+  tasks              Task[]
+
+  @@index([projectId, status])
+  @@index([projectId, createdAt])
+}
+
+/// SprintContent model - Multilingual sprint content
+model SprintContent {
+  id             String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  sprintId       String
+  name           String
+  unaccentedName String
+  description    String?
+  details        String?
+  language       Language @default(English)
+  createdAt      DateTime @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  sprint         Sprint   @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@unique([language, name])
+  @@index([sprintId])
+}
+
+/// SprintAttachment model - File attachments for sprints
+model SprintAttachment {
+  id         String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  sprintId   String
+  attachment String
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  sprint     Sprint   @relation(fields: [sprintId], references: [id], onDelete: Cascade)
+
+  @@index([sprintId])
+}
+
+/// Task model - Work item in a project (GitHub Projects style)
+model Task {
+  id                         String                @id @default(dbgenerated("(gen_random_uuid())::text"))
+  projectId                  String
+  key                        String
+  type                       TaskType              @default(TASK)
+  priority                   TaskPriority          @default(MEDIUM)
+  status                     TaskStatus            @default(TODO)
+  assigneeId                 String?
+  reporterId                 String
+  sprintId                   String?
+  epicId                     String?
+  storyPoints                Int?
+  milestoneId                String?
+  title                      String
+  description                String?
+  estimatedHours             Float?
+  actualHours                Float                 @default(0)
+  dueDate                    DateTime?             @db.Timestamp(6)
+  completedAt                DateTime?             @db.Timestamp(6)
+  displayOrder               Int                   @default(0)
+  parentTaskId               String?
+  createdAt                  DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt                  DateTime              @default(now()) @updatedAt @db.Timestamp(6)
+  progressPercent            Int?                  @default(0)
+  isFavorite                 Boolean               @default(false)
+  archived                   Boolean               @default(false)
+  statusType                 String                @default("ENUM")
+  reminders                  Reminder[]
+  assignee                   User?                 @relation("TaskAssignee", fields: [assigneeId], references: [id])
+  epic                       Epic?                 @relation(fields: [epicId], references: [id])
+  milestone                  Milestone?            @relation(fields: [milestoneId], references: [id])
+  parentTask                 Task?                 @relation("TaskSubtasks", fields: [parentTaskId], references: [id], onDelete: Cascade)
+  subtasks                   Task[]                @relation("TaskSubtasks")
+  project                    Project               @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  reporter                   User                  @relation("TaskReporter", fields: [reporterId], references: [id], onDelete: Cascade)
+  sprint                     Sprint?               @relation(fields: [sprintId], references: [id])
+  attachments                TaskAttachment[]
+  comments                   TaskComment[]
+  content                    TaskContent[]
+  taskDependenciesAsBlocked  TaskDependency[]      @relation("TaskBlockedBy")
+  taskDependenciesAsBlocking TaskDependency[]      @relation("TaskBlocking")
+  labels                     TaskLabelAssignment[]
+  timeEntries                TaskTimeEntry[]
+
+  @@unique([projectId, key])
+  @@index([projectId, status])
+  @@index([assigneeId])
+  @@index([sprintId])
+  @@index([epicId])
+  @@index([milestoneId])
+  @@index([isFavorite])
+  @@index([archived])
+  @@index([projectId, displayOrder])
+}
+
+/// TaskTimeEntry model - Link work sessions to tasks
+model TaskTimeEntry {
+  id            String       @id @default(dbgenerated("(gen_random_uuid())::text"))
+  taskId        String
+  userId        String
+  workSessionId String?
+  hours         Float
+  description   String?
+  createdAt     DateTime     @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime     @default(now()) @updatedAt @db.Timestamp(6)
+  task          Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workSession   WorkSession? @relation(fields: [workSessionId], references: [id])
+
+  @@index([taskId])
+  @@index([userId])
+}
+
+/// TaskComment model - Comments on tasks
+model TaskComment {
+  id        String               @id @default(dbgenerated("(gen_random_uuid())::text"))
+  taskId    String
+  authorId  String
+  content   String
+  createdAt DateTime             @default(now()) @db.Timestamp(6)
+  updatedAt DateTime             @default(now()) @updatedAt @db.Timestamp(6)
+  author    User                 @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  task      Task                 @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  likes     TaskCommentLike[]
+  mentions  TaskCommentMention[]
+
+  @@index([taskId])
+}
+
+/// TaskCommentLike model - Users who liked a task comment
+model TaskCommentLike {
+  id        String      @id @default(dbgenerated("gen_random_uuid()"))
+  commentId String
+  userId    String
+  createdAt DateTime    @default(now()) @db.Timestamp(6)
+  comment   TaskComment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([commentId, userId])
+  @@index([userId])
+}
+
+/// TaskCommentMention model - Users mentioned in task comments
+model TaskCommentMention {
+  id        String      @id @default(dbgenerated("gen_random_uuid()"))
+  commentId String
+  userId    String
+  createdAt DateTime    @default(now()) @db.Timestamp(6)
+  comment   TaskComment @relation(fields: [commentId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([commentId, userId])
+  @@index([userId])
+}
+
+/// TaskAttachment model - File attachments for tasks
+model TaskAttachment {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  taskId    String
+  file      String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([taskId])
+}
+
+/// TaskContent model - Multilingual content for tasks (like UserTaskContent)
+model TaskContent {
+  id          String   @id @default(dbgenerated("gen_random_uuid()"))
+  taskId      String
+  title       String   @default("")
+  description String?
+  details     String?
+  language    Language @default(English)
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([taskId, language])
+  @@index([taskId])
+}
+
+/// TaskLabel model - Project-level reusable labels (assigned to tasks via TaskLabelAssignment)
+model TaskLabel {
+  id        String                @id @default(dbgenerated("gen_random_uuid()"))
+  projectId String
+  name      String
+  color     String                @default("#6B7280")
+  createdAt DateTime              @default(now()) @db.Timestamp(6)
+  updatedAt DateTime              @default(now()) @updatedAt @db.Timestamp(6)
+  project   Project               @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  tasks     TaskLabelAssignment[]
+
+  @@unique([projectId, name])
+  @@index([projectId])
+}
+
+/// TaskLabelAssignment model - Many-to-many junction between Task and TaskLabel
+model TaskLabelAssignment {
+  id        String    @id @default(dbgenerated("gen_random_uuid()"))
+  taskId    String
+  labelId   String
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  label     TaskLabel @relation(fields: [labelId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  task      Task      @relation(fields: [taskId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([taskId, labelId])
+  @@index([taskId])
+  @@index([labelId])
+}
+
+/// Epic model - Large feature that can be broken into stories (AGILE only)
+model Epic {
+  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  projectId   String
+  name        String
+  description String?
+  color       String?
+  startDate   DateTime? @db.Timestamp(6)
+  endDate     DateTime? @db.Timestamp(6)
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime  @default(now()) @updatedAt @db.Timestamp(6)
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks       Task[]
+
+  @@unique([projectId, name])
+  @@index([projectId])
+}
+
+/// Milestone model - Target date for a set of tasks (works for both AGILE and FREESTYLE)
+model Milestone {
+  id          String     @id @default(dbgenerated("(gen_random_uuid())::text"))
+  projectId   String
+  name        String
+  description String?
+  dueDate     DateTime?  @db.Timestamp(6)
+  completedAt DateTime?  @db.Timestamp(6)
+  createdAt   DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime   @default(now()) @updatedAt @db.Timestamp(6)
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  reminders   Reminder[]
+  tasks       Task[]
+
+  @@unique([projectId, name])
+  @@index([projectId])
+  @@index([dueDate])
+}
+
+/// TaskDependency model - Links between tasks for dependency tracking
+model TaskDependency {
+  id             String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  blockingTaskId String
+  blockedTaskId  String
+  dependencyType String   @default("blocks")
+  createdAt      DateTime @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  blockedTask    Task     @relation("TaskBlockedBy", fields: [blockedTaskId], references: [id], onDelete: Cascade)
+  blockingTask   Task     @relation("TaskBlocking", fields: [blockingTaskId], references: [id], onDelete: Cascade)
+
+  @@unique([blockingTaskId, blockedTaskId], map: "TaskDependency_blocking_blocked_key")
+  @@index([blockingTaskId])
+  @@index([blockedTaskId])
+}
+
+/// ProjectTaskStatus model - Customizable task statuses per project
+model ProjectTaskStatus {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()"))
+  projectId          String
+  name               String
+  color              String   @default("#6B7280")
+  order              Int      @default(0)
+  isSystem           Boolean  @default(false)
+  isDefault          Boolean  @default(false)
+  isArchived         Boolean  @default(false)
+  allowedTransitions String[] @default([])
+  createdAt          DateTime @default(now()) @db.Timestamp(6)
+  updatedAt          DateTime @default(now()) @updatedAt @db.Timestamp(6)
+  project            Project  @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([projectId, name])
+  @@index([projectId, isArchived])
+  @@index([projectId, order])
+}
+
+/// Sprint status - matches project status pattern
+enum SprintStatus {
+  Pending
+  Running
+  Stopped
+  Completed
+}
+
+/// Task type
+enum TaskType {
+  EPIC
+  STORY
+  TASK
+  BUG
+  SPIKE
+}
+
+/// Task priority
+enum TaskPriority {
+  URGENT
+  HIGH
+  MEDIUM
+  LOW
+}
+
+/// Task status (Kanban columns)
+enum TaskStatus {
+  BACKLOG
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  TESTING
+  DONE
+}
+
+/// Task status type - distinguishes between enum-based and dynamic custom statuses
+enum TaskStatusType {
+  ENUM
+  CUSTOM
+}

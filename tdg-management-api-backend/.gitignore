@@ -1,0 +1,103 @@
+# compiled output
+/dist
+/node_modules
+/build
+
+data
+images
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Allow src/logs
+!src/logs/
+
+# OS
+.DS_Store
+static
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
+
+# temp directory
+.temp
+.tmp
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Firebase Admin service account
+src/common/firebase/serviceAccountKey.json
+
+# Documentation and plans
+/docs/
+/plans/
+*.md
+*.ps1
+!README.md
+!**/README.md
+
+# Test and utility files
+update-password.sql
+update-permission-user.js
+recreate-permission-user.sql
+remove-cost-migration.sql
+run-permission-tests.js
+simple-permission-user.sql
+CAHIER_DES_CHARGES.tex
+add-reminder-tables.sql
+check-all-users.sql
+check-cost-columns.sql
+check-db-user.js
+check-migration-state.sql
+check-tables.sql
+check-user-exists.sql
+check-user-id.sql
+check-user-role.sql
+check-users.sql
+cleanup-test-data.sql
+comprehensive-test-cleanup.sql
+count-users.sql
+create-permission-test-user.sql
+create-permission-user.js
+fix-password.sql
+fix-schema-migration.sql
+fix-test-account-passwords.sql
+generate-hash.js
+generate-test-accounts.js

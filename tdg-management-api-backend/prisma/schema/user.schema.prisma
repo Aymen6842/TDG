@@ -1,0 +1,140 @@
+model User {
+  id                     String                    @id @default(uuid())
+  email                  String                    @unique
+  phone                  String                    @unique
+  image                  String?
+  unaccentedName         String
+  name                   String
+  password               String
+  isActive               Boolean                   @default(false)
+  createdAt              DateTime                  @default(now()) @db.Timestamp(6)
+  updatedAt              DateTime                  @updatedAt
+  events                 Event[]
+  eventParticipants      EventParticipant[]
+  sentNotifications      Notification[]
+  notificationTokens     NotificationToken[]
+  createdProjects        Project[]
+  projectInvitationsSent ProjectInvitation[]       @relation("InvitationInvitedBy")
+  projectMemberships     ProjectMember[]
+  refreshToken           RefreshToken[]
+  createdReminders       Reminder[]                @relation("ReminderCreatedBy")
+  reminders              Reminder[]
+  resetPasswordCode      ResetPasswordCode?
+  roles                  Role[]
+  createdSprints         Sprint[]                  @relation("CreatedSprints")
+  assignedTasks          Task[]                    @relation("TaskAssignee")
+  reportedTasks          Task[]                    @relation("TaskReporter")
+  taskComments           TaskComment[]
+  taskCommentLikes       TaskCommentLike[]
+  taskCommentMentions    TaskCommentMention[]
+  taskTimeEntries        TaskTimeEntry[]
+  managedUsers           UserManager[]             @relation("ManagerToUser")
+  managers               UserManager[]             @relation("UserToManager")
+  notifications          UserNotification[]
+  notificationSettings   UserNotificationSettings?
+  ntfyIntegration        UserNtfyIntegration?
+  servers                UserServerManagement[]
+  userTasks              UserTask[]
+  userTaskComments       UserTaskComment[]
+  teams                  UserTeam[]
+  telegramBot            UserTelegramBot?
+  workDays               WorkDay[]
+}
+
+model UserTelegramBot {
+  id        String   @id @default(uuid())
+  chatId    String?
+  userId    String   @unique
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserNtfyIntegration {
+  id        String   @id @default(uuid())
+  token     String?
+  topic     String?
+  userId    String   @unique
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserManager {
+  id        String   @id @default(uuid())
+  userId    String
+  managerId String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+  manager   User     @relation("ManagerToUser", fields: [managerId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserToManager", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, managerId])
+}
+
+model UserTeam {
+  id        String   @id @default(uuid())
+  userId    String
+  isManager Boolean  @default(false)
+  teamId    String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, teamId])
+}
+
+model Team {
+  id             String     @id @default(uuid())
+  name           String     @unique
+  unaccentedName String
+  createdAt      DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime   @updatedAt
+  members        UserTeam[]
+}
+
+model Role {
+  id        String   @id @default(uuid())
+  type      UserType
+  userId    String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([type, userId])
+}
+
+enum UserType {
+  CEO
+  CTO
+  CMO
+  TawerCreativeProjectManager
+  GraphicDesigner
+  SocialMediaManager
+  ContentWriter
+  VideoEditor
+  UiUxDesigner
+  TawerDevProjectManager
+  SoftwareEngineer
+  DataEngineer
+  DevopsEngineer
+  QualityAssuranceEngineer
+  ProductOwner
+  ScrumMaster
+  BusinessAnalyst
+  MobileAppDeveloper
+  FrontendDeveloper
+  BackendDeveloper
+  FullStackDeveloper
+  DatabaseAdministrator
+  SystemsArchitect
+  NetworkEngineer
+  CyberSecuritySpecialist
+  SeoSpecialist
+  CustomerSupport
+  HRManager
+  PendingApproval
+  TawerCreativeIntern
+  TawerDevIntern
+}

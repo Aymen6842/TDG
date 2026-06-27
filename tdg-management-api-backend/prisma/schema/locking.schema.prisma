@@ -1,0 +1,8 @@
+model Locking {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  expiresAt DateTime @db.Timestamp(6)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt
+}

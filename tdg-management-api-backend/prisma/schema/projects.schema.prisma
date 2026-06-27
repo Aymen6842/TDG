@@ -1,0 +1,119 @@
+model Project {
+  id                 String              @id @default(uuid())
+  paid               Boolean             @default(false)
+  status             ProjectStatus       @default(Pending)
+  businessUnit       BusinessUnit
+  startDate          DateTime
+  endDate            DateTime
+  estimatedStartDate DateTime
+  estimatedEndDate   DateTime
+  displayOrder       Int                 @default(1000)
+  createdById        String
+  createdAt          DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt          DateTime            @updatedAt
+  projectType        ProjectType         @default(AGILE)
+  estimatedBudget    Decimal?            @db.Decimal(10, 2)
+  hourlyRate         Decimal?            @db.Decimal(10, 2)
+  isArchived         Boolean             @default(false)
+  archivedAt         DateTime?           @db.Timestamp(6)
+  kanbanSettings     Json?
+  epics              Epic[]
+  milestones         Milestone[]
+  createdBy          User                @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  contents           ProjectContent[]
+  invitations        ProjectInvitation[]
+  members            ProjectMember[]
+  taskStatuses       ProjectTaskStatus[]
+  reminders          Reminder[]
+  sprints            Sprint[]
+  tasks              Task[]
+  labels             TaskLabel[]
+
+  @@index([businessUnit])
+  @@index([status])
+  @@index([projectType])
+  @@index([createdById])
+  @@index([displayOrder])
+  @@index([estimatedStartDate])
+  @@index([estimatedEndDate])
+  @@index([isArchived])
+}
+
+model ProjectContent {
+  id             String   @id @default(uuid())
+  projectId      String
+  createdAt      DateTime @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime @updatedAt
+  name           String   @default("")
+  unaccentedName String   @default("")
+  description    String?
+  details        String?
+  language       Language @default(English)
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([language, name])
+  @@index([projectId])
+  @@index([language])
+  @@index([name])
+}
+
+model ProjectMember {
+  id         String   @id @default(uuid())
+  isManager  Boolean  @default(false)
+  projectId  String
+  userId     String
+  createdAt  DateTime @default(now()) @db.Timestamp(6)
+  updatedAt  DateTime @updatedAt
+  hourlyRate Decimal? @db.Decimal(10, 2)
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@index([projectId])
+  @@index([userId])
+}
+
+model ProjectInvitation {
+  id            String           @id @default(dbgenerated("gen_random_uuid()"))
+  email         String
+  token         String           @unique
+  status        InvitationStatus @default(PENDING)
+  isManager     Boolean          @default(false)
+  expiresAt     DateTime         @db.Timestamp(6)
+  acceptedAt    DateTime?        @db.Timestamp(6)
+  invitedUserId String?
+  projectId     String
+  invitedById   String
+  createdAt     DateTime         @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime         @default(now()) @updatedAt @db.Timestamp(6)
+  invitedBy     User             @relation("InvitationInvitedBy", fields: [invitedById], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  project       Project          @relation(fields: [projectId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([projectId, email])
+  @@index([projectId])
+  @@index([token])
+}
+
+enum ProjectStatus {
+  Pending
+  Running
+  Stopped
+  Completed
+}
+
+enum BusinessUnit {
+  TawerDev
+  TawerCreative
+}
+
+enum ProjectType {
+  AGILE
+  FREESTYLE
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}

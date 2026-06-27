@@ -1,0 +1,66 @@
+/// Reminder model - time-triggered notifications
+model Reminder {
+  id             String             @id @default(dbgenerated("(gen_random_uuid())::text"))
+  userId         String
+  entityType     ReminderEntityType
+  entityId       String?
+  projectId      String?
+  taskId         String?
+  milestoneId    String?
+  message        String?
+  reminderAt     DateTime           @db.Timestamp(6)
+  isRecurring    Boolean            @default(false)
+  recurrenceRule String?
+  createdById    String
+  status         ReminderStatus     @default(PENDING)
+  sentAt         DateTime?          @db.Timestamp(6)
+  dismissedAt    DateTime?          @db.Timestamp(6)
+  createdAt      DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt      DateTime           @default(now()) @updatedAt @db.Timestamp(6)
+  createdBy      User               @relation("ReminderCreatedBy", fields: [createdById], references: [id], onDelete: Cascade)
+  milestone      Milestone?         @relation(fields: [milestoneId], references: [id], onDelete: Cascade)
+  project        Project?           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  task           Task?              @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  channels       ReminderChannel[]
+
+  @@index([status, reminderAt])
+  @@index([userId, status])
+  @@index([projectId])
+}
+
+/// ReminderChannel model - delivery channel for a reminder
+model ReminderChannel {
+  id         String      @id @default(dbgenerated("(gen_random_uuid())::text"))
+  reminderId String
+  channel    ChannelType
+  reminder   Reminder    @relation(fields: [reminderId], references: [id], onDelete: Cascade)
+
+  @@unique([reminderId, channel])
+}
+
+/// Reminder entity type - what the reminder is about
+enum ReminderEntityType {
+  TASK
+  SPRINT
+  MILESTONE
+  PROJECT
+  CUSTOM
+}
+
+/// Reminder status
+enum ReminderStatus {
+  PENDING
+  SENT
+  DISMISSED
+  FAILED
+  CANCELLED
+}
+
+/// Channel type - how the reminder is delivered
+enum ChannelType {
+  EMAIL
+  TELEGRAM
+  PUSH
+  NTFY
+}

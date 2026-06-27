@@ -1,0 +1,985 @@
+//////////////////////////////////////////////////////
+// USER MODELS
+//////////////////////////////////////////////////////
+Table User {
+  id             varchar [pk]
+  email          varchar [unique, null]
+  phone          varchar [unique, null]
+  name           varchar
+  unaccentedName varchar [null]
+  password       varchar [null]
+  isActive       boolean [default: false]
+  createdAt      timestamp
+  updatedAt      timestamp
+}
+
+Table UserPoints {
+  id        varchar [pk]
+  value     decimal(20,3) [default: 0]
+  userId    varchar [unique]
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+
+Table Role {
+  id        varchar [pk]
+  type      varchar [default: 'Customer']
+  userId    varchar [unique]
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+Table RefreshToken {
+  token     varchar [pk]
+  userId    varchar
+  createdAt timestamp
+  updatedAt timestamp
+
+  indexes {
+    (token, userId) [unique]
+  }
+}
+
+Table ResetPasswordCode {
+  id        varchar [pk]
+  code      varchar
+  userId    varchar [unique]
+  expiredAt timestamp
+  createdAt timestamp
+  updatedAt timestamp
+
+  indexes {
+    (userId, code) [unique]
+  }
+}
+
+//////////////////////////////////////////////////////
+// COUNTRY / CITY / ADDRESS MODELS
+//////////////////////////////////////////////////////
+
+Table Country {
+  isoCode   varchar [pk]
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+Table CountryContent {
+  id        varchar [pk]
+  isoCode   varchar
+  name      varchar
+  language  varchar
+  createdAt timestamp
+  updatedAt timestamp
+
+  indexes {
+    (isoCode, language) [unique]
+  }
+}
+
+Table City {
+  id        varchar [pk]
+  isoCode   varchar
+  createdAt timestamp
+  updatedAt timestamp
+
+  indexes {
+    (isoCode, id) [unique]
+  }
+}
+
+Table CityContent {
+  id        varchar [pk]
+  cityId    varchar
+  name      varchar
+  language  varchar
+  createdAt timestamp
+  updatedAt timestamp
+
+  indexes {
+    (cityId, language) [unique]
+  }
+}
+
+Table Address {
+  id         varchar [pk]
+  email      varchar
+  fullName   varchar
+  firstName  varchar
+  lastName   varchar
+  address1   varchar
+  address2   varchar
+  company    varchar
+  zone       varchar
+  cityId     varchar
+  postalCode varchar
+  phone      varchar
+  userId     varchar
+  createdAt  timestamp
+  updatedAt  timestamp
+}
+
+Table ShippingCost {
+  id        varchar [pk]
+  cityId    varchar
+  value     decimal(10,3)
+  currency  varchar
+  createdAt timestamp
+  updatedAt timestamp
+
+  indexes {
+    (cityId, currency) [unique]
+  }
+}
+
+//////////////////////////////////////////////////////
+// BRAND MODELS
+//////////////////////////////////////////////////////
+
+Table Brand {
+  id           varchar [pk]
+  displayOrder int [default: 10000]
+  image        varchar
+  createdAt    timestamp
+  updatedAt    timestamp
+}
+
+Table BrandContent {
+  id             varchar [pk]
+  name           varchar
+  unaccentedName varchar
+  slug           varchar
+  description    varchar
+  brandId        varchar
+  language       varchar
+  createdAt      timestamp
+  updatedAt      timestamp
+
+  indexes {
+    (brandId, language) [unique]
+    (slug, language) [unique]
+    (name, language) [unique]
+    (unaccentedName)
+  }
+}
+
+Table BrandMetaContent {
+  id          varchar [pk]
+  title       varchar
+  description varchar
+  tags        varchar[]
+  language    varchar
+  brandId     varchar
+  createdAt   timestamp
+  updatedAt   timestamp
+}
+
+//////////////////////////////////////////////////////
+// CATEGORY MODELS
+//////////////////////////////////////////////////////
+
+Table Category {
+  id               varchar [pk]
+  parentCategoryId varchar
+  displayOrder     int [default: 10000]
+  image            varchar
+  categoryId       varchar
+  createdAt        timestamp
+  updatedAt        timestamp
+}
+
+Table CategoryContent {
+  id             varchar [pk]
+  name           varchar
+  unaccentedName varchar
+  slug           varchar
+  description    varchar
+  categoryId     varchar
+  language       varchar
+  createdAt      timestamp
+  updatedAt      timestamp
+
+  indexes {
+    (categoryId, language) [unique]
+    (slug, language) [unique]
+    (name, language) [unique]
+    (unaccentedName)
+  }
+}
+
+Table CategoryMetaContent {
+  id          varchar [pk]
+  title       varchar
+  description varchar
+  tags        varchar[]
+  language    varchar
+  categoryId  varchar
+  createdAt   timestamp
+  updatedAt   timestamp
+}
+
+Table ProductOnCategory {
+  id         varchar [pk]
+  categoryId varchar
+  productId  varchar
+  createdAt  timestamp
+  updatedAt  timestamp
+
+  indexes {
+    (categoryId, productId) [unique]
+  }
+}
+
+//////////////////////////////////////////////////////
+// EXCHANGE RATE MODELS
+/////////////////////////////////////////////////////
+Table ExchangeRate {
+  id        varchar [pk] // Primary key of the exchange rate record
+  from      varchar [default: 'EUR'] // Source currency
+  to        varchar [default: 'EUR'] // Target currency
+  rate      decimal(10,3) [default: 1.000] // Conversion rate from source to target currency
+  createdAt timestamp // Record creation timestamp
+  updatedAt timestamp // Record last update timestamp
+
+  indexes {
+    (from, to) [unique] // Ensure there is only one exchange rate for each currency pair
+  }
+
+  note: "Stores currency exchange rates between two currencies with unique pairs and timestamps."
+}
+
+//////////////////////////////////////////////////////
+// PRODUCT MODELS
+//////////////////////////////////////////////////////
+
+Table Product {
+  id           varchar [pk]
+  displayOrder int [default: 10000]
+  brandId      varchar
+  createdAt    timestamp
+  updatedAt    timestamp
+
+  indexes {
+    (displayOrder)
+    (brandId)
+    (createdAt)
+  }
+}
+
+Table ProductContent {
+  id             varchar [pk]
+  name           varchar
+  unaccentedName varchar
+  slug           varchar
+  description    varchar
+  details        varchar
+  language       varchar
+  productId      varchar
+  createdAt      timestamp
+  updatedAt      timestamp
+
+  indexes {
+    (productId)
+    (language, productId)
+    (slug)
+    (unaccentedName)
+  }
+
+  indexes {
+    (productId, language) [unique]
+    (slug, language) [unique]
+    (name, language) [unique]
+  }
+}
+
+Table ProductMetaContent {
+  id          varchar [pk]
+  title       varchar
+  description varchar
+  tags        varchar[]
+  language    varchar
+  productId   varchar
+  createdAt   timestamp
+  updatedAt   timestamp
+
+  indexes {
+    (productId)
+    (language, productId)
+  }
+}
+
+Table ProductItem {
+  id        varchar [pk]
+  barcode   varchar
+  reference varchar
+  sku       varchar
+  image     varchar
+  online    boolean [default: true]
+  productId varchar
+  createdAt timestamp
+  updatedAt timestamp
+
+  indexes {
+    (productId)
+    (online)
+  }
+}
+
+Table ProductItemVariation {
+  id            varchar [pk]
+  productItemId varchar
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  indexes {
+    (productItemId)
+  }
+}
+
+Table ProductItemVariationContent {
+  id                     varchar [pk]
+  productItemVariationId varchar
+  name                   varchar
+  value                  varchar
+  language               varchar
+  createdAt              timestamp
+  updatedAt              timestamp
+
+  indexes {
+    (productItemVariationId)
+    (language, name, value)
+  }
+
+  indexes {
+    (productItemVariationId, language, name, value) [unique]
+  }
+}
+
+Table ProductItemPrice {
+  id            varchar [pk]
+  productItemId varchar
+  price         decimal(10,3)
+  currency      varchar
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  indexes {
+    (price)
+    (productItemId)
+    (productItemId, currency) [unique]
+  }
+}
+
+Table ProductItemImage {
+  id            varchar [pk]
+  productItemId varchar
+  image         varchar
+  displayOrder  int [default: 10000]
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  indexes {
+    (productItemId)
+  }
+}
+
+Table ProductItemInventory {
+  id            varchar [pk]
+  productItemId varchar [unique]
+  quantity      int [default: 0]
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  indexes {
+    (productItemId)
+  }
+}
+
+//////////////////////////////////////////////////////
+// ORDER MODELS
+//////////////////////////////////////////////////////
+
+Table Order {
+  id           varchar [pk] // Primary key of the order
+  userId       varchar // User who placed the order
+  code         varchar // Unique order code/number
+  total        decimal(10,3) // Total amount of the order
+  currency     varchar [default: 'EUR'] // Currency of the order
+  status       varchar [default: 'AwaitingApproval'] // Current order status
+  addressId    varchar // Shipping address
+  shippingCost decimal(10,3) [default: 0] // Cost of shipping
+  notes        varchar // Optional notes for the order
+  createdAt    timestamp
+  updatedAt    timestamp
+
+  note: "Stores orders placed by users, including total, shipping, and status."
+}
+
+Table OrderItem {
+  id            varchar [pk] // Primary key for order item
+  orderId       varchar // Reference to the order
+  productItemId varchar // Reference to the purchased product item
+  image         varchar // Item image
+  barcode       varchar
+  reference     varchar
+  sku           varchar
+  quantity      int // Number of items
+  price         decimal(10,3) // Price per item without discount
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  note: "Represents individual items in an order with price, quantity, and SKU."
+}
+
+Table OrderItemContent {
+  id          varchar [pk]
+  orderItemId varchar
+  language    varchar
+  name        varchar
+  createdAt   timestamp
+  updatedAt   timestamp
+
+  indexes {
+    (orderItemId, language) [unique]
+  }
+
+  note: "Stores the name of the order item in multiple languages."
+}
+
+Table VoucherCodeUsedInOrder {
+  id                        varchar [pk]
+  orderItemId               varchar
+  orderId                   varchar
+  code                      varchar
+  allowOnPromotions         boolean [default: false]
+  freeShipping              boolean [default: false]
+  isGeneratedFromPoints     boolean [default: false]
+  promotionDiscountUsedInOrderId varchar
+  createdAt                 timestamp
+  updatedAt                 timestamp
+
+  note: "Links a voucher code applied to an order or order item, including flags and discounts."
+}
+
+Table VoucherCodeDiscountUsedInOrder {
+  id            varchar [pk]
+  voucherCodeId varchar [unique]
+  type          varchar
+  value         decimal(10,3)
+  currency      varchar [default: 'EUR']
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  note: "Tracks discounts applied via a voucher code."
+}
+
+Table PromotionUsedInOrder {
+  id          varchar [pk]
+  orderItemId varchar [unique]
+  createdAt   timestamp
+  updatedAt   timestamp
+
+  note: "Tracks promotions applied to a specific order item."
+}
+
+Table PromotionContentUsedInOrder {
+  id          varchar [pk]
+  promotionId varchar
+  language    varchar
+  name        varchar
+  createdAt   timestamp
+  updatedAt   timestamp
+
+  indexes {
+    (promotionId, language) [unique]
+  }
+
+  note: "Stores the promotion name in multiple languages."
+}
+
+Table PromotionDiscountUsedInOrder {
+  id          varchar [pk]
+  promotionId varchar [unique]
+  type        varchar
+  value       decimal(10,3)
+  currency    varchar [default: 'EUR']
+  createdAt   timestamp
+  updatedAt   timestamp
+
+  note: "Stores discount values for promotions applied to an order item."
+}
+
+//////////////////////////////////////////////////////
+// PAGE PALETTE MODELS
+//////////////////////////////////////////////////////
+
+Table PagePalette {
+  id        varchar [pk] // Primary key of the page palette
+  name      varchar [unique] // Unique name for the palette
+  createdAt timestamp
+  updatedAt timestamp
+
+  note: "Represents a page palette containing images, sections, and meta content."
+}
+
+Table PagePaletteMetaContent {
+  id            varchar [pk]
+  pagePaletteId varchar
+  title         varchar
+  description   varchar
+  tags          varchar[]
+  language      varchar
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  indexes {
+    (pagePaletteId, language) [unique]
+  }
+
+  note: "Stores multi-language metadata (title, description, tags) for a page palette."
+}
+
+Table PagePaletteImage {
+  id            varchar [pk]
+  pagePaletteId varchar
+  computerImage varchar
+  mobileImage   varchar
+  redirectUrl   varchar
+  displayOrder  int [default: 1000]
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  note: "Stores images for the page palette for computer and mobile view with optional redirect."
+}
+
+Table PagePaletteSection {
+  id            varchar [pk]
+  pagePaletteId varchar
+  displayOrder  int [default: 1000]
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  note: "Sections within a page palette to organize content."
+}
+
+Table PagePaletteSectionContent {
+  id                   varchar [pk]
+  pagePaletteSectionId  varchar
+  title                varchar
+  description          varchar
+  displayOrder         int [default: 1000]
+  language             varchar
+  createdAt            timestamp
+  updatedAt            timestamp
+
+  indexes {
+    (pagePaletteSectionId, language) [unique]
+  }
+
+  note: "Stores multi-language content for each page palette section."
+}
+
+//////////////////////////////////////////////////////
+// Pixel Config Model
+//////////////////////////////////////////////////////
+Table PixelConfig {
+  id                      varchar [pk] // Singleton ID for configuration
+  pixelId                 varchar [unique] // Unique Pixel ID
+  accessToken             varchar // Access token for the pixel
+  domainVerificationToken varchar // Token to verify domain ownership
+  apiUrl                  varchar [default: 'https://graph.facebook.com/v17.0'] // API endpoint
+
+  isSandbox   boolean [default: false] // True if in sandbox environment
+  testingCode varchar // Optional code used for testing
+
+  createdAt   timestamp
+  updatedAt   timestamp
+
+  note: "Stores configuration for the Facebook Pixel, including tokens, API URL, and sandbox/testing info."
+}
+
+//////////////////////////////////////////////////////
+// Points Rate Model
+//////////////////////////////////////////////////////
+Table PointRate {
+  id       varchar [pk] // Primary key
+  currency varchar [unique] // Currency for which the point rate applies
+  rate     decimal(10,5) // Conversion rate from currency to points
+
+  createdAt timestamp
+  updatedAt timestamp
+
+  note: "Stores the conversion rate of a currency to points. Each currency has a unique rate."
+}
+
+//////////////////////////////////////////////////////
+// PROMOTION MODELS
+//////////////////////////////////////////////////////
+
+Table Promotion {
+  id        varchar [pk] // Primary key of the promotion
+  from      timestamp // Start date of promotion
+  to        timestamp // End date of promotion
+  forever   boolean [default: false] // True if promotion never expires
+  createdAt timestamp
+  updatedAt timestamp
+
+  note: "Represents a promotion which can be applied to product items. Includes time range or 'forever' flag."
+}
+
+Table PromotionContent {
+  id             varchar [pk]
+  promotionId    varchar
+  name           varchar
+  unaccentedName varchar
+  slug           varchar
+  description    varchar
+  language       varchar
+  createdAt      timestamp
+  updatedAt      timestamp
+
+  indexes {
+    (name, language) [unique]
+    (promotionId, language) [unique]
+    (slug, language) [unique]
+    unaccentedName
+  }
+
+  note: "Stores multi-language content for a promotion, including name, slug, and description."
+}
+
+Table ProductItemPromotion {
+  id                   varchar [pk]
+  promotionId          varchar
+  productItemId        varchar
+  type                 varchar // PromotionType: percentage or amount
+  discount             decimal(10,3)
+  priceBeforePromotion decimal(10,3)
+  amountReduced        decimal(10,3)
+  currency             varchar
+  createdAt            timestamp
+  updatedAt            timestamp
+
+  indexes {
+    (promotionId, productItemId, currency) [unique]
+    productItemId
+    promotionId
+  }
+
+  note: "Links promotions to specific product items with discount details and currency."
+}
+
+//////////////////////////////////////////////////////
+// SHOPPING CART MODELS
+//////////////////////////////////////////////////////
+
+Table ShoppingCart {
+  id        varchar [pk] // Primary key of the shopping cart
+  userId    varchar [unique] // Each user can have only one cart
+  createdAt timestamp
+  updatedAt timestamp
+
+  note: "Represents a user's shopping cart containing multiple items."
+}
+
+Table ShoppingCartItem {
+  id             varchar [pk]
+  shoppingCartId varchar
+  productItemId  varchar
+  quantity       int
+  createdAt      timestamp
+  updatedAt      timestamp
+
+  indexes {
+    (shoppingCartId, productItemId) [unique] // Prevent duplicate items in the same cart
+  }
+
+  note: "Represents an individual item in a shopping cart, linking to a product item."
+}
+
+//////////////////////////////////////////////////////
+// USER FAVOURITES MODEL
+//////////////////////////////////////////////////////
+
+Table UserFavourite {
+  id            varchar [pk] // Primary key
+  userId        varchar      // User who favorited the product item
+  productItemId varchar      // Product item that is favorited
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  indexes {
+    (userId, productItemId) [unique] // Prevent the same user from favoriting the same item multiple times
+  }
+
+  note: "Represents a product item favorited by a user."
+}
+
+//////////////////////////////////////////////////////
+// VOUCHER CODE MODELS
+//////////////////////////////////////////////////////
+
+Table VoucherCode {
+  id                             varchar [pk] // Primary key
+  code                           varchar [unique] // Unique voucher code
+  description                    varchar
+  generatedById                  varchar // Optional: who generated the voucher
+  isGeneratedFromPoints          boolean [default: false]
+  appliesToAllProducts           boolean [default: false]
+  unlimitedUsage                 boolean [default: false]
+  maxRedemptions                 int
+  maxUsesPerUser                 int
+  totalVoucherRedemptionsByUsers int [default: 0]
+  allowOnPromotions              boolean [default: false]
+  freeShipping                   boolean [default: false]
+  createdAt                      timestamp
+  updatedAt                      timestamp
+
+  note: "Represents a voucher code, which can be applied to products, categories, or brands."
+}
+
+Table VoucherCodePeriod {
+  id            varchar [pk]
+  voucherCodeId varchar [unique]
+  from          timestamp
+  to            timestamp
+  forever       boolean [default: false]
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  note: "Defines the validity period of a voucher code."
+}
+
+Table VoucherCodeDiscount {
+  id            varchar [pk]
+  type          varchar // VoucherCodeDiscountType: percentage or amount
+  voucherCodeId varchar
+  value         decimal(10,3)
+  currency      varchar [default: 'EUR']
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  indexes {
+    (voucherCodeId, currency) [unique]
+  }
+
+  note: "Represents discount applied to a voucher code, supports multi-currency."
+}
+
+Table VoucherCodeProductItem {
+  id            varchar [pk]
+  productItemId varchar
+  voucherCodeId varchar
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  note: "Links voucher codes to specific product items."
+}
+
+Table VoucherCodeProductItemDiscount {
+  id                       varchar [pk]
+  type                     varchar // VoucherCodeDiscountType
+  voucherCodeProductItemId varchar
+  value                    decimal(10,3)
+  currency                 varchar [default: 'EUR']
+  createdAt                timestamp
+  updatedAt                timestamp
+
+  indexes {
+    (voucherCodeProductItemId, currency) [unique]
+  }
+
+  note: "Discounts for voucher codes applied to specific product items."
+}
+
+Table VoucherCodeBrand {
+  id            varchar [pk]
+  brandId       varchar
+  voucherCodeId varchar
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  note: "Links voucher codes to brands."
+}
+
+Table VoucherCodeBrandDiscount {
+  id                 varchar [pk]
+  type               varchar // VoucherCodeDiscountType
+  voucherCodeBrandId varchar
+  value              decimal(10,3)
+  currency           varchar [default: 'EUR']
+  createdAt          timestamp
+  updatedAt          timestamp
+
+  indexes {
+    (voucherCodeBrandId, currency) [unique]
+  }
+
+  note: "Discounts for voucher codes applied to specific brands."
+}
+
+Table VoucherCodeCategory {
+  id            varchar [pk]
+  categoryId    varchar
+  voucherCodeId varchar
+  createdAt     timestamp
+  updatedAt     timestamp
+
+  note: "Links voucher codes to categories."
+}
+
+Table VoucherCodeCategoryDiscount {
+  id                    varchar [pk]
+  type                  varchar // VoucherCodeDiscountType
+  voucherCodeCategoryId varchar
+  value                 decimal(10,3)
+  currency              varchar [default: 'EUR']
+  createdAt             timestamp
+  updatedAt             timestamp
+
+  indexes {
+    (voucherCodeCategoryId, currency) [unique]
+  }
+
+  note: "Discounts for voucher codes applied to specific categories."
+}
+//////////////////////////////////////////////////////
+// NOTIFICATION MODEL
+//////////////////////////////////////////////////////
+Table Notification {
+  id             varchar [pk]
+  title          varchar  
+  body           varchar
+  userId         varchar
+  createdAt      timestamp
+  updatedAt      timestamp
+
+}
+
+
+//////////////////////////////////////////////////////
+// ENUMS
+//////////////////////////////////////////////////////
+
+
+Enum UserType {
+  Admin
+  Customer
+  SalesProcessor
+  Accountant
+  Editor
+}
+
+Enum CountryChoice {
+  Tunisia
+}
+
+enum Language {
+    English
+    Arabic
+}
+
+enum Currency {
+    LYD
+    USD
+    EUR
+}
+
+Enum OrderStatus {
+  AwaitingApproval
+  Refused
+  Delivered
+  Cancelled
+  Returned
+  Failed
+  Processing
+}
+
+enum PagePaletteName {
+    LandingPage
+}
+
+Enum PromotionType {
+  percentage
+  amount
+}
+
+Enum VoucherCodeDiscountType {
+  percentage
+  amount
+}
+
+//////////////////////////////////////////////////////
+// RELATIONS
+//////////////////////////////////////////////////////
+Ref: UserPoints.userId > User.id
+Ref: Role.userId > User.id
+Ref: RefreshToken.userId > User.id
+Ref: ResetPasswordCode.userId > User.id
+
+Ref: CountryContent.isoCode > Country.isoCode
+Ref: City.isoCode > Country.isoCode
+Ref: CityContent.cityId > City.id
+Ref: Address.cityId > City.id
+Ref: Address.userId > User.id
+Ref: ShippingCost.cityId > City.id
+
+Ref: BrandContent.brandId > Brand.id
+Ref: BrandMetaContent.brandId > Brand.id
+
+Ref: Category.parentCategoryId > Category.id
+Ref: CategoryContent.categoryId > Category.id
+Ref: CategoryMetaContent.categoryId > Category.id
+Ref: ProductOnCategory.categoryId > Category.id
+Ref: ProductOnCategory.productId > Product.id
+
+Ref: ProductContent.productId > Product.id
+Ref: ProductMetaContent.productId > Product.id
+Ref: ProductItem.productId > Product.id
+Ref: ProductItemVariation.productItemId > ProductItem.id
+Ref: ProductItemVariationContent.productItemVariationId > ProductItemVariation.id
+Ref: ProductItemPrice.productItemId > ProductItem.id
+Ref: ProductItemImage.productItemId > ProductItem.id
+Ref: ProductItemInventory.productItemId > ProductItem.id
+Ref: Product.brandId > Brand.id
+
+Ref: Order.addressId > Address.id // Order linked to shipping address
+Ref: OrderItem.orderId > Order.id // Each order item belongs to one order
+Ref: OrderItem.productItemId > ProductItem.id // Each order item links to a product item
+Ref: OrderItemContent.orderItemId > OrderItem.id // Item name translations
+Ref: VoucherCodeUsedInOrder.orderId > Order.id // Voucher used at order level
+Ref: VoucherCodeUsedInOrder.orderItemId > OrderItem.id // Voucher used at item level
+Ref: VoucherCodeDiscountUsedInOrder.voucherCodeId > VoucherCodeUsedInOrder.id // Discount applied by voucher
+Ref: PromotionUsedInOrder.orderItemId > OrderItem.id // Promotion applied to order item
+Ref: PromotionContentUsedInOrder.promotionId > PromotionUsedInOrder.id // Promotion name translations
+Ref: PromotionDiscountUsedInOrder.promotionId > PromotionUsedInOrder.id // Promotion discount applied
+Ref: VoucherCodeUsedInOrder.promotionDiscountUsedInOrderId > PromotionDiscountUsedInOrder.id // Voucher linked to promotion discount
+
+Ref: PagePaletteMetaContent.pagePaletteId > PagePalette.id // Meta content belongs to a palette
+Ref: PagePaletteImage.pagePaletteId > PagePalette.id // Images belong to a palette
+Ref: PagePaletteSection.pagePaletteId > PagePalette.id // Sections belong to a palette
+Ref: PagePaletteSectionContent.pagePaletteSectionId > PagePaletteSection.id // Section content belongs to a section
+
+Ref: PromotionContent.promotionId > Promotion.id // Content belongs to a promotion
+Ref: ProductItemPromotion.promotionId > Promotion.id // Product item linked to promotion
+Ref: ProductItemPromotion.productItemId > ProductItem.id // Product item linked to promotion
+
+Ref: ShoppingCartItem.shoppingCartId > ShoppingCart.id // Items belong to a shopping cart
+Ref: ShoppingCartItem.productItemId > ProductItem.id // Items link to product items
+
+Ref: UserFavourite.userId > User.id // Favourite belongs to a user
+Ref: UserFavourite.productItemId > ProductItem.id // Favourite links to a product item
+
+Ref: VoucherCodePeriod.voucherCodeId > VoucherCode.id
+Ref: VoucherCodeDiscount.voucherCodeId > VoucherCode.id
+Ref: VoucherCodeProductItem.voucherCodeId > VoucherCode.id
+Ref: VoucherCodeProductItem.productItemId > ProductItem.id
+Ref: VoucherCodeProductItemDiscount.voucherCodeProductItemId > VoucherCodeProductItem.id
+Ref: VoucherCodeBrand.voucherCodeId > VoucherCode.id
+Ref: VoucherCodeBrand.brandId > Brand.id
+Ref: VoucherCodeBrandDiscount.voucherCodeBrandId > VoucherCodeBrand.id
+Ref: VoucherCodeCategory.voucherCodeId > VoucherCode.id
+Ref: VoucherCodeCategory.categoryId > Category.id
+Ref: VoucherCodeCategoryDiscount.voucherCodeCategoryId > VoucherCodeCategory.id
+Ref: VoucherCode.generatedById > User.id
+Ref: Notification.userId > User.id
