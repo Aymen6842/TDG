@@ -37,6 +37,8 @@ const uniqueOrderStatuses = fc
         name: nonEmptyString,
         color: fc.constant("#000000"),
         order: fc.constant(order),
+        isSystem: fc.boolean(),
+        allowedTransitions: fc.constant([]),
         createdAt: isoDateString.map((s) => new Date(s)),
         updatedAt: isoDateString.map((s) => new Date(s)),
       }),

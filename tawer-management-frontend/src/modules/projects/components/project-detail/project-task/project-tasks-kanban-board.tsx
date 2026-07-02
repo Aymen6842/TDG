@@ -58,11 +58,34 @@ function findChangedTasks(
   return changes;
 }
 
+// Moves the given tasks back to wherever they sat in `original`, leaving everything else in
+// `current` untouched. Used to undo drops into local-only columns that can't be persisted.
+function revertTaskPositions(
+  current: Record<string, ProjectTaskType[]>,
+  original: Record<string, ProjectTaskType[]>,
+  taskIds: string[],
+): Record<string, ProjectTaskType[]> {
+  const idSet = new Set(taskIds);
+  const next: Record<string, ProjectTaskType[]> = {};
+  for (const [status, tasks] of Object.entries(current)) {
+    next[status] = tasks.filter((t) => !idSet.has(t.id));
+  }
+  for (const [status, tasks] of Object.entries(original)) {
+    const restored = tasks.filter((t) => idSet.has(t.id));
+    if (restored.length > 0) {
+      next[status] = [...(next[status] || []), ...restored];
+    }
+  }
+  return next;
+}
+
 interface Props {
   projectId: string;
   params?: KanbanParams;
   projectType: string;
   columnTitles: Record<string, string>;
+  /** IDs of user-added columns that aren't backed by a real project status yet. */
+  localColumnIds?: string[];
   onTaskClick: (task: ProjectTaskType) => void;
   onDuplicateTask: (task: ProjectTaskType, e: React.MouseEvent) => void;
   onDeleteColumn: (columnId: string) => void;
@@ -74,6 +97,7 @@ export default function ProjectTasksKanbanBoard({
   params,
   projectType,
   columnTitles,
+  localColumnIds = [],
   onTaskClick,
   onDuplicateTask,
   onDeleteColumn,
@@ -106,6 +130,23 @@ export default function ProjectTasksKanbanBoard({
     }
   }, [kanbanBoard]);
 
+  // Local-only columns aren't returned by the kanban API; add any newly-created ones as empty
+  // columns without disturbing tasks already placed in existing columns.
+  React.useEffect(() => {
+    if (localColumnIds.length === 0) return;
+    setLocalColumns((prev) => {
+      let changed = false;
+      const next = { ...prev };
+      for (const id of localColumnIds) {
+        if (!(id in next)) {
+          next[id] = [];
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [localColumnIds]);
+
   const handleAddColumn = () => {
     if (!newColumnTitle.trim()) return;
     onAddColumn(newColumnTitle.trim());
@@ -130,9 +171,27 @@ export default function ProjectTasksKanbanBoard({
     const changes = findChangedTasks(dragStartSnapshotRef.current, nextColumns);
     if (changes.length === 0) return;
 
+    // Local-only columns aren't registered project statuses; block persisting those moves
+    // instead of sending a status the backend can't resolve.
+    const localChanges = changes.filter((change) => localColumnIds.includes(change.status));
+    const persistableChanges = changes.filter((change) => !localColumnIds.includes(change.status));
+
+    if (localChanges.length > 0) {
+      setLocalColumns((prev) =>
+        revertTaskPositions(
+          prev,
+          dragStartSnapshotRef.current,
+          localChanges.map((change) => change.taskId),
+        ),
+      );
+      toast.error(tTasks("kanban.localColumnBlocked"));
+    }
+
+    if (persistableChanges.length === 0) return;
+
     try {
       await Promise.all(
-        changes.map((change) =>
+        persistableChanges.map((change) =>
           moveTaskInKanban(projectId, {
             taskId: change.taskId,
             status: change.status,
