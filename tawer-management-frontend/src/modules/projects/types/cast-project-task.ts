@@ -2,9 +2,19 @@ import {
   ProjectTaskInResponseType,
   ProjectTaskType,
   ProjectTaskComment,
+  TaskLabelAssignmentInResponse,
 } from "@/modules/projects/types/project-tasks";
 import { castLabelToFrontend } from "@/modules/projects/types/cast-project-label";
 import { resolveAttachmentUrl } from "@/modules/projects/utils/resolve-attachment-url";
+
+// The list endpoint currently serializes labels nested as `{ label: { id, name, color } }`
+// instead of the flat shape the type declares; normalize both so chips never render undefined.
+function normalizeTaskLabel(
+  raw: TaskLabelAssignmentInResponse | { label?: TaskLabelAssignmentInResponse },
+): TaskLabelAssignmentInResponse | undefined {
+  const flat = "label" in raw && raw.label ? raw.label : (raw as TaskLabelAssignmentInResponse);
+  return flat?.id ? flat : undefined;
+}
 
 export function castProjectTaskToFrontend(raw: ProjectTaskInResponseType): ProjectTaskType {
   const comments: ProjectTaskComment[] = (raw.comments || []).map((c) => ({
@@ -63,14 +73,17 @@ export function castProjectTaskToFrontend(raw: ProjectTaskInResponseType): Proje
     subtasksCount: raw.subtasksCount,
     completedSubtasksCount: raw.completedSubtasksCount,
     labels: raw.labels
-      ? raw.labels.map((l) => ({
-          id: l.id,
-          projectId: "",
-          name: l.name,
-          color: l.color,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        }))
+      ? raw.labels
+          .map(normalizeTaskLabel)
+          .filter((l): l is TaskLabelAssignmentInResponse => l !== undefined)
+          .map((l) => ({
+            id: l.id,
+            projectId: "",
+            name: l.name,
+            color: l.color,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          }))
       : undefined,
     taskDependenciesAsBlocked: raw.taskDependenciesAsBlocked
       ? raw.taskDependenciesAsBlocked.map((d) => ({

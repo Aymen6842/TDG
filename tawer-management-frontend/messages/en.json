@@ -1386,7 +1386,8 @@
           "noStatus": "No Status",
           "noTasks": "No tasks in this column",
           "cancel": "Cancel",
-          "confirm": "Confirm"
+          "confirm": "Confirm",
+          "localColumnBlocked": "Custom columns are local-only for now, so this move can't be saved."
         }
       },
       "project": {

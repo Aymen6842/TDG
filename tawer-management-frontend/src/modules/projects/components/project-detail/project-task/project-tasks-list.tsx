@@ -201,6 +201,7 @@ export default function ProjectTasksList({ project }: Props) {
                 projectId={project.id}
                 projectType={project.projectType}
                 columnTitles={columnTitles}
+                localColumnIds={customColumns}
                 onTaskClick={handleOpenDetailSheet}
                 onDuplicateTask={handleDuplicateTask}
                 onDeleteColumn={handleDeleteColumn}

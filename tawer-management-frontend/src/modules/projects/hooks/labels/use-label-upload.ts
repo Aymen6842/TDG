@@ -91,6 +91,7 @@ export default function useLabelUpload({ projectId, label, onSuccess }: Params) 
     try {
       await assignLabelToTask(projectId, taskId, labelId);
       queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["project-task", projectId, taskId] });
     } catch (err: any) {
       const msg =
         err?.response?.data?.message || err?.message || "An error occurred.";
@@ -107,6 +108,7 @@ export default function useLabelUpload({ projectId, label, onSuccess }: Params) 
     try {
       await removeLabelFromTask(projectId, taskId, labelId);
       queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
+      queryClient.invalidateQueries({ queryKey: ["project-task", projectId, taskId] });
     } catch (err: any) {
       const msg =
         err?.response?.data?.message || err?.message || "An error occurred.";
