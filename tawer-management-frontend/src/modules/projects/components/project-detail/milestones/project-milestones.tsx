@@ -23,27 +23,71 @@ interface Props {
 function GanttView({ projectId }: { projectId: string }) {
   const { ganttData, ganttIsLoading } = useGanttData(projectId);
   if (ganttIsLoading) return <Loading />;
-  if (!ganttData || ganttData.milestones.length === 0) return <EmptyState message="No milestones to display on Gantt." />;
+
+  const isEmpty =
+    !ganttData ||
+    (ganttData.milestones.length === 0 &&
+      ganttData.epics.length === 0 &&
+      ganttData.sprints.length === 0 &&
+      ganttData.tasks.length === 0);
+  if (isEmpty) return <EmptyState message="No milestones, epics, or sprints to display on Gantt." />;
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto space-y-6">
       <div className="min-w-[500px] space-y-2">
-        {ganttData.milestones.map((m) => (
-          <div key={m.id} className="flex items-center gap-3 rounded-md border px-4 py-2.5">
-            {m.completedAt
-              ? <CheckCircle2 className="size-4 text-green-500 flex-shrink-0" />
-              : <Circle className="size-4 text-muted-foreground flex-shrink-0" />}
-            <span className="text-sm font-medium flex-1 truncate">{m.name}</span>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground">
-              <CalendarClock className="size-3" />
-              {m.dueDate ? format(new Date(m.dueDate), "MMM d, yyyy") : "No due date"}
+        <h4 className="text-sm font-semibold text-muted-foreground">Milestones</h4>
+        {ganttData.milestones.length === 0 ? (
+          <p className="text-xs text-muted-foreground">No milestones.</p>
+        ) : (
+          ganttData.milestones.map((m) => (
+            <div key={m.id} className="flex items-center gap-3 rounded-md border px-4 py-2.5">
+              {m.completedAt
+                ? <CheckCircle2 className="size-4 text-green-500 flex-shrink-0" />
+                : <Circle className="size-4 text-muted-foreground flex-shrink-0" />}
+              <span className="text-sm font-medium flex-1 truncate">{m.name}</span>
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <CalendarClock className="size-3" />
+                {m.dueDate ? format(m.dueDate, "MMM d, yyyy") : "No due date"}
+              </div>
+              <Badge variant="outline" className="text-xs">{m.status}</Badge>
             </div>
-            {m.completedAt && (
-              <Badge variant="outline" className="text-xs text-green-600 border-green-300">Completed</Badge>
-            )}
-          </div>
-        ))}
+          ))
+        )}
       </div>
+
+      {ganttData.epics.length > 0 && (
+        <div className="min-w-[500px] space-y-2">
+          <h4 className="text-sm font-semibold text-muted-foreground">Epics</h4>
+          {ganttData.epics.map((e) => (
+            <div key={e.id} className="flex items-center gap-3 rounded-md border px-4 py-2 text-sm">
+              <span className="flex-1 truncate">{e.name}</span>
+              <span className="text-xs text-muted-foreground flex-shrink-0">
+                {e.startDate ? format(e.startDate, "MMM d") : "?"} – {e.endDate ? format(e.endDate, "MMM d, yyyy") : "?"}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {ganttData.sprints.length > 0 && (
+        <div className="min-w-[500px] space-y-2">
+          <h4 className="text-sm font-semibold text-muted-foreground">Sprints</h4>
+          {ganttData.sprints.map((s) => (
+            <div key={s.id} className="flex items-center gap-3 rounded-md border px-4 py-2 text-sm">
+              <Badge variant="outline" className="text-xs flex-shrink-0">{s.status}</Badge>
+              <span className="text-xs text-muted-foreground flex-1 text-right">
+                {s.startDate ? format(s.startDate, "MMM d") : "?"} – {s.endDate ? format(s.endDate, "MMM d, yyyy") : "?"}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {ganttData.tasks.length > 0 && (
+        <p className="text-xs text-muted-foreground">
+          {ganttData.tasks.length} task{ganttData.tasks.length === 1 ? "" : "s"} in scope for this timeline.
+        </p>
+      )}
     </div>
   );
 }

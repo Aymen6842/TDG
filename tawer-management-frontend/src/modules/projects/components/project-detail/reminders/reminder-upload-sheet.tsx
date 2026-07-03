@@ -10,6 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ErrorBanner } from "@/components/error-banner";
 import { ReminderType, ChannelType } from "@/modules/reminders/types/reminders";
 import useReminderUpload from "@/modules/reminders/hooks/use-reminder-upload";
+import ReminderEntityPicker from "./reminder-entity-picker";
+import ReminderEntityLabel from "./reminder-entity-label";
 
 const CHANNELS: ChannelType[] = ["EMAIL", "TELEGRAM", "PUSH", "NTFY"];
 
@@ -61,6 +63,23 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
               </FormItem>
             )} />
 
+            {isEdit && reminder?.entityType && (
+              <div className="grid grid-cols-2 gap-3">
+                <FormItem>
+                  <FormLabel>Entity Type</FormLabel>
+                  <p className="text-sm text-muted-foreground mt-2">{reminder.entityType}</p>
+                </FormItem>
+                {reminder.entityType !== "CUSTOM" && reminder.entityType !== "PROJECT" && (
+                  <FormItem>
+                    <FormLabel>Linked {reminder.entityType.charAt(0) + reminder.entityType.slice(1).toLowerCase()}</FormLabel>
+                    <p className="text-sm text-muted-foreground mt-2 truncate">
+                      <ReminderEntityLabel projectId={projectId} entityType={reminder.entityType} entityId={reminder.entityId} />
+                    </p>
+                  </FormItem>
+                )}
+              </div>
+            )}
+
             {!isEdit && (
               <>
                 <FormField control={form.control} name="channels" render={({ field }) => (
@@ -88,7 +107,13 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
                   <FormField control={form.control} name="entityType" render={({ field }) => (
                     <FormItem>
                       <FormLabel>Entity Type</FormLabel>
-                      <Select value={field.value ?? "CUSTOM"} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value ?? "CUSTOM"}
+                        onValueChange={(val) => {
+                          field.onChange(val);
+                          form.setValue("entityId", "");
+                        }}
+                      >
                         <FormControl>
                           <SelectTrigger><SelectValue placeholder="Custom" /></SelectTrigger>
                         </FormControl>
@@ -104,13 +129,32 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
                     </FormItem>
                   )} />
 
-                  <FormField control={form.control} name="entityId" render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Entity ID</FormLabel>
-                      <FormControl><Input placeholder="Optional" {...field} /></FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )} />
+                  <FormField control={form.control} name="entityId" render={({ field }) => {
+                    const entityType = form.watch("entityType") ?? "CUSTOM";
+                    if (entityType === "CUSTOM" || entityType === "PROJECT") {
+                      return (
+                        <FormItem>
+                          <FormLabel>Entity ID</FormLabel>
+                          <FormControl><Input placeholder="Optional" {...field} /></FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }
+                    return (
+                      <FormItem>
+                        <FormLabel>Linked {entityType.charAt(0) + entityType.slice(1).toLowerCase()}</FormLabel>
+                        <FormControl>
+                          <ReminderEntityPicker
+                            projectId={projectId}
+                            entityType={entityType}
+                            value={field.value}
+                            onChange={(id) => field.onChange(id ?? "")}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }} />
                 </div>
               </>
             )}
