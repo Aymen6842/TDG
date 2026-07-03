@@ -20,6 +20,7 @@ import { EnumProjectTaskPriority, EnumProjectTaskType } from "@/modules/projects
 import { projectTaskPriorityDotColors, projectTaskTypeDotColors } from "../../../utils/badges/project-task-badges";
 import { ProjectType } from "../../../types/projects";
 import { useProjectTasksStore } from "@/modules/projects/store/project-tasks";
+import useTaskStatuses from "@/modules/projects/hooks/task-statuses/use-task-statuses";
 import { FilterPanel } from "../../shared/filter-panel";
 import { FilterSection } from "../../shared/filter-section";
 import { DotBadgeToggle } from "../../shared/dot-badge-option";
@@ -54,6 +55,7 @@ export default function ProjectTasksToolbar({
 }: Props) {
   const tTasks = useTranslations("modules.projects.tasks");
   const { viewMode, setViewMode, visibleAttributes, toggleAttribute } = useProjectTasksStore();
+  const { taskStatuses } = useTaskStatuses(project.id);
 
   const hasActiveFilters = !!(priority || type || assigneeId || milestoneId || epicId);
 
@@ -137,13 +139,11 @@ export default function ProjectTasksToolbar({
       <Tabs defaultValue={status || "all"} onValueChange={(val) => setStatus(val === "all" ? undefined : val)} value={status || "all"}>
         <TabsList>
           <TabsTrigger value="all">{tTasks("upload.form.labels.allTasks")}</TabsTrigger>
-          {(project.projectType === "AGILE"
-            ? ["BACKLOG", "TODO", "IN_PROGRESS", "TESTING", "IN_REVIEW", "DONE"]
-            : ["BACKLOG", "TODO", "IN_PROGRESS", "DONE"]).map(s => (
-              <TabsTrigger key={s} value={s} className="capitalize">
-                {s.toLowerCase().replace("_", " ")}
-              </TabsTrigger>
-            ))}
+          {taskStatuses.map((s) => (
+            <TabsTrigger key={s.id} value={s.name} className="capitalize">
+              {s.name.toLowerCase().replace(/_/g, " ")}
+            </TabsTrigger>
+          ))}
         </TabsList>
       </Tabs>
 

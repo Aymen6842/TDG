@@ -67,6 +67,29 @@ export class TasksService {
     return this.taskStatusesRepository.findAllByProject({ projectId });
   }
 
+  /**
+   * Load a project's statuses, lazily seeding the system defaults if none
+   * exist yet. Project creation does not seed statuses, so this guarantees any
+   * read path (status list, kanban) sees the same seeded statuses the transition
+   * validator relies on — the frontend can then derive legal transitions purely
+   * from `allowedTransitions` without duplicating the enum fallback maps.
+   */
+  private async loadProjectStatusesEnsured(
+    projectId: string,
+    projectType?: ProjectType,
+  ): Promise<ProjectTaskStatusRecord[]> {
+    let statuses = await this.loadProjectStatuses(projectId);
+    if (statuses.length === 0) {
+      const type = projectType ?? (await this.getProjectType(projectId));
+      await this.taskStatusesRepository.seedDefaultsForProject({
+        projectId,
+        projectType: type,
+      });
+      statuses = await this.loadProjectStatuses(projectId);
+    }
+    return statuses;
+  }
+
   private async getDefaultStatusForProject(projectId: string): Promise<string> {
     const statuses = await this.loadProjectStatuses(projectId);
     const defaultStatus = statuses.find((s) => s.isDefault);
@@ -155,7 +178,7 @@ export class TasksService {
       throw error;
     }
 
-    const statuses = await this.loadProjectStatuses(projectId);
+    const statuses = await this.loadProjectStatusesEnsured(projectId);
 
     return statuses.map((status) => ({
       id: status.id,
@@ -2007,17 +2030,11 @@ export class TasksService {
       return { swimlanes, wipLimits: project.kanbanSettings || null };
     }
 
-    // Load project statuses for dynamic grouping
-    let projectStatuses = await this.loadProjectStatuses(projectId);
-
-    // If no custom statuses exist, seed defaults based on project type
-    if (projectStatuses.length === 0) {
-      await this.taskStatusesRepository.seedDefaultsForProject({
-        projectId,
-        projectType: project.projectType,
-      });
-      projectStatuses = await this.loadProjectStatuses(projectId);
-    }
+    // Load project statuses for dynamic grouping (seeding defaults if none yet)
+    const projectStatuses = await this.loadProjectStatusesEnsured(
+      projectId,
+      project.projectType,
+    );
 
     // Group tasks by status using project statuses
     const kanban = this.groupTasksByStatusDynamic(

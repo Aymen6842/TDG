@@ -29,14 +29,13 @@ import TaskStatusStepper from "./task-status-stepper";
 
 interface Props {
   projectId: string;
-  isAgile: boolean;
   isOpen: boolean;
   onClose: () => void;
   task: ProjectTaskType | null;
   onEditClick: () => void;
 }
 
-export function ProjectTaskDetailSheet({ projectId, isAgile, isOpen, onClose, task, onEditClick }: Props) {
+export function ProjectTaskDetailSheet({ projectId, isOpen, onClose, task, onEditClick }: Props) {
   const t = useTranslations("modules.projects.project.taskAttributes");
   const queryClient = useQueryClient();
   const [isDeleteTaskOpen, setIsDeleteTaskOpen] = React.useState(false);
@@ -97,7 +96,6 @@ export function ProjectTaskDetailSheet({ projectId, isAgile, isOpen, onClose, ta
                   projectId={projectId}
                   taskId={displayTask.id}
                   currentStatus={displayTask.status}
-                  isAgile={isAgile}
                 />
               )}
               {displayTask.priority && <Badge className={projectTaskPriorityClasses[displayTask.priority.toUpperCase()]}>{displayTask.priority}</Badge>}
