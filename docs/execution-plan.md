@@ -270,6 +270,21 @@ Frontend-first per constraint; backend items are called out with justification.
   being re-confirmed as a side note forever.
 - Acceptance: wrap bounds with `Math.fround(...)` (or equivalent) so the suite runs; all other suites unaffected.
 
+**6.5 — Repo-wide `hsl(var(--primary))` invalid-color bug**
+- Files found so far: `tawer-management-frontend/src/components/ui/sidebar.tsx`,
+  `tawer-management-frontend/src/components/ui/custom/minimal-tiptap/components/section/three.tsx` (not fixed —
+  out of scope for this pass)
+- Layer: Frontend · Effort: S · Risk: Low
+- Why separate: `globals.css` defines `--primary` (and sibling theme tokens) as a full `oklch(...)` value, not raw
+  `H S% L%` components, so wrapping it in `hsl(var(--primary))` produces an invalid CSS color. The browser silently
+  falls back to the SVG/CSS default (black for `fill`, `none` for `stroke`), so anything using this pattern renders
+  wrong or invisible with no console error. Found and fixed in `analytics/burndown-chart.tsx` and
+  `analytics/velocity-chart.tsx` (see the commit fixing those) during Phase 4 populated-state verification; the same
+  pattern still exists in the two files above and possibly elsewhere — worth a full `grep -r "hsl(var(--"` sweep and
+  fix (`hsl(var(--x))` → `var(--x)`, or equivalent) in one pass rather than fixing it piecemeal per feature.
+- Acceptance: no remaining `hsl(var(--...))`-wrapped theme token usages; affected UI elements render in the correct
+  theme color.
+
 ---
 
 ## Open questions & assumptions

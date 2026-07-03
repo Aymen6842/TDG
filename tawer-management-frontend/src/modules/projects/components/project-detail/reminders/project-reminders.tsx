@@ -14,6 +14,7 @@ import { ReminderType } from "@/modules/reminders/types/reminders";
 import useReminders from "@/modules/reminders/hooks/use-reminders";
 import useReminderUpload from "@/modules/reminders/hooks/use-reminder-upload";
 import ReminderUploadSheet from "./reminder-upload-sheet";
+import ReminderEntityLabel from "./reminder-entity-label";
 
 const CHANNEL_COLORS: Record<string, string> = {
   EMAIL: "bg-blue-100 text-blue-700",
@@ -86,7 +87,19 @@ export default function ProjectReminders({ project }: Props) {
                       <span key={ch.id ?? ch.channel} className={`inline-block rounded px-1.5 py-0.5 text-xs font-medium ${CHANNEL_COLORS[ch.channel] ?? "bg-muted text-muted-foreground"}`}>{ch.channel}</span>
                     ))}
                     {reminder.entityType && reminder.entityType !== "CUSTOM" && (
-                      <Badge variant="outline" className="text-xs">{reminder.entityType}</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {reminder.entityType}
+                        {reminder.entityId && (
+                          <>
+                            {": "}
+                            <ReminderEntityLabel
+                              projectId={project.id}
+                              entityType={reminder.entityType}
+                              entityId={reminder.entityId}
+                            />
+                          </>
+                        )}
+                      </Badge>
                     )}
                     {reminder.status && (
                       <Badge variant="secondary" className="text-xs">{reminder.status}</Badge>

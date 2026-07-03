@@ -23,6 +23,16 @@ export default function BurndownChart({ sprintId }: Props) {
     return <Skeleton className="h-[300px] w-full rounded-md" />;
   }
 
+  if (burndownData.length === 0) {
+    return (
+      <div className="h-[300px] w-full flex items-center justify-center rounded-md border border-dashed">
+        <p className="text-sm text-muted-foreground text-center px-6">
+          Add sprint start/end dates to see burndown
+        </p>
+      </div>
+    );
+  }
+
   return (
     <ResponsiveContainer width="100%" height={300}>
       <LineChart data={burndownData}>
@@ -33,7 +43,7 @@ export default function BurndownChart({ sprintId }: Props) {
         <Line
           type="monotone"
           dataKey="remainingPoints"
-          stroke="hsl(var(--primary))"
+          stroke="var(--primary)"
           strokeWidth={2}
           dot={false}
         />

@@ -6,10 +6,11 @@ import {
   MilestoneType,
   MilestoneInResponseType,
   GanttType,
+  GanttInResponseType,
   CreateMilestonePayload,
   UpdateMilestonePayload,
 } from "@/modules/projects/types/project-milestones";
-import { castMilestoneToFrontend } from "@/modules/projects/types/cast-project-milestone";
+import { castMilestoneToFrontend, castGanttDataToFrontend } from "@/modules/projects/types/cast-project-milestone";
 
 export type MilestonesListResult = {
   data: MilestoneType[];
@@ -179,7 +180,8 @@ export async function retrieveGanttData(
       `/projects/${projectId}/gantt`,
       headers
     );
-    return (res.data?.data ?? res.data) as GanttType;
+    const raw = (res.data?.data ?? res.data) as GanttInResponseType;
+    return castGanttDataToFrontend(raw);
   } catch (error: any) {
     if (error?.response?.status === 401) {
       return await refreshToken(() => retrieveGanttData(projectId));
