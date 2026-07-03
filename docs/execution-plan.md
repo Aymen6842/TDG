@@ -261,6 +261,17 @@ Frontend-first per constraint; backend items are called out with justification.
   transitions persist and the 5.1 acceptance bar holds for custom-status projects too.
 - Acceptance: transitioning a task to a project-defined custom status persists (200) and the status round-trips
   through list/kanban/detail; deleting an unused custom status succeeds.
+- **Status: DONE.** `Task.status` migrated from the `TaskStatus` enum → `String @default("TODO")` (migration
+  `20260703000000_task_status_to_string`: `DROP DEFAULT` → `SET DATA TYPE TEXT USING "status"::text` → re-add
+  default → `DROP TYPE "TaskStatus"`). Existing data preserved byte-for-byte (verified before/after against the
+  live dev DB: 18 tasks, identical distribution and per-row values; `::text` casts each enum label to the same
+  string). Backend cleanup: dropped the `TaskStatus` import, deleted two now-dead enum-typed methods
+  (`isValidStatusTransition`, `updateTaskStatus(TaskStatus)`), removed the `as any` on `countTasksUsingStatus`.
+  All request/response DTOs were already `status: string`; frontend already open-string since 5.1. Verified via
+  the exact Prisma ops that previously 500'd: custom-status write + round-trip, count, list-filter, and delete of
+  an unused custom status all succeed. **Two pre-existing (not migration-caused) cosmetic gaps deferred:** custom
+  statuses render uncolored in `project-task-item.tsx` (badge map keyed to system names only) and are dropped from
+  the assignee-swimlane kanban view (`groupTasksByAssignee` hardcodes columns by project type).
 
 ### Phase 6 — Hardening (OPTIONAL — separate approval, not bugs today)
 
