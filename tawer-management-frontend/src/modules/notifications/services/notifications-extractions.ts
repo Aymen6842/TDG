@@ -5,7 +5,6 @@ import extractJWTokens from "@/modules/auth/utils/jwt/extract-tokens";
 import { refreshToken } from "@/modules/auth/services/refresh-token";
 import { NotificationInResponseType } from "@/modules/notifications/types";
 import { castToNotificationType } from "@/modules/notifications/utils/type-casting/notifications";
-import { USE_MOCK } from "@/lib/mock-config"; // REMOVE THIS LINE FOR PROD
 
 interface Params {
   page: number;
@@ -14,8 +13,6 @@ interface Params {
 }
 
 export default async function retreiveNotifications(params: Params) {
-  if (USE_MOCK()) return null; // REMOVE THIS LINE FOR PROD
-
   const { access } = extractJWTokens();
   const headers = {
     Authorization: `Bearer ${access}`

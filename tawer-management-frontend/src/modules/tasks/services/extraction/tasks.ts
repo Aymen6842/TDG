@@ -6,8 +6,6 @@ import extractJWTokens from "@/modules/auth/utils/jwt/extract-tokens";
 import { refreshToken } from "@/modules/auth/services/refresh-token";
 import { TaskInResponseType } from "../../types/tasks";
 import { castToTaskType } from "../../utils/type-casting/task";
-import { USE_MOCK } from "@/lib/mock-config";
-import mockTasks from "../../../../../mock_data/personal-tasks.json";
 
 interface Params {
   archived?: boolean;
@@ -18,8 +16,6 @@ interface Params {
 }
 
 export default async function retrieveTasks(params: Params) {
-  if (USE_MOCK()) return (mockTasks as TaskInResponseType[]).map(castToTaskType);
-
   const { access } = extractJWTokens();
   const headers = {
     Authorization: `Bearer ${access}`

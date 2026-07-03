@@ -4,20 +4,12 @@ import extractJWTokens from "@/modules/auth/utils/jwt/extract-tokens";
 import { refreshToken } from "@/modules/auth/services/refresh-token";
 import { castToTaskDetailsType } from "../../utils/type-casting/tasks";
 import { TaskDetailsInResponseType } from "../../types/tasks";
-import { USE_MOCK } from "@/lib/mock-config";
-import mockTasks from "../../../../../mock_data/personal-tasks.json";
-
 
 interface Params {
   id: string;
 }
 
 export default async function retrieveTaskFromServerSide({ id }: Params) {
-  if (USE_MOCK()) {
-    const found = (mockTasks as TaskDetailsInResponseType[]).find(t => t.id === id);
-    return found ? castToTaskDetailsType(found) : null;
-  }
-
   const { access } = extractJWTokens();
 
   const headers = {

@@ -3,11 +3,6 @@ import extractJWTokens from "@/modules/auth/utils/jwt/extract-tokens";
 import { refreshToken } from "@/modules/auth/services/refresh-token";
 import { ProjectTaskType, ProjectTaskInResponseType } from "@/modules/projects/types/project-tasks";
 import { castProjectTaskToFrontend } from "@/modules/projects/types/cast-project-task";
-import { USE_MOCK } from "@/lib/mock-config";
-import mockData from "../../mock_data/mock.json";
-
-// In mock mode the current user is "mock-user-id" (matches mock.json assigneeId values)
-const MOCK_ASSIGNEE_ID = "mock-user-id";
 
 export interface AssignedProjectTasksParams {
   search?: string;
@@ -16,30 +11,9 @@ export interface AssignedProjectTasksParams {
   type?: string;
 }
 
-function mockRetrieveAssignedProjectTasks(params: AssignedProjectTasksParams): ProjectTaskType[] {
-  let tasks: ProjectTaskInResponseType[] = [];
-
-  for (const project of mockData.projects) {
-    const projectTasks = (project.tasks as unknown as ProjectTaskInResponseType[]) ?? [];
-    tasks = tasks.concat(projectTasks.filter((t) => t.assigneeId === MOCK_ASSIGNEE_ID));
-  }
-
-  if (params.status)   tasks = tasks.filter((t) => t.status === params.status);
-  if (params.priority) tasks = tasks.filter((t) => t.priority === params.priority);
-  if (params.type)     tasks = tasks.filter((t) => t.type === params.type);
-  if (params.search) {
-    const q = params.search.toLowerCase();
-    tasks = tasks.filter((t) => t.title.toLowerCase().includes(q) || t.key.toLowerCase().includes(q));
-  }
-
-  return tasks.map(castProjectTaskToFrontend);
-}
-
 export default async function retrieveAssignedProjectTasks(
   params: AssignedProjectTasksParams
 ): Promise<ProjectTaskType[]> {
-  if (USE_MOCK()) return mockRetrieveAssignedProjectTasks(params);
-
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
 
