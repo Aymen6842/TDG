@@ -43,7 +43,7 @@ export default function BurndownChart({ sprintId }: Props) {
         <Line
           type="monotone"
           dataKey="remainingPoints"
-          stroke="hsl(var(--primary))"
+          stroke="var(--primary)"
           strokeWidth={2}
           dot={false}
         />

@@ -39,7 +39,7 @@ export default function VelocityChart({ projectId }: Props) {
         <XAxis dataKey="sprintName" tick={{ fontSize: 12 }} />
         <YAxis tick={{ fontSize: 12 }} />
         <Tooltip />
-        <Bar dataKey="completedPoints" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="completedPoints" fill="var(--primary)" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
