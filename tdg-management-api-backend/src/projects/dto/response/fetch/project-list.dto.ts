@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { ProjectSummaryDto } from './project-summary.dto';
 
 export class ProjectListDto {
@@ -24,6 +25,7 @@ export class ProjectListDto {
       },
     ],
   })
+  @Type(() => ProjectSummaryDto)
   data!: ProjectSummaryDto[];
 
   @ApiProperty({

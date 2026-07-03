@@ -25,6 +25,8 @@ interface Params {
   deletedAttachments?: string;
 }
 
+const UUID_FIELDS = ["assigneeId", "epicId", "sprintId", "milestoneId", "parentTaskId"] as const;
+
 export default async function uploadProjectTask({ task, id, projectId, attachments, deletedAttachments }: Params) {
   const { access } = extractJWTokens();
   const headers = { Authorization: `Bearer ${access}` };
@@ -32,7 +34,9 @@ export default async function uploadProjectTask({ task, id, projectId, attachmen
   if (attachments && attachments.length > 0) {
     const formData = new FormData();
     Object.entries(task).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) formData.append(key, String(value));
+      if (value === undefined || value === null) return;
+      if (value === "" && (UUID_FIELDS as readonly string[]).includes(key)) return;
+      formData.append(key, String(value));
     });
     attachments.forEach((file) => formData.append("attachments", file));
     if (deletedAttachments) formData.append("deletedAttachments", deletedAttachments);
