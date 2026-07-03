@@ -179,7 +179,6 @@ export default function AssignedProjectTasks() {
         isOpen={isDetailOpen && !isEditOpen}
         onClose={handleCloseDetail}
         task={selectedTask}
-        isAgile={true}
         onEditClick={() => setIsEditOpen(true)}
       />
 

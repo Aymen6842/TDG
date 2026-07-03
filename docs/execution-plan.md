@@ -236,6 +236,31 @@ Frontend-first per constraint; backend items are called out with justification.
 - Acceptance: the stepper offers exactly the transitions the backend will accept for a given project; no
   hardcoded transition map remains in the frontend; a legal move never shows as disabled and an offered move
   never returns P8002.
+- **Status: DONE.** Backend `getTaskStatuses` + `findKanban` now share `loadProjectStatusesEnsured` (seed-on-read,
+  so the statuses endpoint never returns `[]`); stepper drives off `allowedTransitions` only; toolbar filter tabs
+  derive from `useTaskStatuses`; dead `isAgile` prop removed. Verified with real clicks against the live backend:
+  AGILE and FREESTYLE offer exactly the backend's `allowedTransitions` and each transition PATCHes 200. **Custom
+  statuses surfaced a separate pre-existing bug — see 5.2.**
+
+**5.2 — Custom task statuses cannot be persisted (`Task.status` is an enum) — NEW, HOLDS**
+- Files: `tdg-management-api-backend/prisma/schema/agile.schema.prisma` (`Task.status TaskStatus`, enum at
+  `:325`), `…/tasks/repositories/update-task.repository.ts:30` (writes raw string into the enum),
+  `…/task-statuses.repository.ts:142` (`countTasksUsingStatus` queries the enum column with a custom value)
+- Layer: Backend · Effort: M–L · Risk: **High** (schema migration + all enum-typed status code)
+- The bug: `isValidStatusTransitionDynamic` declares a transition to a **custom** (non-system) status legal (custom
+  target reachable from any source), but `Task.status` is a Prisma `enum TaskStatus` limited to the 6 system values.
+  Writing a custom name (e.g. `READY_FOR_QA`) → Prisma rejects → **500**. The same enum gap breaks
+  `countTasksUsingStatus`, so a custom status also cannot be deleted via the API. There is **no** separate
+  `statusName`/dynamic column on `Task` — the dynamic-status feature (ProjectTaskStatus + `allowedTransitions` +
+  `isSystem`) was added and the validator supports it, but `Task.status` was never migrated to hold custom values.
+- Discovered during 5.1 verification; **not introduced by 5.1** — the prior stepper had the same custom-status
+  branch and would 500 identically. 5.1 faithfully mirrors the backend validator; the divergence is a backend
+  self-inconsistency between validation and persistence.
+- Fix direction (needs its own approval): migrate `Task.status` enum → `String` and update the enum-typed status
+  code paths (update/count/kanban grouping), so the validator and persistence agree; then custom-status
+  transitions persist and the 5.1 acceptance bar holds for custom-status projects too.
+- Acceptance: transitioning a task to a project-defined custom status persists (200) and the status round-trips
+  through list/kanban/detail; deleting an unused custom status succeeds.
 
 ### Phase 6 — Hardening (OPTIONAL — separate approval, not bugs today)
 

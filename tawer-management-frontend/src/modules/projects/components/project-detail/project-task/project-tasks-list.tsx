@@ -282,7 +282,6 @@ export default function ProjectTasksList({ project }: Props) {
             task={selectedTask}
             onEditClick={() => handleOpenUploadSheet(selectedTask as ProjectTaskType)}
             projectId={project.id}
-            isAgile={project.projectType === "AGILE"}
           />
         </>
       )}

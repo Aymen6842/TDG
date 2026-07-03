@@ -14,28 +14,6 @@ import uploadProjectTask from "@/modules/projects/services/api/project-task-uplo
 import useTaskStatuses from "@/modules/projects/hooks/task-statuses/use-task-statuses";
 import { projectTaskStatusClasses } from "@/modules/projects/utils/badges/project-task-badges";
 
-// ─── Enum-based transition map (mirrors backend logic) ──────────────────────
-
-const AGILE_TRANSITIONS: Record<string, string[]> = {
-  BACKLOG: ["TODO"],
-  TODO: ["BACKLOG", "IN_PROGRESS"],
-  IN_PROGRESS: ["TODO", "IN_REVIEW"],
-  IN_REVIEW: ["IN_PROGRESS", "TESTING"],
-  TESTING: ["IN_REVIEW", "DONE"],
-  DONE: ["TESTING"],
-};
-
-const FREESTYLE_TRANSITIONS: Record<string, string[]> = {
-  TODO: ["IN_PROGRESS"],
-  IN_PROGRESS: ["TODO", "DONE"],
-  DONE: ["IN_PROGRESS"],
-};
-
-function getNextStatuses(current: string, isAgile: boolean): string[] {
-  const map = isAgile ? AGILE_TRANSITIONS : FREESTYLE_TRANSITIONS;
-  return map[current?.toUpperCase()] ?? [];
-}
-
 function formatLabel(status: string) {
   return status.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, (c) => c.toUpperCase());
 }
@@ -46,30 +24,25 @@ interface Props {
   projectId: string;
   taskId: string;
   currentStatus: string;
-  isAgile: boolean;
 }
 
-export default function TaskStatusStepper({ projectId, taskId, currentStatus, isAgile }: Props) {
+export default function TaskStatusStepper({ projectId, taskId, currentStatus }: Props) {
   const queryClient = useQueryClient();
   const [isPending, setIsPending] = React.useState(false);
   const { taskStatuses } = useTaskStatuses(projectId);
 
-  // If project has custom statuses, use them and respect allowedTransitions
-  const hasCustomStatuses = taskStatuses.length > 0;
+  // Legal transitions are derived entirely from the project's statuses as the
+  // backend reports them. This mirrors backend `isValidStatusTransitionDynamic`:
+  // a custom (non-system) target is always reachable; a system target is only
+  // reachable when it appears in the current status's `allowedTransitions`.
   const currentStatusRecord = taskStatuses.find((s) => s.name === currentStatus);
 
-  let nextStatuses: string[] = [];
-
-  if (hasCustomStatuses) {
-    if (currentStatusRecord) {
-      nextStatuses = taskStatuses
+  const nextStatuses: string[] = currentStatusRecord
+    ? taskStatuses
         .filter((s) => s.name !== currentStatus)
         .filter((s) => !s.isSystem || (currentStatusRecord.allowedTransitions?.includes(s.name) ?? false))
-        .map((s) => s.name);
-    }
-  } else {
-    nextStatuses = getNextStatuses(currentStatus, isAgile);
-  }
+        .map((s) => s.name)
+    : [];
 
   async function handleTransition(newStatus: string) {
     setIsPending(true);
