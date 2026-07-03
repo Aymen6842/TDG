@@ -10,10 +10,20 @@ import {
   BusinessUnit,
   ProjectStatus,
   ProjectType,
-  TaskStatus,
   TaskPriority,
   TaskType,
 } from '@prisma/client';
+
+// Task.status is now a free String column (Phase 5.2); the former enum's
+// system values are kept here as literals so these tests read unchanged.
+const TaskStatus = {
+  BACKLOG: 'BACKLOG',
+  TODO: 'TODO',
+  IN_PROGRESS: 'IN_PROGRESS',
+  IN_REVIEW: 'IN_REVIEW',
+  TESTING: 'TESTING',
+  DONE: 'DONE',
+} as const;
 
 jest.setTimeout(30000);
 

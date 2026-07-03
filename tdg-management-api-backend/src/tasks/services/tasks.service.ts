@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {
   Prisma,
-  TaskStatus,
   UserType,
   ProjectType,
   BusinessUnit,
@@ -448,20 +447,6 @@ export class TasksService {
     };
 
     return validTransitions[currentStatus]?.includes(newStatus) ?? false;
-  }
-
-  /**
-   * Legacy method for backward compatibility - converts string to enum
-   * @deprecated Use isValidStatusTransitionDynamic for new code
-   */
-  private isValidStatusTransition(
-    currentStatus: TaskStatus,
-    newStatus: TaskStatus,
-  ): boolean {
-    return this.isValidStatusTransitionEnum(
-      currentStatus.toString(),
-      newStatus.toString(),
-    );
   }
 
   private async canAccessProject(
@@ -1180,77 +1165,6 @@ export class TasksService {
           throw new ConflictCustomException(
             'Task with this identifier already exists',
             ErrorCode.TASK_ALREADY_EXISTS,
-          );
-        }
-      }
-      throw error;
-    }
-  }
-
-  async updateTaskStatus(
-    req: CustomRequest,
-    projectId: string,
-    taskId: string,
-    status: TaskStatus,
-  ) {
-    const user = req.user!;
-
-    try {
-      const existingTask = await this.fetchTaskRepository.findByIdInProject({
-        taskId,
-        projectId,
-      });
-
-      const canAccess = await this.canAdvanceTaskWorkflow(
-        user.id,
-        user.roles,
-        projectId,
-        existingTask.assignee?.id,
-      );
-      if (!canAccess) {
-        throw new ForbiddenCustomException(
-          'Only the assignee, scrum masters, product owners, project managers, or executives can update task status',
-          ErrorCode.INSUFFICIENT_PERMISSION,
-        );
-      }
-
-      if (
-        !(await this.isValidStatusTransitionDynamic(
-          projectId,
-          existingTask.status,
-          status,
-        ))
-      ) {
-        throw new BadRequestCustomException(
-          'Invalid status transition',
-          ErrorCode.TASK_INVALID_STATUS_TRANSITION,
-        );
-      }
-
-      // Check if task is blocked by incomplete dependencies
-      const blockingTasks = await this.checkTaskBlocked({
-        taskId,
-      });
-      if (blockingTasks) {
-        throw new BadRequestCustomException(
-          `Task is blocked by: ${blockingTasks.join(', ')}`,
-          ErrorCode.TASK_BLOCKED,
-        );
-      }
-
-      return await this.updateTaskRepository.updateTaskStatus({
-        taskId,
-        status,
-      });
-    } catch (error) {
-      if (error instanceof BadRequestCustomException) {
-        throw error;
-      }
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new NotFoundCustomException(
-            'Task not found',
-            ErrorCode.TASK_NOT_FOUND,
           );
         }
       }

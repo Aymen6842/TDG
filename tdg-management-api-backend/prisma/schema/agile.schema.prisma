@@ -57,7 +57,7 @@ model Task {
   key                        String
   type                       TaskType              @default(TASK)
   priority                   TaskPriority          @default(MEDIUM)
-  status                     TaskStatus            @default(TODO)
+  status                     String                @default("TODO")
   assigneeId                 String?
   reporterId                 String
   sprintId                   String?
@@ -319,16 +319,6 @@ enum TaskPriority {
   HIGH
   MEDIUM
   LOW
-}
-
-/// Task status (Kanban columns)
-enum TaskStatus {
-  BACKLOG
-  TODO
-  IN_PROGRESS
-  IN_REVIEW
-  TESTING
-  DONE
 }
 
 /// Task status type - distinguishes between enum-based and dynamic custom statuses

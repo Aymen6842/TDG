@@ -146,7 +146,7 @@ export class TaskStatusesRepository {
     return this.prismaService.task.count({
       where: {
         projectId: data.projectId,
-        status: data.statusName as any, // Dynamic status - not constrained to enum
+        status: data.statusName,
       },
     });
   }
