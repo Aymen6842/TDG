@@ -7,17 +7,13 @@ import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "@/lib/firebase";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNotificationsTokensStore } from "../store/notifications-tokens";
-import { USE_MOCK } from "@/lib/mock-config";
 
 export default function useNotificationsTokenSetup() {
   const { user } = useCurrentUser();
   const queryClient = useQueryClient();
   const fcmToken = useNotificationsTokensStore(store => store.fcmToken);
 
-  // EDITED: added USE_MOCK early return and null guard for messaging
   useEffect(() => {
-    if (USE_MOCK()) return;
-
     const setupToken = async () => {
       try {
         if (!user || fcmToken !== null) return;

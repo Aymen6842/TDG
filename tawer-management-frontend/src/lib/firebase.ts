@@ -12,7 +12,6 @@ export const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
-// EDITED: added USE_MOCK guard and null check for messaging (SSR fix)
 const app = initializeApp(firebaseConfig);
 export const messaging = typeof window !== "undefined" ? getMessaging(app) : null;
 export const VAPID_KEY = process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY;
