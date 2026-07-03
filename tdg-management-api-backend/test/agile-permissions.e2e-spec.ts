@@ -2074,7 +2074,7 @@ describe('Agile Permissions Policy (e2e)', () => {
 
     it('allows CEO/CTO/CMO to get all their tasks (200)', async () => {
       const response = await request(httpServer)
-        .get('/tasks/me')
+        .get('/project-tasks/assigned')
         .set(authHeader(users.ceo.token));
 
       expect(response.status).toBe(200);
@@ -2082,7 +2082,7 @@ describe('Agile Permissions Policy (e2e)', () => {
 
     it('allows project manager to get all their tasks (200)', async () => {
       const response = await request(httpServer)
-        .get('/tasks/me')
+        .get('/project-tasks/assigned')
         .set(authHeader(users.pmManager.token));
 
       expect(response.status).toBe(200);
@@ -2090,7 +2090,7 @@ describe('Agile Permissions Policy (e2e)', () => {
 
     it('allows product owner to get all their tasks (200)', async () => {
       const response = await request(httpServer)
-        .get('/tasks/me')
+        .get('/project-tasks/assigned')
         .set(authHeader(users.productOwner.token));
 
       expect(response.status).toBe(200);
@@ -2098,7 +2098,7 @@ describe('Agile Permissions Policy (e2e)', () => {
 
     it('allows scrum master to get all their tasks (200)', async () => {
       const response = await request(httpServer)
-        .get('/tasks/me')
+        .get('/project-tasks/assigned')
         .set(authHeader(users.scrumMaster.token));
 
       expect(response.status).toBe(200);
@@ -2106,7 +2106,7 @@ describe('Agile Permissions Policy (e2e)', () => {
 
     it('allows business analyst to get all their tasks (200)', async () => {
       const response = await request(httpServer)
-        .get('/tasks/me')
+        .get('/project-tasks/assigned')
         .set(authHeader(users.businessAnalyst.token));
 
       expect(response.status).toBe(200);
@@ -2114,7 +2114,7 @@ describe('Agile Permissions Policy (e2e)', () => {
 
     it('allows engineer to get all their tasks (200)', async () => {
       const response = await request(httpServer)
-        .get('/tasks/me')
+        .get('/project-tasks/assigned')
         .set(authHeader(users.engineer.token));
 
       expect(response.status).toBe(200);

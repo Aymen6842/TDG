@@ -546,7 +546,7 @@ describe('Sprints API Endpoints (e2e)', () => {
             },
             {
               name: `Multi FR ${runSuffix}`,
-              language: Language.French,
+              language: Language.English,
               description: 'Description française',
             },
           ],

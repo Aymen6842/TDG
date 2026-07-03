@@ -64,7 +64,8 @@ describe('Milestones API Endpoints (e2e)', () => {
   let freestyleProjectId: string;
   let milestoneId: string;
 
-  const testEmail = `milestone-test-${Date.now()}@example.com`;
+  const runSuffix = Date.now().toString();
+  const testEmail = `milestone-test-${runSuffix}@example.com`;
   const testPhone = `+216${(
     Date.now().toString() +
     Math.floor(Math.random() * 1000000)
@@ -147,8 +148,8 @@ describe('Milestones API Endpoints (e2e)', () => {
         },
         contents: {
           create: {
-            name: 'Test Project for Milestones',
-            unaccentedName: 'test project for milestones',
+            name: `Test Project for Milestones ${runSuffix}`,
+            unaccentedName: `test project for milestones ${runSuffix}`,
             description: 'Test project description',
             language: Language.English,
           },
@@ -181,8 +182,8 @@ describe('Milestones API Endpoints (e2e)', () => {
         },
         contents: {
           create: {
-            name: 'Freestyle Project for Milestones',
-            unaccentedName: 'freestyle project for milestones',
+            name: `Freestyle Project for Milestones ${runSuffix}`,
+            unaccentedName: `freestyle project for milestones ${runSuffix}`,
             description: 'Freestyle milestone project',
             language: Language.English,
           },
@@ -198,23 +199,28 @@ describe('Milestones API Endpoints (e2e)', () => {
   });
 
   afterAll(async () => {
-    // Clean up test data
-    if (prisma) {
+    // Clean up test data. beforeAll may have thrown partway through, so any
+    // of these ids can be unset — filter them out instead of letting a
+    // partial setup leave stale rows that break every subsequent run.
+    const projectIds = [projectId, freestyleProjectId].filter(Boolean);
+    if (prisma && projectIds.length > 0) {
       await prisma.task.deleteMany({
-        where: { projectId: { in: [projectId, freestyleProjectId] } },
+        where: { projectId: { in: projectIds } },
       });
       await prisma.milestone.deleteMany({
-        where: { projectId: { in: [projectId, freestyleProjectId] } },
+        where: { projectId: { in: projectIds } },
       });
       await prisma.projectMember.deleteMany({
-        where: { projectId: { in: [projectId, freestyleProjectId] } },
+        where: { projectId: { in: projectIds } },
       });
       await prisma.projectContent.deleteMany({
-        where: { projectId: { in: [projectId, freestyleProjectId] } },
+        where: { projectId: { in: projectIds } },
       });
       await prisma.project.deleteMany({
-        where: { id: { in: [projectId, freestyleProjectId] } },
+        where: { id: { in: projectIds } },
       });
+    }
+    if (prisma && userId) {
       await prisma.role.deleteMany({
         where: { userId },
       });
