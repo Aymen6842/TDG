@@ -1895,7 +1895,7 @@ describe('Tasks API Endpoints (e2e)', () => {
     });
   });
 
-  describe('GET /projects/:projectId/tasks/me and GET /tasks/me', () => {
+  describe('GET /projects/:projectId/tasks/me and GET /project-tasks/assigned', () => {
     let assignedTaskId: string;
 
     beforeAll(async () => {
@@ -1987,9 +1987,9 @@ describe('Tasks API Endpoints (e2e)', () => {
       expect(response.status).toBe(401);
     });
 
-    it('GET /tasks/me – returns tasks assigned to the caller across all projects', async () => {
+    it('GET /project-tasks/assigned – returns tasks assigned to the caller across all projects', async () => {
       const response = await request(app.getHttpServer())
-        .get('/tasks/me')
+        .get('/project-tasks/assigned')
         .set('Authorization', `Bearer ${authToken}`);
 
       expect(response.status).toBe(200);
@@ -2010,9 +2010,9 @@ describe('Tasks API Endpoints (e2e)', () => {
       expect(ids).toContain(assignedTaskId);
     });
 
-    it('GET /tasks/me – pagination shape is correct', async () => {
+    it('GET /project-tasks/assigned – pagination shape is correct', async () => {
       const response = await request(app.getHttpServer())
-        .get('/tasks/me?page=1&limit=5')
+        .get('/project-tasks/assigned?page=1&limit=5')
         .set('Authorization', `Bearer ${authToken}`);
 
       expect(response.status).toBe(200);
@@ -2023,8 +2023,10 @@ describe('Tasks API Endpoints (e2e)', () => {
       });
     });
 
-    it('GET /tasks/me – rejects unauthenticated request', async () => {
-      const response = await request(app.getHttpServer()).get('/tasks/me');
+    it('GET /project-tasks/assigned – rejects unauthenticated request', async () => {
+      const response = await request(app.getHttpServer()).get(
+        '/project-tasks/assigned',
+      );
       expect(response.status).toBe(401);
     });
   });
