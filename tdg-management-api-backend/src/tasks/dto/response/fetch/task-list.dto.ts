@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { TaskSummaryDto } from './task-summary.dto';
 
 export class TaskListDto {
@@ -26,6 +27,7 @@ export class TaskListDto {
       },
     ],
   })
+  @Type(() => TaskSummaryDto)
   data!: TaskSummaryDto[];
 
   @ApiProperty({

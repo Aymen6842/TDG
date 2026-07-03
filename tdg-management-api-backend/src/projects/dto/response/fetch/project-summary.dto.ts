@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Transform } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { ProjectStatus, BusinessUnit, ProjectType } from '@prisma/client';
 import { TimeService } from 'src/common/time/service/time.service';
 
@@ -111,6 +111,7 @@ export class ProjectSummaryDto {
     description: 'Project name (from default content)',
     example: 'E-Commerce Platform',
   })
+  @Expose()
   @Transform(
     ({ obj }: { obj: ProjectSummaryWithContents }) =>
       obj.contents?.[0]?.name ?? '',
@@ -122,6 +123,7 @@ export class ProjectSummaryDto {
     description: 'Project description (from default content)',
     example: 'A full-featured e-commerce platform',
   })
+  @Expose()
   @Transform(
     ({ obj }: { obj: ProjectSummaryWithContents }) =>
       obj.contents?.[0]?.description ?? null,
