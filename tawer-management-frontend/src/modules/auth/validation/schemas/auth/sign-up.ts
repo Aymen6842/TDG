@@ -16,7 +16,7 @@ export function getSignUpFormSchema(t?: TranslateFunction) {
         (file) =>
           file.type.startsWith("image/") &&
           ["image/jpeg", "image/png", "image/webp"].includes(file.type),
-        { message: t ? t("image.invalidFormat") : "Format d'adresse e-mail invalide." }
+        { message: t ? t("image.invalid") : "Format d'adresse e-mail invalide." }
       ),
     email: z
       .string()
