@@ -192,6 +192,20 @@
     }
   },
   "modules": {
+    "ai": {
+      "estimate": {
+        "title": "Estimation d’après l’historique",
+        "loading": "Estimation à partir de tâches similaires…",
+        "basedOn": "d’après",
+        "points": "pts",
+        "hoursSuffix": "h",
+        "apply": "Appliquer",
+        "applied": "Appliqué",
+        "noHistory": "Pas encore assez de tâches terminées pour estimer celle-ci.",
+        "businessUnitScope": "D’après des tâches similaires dans toute l’unité.",
+        "error": "Impossible d’obtenir une estimation pour le moment."
+      }
+    },
     "auth": {
       "authUIWrapper": {
         "imageAlt": "Illustration de la page de connexion"
@@ -1322,6 +1336,7 @@
               "allTasks": "Toutes les tâches",
               "type": "Type",
               "points": "Story Points",
+              "estimatedHours": "Heures estimées",
               "assignee": "Assigné",
               "milestone": "Jalon",
               "epic": "Epic",

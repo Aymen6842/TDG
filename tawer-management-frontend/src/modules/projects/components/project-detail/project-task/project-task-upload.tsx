@@ -47,6 +47,7 @@ import useEpics from "@/modules/projects/hooks/epics/use-epics";
 import useMilestones from "@/modules/projects/hooks/milestones/use-milestones";
 import useProjectSprints from "@/modules/projects/hooks/sprints/use-project-sprints";
 import useProject from "@/modules/projects/hooks/projects/use-project";
+import EstimateSuggestion from "@/modules/ai/components/estimate-suggestion";
 
 const UNSET = "__none__";
 
@@ -200,6 +201,27 @@ export default function ProjectTaskUploadSheet({
               )}
             />
 
+            {/* AI estimate suggestion — grounded in similar completed tasks */}
+            <EstimateSuggestion
+              projectId={projectId}
+              title={form.watch("title") ?? ""}
+              description={form.watch("description") ?? ""}
+              isAgile={isAgile}
+              enabled={isOpen}
+              onApply={({ estimatedHours, storyPoints }) => {
+                if (estimatedHours != null) {
+                  form.setValue("estimatedHours", estimatedHours, {
+                    shouldDirty: true,
+                  });
+                }
+                if (isAgile && storyPoints != null) {
+                  form.setValue("storyPoints", storyPoints, {
+                    shouldDirty: true,
+                  });
+                }
+              }}
+            />
+
             {/* Type + Priority */}
             <div className="grid grid-cols-2 gap-4">
               <FormField
@@ -309,6 +331,27 @@ export default function ProjectTaskUploadSheet({
                 />
               )}
             </div>
+
+            {/* Estimated Hours */}
+            <FormField
+              control={form.control}
+              name="estimatedHours"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t("upload.form.labels.estimatedHours")}</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="number"
+                      min={0}
+                      step="0.5"
+                      placeholder="0"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* Assignee + Due Date */}
             <div className="grid grid-cols-2 gap-4">

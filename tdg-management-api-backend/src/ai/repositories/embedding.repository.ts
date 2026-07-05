@@ -20,6 +20,21 @@ export interface VectorSearchFilters {
 }
 
 /**
+ * A completed task retrieved as a k-NN estimation neighbor: the DONE task whose
+ * embedding is nearest the draft, carrying its real outcome (`actualHours`) and
+ * `storyPoints` as the regression targets (§4.6).
+ */
+export interface CompletedTaskNeighbor {
+  key: string;
+  title: string;
+  /** Real logged effort of the completed task (`Task.actualHours`, hours). */
+  actualHours: number;
+  storyPoints: number | null;
+  /** Cosine similarity in [0, 1] between the draft and this task's embedding. */
+  similarity: number;
+}
+
+/**
  * All raw-SQL access to the pgvector `DocumentEmbedding.embedding` column.
  *
  * Prisma cannot type the `vector` column, so every read/write of it goes
@@ -142,6 +157,50 @@ export class EmbeddingRepository {
       WHERE "projectId" = ANY(${allowedProjectIds})
         ${entityTypeFilter}
       ORDER BY "embedding" <=> ${vectorLiteral}::vector
+      LIMIT ${k};
+    `;
+
+    return rows;
+  }
+
+  /**
+   * Permission-scoped k-NN over *completed* tasks: the `k` DONE tasks (with real
+   * logged effort) whose embedding is nearest `queryVector`, among `projectIds`.
+   *
+   * Joins `DocumentEmbedding` (entityType TASK) to `Task` and keeps only
+   * `status = 'DONE'` rows with `actualHours > 0` (the column is non-nullable
+   * with a `0` default, so `> 0` is the real "has an outcome" test). A task can
+   * have several chunks; `DISTINCT ON (t.id)` keeps only its nearest chunk
+   * before the outer query ranks tasks by similarity. Like `searchVector`, the
+   * `projectId = ANY(...)` filter runs in SQL before ranking.
+   */
+  async searchCompletedTaskNeighbors(
+    queryVector: number[],
+    projectIds: string[],
+    k: number,
+  ): Promise<CompletedTaskNeighbor[]> {
+    if (projectIds.length === 0) return [];
+
+    const vectorLiteral = this.toVectorLiteral(queryVector);
+
+    const rows = await this.prismaService.$queryRaw<CompletedTaskNeighbor[]>`
+      SELECT "key", "title", "actualHours", "storyPoints", "similarity"
+      FROM (
+        SELECT DISTINCT ON (t."id")
+          t."key"          AS "key",
+          t."title"        AS "title",
+          t."actualHours"  AS "actualHours",
+          t."storyPoints"  AS "storyPoints",
+          1 - (de."embedding" <=> ${vectorLiteral}::vector) AS "similarity"
+        FROM "DocumentEmbedding" de
+        JOIN "Task" t ON t."id" = de."entityId"
+        WHERE de."entityType" = 'TASK'::"EmbeddingEntityType"
+          AND de."projectId" = ANY(${projectIds})
+          AND t."status" = 'DONE'
+          AND t."actualHours" > 0
+        ORDER BY t."id", de."embedding" <=> ${vectorLiteral}::vector
+      ) neighbors
+      ORDER BY "similarity" DESC
       LIMIT ${k};
     `;
 

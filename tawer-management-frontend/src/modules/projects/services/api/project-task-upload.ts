@@ -9,6 +9,7 @@ export interface ProjectTaskPayload {
   status?: string;
   priority?: string;
   storyPoints?: number;
+  estimatedHours?: number;
   dueDate?: string;
   assigneeId?: string;
   milestoneId?: string;

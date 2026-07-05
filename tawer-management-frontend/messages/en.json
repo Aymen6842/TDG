@@ -192,6 +192,20 @@
     }
   },
   "modules": {
+    "ai": {
+      "estimate": {
+        "title": "Estimate from history",
+        "loading": "Estimating from similar tasks…",
+        "basedOn": "based on",
+        "points": "pts",
+        "hoursSuffix": "h",
+        "apply": "Apply",
+        "applied": "Applied",
+        "noHistory": "Not enough completed tasks yet to estimate this one.",
+        "businessUnitScope": "Based on similar tasks across the business unit.",
+        "error": "Couldn’t fetch an estimate right now."
+      }
+    },
     "auth": {
       "authUIWrapper": {
         "imageAlt": "Login page illustration"
@@ -1322,6 +1336,7 @@
               "allTasks": "All Tasks",
               "type": "Type",
               "points": "Story Points",
+              "estimatedHours": "Estimated Hours",
               "assignee": "Assignee",
               "milestone": "Milestone",
               "epic": "Epic",

@@ -17,6 +17,7 @@ export const getProjectTaskFormSchema = ({ t }: Params) =>
       errorMap: () => ({ message: t("priority.invalid") })
     }),
     storyPoints: z.coerce.number().min(0).max(100).optional(),
+    estimatedHours: z.coerce.number().min(0).optional(),
     dueDate: z.string().optional(),
     assigneeId: z.string().optional(),
     milestoneId: z.string().optional(),
