@@ -1075,181 +1075,181 @@
       }
     },
     "tasks": {
-      "title": "Liste des tâches",
-      "tabs": {
-        "personal": "Tâches personnelles",
-        "project": "Tâches du projet"
-      },
-      "deletion": {
-        "tasks": {
-          "confirmation": {
-            "title": "Supprimer la tâche",
-            "message": "Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action est irréversible.",
-            "cancel": "Annuler",
-            "delete": "Supprimer",
-            "deleting": "Suppression en cours..."
-          }
+        "title": "Liste des tâches",
+        "tabs": {
+          "personal": "Tâches personnelles",
+          "project": "Tâches du projet"
         },
-        "subtasks": {
-          "confirmation": {
-            "title": "Supprimer la sous-tâche",
-            "message": "Êtes-vous sûr de vouloir supprimer cette sous-tâche ? Cette action est irréversible.",
-            "cancel": "Annuler",
-            "delete": "Supprimer",
-            "deleting": "Suppression en cours..."
+        "deletion": {
+          "tasks": {
+            "confirmation": {
+              "title": "Supprimer la tâche",
+              "message": "Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action est irréversible.",
+              "cancel": "Annuler",
+              "delete": "Supprimer",
+              "deleting": "Suppression en cours..."
+            }
+          },
+          "subtasks": {
+            "confirmation": {
+              "title": "Supprimer la sous-tâche",
+              "message": "Êtes-vous sûr de vouloir supprimer cette sous-tâche ? Cette action est irréversible.",
+              "cancel": "Annuler",
+              "delete": "Supprimer",
+              "deleting": "Suppression en cours..."
+            }
+          },
+          "comments": {
+            "confirmation": {
+              "title": "Supprimer le commentaire",
+              "message": "Êtes-vous sûr de vouloir supprimer ce commentaire ? Cette action est irréversible.",
+              "cancel": "Annuler",
+              "delete": "Supprimer",
+              "deleting": "Suppression en cours..."
+            }
           }
-        },
-        "comments": {
-          "confirmation": {
-            "title": "Supprimer le commentaire",
-            "message": "Êtes-vous sûr de vouloir supprimer ce commentaire ? Cette action est irréversible.",
-            "cancel": "Annuler",
-            "delete": "Supprimer",
-            "deleting": "Suppression en cours..."
-          }
-        }
-      },
-      "status": {
-        "pending": "En attente",
-        "inProgress": "En cours",
-        "completed": "Terminée"
-      },
-      "priority": {
-        "low": "Basse",
-        "medium": "Moyenne",
-        "high": "Haute"
-      },
-      "upload": {
-        "form": {
-          "labels": {
-            "parentTaskId": "ID de la tâche parente",
-            "status": "Statut",
-            "priority": "Priorité",
-            "title": "Titre",
-            "description": "Description",
-            "details": "Détails",
-            "dueDate": "Date d'échéance",
-            "dueTime": "Heure d'échéance",
-            "reminderDate": "Date de rappel",
-            "reminderTime": "Heure de rappel",
-            "isArchived": "Archivée",
-            "isFavorite": "Favorite",
-            "attachments": "Pièces jointes",
-            "comments": "Commentaires",
-            "upload": "Téléverser",
-            "noAttachments": "Aucune pièce jointe pour le moment",
-            "subTasks": "Sous-tâches",
-            "createdAt": "Créée le",
-            "noComments": "Aucun commentaire pour le moment",
-            "noSubTasks": "Aucune sous-tâche pour le moment",
-            "noTasks": "Aucune tâche trouvée",
-            "allTasks": "Toutes les tâches"
-          },
-          "placeholders": {
-            "parentTaskId": "ID de la tâche parente",
-            "status": "Statut de la tâche",
-            "priority": "Priorité de la tâche",
-            "title": "Titre de la tâche",
-            "description": "Description de la tâche",
-            "details": "Détails de la tâche",
-            "date": "Sélectionner une date",
-            "comment": "Ajouter un commentaire",
-            "search": "Rechercher des tâches...",
-            "dragDropFiles": "Glissez-déposez des fichiers ici, ou cliquez pour sélectionner"
-          },
-          "ariaLabels": {
-            "hidePassword": "Masquer le mot de passe",
-            "showPassword": "Afficher le mot de passe"
-          },
-          "cancel": "Annuler",
-          "creating": "Création en cours..."
-        }
-      },
-      "success": {
-        "taskCreated": "Tâche créée avec succès.",
-        "subTaskCreated": "Sous-tâche créée avec succès.",
-        "taskUpdated": "Tâche mise à jour avec succès.",
-        "taskDeleted": "Tâche supprimée avec succès.",
-        "commentDeleted": "Commentaire supprimé avec succès.",
-        "commentCreated": "Commentaire créé avec succès.",
-        "commentUpdated": "Commentaire mis à jour avec succès.",
-        "attachmentsUpdated": "Pièces jointes mises à jour avec succès."
-      },
-      "validations": {
-        "title": {
-          "required": "Le titre est requis"
-        },
-        "parentTaskId": {
-          "invalid": "Identifiant de la tâche parente invalide"
         },
         "status": {
-          "invalid": "Statut sélectionné invalide"
+          "pending": "En attente",
+          "inProgress": "En cours",
+          "completed": "Terminée"
         },
         "priority": {
-          "invalid": "Priorité sélectionnée invalide"
+          "low": "Basse",
+          "medium": "Moyenne",
+          "high": "Haute"
         },
-        "dueTime": {
-          "required": "L'heure d'échéance est requise"
+        "upload": {
+          "form": {
+            "labels": {
+              "parentTaskId": "ID de la tâche parente",
+              "status": "Statut",
+              "priority": "Priorité",
+              "title": "Titre",
+              "description": "Description",
+              "details": "Détails",
+              "dueDate": "Date d'échéance",
+              "dueTime": "Heure d'échéance",
+              "reminderDate": "Date de rappel",
+              "reminderTime": "Heure de rappel",
+              "isArchived": "Archivée",
+              "isFavorite": "Favorite",
+              "attachments": "Pièces jointes",
+              "comments": "Commentaires",
+              "upload": "Téléverser",
+              "noAttachments": "Aucune pièce jointe pour le moment",
+              "subTasks": "Sous-tâches",
+              "createdAt": "Créée le",
+              "noComments": "Aucun commentaire pour le moment",
+              "noSubTasks": "Aucune sous-tâche pour le moment",
+              "noTasks": "Aucune tâche trouvée",
+              "allTasks": "Toutes les tâches"
+            },
+            "placeholders": {
+              "parentTaskId": "ID de la tâche parente",
+              "status": "Statut de la tâche",
+              "priority": "Priorité de la tâche",
+              "title": "Titre de la tâche",
+              "description": "Description de la tâche",
+              "details": "Détails de la tâche",
+              "date": "Sélectionner une date",
+              "comment": "Ajouter un commentaire",
+              "search": "Rechercher des tâches...",
+              "dragDropFiles": "Glissez-déposez des fichiers ici, ou cliquez pour sélectionner"
+            },
+            "ariaLabels": {
+              "hidePassword": "Masquer le mot de passe",
+              "showPassword": "Afficher le mot de passe"
+            },
+            "cancel": "Annuler",
+            "creating": "Création en cours..."
+          }
         },
-        "reminderTime": {
-          "required": "La date de rappel est requise"
+        "success": {
+          "taskCreated": "Tâche créée avec succès.",
+          "subTaskCreated": "Sous-tâche créée avec succès.",
+          "taskUpdated": "Tâche mise à jour avec succès.",
+          "taskDeleted": "Tâche supprimée avec succès.",
+          "commentDeleted": "Commentaire supprimé avec succès.",
+          "commentCreated": "Commentaire créé avec succès.",
+          "commentUpdated": "Commentaire mis à jour avec succès.",
+          "attachmentsUpdated": "Pièces jointes mises à jour avec succès."
         },
-        "timeRange": {
-          "invalid": "Le rappel doit être antérieur à l'heure d'échéance"
+        "validations": {
+          "title": {
+            "required": "Le titre est requis"
+          },
+          "parentTaskId": {
+            "invalid": "Identifiant de la tâche parente invalide"
+          },
+          "status": {
+            "invalid": "Statut sélectionné invalide"
+          },
+          "priority": {
+            "invalid": "Priorité sélectionnée invalide"
+          },
+          "dueTime": {
+            "required": "L'heure d'échéance est requise"
+          },
+          "reminderTime": {
+            "required": "La date de rappel est requise"
+          },
+          "timeRange": {
+            "invalid": "Le rappel doit être antérieur à l'heure d'échéance"
+          },
+          "attachments": {
+            "invalidImageFormat": "Seules les images JPEG, PNG ou WEBP sont autorisées"
+          },
+          "taskId": {
+            "invalid": "Identifiant de tâche invalide",
+            "required": "L'ID de la tâche est requis"
+          },
+          "comment": {
+            "required": "Le commentaire est requis"
+          },
+          "reordered": "Les éléments de la liste ont été réorganisés avec succès.",
+          "fileAdded": "{{fileName}} a été ajouté à la tâche"
         },
-        "attachments": {
-          "invalidImageFormat": "Seules les images JPEG, PNG ou WEBP sont autorisées"
+        "errors": {
+          "invalidFormat": "Le format des données fournies est invalide. Veuillez vérifier et réessayer.",
+          "taskUploadFailed": "Échec de l'envoi de votre tâche. Veuillez réessayer plus tard.",
+          "serverError": "Une erreur serveur inattendue s'est produite. Veuillez réessayer plus tard.",
+          "loadTasksFailed": "Échec du chargement des tâches. Veuillez réessayer.",
+          "loadTaskFailed": "Échec du chargement de la tâche. Veuillez réessayer."
         },
-        "taskId": {
-          "invalid": "Identifiant de tâche invalide",
-          "required": "L'ID de la tâche est requis"
+        "actions": {
+          "cancel": "Annuler",
+          "creating": "Création en cours...",
+          "createTask": "Créer la tâche",
+          "updateTask": "Mettre à jour la tâche",
+          "deleteTask": "Supprimer la tâche",
+          "createComment": "Créer le commentaire",
+          "createSubTask": "Créer la sous-tâche"
         },
-        "comment": {
-          "required": "Le commentaire est requis"
+        "filters": {
+          "priority": "Priorité",
+          "sortBy": "Trier par",
+          "selectSortOption": "Sélectionner l'option de tri",
+          "statusAscending": "Statut croissant",
+          "statusDescending": "Statut décroissant",
+          "priorityAscending": "Priorité croissante",
+          "priorityDescending": "Priorité décroissante",
+          "dueDateAscending": "Date d'échéance croissante",
+          "dueDateDescending": "Date d'échéance décroissante",
+          "clearFilters": "Effacer les filtres"
         },
-        "reordered": "Les éléments de la liste ont été réorganisés avec succès.",
-        "fileAdded": "{{fileName}} a été ajouté à la tâche"
+        "loading": {
+          "tasks": "Chargement des tâches...",
+          "task": "Chargement de la tâche...",
+          "button": "Chargement...",
+          "uploading": "Téléversement en cours..."
+        },
+        "edit": "Modifier",
+        "noDescription": "Aucune description fournie.",
+        "enterSubTaskTitle": "Saisissez le titre de la sous-tâche",
+        "addTask": "Ajouter une tâche",
+        "filePreview": "Aperçu du fichier"
       },
-      "errors": {
-        "invalidFormat": "Le format des données fournies est invalide. Veuillez vérifier et réessayer.",
-        "taskUploadFailed": "Échec de l'envoi de votre tâche. Veuillez réessayer plus tard.",
-        "serverError": "Une erreur serveur inattendue s'est produite. Veuillez réessayer plus tard.",
-        "loadTasksFailed": "Échec du chargement des tâches. Veuillez réessayer.",
-        "loadTaskFailed": "Échec du chargement de la tâche. Veuillez réessayer."
-      },
-      "actions": {
-        "cancel": "Annuler",
-        "creating": "Création en cours...",
-        "createTask": "Créer la tâche",
-        "updateTask": "Mettre à jour la tâche",
-        "deleteTask": "Supprimer la tâche",
-        "createComment": "Créer le commentaire",
-        "createSubTask": "Créer la sous-tâche"
-      },
-      "filters": {
-        "priority": "Priorité",
-        "sortBy": "Trier par",
-        "selectSortOption": "Sélectionner l'option de tri",
-        "statusAscending": "Statut croissant",
-        "statusDescending": "Statut décroissant",
-        "priorityAscending": "Priorité croissante",
-        "priorityDescending": "Priorité décroissante",
-        "dueDateAscending": "Date d'échéance croissante",
-        "dueDateDescending": "Date d'échéance décroissante",
-        "clearFilters": "Effacer les filtres"
-      },
-      "loading": {
-        "tasks": "Chargement des tâches...",
-        "task": "Chargement de la tâche...",
-        "button": "Chargement...",
-        "uploading": "Téléversement en cours..."
-      },
-      "edit": "Modifier",
-      "noDescription": "Aucune description fournie.",
-      "enterSubTaskTitle": "Saisissez le titre de la sous-tâche",
-      "addTask": "Ajouter une tâche",
-      "filePreview": "Aperçu du fichier"
-    },
     "projects": {
       "title": "Gestion des projets",
       "tasks": {
@@ -1688,81 +1688,81 @@
           "start": "Démarrer le projet",
           "stop": "Arrêter le projet",
           "complete": "Marquer comme terminé"
-        }
-      },
-      "analytics": {
-        "capacity": {
-          "title": "Capacité du projet",
-          "totalCapacity": "Capacité totale",
-          "allocated": "Allouée",
-          "remaining": "Restante"
         },
-        "velocity": {
-          "title": "Vélocité du sprint",
-          "noData": "Aucun sprint terminé pour le moment"
+        "analytics": {
+          "capacity": {
+            "title": "Capacité du projet",
+            "totalCapacity": "Capacité totale",
+            "allocated": "Allouée",
+            "remaining": "Restante"
+          },
+          "velocity": {
+            "title": "Vélocité du sprint",
+            "noData": "Aucun sprint terminé pour le moment"
+          },
+          "burndown": {
+            "title": "Burndown du sprint",
+            "selectSprint": "Sélectionner un sprint",
+            "noSprintsAvailable": "Aucun sprint disponible.",
+            "noDatesYet": "Ajoutez des dates de début/fin de sprint pour voir le burndown"
+          }
         },
-        "burndown": {
-          "title": "Burndown du sprint",
-          "selectSprint": "Sélectionner un sprint",
-          "noSprintsAvailable": "Aucun sprint disponible.",
-          "noDatesYet": "Ajoutez des dates de début/fin de sprint pour voir le burndown"
+        "epics": {
+          "sectionTitle": "Epics",
+          "addTooltip": "Ajouter un epic",
+          "emptyMessage": "Aucun epic pour le moment. Créez-en un pour regrouper les tâches liées.",
+          "editTitle": "Modifier l'epic",
+          "createTitle": "Créer un epic",
+          "nameLabel": "Nom *",
+          "namePlaceholder": "Nom de l'epic",
+          "descriptionLabel": "Description",
+          "descriptionPlaceholder": "Description facultative",
+          "colorLabel": "Couleur",
+          "startDateLabel": "Date de début",
+          "endDateLabel": "Date de fin",
+          "cancel": "Annuler",
+          "saving": "Enregistrement…",
+          "updateButton": "Mettre à jour l'epic",
+          "createButton": "Créer l'epic",
+          "deleteTitle": "Supprimer l'epic",
+          "deleteDescription": "Êtes-vous sûr de vouloir supprimer « {name} » ? Cette action est irréversible.",
+          "deleteConfirm": "Supprimer",
+          "deleteCancel": "Annuler"
+        },
+        "milestones": {
+          "sectionTitle": "Jalons",
+          "epicsSectionTitle": "Epics",
+          "sprintsSectionTitle": "Sprints",
+          "addTooltip": "Ajouter un jalon",
+          "emptyMessage": "Aucun jalon pour le moment. Créez-en un pour suivre les dates de livraison clés.",
+          "ganttEmptyMessage": "Aucun jalon, epic ou sprint à afficher sur le Gantt.",
+          "noMilestones": "Aucun jalon.",
+          "noDueDate": "Aucune date d'échéance",
+          "tasksInScope": "{count, plural, one {# tâche} other {# tâches}} dans le périmètre de cette chronologie.",
+          "listTab": "Liste",
+          "ganttTab": "Gantt",
+          "done": "Terminé",
+          "editTitle": "Modifier le jalon",
+          "createTitle": "Créer un jalon",
+          "nameLabel": "Nom *",
+          "namePlaceholder": "Nom du jalon",
+          "descriptionLabel": "Description",
+          "descriptionPlaceholder": "Description facultative",
+          "dueDateLabel": "Date d'échéance *",
+          "cancel": "Annuler",
+          "saving": "Enregistrement…",
+          "updateButton": "Mettre à jour le jalon",
+          "createButton": "Créer le jalon",
+          "deleteTitle": "Supprimer le jalon",
+          "deleteDescription": "Supprimer « {name} » ? Cette action est irréversible.",
+          "deleteConfirm": "Supprimer",
+          "deleteCancel": "Annuler"
+        },
+        "userSearch": {
+          "placeholder": "Rechercher des utilisateurs...",
+          "loadFailed": "Échec du chargement des utilisateurs.",
+          "noResults": "Aucun utilisateur trouvé."
         }
-      },
-      "epics": {
-        "sectionTitle": "Epics",
-        "addTooltip": "Ajouter un epic",
-        "emptyMessage": "Aucun epic pour le moment. Créez-en un pour regrouper les tâches liées.",
-        "editTitle": "Modifier l'epic",
-        "createTitle": "Créer un epic",
-        "nameLabel": "Nom *",
-        "namePlaceholder": "Nom de l'epic",
-        "descriptionLabel": "Description",
-        "descriptionPlaceholder": "Description facultative",
-        "colorLabel": "Couleur",
-        "startDateLabel": "Date de début",
-        "endDateLabel": "Date de fin",
-        "cancel": "Annuler",
-        "saving": "Enregistrement…",
-        "updateButton": "Mettre à jour l'epic",
-        "createButton": "Créer l'epic",
-        "deleteTitle": "Supprimer l'epic",
-        "deleteDescription": "Êtes-vous sûr de vouloir supprimer « {name} » ? Cette action est irréversible.",
-        "deleteConfirm": "Supprimer",
-        "deleteCancel": "Annuler"
-      },
-      "milestones": {
-        "sectionTitle": "Jalons",
-        "epicsSectionTitle": "Epics",
-        "sprintsSectionTitle": "Sprints",
-        "addTooltip": "Ajouter un jalon",
-        "emptyMessage": "Aucun jalon pour le moment. Créez-en un pour suivre les dates de livraison clés.",
-        "ganttEmptyMessage": "Aucun jalon, epic ou sprint à afficher sur le Gantt.",
-        "noMilestones": "Aucun jalon.",
-        "noDueDate": "Aucune date d'échéance",
-        "tasksInScope": "{count, plural, one {# tâche} other {# tâches}} dans le périmètre de cette chronologie.",
-        "listTab": "Liste",
-        "ganttTab": "Gantt",
-        "done": "Terminé",
-        "editTitle": "Modifier le jalon",
-        "createTitle": "Créer un jalon",
-        "nameLabel": "Nom *",
-        "namePlaceholder": "Nom du jalon",
-        "descriptionLabel": "Description",
-        "descriptionPlaceholder": "Description facultative",
-        "dueDateLabel": "Date d'échéance *",
-        "cancel": "Annuler",
-        "saving": "Enregistrement…",
-        "updateButton": "Mettre à jour le jalon",
-        "createButton": "Créer le jalon",
-        "deleteTitle": "Supprimer le jalon",
-        "deleteDescription": "Supprimer « {name} » ? Cette action est irréversible.",
-        "deleteConfirm": "Supprimer",
-        "deleteCancel": "Annuler"
-      },
-      "userSearch": {
-        "placeholder": "Rechercher des utilisateurs...",
-        "loadFailed": "Échec du chargement des utilisateurs.",
-        "noResults": "Aucun utilisateur trouvé."
       },
       "taskSections": {
         "attachments": {
@@ -1897,6 +1897,7 @@
           "statusStopped": "Définir comme arrêté",
           "statusCompleted": "Définir comme terminé"
         }
+
       },
       "upload": {
         "createProject": {
@@ -2487,7 +2488,7 @@
         }
       }
     },
-    "estimator": {
+        "estimator": {
       "title": "Estimateur de projet",
       "subtitle": "Estimez les coûts, délais et efforts pour plusieurs projets",
       "config": {
