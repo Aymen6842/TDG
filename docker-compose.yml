@@ -1,0 +1,57 @@
+# Local dev stack for the Tawer management platform.
+#
+# Postgres uses the pgvector image so the `vector` extension the AI features
+# depend on is ALWAYS present (the previous postgres:15 container had pgvector
+# installed manually, which would vanish if the container were ever recreated).
+#
+# It reuses the EXISTING data volume, so your seeded data is preserved.
+#
+# One-time swap (stops the ad-hoc containers, recreates from this file):
+#   docker rm -f tdg-postgres tdg-redis tdg-mailpit
+#   docker compose up -d
+#
+# Verify afterwards:
+#   docker exec -it tdg-postgres psql -U tdg -d tdg_db -c "\dx vector"
+#   docker exec -it tdg-postgres psql -U tdg -d tdg_db -c 'SELECT count(*) FROM "DocumentEmbedding";'
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: tdg-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tdg
+      POSTGRES_PASSWORD: tdg1234
+      POSTGRES_DB: tdg_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tdg -d tdg_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    container_name: tdg-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: tdg-mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  # Reuse the current anonymous Postgres volume so existing data is preserved.
+  # If you'd rather start clean, delete this `external`/`name` block and compose
+  # will create a fresh named volume instead.
+  pgdata:
+    external: true
+    name: fe63321218309117e5be6019d497988be20c2f5bc35f7be879b163f021c69b3e
