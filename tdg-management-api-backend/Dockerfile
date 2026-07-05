@@ -26,5 +26,7 @@ RUN mkdir logs
 # Expose the application port
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "run", "start"]
+# Apply any pending DB migrations (idempotent, production-safe), then start.
+# `migrate deploy` only runs migrations not yet recorded in _prisma_migrations,
+# so a fresh environment self-provisions the schema with no manual step.
+CMD ["sh", "-c", "npm run prisma:deploy && npm run start"]
