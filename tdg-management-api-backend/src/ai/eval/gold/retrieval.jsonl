@@ -1,0 +1,12 @@
+{"question": "Why do we buffer MQTT sensor readings through Redis before writing them to the database?", "relevantEntityIds": ["COMMENT:NDF-3", "TASK:NDF-3"]}
+{"question": "What MQTT quality-of-service level and deduplication strategy did we choose for the bin sensors?", "relevantEntityIds": ["COMMENT:NDF-3", "TASK:NDF-3"]}
+{"question": "Where are the high-frequency fill-level sensor readings stored and what is the retention policy?", "relevantEntityIds": ["COMMENT:NDF-4", "TASK:NDF-4"]}
+{"question": "Which wireless connectivity technology did we pick for the bin sensors and why?", "relevantEntityIds": ["COMMENT:NDF-10", "TASK:NDF-10"]}
+{"question": "What library or algorithm powers the collection route optimization engine?", "relevantEntityIds": ["TASK:NDF-6", "COMMENT:NDF-6"]}
+{"question": "How often are collection routes recomputed and why is that capped?", "relevantEntityIds": ["COMMENT:NDF-6", "TASK:NDF-6"]}
+{"question": "How are citizen report photos handled so uploads don't time out on slow mobile networks?", "relevantEntityIds": ["COMMENT:NDF-8", "TASK:NDF-8"]}
+{"question": "What is causing the operations dashboard to stop receiving live bin updates?", "relevantEntityIds": ["COMMENT:NDF-9", "TASK:NDF-9"]}
+{"question": "How is data isolation between municipal tenants enforced?", "relevantEntityIds": ["COMMENT:NDF-2", "TASK:NDF-2"]}
+{"question": "How does user authentication with access and refresh tokens work?", "relevantEntityIds": ["TASK:NDF-1"]}
+{"question": "What technology stack is the real-time operations dashboard built with?", "relevantEntityIds": ["TASK:NDF-5"]}
+{"question": "What is planned for Arabic right-to-left localization of the dashboard?", "relevantEntityIds": ["TASK:NDF-12"]}

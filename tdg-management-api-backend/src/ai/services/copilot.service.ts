@@ -52,6 +52,9 @@ export class CopilotService {
   /** Exact phrase the model is told to use, and that we detect, on refusal. */
   static readonly REFUSAL =
     "I don't have information on that in this project.";
+  /** Honest fallback shown when generation itself fails (e.g. provider down). */
+  static readonly UNAVAILABLE =
+    'The assistant is temporarily unavailable. Please try again in a moment.';
   /** Per-source excerpt cap fed to the model (chunks are already ≤ ~2000 chars). */
   private readonly maxSourceChars = 1200;
   /** Excerpt length kept on each returned citation for the UI preview. */
@@ -122,8 +125,7 @@ export class CopilotService {
         latencyMs: Date.now() - startedAt,
       });
       return {
-        answer:
-          'The assistant is temporarily unavailable. Please try again in a moment.',
+        answer: CopilotService.UNAVAILABLE,
         citations: [],
         insufficientContext: false,
       };
@@ -272,9 +274,7 @@ export class CopilotService {
       if (answerText.length === 0) {
         subscriber.next({
           type: 'token',
-          data: {
-            text: 'The assistant is temporarily unavailable. Please try again in a moment.',
-          },
+          data: { text: CopilotService.UNAVAILABLE },
         });
       }
       subscriber.next({

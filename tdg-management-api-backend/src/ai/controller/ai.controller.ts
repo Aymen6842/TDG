@@ -22,6 +22,10 @@ import { CustomRequest } from 'src/common/types/request.type';
 import { IndexingService } from '../services/indexing.service';
 import { EstimationService } from '../services/estimation.service';
 import { CopilotService } from '../services/copilot.service';
+import {
+  TelemetryService,
+  CopilotTelemetrySummary,
+} from '../services/telemetry.service';
 import { EstimateTaskDto } from '../dto/request/estimate-task.dto';
 import { EstimateResultDto } from '../dto/response/estimate-result.dto';
 import { CopilotQueryDto } from '../dto/request/copilot-query.dto';
@@ -36,6 +40,7 @@ export class AiController {
     private readonly indexingService: IndexingService,
     private readonly estimationService: EstimationService,
     private readonly copilotService: CopilotService,
+    private readonly telemetryService: TelemetryService,
   ) {}
 
   /**
@@ -139,5 +144,19 @@ export class AiController {
   @ApiResponse({ status: 200, description: 'Reindex summary (per-entity counts).' })
   reindex() {
     return this.indexingService.reindexAll();
+  }
+
+  /**
+   * Copilot telemetry rollup for the eval dashboard (§6): latency p50/p95, mean
+   * faithfulness, refusal rate, average retrieval top-score and citations over
+   * all logged `CopilotQueryLog` calls. Executive-only, like the reindex trigger.
+   */
+  @Get('telemetry')
+  @UseGuards(HasPermissionGuard)
+  @Permissions([PERMISSIONS.PROJECTS.PROJECT_CREATE])
+  @ApiOperation({ summary: 'Copilot telemetry summary (admin dashboard)' })
+  @ApiResponse({ status: 200, description: 'Aggregated copilot telemetry.' })
+  telemetry(): Promise<CopilotTelemetrySummary> {
+    return this.telemetryService.copilotSummary();
   }
 }
