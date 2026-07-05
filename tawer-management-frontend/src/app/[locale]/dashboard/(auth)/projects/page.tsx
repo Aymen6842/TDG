@@ -1,11 +1,13 @@
+import { getTranslations } from "next-intl/server";
 import { generateMeta } from "@/lib/utils";
 import ProjectsPageRender from "./render";
 
 export async function generateMetadata() {
+  const t = await getTranslations("metadata.projectsApp");
+
   return generateMeta({
-    title: "Projects App",
-    description:
-      "Organize your tasks, add new tasks and view task details with the to-do list app template. Built with shadcn/ui, Next.js and Tailwind CSS.",
+    title: t("title"),
+    description: t("description"),
     canonical: "/dashboard/projects"
   });
 }

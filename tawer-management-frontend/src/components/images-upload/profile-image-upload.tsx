@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useFileUpload } from "@/hooks/use-file-upload";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { useTranslations } from "next-intl";
 
 interface Props {
   inputName?: string;
@@ -18,6 +19,7 @@ export default function ProfileImageUpload({
   defaultImageUrlInputName = "imageUrl",
   defaultImageUrl = null
 }: Props) {
+  const t = useTranslations("shared.filesUpload");
   const { control } = useFormContext();
 
   const [
@@ -80,7 +82,7 @@ export default function ProfileImageUpload({
 
                   <Button type="button" variant="outline" size="sm" onClick={openFileDialog}>
                     <UploadIcon className="mr-2 h-4 w-4" />
-                    {previewUrl ? "Change image" : "Upload image"}
+                    {previewUrl ? t("changeImage") : t("uploadImage")}
                   </Button>
 
                   {defaultImageUrlInputName && defaultImageUrl ? (

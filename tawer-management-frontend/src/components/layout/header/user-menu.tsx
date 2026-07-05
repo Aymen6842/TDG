@@ -48,7 +48,7 @@ export default function UserMenu() {
             <Avatar>
               <AvatarImage
                 src={user && user.image ? user.image : undefined}
-                alt={user?.name || "User"}
+                alt={user?.name || t("defaultName")}
               />
               <AvatarFallback className="rounded-lg">
                 {isLoading

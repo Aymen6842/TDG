@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ErrorBanner } from "@/components/error-banner";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "../../shared/confirm-dialog";
 import { EmptyState } from "../../shared/empty-state";
 import Loading from "@/components/page-loader";
@@ -24,6 +25,7 @@ function StatusUploadSheet({ projectId, isOpen, onClose, status, defaultOrder }:
   status?: TaskStatusType | null;
   defaultOrder: number;
 }) {
+  const t = useTranslations("modules.projects.taskStatuses");
   const { form, isPending, onSubmit, error } = useTaskStatusUpload({
     projectId,
     status,
@@ -35,20 +37,20 @@ function StatusUploadSheet({ projectId, isOpen, onClose, status, defaultOrder }:
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent className="sm:max-w-sm p-0 flex flex-col h-full">
         <SheetHeader className="p-6 pb-4">
-          <SheetTitle>{status?.id ? "Edit Status" : "Create Status"}</SheetTitle>
+          <SheetTitle>{status?.id ? t("editTitle") : t("createTitle")}</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 overflow-y-auto space-y-5 px-6 pb-6">
             <FormField control={form.control} name="name" render={({ field }) => (
               <FormItem>
-                <FormLabel>Name *</FormLabel>
-                <FormControl><Input placeholder="e.g. In Review" disabled={status?.isSystem} {...field} /></FormControl>
+                <FormLabel>{t("nameLabel")}</FormLabel>
+                <FormControl><Input placeholder={t("namePlaceholder")} disabled={status?.isSystem} {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name="color" render={({ field }) => (
               <FormItem>
-                <FormLabel>Color</FormLabel>
+                <FormLabel>{t("colorLabel")}</FormLabel>
                 <div className="flex items-center gap-2">
                   <input type="color" value={field.value} onChange={(e) => field.onChange(e.target.value)} disabled={status?.isSystem} className="h-9 w-12 cursor-pointer rounded border p-0.5 disabled:opacity-50" />
                   <FormControl><Input placeholder="#000000" disabled={status?.isSystem} {...field} className="flex-1" /></FormControl>
@@ -58,7 +60,7 @@ function StatusUploadSheet({ projectId, isOpen, onClose, status, defaultOrder }:
             )} />
             <FormField control={form.control} name="order" render={({ field }) => (
               <FormItem>
-                <FormLabel>Order *</FormLabel>
+                <FormLabel>{t("orderLabel")}</FormLabel>
                 <FormControl>
                   <Input type="number" min={1} {...field} onChange={(e) => field.onChange(parseInt(e.target.value, 10))} />
                 </FormControl>
@@ -67,8 +69,8 @@ function StatusUploadSheet({ projectId, isOpen, onClose, status, defaultOrder }:
             )} />
             {error && <ErrorBanner error={error} />}
             <div className="flex justify-end gap-2 pt-2 border-t">
-              <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>Cancel</Button>
-              <Button type="submit" disabled={isPending}>{isPending ? "Saving…" : status?.id ? "Update" : "Create"}</Button>
+              <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>{t("cancel")}</Button>
+              <Button type="submit" disabled={isPending}>{isPending ? t("saving") : status?.id ? t("update") : t("create")}</Button>
             </div>
           </form>
         </Form>
@@ -78,6 +80,7 @@ function StatusUploadSheet({ projectId, isOpen, onClose, status, defaultOrder }:
 }
 
 export default function ProjectTaskStatuses({ projectId }: Props) {
+  const t = useTranslations("modules.projects.taskStatuses");
   const { taskStatuses, taskStatusesAreLoading } = useTaskStatuses(projectId);
   const { deleteStatusFromProject, isPending } = useTaskStatusUpload({ projectId });
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
@@ -99,16 +102,16 @@ export default function ProjectTaskStatuses({ projectId }: Props) {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-sm font-semibold">Custom Task Statuses</h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Define workflow stages for tasks in this project.</p>
+            <h3 className="text-sm font-semibold">{t("sectionTitle")}</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">{t("sectionDescription")}</p>
           </div>
           <Button size="sm" variant="outline" onClick={() => { setEditStatus(null); setIsSheetOpen(true); }}>
-            <Plus className="size-3.5 mr-1" /> Add Status
+            <Plus className="size-3.5 mr-1" /> {t("addButton")}
           </Button>
         </div>
 
         {sorted.length === 0 ? (
-          <EmptyState message="No custom statuses. Tasks use default statuses." />
+          <EmptyState message={t("emptyMessage")} />
         ) : (
           <div className="space-y-1.5">
             {sorted.map((status) => (
@@ -116,7 +119,7 @@ export default function ProjectTaskStatuses({ projectId }: Props) {
                 <GripVertical className="size-4 text-muted-foreground/40 flex-shrink-0" />
                 <span className="inline-block size-3 rounded-full flex-shrink-0" style={{ backgroundColor: status.color }} />
                 <span className="text-sm font-medium flex-1 truncate">{status.name}</span>
-                <span className="text-xs text-muted-foreground">order: {status.order}</span>
+                <span className="text-xs text-muted-foreground">{t("orderInline", { order: status.order })}</span>
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button variant="ghost" size="sm" className="size-7 p-0" onClick={() => { setEditStatus(status); setIsSheetOpen(true); }}>
                     <Edit2 className="size-3.5" />
@@ -144,12 +147,12 @@ export default function ProjectTaskStatuses({ projectId }: Props) {
       <ConfirmDialog
         open={!!statusToDelete}
         onOpenChange={(open) => !open && setStatusToDelete(null)}
-        title="Delete Status"
-        description={`Delete status "${statusToDelete?.name}"? This cannot be undone.`}
+        title={t("deleteTitle")}
+        description={t("deleteDescription", { name: statusToDelete?.name ?? "" })}
         onConfirm={handleDelete}
         onCancel={() => setStatusToDelete(null)}
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        confirmLabel={t("deleteConfirm")}
+        cancelLabel={t("deleteCancel")}
       />
     </>
   );

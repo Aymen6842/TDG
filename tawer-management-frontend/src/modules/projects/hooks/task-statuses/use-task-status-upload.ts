@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-  taskStatusSchema,
+  getTaskStatusSchema,
   TaskStatusFormValues,
 } from "@/modules/projects/validation/task-status.schema";
 import {
@@ -36,11 +37,14 @@ export default function useTaskStatusUpload({
   onSuccess,
 }: Params) {
   const queryClient = useQueryClient();
+  const t = useTranslations("modules.projects.validation.taskStatus");
+  const tToasts = useTranslations("modules.projects.entityToasts.taskStatus");
+  const tErrors = useTranslations("shared.errors");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
 
   const form = useForm<TaskStatusFormValues>({
-    resolver: zodResolver(taskStatusSchema) as any,
+    resolver: zodResolver(getTaskStatusSchema({ t })) as any,
     defaultValues: buildDefaults(status, defaultOrder),
   });
 
@@ -61,10 +65,10 @@ export default function useTaskStatusUpload({
 
       if (status?.id) {
         await updateTaskStatus(projectId, status.id, payload);
-        toast.success("Status updated");
+        toast.success(tToasts("updated"));
       } else {
         await createTaskStatus(projectId, payload);
-        toast.success("Status created");
+        toast.success(tToasts("created"));
       }
       queryClient.invalidateQueries({
         queryKey: ["task-statuses", projectId],
@@ -72,7 +76,7 @@ export default function useTaskStatusUpload({
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -85,14 +89,14 @@ export default function useTaskStatusUpload({
     setError("");
     try {
       await deleteTaskStatus(projectId, statusId);
-      toast.success("Status deleted");
+      toast.success(tToasts("deleted"));
       queryClient.invalidateQueries({
         queryKey: ["task-statuses", projectId],
       });
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {

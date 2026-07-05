@@ -1,10 +1,13 @@
+import { getTranslations } from "next-intl/server";
 import { generateMeta } from "@/lib/utils";
 import ProjectDetailRender from "./render";
 
 export async function generateMetadata() {
+  const t = await getTranslations("metadata.projectDetails");
+
   return generateMeta({
-    title: "Project Details",
-    description: "View and manage tasks, members, and settings for this project.",
+    title: t("title"),
+    description: t("description"),
     canonical: ""
   });
 }

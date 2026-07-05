@@ -5,6 +5,7 @@ import { Plus, Edit2, Trash2, Bell, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTranslations } from "next-intl";
 import { ConfirmDialog } from "../../shared/confirm-dialog";
 import { EmptyState } from "../../shared/empty-state";
 import Loading from "@/components/page-loader";
@@ -28,6 +29,7 @@ interface Props {
 }
 
 export default function ProjectReminders({ project }: Props) {
+  const t = useTranslations("modules.reminders");
   const { user } = useCurrentUser();
   const { reminders, remindersAreLoading } = useReminders(project.id);
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
@@ -48,7 +50,7 @@ export default function ProjectReminders({ project }: Props) {
     <>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Reminders</h2>
+          <h2 className="text-lg font-semibold">{t("sectionTitle")}</h2>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -56,13 +58,13 @@ export default function ProjectReminders({ project }: Props) {
                   <Plus className="md:size-6" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="left"><p>Add Reminder</p></TooltipContent>
+              <TooltipContent side="left"><p>{t("addTooltip")}</p></TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
 
         {reminders.length === 0 ? (
-          <EmptyState message="No reminders yet. Create one to get notified before deadlines." />
+          <EmptyState message={t("emptyMessage")} />
         ) : (
           <div className="space-y-2">
             {reminders.map((reminder) => (
@@ -70,10 +72,10 @@ export default function ProjectReminders({ project }: Props) {
                 <Bell className="size-4 text-muted-foreground mt-0.5 flex-shrink-0" />
                 <div className="flex-1 min-w-0 space-y-1.5">
                   <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium truncate">{reminder.message || "(No message)"}</p>
+                    <p className="text-sm font-medium truncate">{reminder.message || t("noMessage")}</p>
                     {reminder.isRecurring && (
                       <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <RefreshCw className="size-3" /> {reminder.recurrenceRule ?? "recurring"}
+                        <RefreshCw className="size-3" /> {reminder.recurrenceRule ?? t("recurringFallback")}
                       </span>
                     )}
                   </div>
@@ -88,7 +90,7 @@ export default function ProjectReminders({ project }: Props) {
                     ))}
                     {reminder.entityType && reminder.entityType !== "CUSTOM" && (
                       <Badge variant="outline" className="text-xs">
-                        {reminder.entityType}
+                        {t(`entityTypes.${reminder.entityType.toLowerCase()}`)}
                         {reminder.entityId && (
                           <>
                             {": "}
@@ -102,7 +104,7 @@ export default function ProjectReminders({ project }: Props) {
                       </Badge>
                     )}
                     {reminder.status && (
-                      <Badge variant="secondary" className="text-xs">{reminder.status}</Badge>
+                      <Badge variant="secondary" className="text-xs">{t(`statuses.${reminder.status.toLowerCase()}`)}</Badge>
                     )}
                   </div>
                 </div>
@@ -132,12 +134,12 @@ export default function ProjectReminders({ project }: Props) {
       <ConfirmDialog
         open={!!reminderToDelete}
         onOpenChange={(open) => !open && setReminderToDelete(null)}
-        title="Delete Reminder"
-        description={`Delete "${reminderToDelete?.message || 'this reminder'}"? This cannot be undone.`}
+        title={t("deleteTitle")}
+        description={t("deleteDescription", { message: reminderToDelete?.message || t("deleteDescriptionFallback") })}
         onConfirm={handleDelete}
         onCancel={() => setReminderToDelete(null)}
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        confirmLabel={t("deleteConfirm")}
+        cancelLabel={t("deleteCancel")}
       />
     </>
   );

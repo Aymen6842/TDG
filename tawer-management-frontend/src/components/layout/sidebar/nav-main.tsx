@@ -201,7 +201,7 @@ export function getNavItems({
           icon: User
         },
         {
-          title: "Company Rules",
+          title: t("navigation.rules"),
           href: user ? `/dashboard/rules` : "#",
           icon: Scale
         }
@@ -328,12 +328,12 @@ export function NavMain() {
                     )}
                     {!!item.isComing && (
                       <SidebarMenuBadge className="peer-hover/menu-button:text-foreground opacity-50">
-                        Coming
+                        {t("badges.coming")}
                       </SidebarMenuBadge>
                     )}
                     {!!item.isNew && (
                       <SidebarMenuBadge className="border border-green-400 text-green-600 peer-hover/menu-button:text-green-600">
-                        New
+                        {t("badges.new")}
                       </SidebarMenuBadge>
                     )}
                     {!!item.isDataBadge && (

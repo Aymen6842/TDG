@@ -1,10 +1,15 @@
 import { z } from "zod";
 
-export const timeEntrySchema = z.object({
-  hours: z
-    .number({ invalid_type_error: "Hours must be a number" })
-    .min(0.01, "Hours must be greater than 0"),
-  description: z.string().optional(),
-});
+interface Params {
+  t: (key: string) => string;
+}
 
-export type TimeEntryFormValues = z.infer<typeof timeEntrySchema>;
+export const getTimeEntrySchema = ({ t }: Params) =>
+  z.object({
+    hours: z
+      .number({ invalid_type_error: t("hoursNotANumber") })
+      .min(0.01, t("hoursMin")),
+    description: z.string().optional(),
+  });
+
+export type TimeEntryFormValues = z.infer<ReturnType<typeof getTimeEntrySchema>>;

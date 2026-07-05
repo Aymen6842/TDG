@@ -125,7 +125,7 @@ export default function ActivityTrackingAndWorkerDateRating({
                               month: "short",
                               year: "numeric"
                             })
-                            : `Day ${dayIndex + 1}`}
+                            : t("dayFallback", { index: dayIndex + 1 })}
                         </p>
                         <div className="flex items-center gap-3">
                           <p className="text-muted-foreground flex items-center gap-1 text-[11px]">

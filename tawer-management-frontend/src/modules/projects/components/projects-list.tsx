@@ -133,7 +133,7 @@ export default function ProjectsList() {
 
           <div className="flex items-center justify-end space-x-2 pt-4 border-t">
             <div className="text-muted-foreground flex-1 text-sm">
-              {records !== undefined ? paginationContent.rich("selected", { page, pages: pagesNumber, records }) : `Page ${page}`}
+              {records !== undefined ? paginationContent.rich("selected", { page, pages: pagesNumber, records }) : paginationContent("pageFallback", { page })}
             </div>
             <div className="space-x-2">
               <Button variant="outline" size="sm" disabled={page === 1} onClick={() => setPage(page - 1)}>

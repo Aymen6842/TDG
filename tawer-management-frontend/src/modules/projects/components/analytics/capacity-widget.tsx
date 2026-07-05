@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTranslations } from "next-intl";
 import useProjectCapacity from "@/modules/projects/hooks/analytics/use-project-capacity";
 
 interface Props {
@@ -8,6 +9,7 @@ interface Props {
 }
 
 export default function CapacityWidget({ projectId }: Props) {
+  const t = useTranslations("modules.projects.project.analytics.capacity");
   const { capacity, capacityIsLoading } = useProjectCapacity(projectId);
 
   if (capacityIsLoading) {
@@ -25,15 +27,15 @@ export default function CapacityWidget({ projectId }: Props) {
   return (
     <div className="flex flex-col gap-2 text-sm">
       <div className="flex items-center justify-between">
-        <span className="text-muted-foreground">Total Capacity</span>
+        <span className="text-muted-foreground">{t("totalCapacity")}</span>
         <span className="font-medium">{capacity.totalCapacity}</span>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-muted-foreground">Allocated</span>
+        <span className="text-muted-foreground">{t("allocated")}</span>
         <span className="font-medium">{capacity.allocatedCapacity}</span>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-muted-foreground">Remaining</span>
+        <span className="text-muted-foreground">{t("remaining")}</span>
         <span className="font-medium">{capacity.remainingCapacity}</span>
       </div>
     </div>

@@ -19,6 +19,7 @@ interface Props {
 
 export default function AttachmentsUpload({ inputName, previews, resetTrigger }: Props) {
   const t = useTranslations("modules.tasks");
+  const tFilesUpload = useTranslations("shared.filesUpload");
   const form = useFormContext();
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -109,7 +110,7 @@ export default function AttachmentsUpload({ inputName, previews, resetTrigger }:
                   <div className="space-y-2">
                     {fileState.files.map((fileItem) => {
                       const isFile = fileItem.file instanceof File;
-                      const fileName = isFile ? fileItem.file.name : (fileItem.file as any).url?.split('/').pop() || 'Unknown file';
+                      const fileName = isFile ? fileItem.file.name : (fileItem.file as any).url?.split('/').pop() || tFilesUpload("unknownFile");
                       const fileSize = isFile ? fileItem.file.size : 0;
                       const isImage = isFile && (fileItem.file as File).type.startsWith('image/');
 
@@ -137,7 +138,7 @@ export default function AttachmentsUpload({ inputName, previews, resetTrigger }:
                                 {fileName}
                               </p>
                               <p className="text-xs text-muted-foreground">
-                                {fileSize > 0 ? `${(fileSize / 1024).toFixed(2)} KB` : 'Unknown size'}
+                                {fileSize > 0 ? `${(fileSize / 1024).toFixed(2)} KB` : tFilesUpload("unknownSize")}
                               </p>
                             </div>
                           </div>

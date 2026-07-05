@@ -84,7 +84,7 @@ export function JourneyNotesPopup(props: Props) {
               <Heart className="text-primary h-4 w-4" />
               <label htmlFor="note" className="text-foreground text-sm font-semibold">
                 {t("workNoteLabel")}
-                <span className="text-muted-foreground ml-2 font-normal">(optional)</span>
+                <span className="text-muted-foreground ml-2 font-normal">{t("optional")}</span>
               </label>
             </div>
             <Textarea

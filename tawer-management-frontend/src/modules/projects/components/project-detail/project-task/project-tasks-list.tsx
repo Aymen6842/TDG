@@ -62,8 +62,8 @@ export default function ProjectTasksList({ project }: Props) {
   ), [project.projectType]);
 
   const defaultColumnTitles = React.useMemo<Record<string, string>>(() => ({
-    BACKLOG: "Backlog", TODO: "To Do", IN_PROGRESS: "In Progress",
-    TESTING: "Testing", IN_REVIEW: "In Review", DONE: "Done",
+    BACKLOG: tTasks("statusLabels.backlog"), TODO: tTasks("statusLabels.todo"), IN_PROGRESS: tTasks("statusLabels.in_progress"),
+    TESTING: tTasks("statusLabels.testing"), IN_REVIEW: tTasks("statusLabels.in_review"), DONE: tTasks("statusLabels.done"),
     [NO_STATUS_KEY]: tTasks("kanban.noStatus", { defaultValue: "No Status" })
   }), [tTasks]);
 

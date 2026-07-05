@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { epicSchema, EpicFormValues } from "@/modules/projects/validation/epic.schema";
+import { getEpicSchema, EpicFormValues } from "@/modules/projects/validation/epic.schema";
 import {
   createEpic,
   updateEpic,
@@ -29,11 +30,14 @@ interface Params {
 
 export default function useEpicUpload({ projectId, epic, onSuccess }: Params) {
   const queryClient = useQueryClient();
+  const t = useTranslations("modules.projects.validation.epic");
+  const tToasts = useTranslations("modules.projects.entityToasts.epic");
+  const tErrors = useTranslations("shared.errors");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
 
   const form = useForm<EpicFormValues>({
-    resolver: zodResolver(epicSchema) as any,
+    resolver: zodResolver(getEpicSchema({ t })) as any,
     defaultValues: buildDefaults(epic),
   });
 
@@ -54,7 +58,7 @@ export default function useEpicUpload({ projectId, epic, onSuccess }: Params) {
           startDate: data.startDate || undefined,
           endDate: data.endDate || undefined,
         });
-        toast.success("Epic updated");
+        toast.success(tToasts("updated"));
       } else {
         await createEpic(projectId, {
           name: data.name,
@@ -63,12 +67,12 @@ export default function useEpicUpload({ projectId, epic, onSuccess }: Params) {
           startDate: data.startDate || undefined,
           endDate: data.endDate || undefined,
         });
-        toast.success("Epic created");
+        toast.success(tToasts("created"));
       }
       queryClient.invalidateQueries({ queryKey: ["project-epics", projectId] });
       onSuccess?.();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "An error occurred.";
+      const msg = err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -81,11 +85,11 @@ export default function useEpicUpload({ projectId, epic, onSuccess }: Params) {
     setError("");
     try {
       await deleteEpic(projectId, epicId);
-      toast.success("Epic deleted");
+      toast.success(tToasts("deleted"));
       queryClient.invalidateQueries({ queryKey: ["project-epics", projectId] });
       onSuccess?.();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "An error occurred.";
+      const msg = err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {

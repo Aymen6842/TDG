@@ -1,12 +1,14 @@
+import { getTranslations } from "next-intl/server";
 import { generateMeta } from "@/lib/utils";
 
 import UsersPageRender from "./render";
 
 export async function generateMetadata() {
+  const t = await getTranslations("metadata.usersList");
+
   return generateMeta({
-    title: "Users List",
-    description:
-      "A list of users in the dashboard, where you can view and manage user accounts, including their details.",
+    title: t("title"),
+    description: t("description"),
     canonical: "/pages/users"
   });
 }

@@ -4,7 +4,10 @@ import { useLocale } from "next-intl";
 import { Language } from "@/types/languages";
 import { FrontendLocale } from "@/types/locales";
 
-const languages: Language[] = [{ code: "en", name: "English" }];
+const languages: Language[] = [
+  { code: "en", name: "English" },
+  { code: "fr", name: "Français" }
+];
 
 export const defaultLanguage = languages[0];
 

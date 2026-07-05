@@ -9,6 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useTranslations } from "next-intl";
 import useProjectVelocity from "@/modules/projects/hooks/analytics/use-project-velocity";
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function VelocityChart({ projectId }: Props) {
+  const t = useTranslations("modules.projects.project.analytics.velocity");
   const { velocityData, velocityIsLoading } = useProjectVelocity(projectId);
 
   if (velocityIsLoading) {
@@ -26,7 +28,7 @@ export default function VelocityChart({ projectId }: Props) {
     return (
       <div className="h-[300px] w-full flex items-center justify-center rounded-md border border-dashed">
         <p className="text-sm text-muted-foreground text-center px-6">
-          No completed sprints yet
+          {t("noData")}
         </p>
       </div>
     );

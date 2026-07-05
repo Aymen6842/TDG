@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ConfirmDialog } from "../../shared/confirm-dialog";
 import { EmptyState } from "../../shared/empty-state";
 import Loading from "@/components/page-loader";
+import { useTranslations } from "next-intl";
 import { ProjectType } from "@/modules/projects/types/projects";
 import { EpicType } from "@/modules/projects/types/project-epics";
 import useEpics from "@/modules/projects/hooks/epics/use-epics";
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export default function ProjectEpics({ project }: Props) {
+  const t = useTranslations("modules.projects.project.epics");
   const { epics, epicsAreLoading } = useEpics(project.id);
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const [editEpic, setEditEpic] = React.useState<EpicType | null>(null);
@@ -38,7 +40,7 @@ export default function ProjectEpics({ project }: Props) {
     <>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Epics</h2>
+          <h2 className="text-lg font-semibold">{t("sectionTitle")}</h2>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -46,13 +48,13 @@ export default function ProjectEpics({ project }: Props) {
                   <Plus className="md:size-6" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent side="left"><p>Add Epic</p></TooltipContent>
+              <TooltipContent side="left"><p>{t("addTooltip")}</p></TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
 
         {epics.length === 0 ? (
-          <EmptyState message="No epics yet. Create one to group related work." />
+          <EmptyState message={t("emptyMessage")} />
         ) : (
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {epics.map((epic) => (
@@ -100,12 +102,12 @@ export default function ProjectEpics({ project }: Props) {
       <ConfirmDialog
         open={!!epicToDelete}
         onOpenChange={(open) => !open && setEpicToDelete(null)}
-        title="Delete Epic"
-        description={`Are you sure you want to delete "${epicToDelete?.name}"? This cannot be undone.`}
+        title={t("deleteTitle")}
+        description={t("deleteDescription", { name: epicToDelete?.name ?? "" })}
         onConfirm={handleDelete}
         onCancel={() => setEpicToDelete(null)}
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        confirmLabel={t("deleteConfirm")}
+        cancelLabel={t("deleteCancel")}
       />
     </>
   );

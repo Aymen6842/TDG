@@ -19,11 +19,12 @@ function getNavItems(t: (key: string) => string) {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata.notifications");
+
   return generateMeta({
-    title: "Account Settings Page",
-    description:
-      "Manage your account settings including profile, appearance, billing, notifications, and password.",
-    canonical: "/pages/account-settings"
+    title: t("title"),
+    description: t("description"),
+    canonical: "/pages/notifications"
   });
 }
 

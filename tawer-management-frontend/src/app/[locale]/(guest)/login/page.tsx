@@ -1,12 +1,14 @@
+import { getTranslations } from "next-intl/server";
 import { generateMeta } from "@/lib/utils";
 import AuthUIWrapper from "@/modules/auth/components/auth-ui-wrapper";
 import SignInForm from "@/modules/auth/components/sign-in/form";
 
-export function generateMetadata() {
+export async function generateMetadata() {
+  const t = await getTranslations("metadata.login");
+
   return generateMeta({
-    title: "Login Page",
-    description:
-      "A login form with email and password. There's an option to login with Google and a link to sign up if you don't have an account.",
+    title: t("title"),
+    description: t("description"),
     canonical: "/login"
   });
 }

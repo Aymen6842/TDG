@@ -38,7 +38,9 @@ export default function LanguageSelector() {
             className="w-fit justify-between"
             aria-label={t("ariaLabel")}>
             <span className="text-sm font-medium">
-              Language : {languages.find((language) => language.code === locale)?.name}
+              {t("currentLabel", {
+                name: languages.find((language) => language.code === locale)?.name ?? ""
+              })}
             </span>
           </Button>
         </PopoverTrigger>

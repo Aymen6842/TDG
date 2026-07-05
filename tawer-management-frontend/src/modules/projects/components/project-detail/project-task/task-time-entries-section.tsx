@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import useTimeEntries from "@/modules/projects/hooks/time-entries/use-time-entries";
 import useTimeEntryUpload from "@/modules/projects/hooks/time-entries/use-time-entry-upload";
 
@@ -15,6 +16,7 @@ interface Props {
 }
 
 export function TaskTimeEntriesSection({ projectId, taskId }: Props) {
+  const t = useTranslations("modules.projects.taskSections.timeEntries");
   const { timeEntries, timeEntriesAreLoading } = useTimeEntries(projectId, taskId);
   const { deleteTimeEntryFromTask } = useTimeEntryUpload({ projectId, taskId });
 
@@ -40,10 +42,10 @@ export function TaskTimeEntriesSection({ projectId, taskId }: Props) {
     <div className="p-4 space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium flex items-center gap-1.5">
-          <Clock className="size-3.5" /> Time Entries
+          <Clock className="size-3.5" /> {t("title")}
           {timeEntries.length > 0 && (
             <span className="text-xs text-muted-foreground">
-              — {totalHours}h total
+              {t("totalSuffix", { hours: totalHours })}
             </span>
           )}
         </h4>
@@ -53,14 +55,14 @@ export function TaskTimeEntriesSection({ projectId, taskId }: Props) {
           className="h-7 px-2"
           onClick={() => setAdding((p) => !p)}
         >
-          <Plus className="size-3.5 mr-1" /> Log time
+          <Plus className="size-3.5 mr-1" /> {t("logTime")}
         </Button>
       </div>
 
       {adding && (
         <div className="space-y-2 bg-muted/50 rounded p-3">
           <div>
-            <Label className="text-xs mb-1 block">Hours</Label>
+            <Label className="text-xs mb-1 block">{t("hoursLabel")}</Label>
             <Input
               type="number"
               min={0.01}
@@ -68,28 +70,28 @@ export function TaskTimeEntriesSection({ projectId, taskId }: Props) {
               value={hours}
               onChange={(e) => setHours(e.target.value)}
               className="h-8 text-sm"
-              placeholder="e.g. 1.5"
+              placeholder={t("hoursPlaceholder")}
             />
           </div>
           <Textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="Optional description"
+            placeholder={t("descriptionPlaceholder")}
             className="text-sm min-h-[50px]"
           />
           <div className="flex gap-2 justify-end">
             <Button size="sm" variant="ghost" onClick={() => setAdding(false)}>
-              Cancel
+              {t("cancel")}
             </Button>
             <Button size="sm" disabled={isPending} onClick={handleAdd}>
-              Save
+              {t("save")}
             </Button>
           </div>
         </div>
       )}
 
       {timeEntriesAreLoading ? (
-        <p className="text-xs text-muted-foreground">Loading...</p>
+        <p className="text-xs text-muted-foreground">{t("loading")}</p>
       ) : timeEntries.length > 0 ? (
         <div className="space-y-1">
           {timeEntries.map((entry) => (
@@ -119,7 +121,7 @@ export function TaskTimeEntriesSection({ projectId, taskId }: Props) {
         </div>
       ) : (
         !adding && (
-          <p className="text-xs text-muted-foreground">No time logged yet</p>
+          <p className="text-xs text-muted-foreground">{t("empty")}</p>
         )
       )}
     </div>

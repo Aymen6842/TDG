@@ -42,10 +42,10 @@ export function TaskSubtasksSection({ projectId, task }: TaskSubtasksSectionProp
     try {
       await deleteProjectTask(projectId, subTaskToDelete);
       invalidateTaskQueries();
-      toast.success("Subtask deleted");
+      toast.success(tCommon("subtaskDeletedToast"));
       setSubTaskToDelete(null);
     } catch {
-      toast.error("Failed to delete subtask");
+      toast.error(tCommon("subtaskDeleteFailedToast"));
     } finally {
       setIsDeletingSubTask(false);
     }

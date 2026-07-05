@@ -21,7 +21,7 @@ export default function AuthUIWrapper({ children }: Props) {
           width={1000}
           height={1000}
           src={`/images/extra/image4.jpg`}
-          alt="shadcn/ui login page"
+          alt={t("imageAlt")}
           className="h-full w-full object-cover"
           unoptimized
         />

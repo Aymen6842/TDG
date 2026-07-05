@@ -18,20 +18,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useTheme } from "next-themes";
 import { useTranslations } from "next-intl";
 
-const appearanceFormSchema = z.object({
-  theme: z.enum(["light", "dark"], {
-    required_error: "Please select a theme."
-  })
-});
+type AppearanceFormValues = z.infer<ReturnType<typeof buildAppearanceFormSchema>>;
 
-type AppearanceFormValues = z.infer<typeof appearanceFormSchema>;
+function buildAppearanceFormSchema(t: (key: string) => string) {
+  return z.object({
+    theme: z.enum(["light", "dark"], {
+      required_error: t("validation.themeRequired")
+    })
+  });
+}
 
 export default function PlatformAppearanceChangement() {
   const t = useTranslations("shared.theme");
   const { theme, setTheme } = useTheme();
 
   const form = useForm<AppearanceFormValues>({
-    resolver: zodResolver(appearanceFormSchema),
+    resolver: zodResolver(buildAppearanceFormSchema(t)),
     defaultValues: {
       theme: (theme as "light" | "dark") || "light"
     }

@@ -8,6 +8,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useTranslations } from "next-intl";
 import { LabelType } from "@/modules/projects/types/project-labels";
 import useProjectLabels from "@/modules/projects/hooks/labels/use-project-labels";
 import useLabelUpload from "@/modules/projects/hooks/labels/use-label-upload";
@@ -19,6 +20,7 @@ interface Props {
 }
 
 export function TaskLabelsSection({ projectId, taskId, assignedLabels = [] }: Props) {
+  const t = useTranslations("modules.projects.taskSections.labels");
   const { labels } = useProjectLabels(projectId);
   const { assignLabel, removeLabel } = useLabelUpload({ projectId });
   const [open, setOpen] = React.useState(false);
@@ -36,17 +38,17 @@ export function TaskLabelsSection({ projectId, taskId, assignedLabels = [] }: Pr
   return (
     <div className="p-4 space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-medium">Labels</h4>
+        <h4 className="text-sm font-medium">{t("title")}</h4>
         <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button variant="ghost" size="sm" className="h-7 px-2">
-              <Plus className="size-3.5 mr-1" /> Add
+              <Plus className="size-3.5 mr-1" /> {t("add")}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-52 p-2" align="end">
             {labels.length === 0 ? (
               <p className="text-xs text-muted-foreground text-center py-2">
-                No labels defined for this project
+                {t("noneDefined")}
               </p>
             ) : (
               <div className="space-y-1">
@@ -94,7 +96,7 @@ export function TaskLabelsSection({ projectId, taskId, assignedLabels = [] }: Pr
           ))}
         </div>
       ) : (
-        <p className="text-xs text-muted-foreground">No labels assigned</p>
+        <p className="text-xs text-muted-foreground">{t("noneAssigned")}</p>
       )}
     </div>
   );

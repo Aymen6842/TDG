@@ -10,9 +10,11 @@ import {
   SelectValue
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { useTranslations } from "next-intl";
 
 export function PresetSelector() {
   const { theme, setTheme } = useThemeConfig();
+  const t = useTranslations("shared.themeCustomizer");
 
   const handlePreset = (value: string) => {
     setTheme({ ...theme, ...DEFAULT_THEME, preset: value as any });
@@ -20,10 +22,10 @@ export function PresetSelector() {
 
   return (
     <div className="flex flex-col gap-4">
-      <Label>Theme preset:</Label>
+      <Label>{t("themePreset")}</Label>
       <Select value={theme.preset} onValueChange={(value) => handlePreset(value)}>
         <SelectTrigger className="w-full">
-          <SelectValue placeholder="Select a theme" />
+          <SelectValue placeholder={t("selectTheme")} />
         </SelectTrigger>
         <SelectContent align="end">
           {THEMES.map((theme) => (

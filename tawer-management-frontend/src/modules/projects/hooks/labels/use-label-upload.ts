@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-  labelSchema,
+  getLabelSchema,
   LabelFormValues,
 } from "@/modules/projects/validation/label.schema";
 import {
@@ -31,11 +32,14 @@ interface Params {
 
 export default function useLabelUpload({ projectId, label, onSuccess }: Params) {
   const queryClient = useQueryClient();
+  const t = useTranslations("modules.projects.validation.label");
+  const tToasts = useTranslations("modules.projects.entityToasts.label");
+  const tErrors = useTranslations("shared.errors");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
 
   const form = useForm<LabelFormValues>({
-    resolver: zodResolver(labelSchema) as any,
+    resolver: zodResolver(getLabelSchema({ t })) as any,
     defaultValues: buildDefaults(label),
   });
 
@@ -50,16 +54,16 @@ export default function useLabelUpload({ projectId, label, onSuccess }: Params) 
     try {
       if (label?.id) {
         await updateLabel(projectId, label.id, data);
-        toast.success("Label updated");
+        toast.success(tToasts("updated"));
       } else {
         await createLabel(projectId, data);
-        toast.success("Label created");
+        toast.success(tToasts("created"));
       }
       queryClient.invalidateQueries({ queryKey: ["project-labels", projectId] });
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -72,12 +76,12 @@ export default function useLabelUpload({ projectId, label, onSuccess }: Params) 
     setError("");
     try {
       await deleteLabel(projectId, labelId);
-      toast.success("Label deleted");
+      toast.success(tToasts("deleted"));
       queryClient.invalidateQueries({ queryKey: ["project-labels", projectId] });
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -94,7 +98,7 @@ export default function useLabelUpload({ projectId, label, onSuccess }: Params) 
       queryClient.invalidateQueries({ queryKey: ["project-task", projectId, taskId] });
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -111,7 +115,7 @@ export default function useLabelUpload({ projectId, label, onSuccess }: Params) 
       queryClient.invalidateQueries({ queryKey: ["project-task", projectId, taskId] });
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {

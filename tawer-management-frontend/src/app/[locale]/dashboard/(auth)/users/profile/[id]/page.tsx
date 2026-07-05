@@ -1,12 +1,14 @@
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { generateMeta } from "@/lib/utils";
 import UserProfilePageRender from "./render";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata.userProfile");
+
   return generateMeta({
-    title: "User Profile",
-    description:
-      "A page within a dashboard that shows detailed user information, profile settings, and recent activity. Built with shadcn/ui, Tailwind CSS, Next.js and React. Typescript is included.",
+    title: t("title"),
+    description: t("description"),
     canonical: "/pages/profile-v2"
   });
 }

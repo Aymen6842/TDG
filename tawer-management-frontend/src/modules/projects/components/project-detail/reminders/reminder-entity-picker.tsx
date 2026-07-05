@@ -4,6 +4,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import useProjectTasks from "@/modules/projects/hooks/tasks/use-project-tasks";
 import useProjectSprints from "@/modules/projects/hooks/sprints/use-project-sprints";
@@ -64,13 +65,14 @@ function useEntityOptions(projectId: string, entityType: ReminderEntityType) {
 }
 
 export default function ReminderEntityPicker({ projectId, entityType, value, onChange, disabled }: Props) {
+  const t = useTranslations("modules.reminders");
   const [open, setOpen] = React.useState(false);
   const { options, isLoading, search, setSearch } = useEntityOptions(projectId, entityType);
 
   if (entityType === "CUSTOM" || entityType === "PROJECT") return null;
 
   const selected = options.find((o) => o.id === value);
-  const entityLabel = entityType.charAt(0) + entityType.slice(1).toLowerCase();
+  const entityLabel = t(`entityTypes.${entityType.toLowerCase()}`);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -81,19 +83,19 @@ export default function ReminderEntityPicker({ projectId, entityType, value, onC
           disabled={disabled}
           className={cn("w-full justify-between font-normal", !selected && "text-muted-foreground")}
         >
-          <span className="truncate">{selected ? selected.label : `Select ${entityLabel.toLowerCase()}...`}</span>
+          <span className="truncate">{selected ? selected.label : t("picker.selectPlaceholder", { entity: entityLabel.toLowerCase() })}</span>
           <ChevronsUpDown className="size-4 opacity-50 flex-shrink-0" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
         <Command shouldFilter={false}>
           <CommandInput
-            placeholder={`Search ${entityLabel.toLowerCase()}s...`}
+            placeholder={t("picker.searchPlaceholder", { entity: entityLabel.toLowerCase() })}
             value={search}
             onValueChange={setSearch}
           />
           <CommandList>
-            <CommandEmpty>{isLoading ? "Loading..." : "No results"}</CommandEmpty>
+            <CommandEmpty>{isLoading ? t("picker.loading") : t("picker.noResults")}</CommandEmpty>
             <CommandGroup>
               {options.map((opt) => (
                 <CommandItem key={opt.id} value={opt.id} onSelect={() => { onChange(opt.id); setOpen(false); }}>

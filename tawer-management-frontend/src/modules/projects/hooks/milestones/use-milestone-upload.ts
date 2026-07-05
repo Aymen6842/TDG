@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-  milestoneSchema,
+  getMilestoneSchema,
   MilestoneFormValues,
 } from "@/modules/projects/validation/milestone.schema";
 import {
@@ -35,11 +36,14 @@ export default function useMilestoneUpload({
   onSuccess,
 }: Params) {
   const queryClient = useQueryClient();
+  const t = useTranslations("modules.projects.validation.milestone");
+  const tToasts = useTranslations("modules.projects.entityToasts.milestone");
+  const tErrors = useTranslations("shared.errors");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
 
   const form = useForm<MilestoneFormValues>({
-    resolver: zodResolver(milestoneSchema) as any,
+    resolver: zodResolver(getMilestoneSchema({ t })) as any,
     defaultValues: buildDefaults(milestone),
   });
 
@@ -58,14 +62,14 @@ export default function useMilestoneUpload({
           description: data.description || undefined,
           dueDate: data.dueDate || undefined,
         });
-        toast.success("Milestone updated");
+        toast.success(tToasts("updated"));
       } else {
         await createMilestone(projectId, {
           name: data.name,
           description: data.description || undefined,
           dueDate: data.dueDate,
         });
-        toast.success("Milestone created");
+        toast.success(tToasts("created"));
       }
       queryClient.invalidateQueries({
         queryKey: ["project-milestones", projectId],
@@ -73,7 +77,7 @@ export default function useMilestoneUpload({
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -86,7 +90,7 @@ export default function useMilestoneUpload({
     setError("");
     try {
       await completeMilestone(projectId, milestoneId);
-      toast.success("Milestone completed");
+      toast.success(tToasts("completed"));
       queryClient.invalidateQueries({
         queryKey: ["project-milestones", projectId],
       });
@@ -96,7 +100,7 @@ export default function useMilestoneUpload({
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -109,14 +113,14 @@ export default function useMilestoneUpload({
     setError("");
     try {
       await deleteMilestone(projectId, milestoneId);
-      toast.success("Milestone deleted");
+      toast.success(tToasts("deleted"));
       queryClient.invalidateQueries({
         queryKey: ["project-milestones", projectId],
       });
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {

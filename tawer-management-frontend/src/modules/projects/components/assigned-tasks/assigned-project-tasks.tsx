@@ -24,6 +24,7 @@ type ViewMode = "list" | "grid";
 
 export default function AssignedProjectTasks() {
   const t = useTranslations("modules.projects.tasks");
+  const tView = useTranslations("shared.viewToggle");
 
   const { tasks, tasksAreLoading, tasksError, searchState, statusState, priorityState, typeState } = useAssignedProjectTasks();
   const [search, setSearch] = searchState;
@@ -144,8 +145,8 @@ export default function AssignedProjectTasks() {
 
           <ToggleGroup type="single" variant="outline" value={viewMode}
             onValueChange={(v) => v && setViewMode(v as ViewMode)}>
-            <ToggleGroupItem value="list" aria-label="List view"><ListIcon /></ToggleGroupItem>
-            <ToggleGroupItem value="grid" aria-label="Grid view"><GridIcon /></ToggleGroupItem>
+            <ToggleGroupItem value="list" aria-label={tView("listView")}><ListIcon /></ToggleGroupItem>
+            <ToggleGroupItem value="grid" aria-label={tView("gridView")}><GridIcon /></ToggleGroupItem>
           </ToggleGroup>
         </div>
       </div>

@@ -163,7 +163,7 @@ export default function ProjectTaskItem({
 
               <div className="flex items-center gap-2">
                 {visibleAttributes.assignee && task.assigneeId && (
-                  <div className="flex size-5 items-center justify-center rounded-full bg-muted text-[8px] font-bold" title={`Assigned to ${assigneeName}`}>
+                  <div className="flex size-5 items-center justify-center rounded-full bg-muted text-[8px] font-bold" title={t("assignedToTitle", { name: assigneeName ?? "" })}>
                     {assigneeName?.split(' ').slice(0, 2).map(w => w[0]).join('').substring(0, 2).toUpperCase() || "UN"}
                   </div>
                 )}
@@ -249,7 +249,7 @@ export default function ProjectTaskItem({
                     </Badge>
                   )}
                   {visibleAttributes.assignee && task.assigneeId && (
-                    <div className="flex size-5 items-center justify-center rounded-full bg-muted text-[8px] font-bold shrink-0 ml-1" title={`Assigned to ${assigneeName}`}>
+                    <div className="flex size-5 items-center justify-center rounded-full bg-muted text-[8px] font-bold shrink-0 ml-1" title={t("assignedToTitle", { name: assigneeName ?? "" })}>
                       {assigneeName?.split(' ').slice(0, 2).map(w => w[0]).join('').substring(0, 2).toUpperCase() || "UN"}
                     </div>
                   )}

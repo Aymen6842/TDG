@@ -1,13 +1,15 @@
 import { generateMeta } from "@/lib/utils";
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 
 import EventCalendarApp from "@/modules/events/components/calendar/event-calendar-app";
 
 export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata.calendarPersonal");
+
   return generateMeta({
-    title: "Event Calendar",
-    description:
-      "Plan your events or tasks in an organized way with the Calendar app template. Built with shadcn/ui, Next.js, Tailwind CSS ve React.",
+    title: t("title"),
+    description: t("description"),
     canonical: "/apps/calendar"
   });
 }

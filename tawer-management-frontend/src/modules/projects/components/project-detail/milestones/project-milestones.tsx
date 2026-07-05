@@ -9,6 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { ConfirmDialog } from "../../shared/confirm-dialog";
 import { EmptyState } from "../../shared/empty-state";
 import Loading from "@/components/page-loader";
+import { useTranslations } from "next-intl";
 import { ProjectType } from "@/modules/projects/types/projects";
 import { MilestoneType } from "@/modules/projects/types/project-milestones";
 import useMilestones from "@/modules/projects/hooks/milestones/use-milestones";
@@ -21,6 +22,7 @@ interface Props {
 }
 
 function GanttView({ projectId }: { projectId: string }) {
+  const t = useTranslations("modules.projects.project.milestones");
   const { ganttData, ganttIsLoading } = useGanttData(projectId);
   if (ganttIsLoading) return <Loading />;
 
@@ -30,14 +32,14 @@ function GanttView({ projectId }: { projectId: string }) {
       ganttData.epics.length === 0 &&
       ganttData.sprints.length === 0 &&
       ganttData.tasks.length === 0);
-  if (isEmpty) return <EmptyState message="No milestones, epics, or sprints to display on Gantt." />;
+  if (isEmpty) return <EmptyState message={t("ganttEmptyMessage")} />;
 
   return (
     <div className="overflow-x-auto space-y-6">
       <div className="min-w-[500px] space-y-2">
-        <h4 className="text-sm font-semibold text-muted-foreground">Milestones</h4>
+        <h4 className="text-sm font-semibold text-muted-foreground">{t("sectionTitle")}</h4>
         {ganttData.milestones.length === 0 ? (
-          <p className="text-xs text-muted-foreground">No milestones.</p>
+          <p className="text-xs text-muted-foreground">{t("noMilestones")}</p>
         ) : (
           ganttData.milestones.map((m) => (
             <div key={m.id} className="flex items-center gap-3 rounded-md border px-4 py-2.5">
@@ -47,7 +49,7 @@ function GanttView({ projectId }: { projectId: string }) {
               <span className="text-sm font-medium flex-1 truncate">{m.name}</span>
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <CalendarClock className="size-3" />
-                {m.dueDate ? format(m.dueDate, "MMM d, yyyy") : "No due date"}
+                {m.dueDate ? format(m.dueDate, "MMM d, yyyy") : t("noDueDate")}
               </div>
               <Badge variant="outline" className="text-xs">{m.status}</Badge>
             </div>
@@ -57,7 +59,7 @@ function GanttView({ projectId }: { projectId: string }) {
 
       {ganttData.epics.length > 0 && (
         <div className="min-w-[500px] space-y-2">
-          <h4 className="text-sm font-semibold text-muted-foreground">Epics</h4>
+          <h4 className="text-sm font-semibold text-muted-foreground">{t("epicsSectionTitle")}</h4>
           {ganttData.epics.map((e) => (
             <div key={e.id} className="flex items-center gap-3 rounded-md border px-4 py-2 text-sm">
               <span className="flex-1 truncate">{e.name}</span>
@@ -71,7 +73,7 @@ function GanttView({ projectId }: { projectId: string }) {
 
       {ganttData.sprints.length > 0 && (
         <div className="min-w-[500px] space-y-2">
-          <h4 className="text-sm font-semibold text-muted-foreground">Sprints</h4>
+          <h4 className="text-sm font-semibold text-muted-foreground">{t("sprintsSectionTitle")}</h4>
           {ganttData.sprints.map((s) => (
             <div key={s.id} className="flex items-center gap-3 rounded-md border px-4 py-2 text-sm">
               <Badge variant="outline" className="text-xs flex-shrink-0">{s.status}</Badge>
@@ -85,7 +87,7 @@ function GanttView({ projectId }: { projectId: string }) {
 
       {ganttData.tasks.length > 0 && (
         <p className="text-xs text-muted-foreground">
-          {ganttData.tasks.length} task{ganttData.tasks.length === 1 ? "" : "s"} in scope for this timeline.
+          {t("tasksInScope", { count: ganttData.tasks.length })}
         </p>
       )}
     </div>
@@ -93,6 +95,7 @@ function GanttView({ projectId }: { projectId: string }) {
 }
 
 export default function ProjectMilestones({ project }: Props) {
+  const t = useTranslations("modules.projects.project.milestones");
   const { milestones, milestonesAreLoading } = useMilestones(project.id);
   const [isSheetOpen, setIsSheetOpen] = React.useState(false);
   const [editMilestone, setEditMilestone] = React.useState<MilestoneType | null>(null);
@@ -112,8 +115,8 @@ export default function ProjectMilestones({ project }: Props) {
         <Tabs defaultValue="list">
           <div className="flex items-center justify-between mb-4">
             <TabsList>
-              <TabsTrigger value="list">List</TabsTrigger>
-              <TabsTrigger value="gantt">Gantt</TabsTrigger>
+              <TabsTrigger value="list">{t("listTab")}</TabsTrigger>
+              <TabsTrigger value="gantt">{t("ganttTab")}</TabsTrigger>
             </TabsList>
             <TooltipProvider>
               <Tooltip>
@@ -122,14 +125,14 @@ export default function ProjectMilestones({ project }: Props) {
                     <Plus className="md:size-6" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="left"><p>Add Milestone</p></TooltipContent>
+                <TooltipContent side="left"><p>{t("addTooltip")}</p></TooltipContent>
               </Tooltip>
             </TooltipProvider>
           </div>
 
           <TabsContent value="list">
             {milestonesAreLoading ? <Loading /> : milestones.length === 0 ? (
-              <EmptyState message="No milestones yet. Create one to track key delivery dates." />
+              <EmptyState message={t("emptyMessage")} />
             ) : (
               <div className="space-y-2">
                 {milestones.map((ms) => (
@@ -149,10 +152,10 @@ export default function ProjectMilestones({ project }: Props) {
                     </div>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
                       <CalendarClock className="size-3" />
-                      {ms.dueDate ? format(new Date(ms.dueDate), "MMM d, yyyy") : "No due date"}
+                      {ms.dueDate ? format(new Date(ms.dueDate), "MMM d, yyyy") : t("noDueDate")}
                     </div>
                     {ms.completedAt && (
-                      <Badge variant="outline" className="text-xs text-green-600 border-green-300 flex-shrink-0">Done</Badge>
+                      <Badge variant="outline" className="text-xs text-green-600 border-green-300 flex-shrink-0">{t("done")}</Badge>
                     )}
                     <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                       <Button variant="ghost" size="sm" className="size-7 p-0" onClick={() => { setEditMilestone(ms); setIsSheetOpen(true); }}>
@@ -184,12 +187,12 @@ export default function ProjectMilestones({ project }: Props) {
       <ConfirmDialog
         open={!!milestoneToDelete}
         onOpenChange={(open) => !open && setMilestoneToDelete(null)}
-        title="Delete Milestone"
-        description={`Delete "${milestoneToDelete?.name}"? This cannot be undone.`}
+        title={t("deleteTitle")}
+        description={t("deleteDescription", { name: milestoneToDelete?.name ?? "" })}
         onConfirm={handleDelete}
         onCancel={() => setMilestoneToDelete(null)}
-        confirmLabel="Delete"
-        cancelLabel="Cancel"
+        confirmLabel={t("deleteConfirm")}
+        cancelLabel={t("deleteCancel")}
       />
     </>
   );

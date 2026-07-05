@@ -131,7 +131,7 @@ export default function UsersList() {
             (table.getIsSomePageRowsSelected() && "indeterminate")
           }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
+          aria-label={t("table.selection.selectAll")}
         />
       ),
       cell: ({ row }) => (
@@ -142,7 +142,7 @@ export default function UsersList() {
             if (row.getIsSelected()) removeUserFromDeletionList(row.original.id);
             else addUserToDeletionList(row.original.id);
           }}
-          aria-label="Select row"
+          aria-label={t("table.selection.selectRow")}
         />
       ),
       enableSorting: false,
@@ -394,7 +394,7 @@ export default function UsersList() {
 
               <div className="relative">
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
+                  <span className="sr-only">{t("table.actions.openMenu")}</span>
                   <MoreHorizontal className="h-4 w-4" />
                 </Button>
               </div>
@@ -541,7 +541,7 @@ export default function UsersList() {
           <Select value={searchBy} onValueChange={setSearchBy}>
             <SelectTrigger className="w-52 lg:w-auto">
               <span className="text-muted-foreground text-sm">{t("table.filters.search.by")}</span>
-              <SelectValue placeholder="Name" />
+              <SelectValue placeholder={t("table.filters.search.name")} />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="name">{t("table.filters.search.name")}</SelectItem>

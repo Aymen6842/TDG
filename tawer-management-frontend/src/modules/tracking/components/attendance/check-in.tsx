@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import DailyWelcomPopUP from "./welcome"
 import { Loader2, Smile, Building2, Home, Clock, Check, Eye } from "lucide-react"
-import { useTranslations } from "next-intl"
+import { useTranslations, useLocale } from "next-intl"
 import useCompany from "@/hooks/use-company"
 import { cn } from "@/lib/utils"
 import useAttendance from "../../hook/work-sessions/use-attendance"
@@ -20,6 +20,7 @@ import { useViewerModeStore } from "../../store/viewer-mode-store"
 
 export function CheckInScreen() {
   const t = useTranslations("modules.tracking.checkIn")
+  const locale = useLocale()
 
   const { company } = useCompany()
   const { workSession } = useWorkSession();
@@ -86,7 +87,7 @@ export function CheckInScreen() {
 
                 <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
                   <Clock className="h-3 w-3" />
-                  <span>{new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}</span>
+                  <span>{new Date().toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}</span>
                 </div>
               </div>
 
@@ -173,7 +174,7 @@ export function CheckInScreen() {
                         {t("checkingIn")}
                       </>
                     ) : (
-                      "Check In"
+                      t("checkIn")
                     )}
                   </span>
                 </Button>

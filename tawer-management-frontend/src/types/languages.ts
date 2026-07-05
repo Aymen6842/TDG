@@ -1,7 +1,7 @@
-import { BackendLocale } from "./locales";
+import { FrontendLocale } from "./locales";
 
-export type LanguageCode = BackendLocale;
-export type LanguageName = "English";
+export type LanguageCode = FrontendLocale;
+export type LanguageName = "English" | "Français";
 
 export interface Language {
   code: LanguageCode;

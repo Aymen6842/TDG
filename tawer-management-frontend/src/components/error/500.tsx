@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 
 export default function Error500() {
+  const t = useTranslations("shared.errorPages");
+
   return (
     <div className="from-background to-secondary/10 flex flex-col items-center justify-center bg-gradient-to-b p-4">
       <div className="w-full max-w-3xl space-y-4 lg:space-y-8">
@@ -24,7 +27,7 @@ export default function Error500() {
               500
             </div>
             <div className="text-foreground text-xl font-medium sm:text-2xl">
-              Internal Server Error
+              {t("serverError.title")}
             </div>
           </div>
 
@@ -34,7 +37,7 @@ export default function Error500() {
         <div className="flex justify-center">
           <Button asChild variant="outline" size="lg" className="group">
             <Link href="/">
-              Back to Home
+              {t("backToHome")}
               <ArrowRight />
             </Link>
           </Button>
