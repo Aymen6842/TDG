@@ -9,6 +9,7 @@ import {
   removeTaskDependency,
 } from "@/modules/projects/services/api/project-task-dependencies";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 
 interface Props {
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export function TaskDependenciesSection({ projectId, taskId, dependencies = [] }: Props) {
+  const t = useTranslations("modules.projects.taskSections.dependencies");
   const queryClient = useQueryClient();
   const [adding, setAdding] = React.useState(false);
   const [blockingTaskId, setBlockingTaskId] = React.useState("");
@@ -29,11 +31,11 @@ export function TaskDependenciesSection({ projectId, taskId, dependencies = [] }
     try {
       await addTaskDependency(projectId, taskId, blockingTaskId.trim());
       queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
-      toast.success("Dependency added");
+      toast.success(t("addedToast"));
       setBlockingTaskId("");
       setAdding(false);
     } catch (err: any) {
-      toast.error(err?.message || "Failed to add dependency");
+      toast.error(err?.message || t("addFailedToast"));
     } finally {
       setIsPending(false);
     }
@@ -43,9 +45,9 @@ export function TaskDependenciesSection({ projectId, taskId, dependencies = [] }
     try {
       await removeTaskDependency(projectId, taskId, dependencyId);
       queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
-      toast.success("Dependency removed");
+      toast.success(t("removedToast"));
     } catch (err: any) {
-      toast.error(err?.message || "Failed to remove dependency");
+      toast.error(err?.message || t("removeFailedToast"));
     }
   }
 
@@ -53,7 +55,7 @@ export function TaskDependenciesSection({ projectId, taskId, dependencies = [] }
     <div className="p-4 space-y-3">
       <div className="flex items-center justify-between">
         <h4 className="text-sm font-medium flex items-center gap-1.5">
-          <Link className="size-3.5" /> Dependencies
+          <Link className="size-3.5" /> {t("title")}
           {dependencies.length > 0 && (
             <span className="text-xs text-muted-foreground">({dependencies.length})</span>
           )}
@@ -64,7 +66,7 @@ export function TaskDependenciesSection({ projectId, taskId, dependencies = [] }
           className="h-7 px-2"
           onClick={() => setAdding((p) => !p)}
         >
-          <Plus className="size-3.5 mr-1" /> Add
+          <Plus className="size-3.5 mr-1" /> {t("add")}
         </Button>
       </div>
 
@@ -73,13 +75,13 @@ export function TaskDependenciesSection({ projectId, taskId, dependencies = [] }
           <Input
             value={blockingTaskId}
             onChange={(e) => setBlockingTaskId(e.target.value)}
-            placeholder="Blocking task ID"
+            placeholder={t("blockingTaskIdPlaceholder")}
             className="h-8 text-sm"
             onKeyDown={(e) => e.key === "Enter" && handleAdd()}
             autoFocus
           />
           <Button size="sm" className="h-8" disabled={isPending} onClick={handleAdd}>
-            Add
+            {t("add")}
           </Button>
         </div>
       )}
@@ -105,7 +107,7 @@ export function TaskDependenciesSection({ projectId, taskId, dependencies = [] }
         </div>
       ) : (
         !adding && (
-          <p className="text-xs text-muted-foreground">No dependencies</p>
+          <p className="text-xs text-muted-foreground">{t("empty")}</p>
         )
       )}
     </div>

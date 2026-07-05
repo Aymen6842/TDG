@@ -1,6 +1,7 @@
 "use client";
 
 import { Star } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface StarRatingProps {
   rate: number;
@@ -26,6 +27,8 @@ export function StarRating({
   size = 24,
   disabled = false
 }: StarRatingProps) {
+  const t = useTranslations("shared.starRating");
+
   return (
     <div className="flex gap-2">
       {Array.from({ length: maxRating }, (_, i) => i).map((index) => (
@@ -35,7 +38,7 @@ export function StarRating({
           onMouseEnter={() => !disabled && setRate(index + 1)}
           disabled={disabled}
           className="transition-transform duration-200 hover:scale-110 disabled:cursor-not-allowed"
-          aria-label={`Rate ${index + 1} out of ${maxRating}`}>
+          aria-label={t("rateAriaLabel", { index: index + 1, max: maxRating })}>
           <Star
             size={size}
             className={`transition-colors duration-200 ${

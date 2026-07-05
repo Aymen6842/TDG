@@ -69,7 +69,7 @@ export function WorkerRatingPopup(props: Props) {
               </label>
               {workerRating.performanceRating !== undefined && (
                 <span className="text-primary ml-auto text-xs font-medium">
-                  {workerRating.performanceRating} / 5
+                  {t("ratingOutOfFive", { rating: workerRating.performanceRating })}
                 </span>
               )}
             </div>
@@ -85,7 +85,7 @@ export function WorkerRatingPopup(props: Props) {
             <div className="flex items-center gap-2">
               <label htmlFor="note" className="text-foreground text-sm font-semibold">
                 {t("managerNotes")}
-                <span className="text-muted-foreground ml-2 font-normal">(optional)</span>
+                <span className="text-muted-foreground ml-2 font-normal">{t("optional")}</span>
               </label>
             </div>
             <Textarea

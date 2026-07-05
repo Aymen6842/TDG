@@ -59,11 +59,11 @@ export function ProjectTaskDetailSheet({ projectId, isOpen, onClose, task, onEdi
       await deleteProjectTask(projectId, displayTask.id);
       queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
       queryClient.removeQueries({ queryKey: ["project-task", projectId, displayTask.id] });
-      toast.success("Task deleted");
+      toast.success(t("deletedToast"));
       setIsDeleteTaskOpen(false);
       onClose();
     } catch {
-      toast.error("Failed to delete task");
+      toast.error(t("deleteFailedToast"));
     } finally {
       setIsDeletingTask(false);
     }

@@ -8,6 +8,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ErrorBanner } from "@/components/error-banner";
+import { useTranslations } from "next-intl";
 import { ReminderType, ChannelType } from "@/modules/reminders/types/reminders";
 import useReminderUpload from "@/modules/reminders/hooks/use-reminder-upload";
 import ReminderEntityPicker from "./reminder-entity-picker";
@@ -24,6 +25,7 @@ interface Props {
 }
 
 export default function ReminderUploadSheet({ projectId, isOpen, onClose, reminder, currentUserId }: Props) {
+  const t = useTranslations("modules.reminders");
   const { form, isPending, onSubmit, error, isEdit } = useReminderUpload({
     projectId,
     reminder,
@@ -37,21 +39,21 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent className="sm:max-w-md p-0 flex flex-col h-full">
         <SheetHeader className="p-6 pb-4">
-          <SheetTitle>{reminder?.id ? "Edit Reminder" : "Create Reminder"}</SheetTitle>
+          <SheetTitle>{reminder?.id ? t("upload.editTitle") : t("upload.createTitle")}</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 overflow-y-auto space-y-5 px-6 pb-6">
             <FormField control={form.control} name="message" render={({ field }) => (
               <FormItem>
-                <FormLabel>Message</FormLabel>
-                <FormControl><Textarea placeholder="Reminder message (optional)" className="min-h-[80px]" {...field} /></FormControl>
+                <FormLabel>{t("upload.messageLabel")}</FormLabel>
+                <FormControl><Textarea placeholder={t("upload.messagePlaceholder")} className="min-h-[80px]" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
 
             <FormField control={form.control} name="reminderAt" render={({ field }) => (
               <FormItem>
-                <FormLabel>Remind At *</FormLabel>
+                <FormLabel>{t("upload.remindAtLabel")}</FormLabel>
                 <FormControl>
                   <Input
                     type="datetime-local"
@@ -66,12 +68,12 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
             {isEdit && reminder?.entityType && (
               <div className="grid grid-cols-2 gap-3">
                 <FormItem>
-                  <FormLabel>Entity Type</FormLabel>
-                  <p className="text-sm text-muted-foreground mt-2">{reminder.entityType}</p>
+                  <FormLabel>{t("upload.entityTypeLabel")}</FormLabel>
+                  <p className="text-sm text-muted-foreground mt-2">{t(`entityTypes.${reminder.entityType.toLowerCase()}`)}</p>
                 </FormItem>
                 {reminder.entityType !== "CUSTOM" && reminder.entityType !== "PROJECT" && (
                   <FormItem>
-                    <FormLabel>Linked {reminder.entityType.charAt(0) + reminder.entityType.slice(1).toLowerCase()}</FormLabel>
+                    <FormLabel>{t("upload.linkedLabel", { entity: t(`entityTypes.${reminder.entityType.toLowerCase()}`) })}</FormLabel>
                     <p className="text-sm text-muted-foreground mt-2 truncate">
                       <ReminderEntityLabel projectId={projectId} entityType={reminder.entityType} entityId={reminder.entityId} />
                     </p>
@@ -84,7 +86,7 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
               <>
                 <FormField control={form.control} name="channels" render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Channels *</FormLabel>
+                    <FormLabel>{t("upload.channelsLabel")}</FormLabel>
                     <div className="flex flex-wrap gap-x-4 gap-y-2 mt-1">
                       {CHANNELS.map((ch) => (
                         <label key={ch} className="flex items-center gap-2 cursor-pointer">
@@ -106,7 +108,7 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
                 <div className="grid grid-cols-2 gap-3">
                   <FormField control={form.control} name="entityType" render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Entity Type</FormLabel>
+                      <FormLabel>{t("upload.entityTypeLabel")}</FormLabel>
                       <Select
                         value={field.value ?? "CUSTOM"}
                         onValueChange={(val) => {
@@ -115,14 +117,14 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
                         }}
                       >
                         <FormControl>
-                          <SelectTrigger><SelectValue placeholder="Custom" /></SelectTrigger>
+                          <SelectTrigger><SelectValue placeholder={t("entityTypes.custom")} /></SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="CUSTOM">Custom</SelectItem>
-                          <SelectItem value="TASK">Task</SelectItem>
-                          <SelectItem value="SPRINT">Sprint</SelectItem>
-                          <SelectItem value="MILESTONE">Milestone</SelectItem>
-                          <SelectItem value="PROJECT">Project</SelectItem>
+                          <SelectItem value="CUSTOM">{t("entityTypes.custom")}</SelectItem>
+                          <SelectItem value="TASK">{t("entityTypes.task")}</SelectItem>
+                          <SelectItem value="SPRINT">{t("entityTypes.sprint")}</SelectItem>
+                          <SelectItem value="MILESTONE">{t("entityTypes.milestone")}</SelectItem>
+                          <SelectItem value="PROJECT">{t("entityTypes.project")}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -134,15 +136,15 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
                     if (entityType === "CUSTOM" || entityType === "PROJECT") {
                       return (
                         <FormItem>
-                          <FormLabel>Entity ID</FormLabel>
-                          <FormControl><Input placeholder="Optional" {...field} /></FormControl>
+                          <FormLabel>{t("upload.entityIdLabel")}</FormLabel>
+                          <FormControl><Input placeholder={t("upload.entityIdPlaceholder")} {...field} /></FormControl>
                           <FormMessage />
                         </FormItem>
                       );
                     }
                     return (
                       <FormItem>
-                        <FormLabel>Linked {entityType.charAt(0) + entityType.slice(1).toLowerCase()}</FormLabel>
+                        <FormLabel>{t("upload.linkedLabel", { entity: t(`entityTypes.${entityType.toLowerCase()}`) })}</FormLabel>
                         <FormControl>
                           <ReminderEntityPicker
                             projectId={projectId}
@@ -163,7 +165,7 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
               <FormItem>
                 <label className="flex items-center gap-2 cursor-pointer">
                   <Checkbox checked={field.value} onCheckedChange={field.onChange} />
-                  <span className="text-sm font-medium">Recurring reminder</span>
+                  <span className="text-sm font-medium">{t("upload.recurringLabel")}</span>
                 </label>
               </FormItem>
             )} />
@@ -171,10 +173,10 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
             {isRecurring && (
               <FormField control={form.control} name="recurrenceRule" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Recurrence Rule (cron) *</FormLabel>
+                  <FormLabel>{t("upload.recurrenceRuleLabel")}</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="e.g. 0 9 * * *"
+                      placeholder={t("upload.recurrenceRulePlaceholder")}
                       value={field.value ?? ""}
                       onChange={(e) => field.onChange(e.target.value || undefined)}
                     />
@@ -186,9 +188,9 @@ export default function ReminderUploadSheet({ projectId, isOpen, onClose, remind
 
             {error && <ErrorBanner error={error} />}
             <div className="flex justify-end gap-2 pt-2 border-t">
-              <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>Cancel</Button>
+              <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>{t("upload.cancel")}</Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Saving…" : reminder?.id ? "Update Reminder" : "Create Reminder"}
+                {isPending ? t("upload.saving") : reminder?.id ? t("upload.update") : t("upload.create")}
               </Button>
             </div>
           </form>

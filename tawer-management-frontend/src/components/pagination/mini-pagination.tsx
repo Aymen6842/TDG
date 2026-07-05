@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -12,12 +13,14 @@ export default function MiniPagination({
   totalPages,
   onPageChange
 }: MiniPaginationProps) {
+  const t = useTranslations("shared.pagination");
+
   if (totalPages <= 1) return null;
 
   return (
     <div className="flex items-center justify-between">
       <p className="text-muted-foreground text-sm">
-        {currentPage} of {totalPages}
+        {t("pageOf", { current: currentPage, total: totalPages })}
       </p>
       <div className="space-x-2">
         <Button

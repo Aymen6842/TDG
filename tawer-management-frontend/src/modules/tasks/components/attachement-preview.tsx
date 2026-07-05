@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Download, Eye, FileIcon, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   attachment: string;
@@ -8,7 +9,8 @@ interface Props {
 }
 
 export default function AttachementPreview({ attachment, onViewAttachment, onDeleteAttachment }: Props) {
-  const fileName = attachment.split('/').pop() || 'Unknown file';
+  const t = useTranslations("shared.filesUpload");
+  const fileName = attachment.split('/').pop() || t("unknownFile");
   const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(attachment);
   const isPdf = /\.pdf$/i.test(attachment);
 
@@ -42,7 +44,7 @@ export default function AttachementPreview({ attachment, onViewAttachment, onDel
               {decodeURIComponent(fileName)}
             </p>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>{isImage ? 'Image' : isPdf ? 'PDF' : 'File'}</span>
+              <span>{isImage ? t("fileTypeImage") : isPdf ? t("fileTypePdf") : t("fileTypeFile")}</span>
             </div>
           </div>
         </div>

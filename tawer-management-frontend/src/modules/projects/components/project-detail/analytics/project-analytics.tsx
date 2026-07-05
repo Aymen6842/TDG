@@ -2,6 +2,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useTranslations } from "next-intl";
 import { ProjectType } from "@/modules/projects/types/projects";
 import useProjectSprints from "@/modules/projects/hooks/sprints/use-project-sprints";
 import BurndownChart from "../../analytics/burndown-chart";
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function ProjectAnalytics({ project }: Props) {
+  const t = useTranslations("modules.projects.project.analytics");
   const { sprints } = useProjectSprints(project.id);
   const [selectedSprintId, setSelectedSprintId] = React.useState<string>("");
 
@@ -30,7 +32,7 @@ export default function ProjectAnalytics({ project }: Props) {
         {/* Capacity */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Project Capacity</CardTitle>
+            <CardTitle className="text-base">{t("capacity.title")}</CardTitle>
           </CardHeader>
           <CardContent>
             <CapacityWidget projectId={project.id} />
@@ -40,7 +42,7 @@ export default function ProjectAnalytics({ project }: Props) {
         {/* Velocity */}
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-base">Sprint Velocity</CardTitle>
+            <CardTitle className="text-base">{t("velocity.title")}</CardTitle>
           </CardHeader>
           <CardContent>
             <VelocityChart projectId={project.id} />
@@ -53,11 +55,11 @@ export default function ProjectAnalytics({ project }: Props) {
         <Card>
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Sprint Burndown</CardTitle>
+              <CardTitle className="text-base">{t("burndown.title")}</CardTitle>
               {sprints.length > 0 && (
                 <Select value={selectedSprintId} onValueChange={setSelectedSprintId}>
                   <SelectTrigger className="w-[200px] h-8 text-sm">
-                    <SelectValue placeholder="Select sprint" />
+                    <SelectValue placeholder={t("burndown.selectSprint")} />
                   </SelectTrigger>
                   <SelectContent>
                     {sprints.map((s) => (
@@ -72,7 +74,7 @@ export default function ProjectAnalytics({ project }: Props) {
             {selectedSprintId ? (
               <BurndownChart sprintId={selectedSprintId} />
             ) : (
-              <p className="text-sm text-muted-foreground text-center py-12">No sprints available.</p>
+              <p className="text-sm text-muted-foreground text-center py-12">{t("burndown.noSprintsAvailable")}</p>
             )}
           </CardContent>
         </Card>

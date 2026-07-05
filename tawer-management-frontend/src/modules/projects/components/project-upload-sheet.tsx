@@ -138,7 +138,7 @@ export default function ProjectUploadSheet({ isOpen, onClose, project }: Props) 
                   <FormLabel>{t("upload.form.labels.language", { defaultValue: "Language" })}</FormLabel>
                   <Select value={field.value || ""} onValueChange={field.onChange}>
                     <FormControl>
-                      <SelectTrigger className="w-full"><SelectValue placeholder="Select language..." /></SelectTrigger>
+                      <SelectTrigger className="w-full"><SelectValue placeholder={t("upload.form.placeholders.selectLanguage")} /></SelectTrigger>
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="English">{t("upload.form.languageOptions.english")}</SelectItem>
@@ -187,7 +187,7 @@ export default function ProjectUploadSheet({ isOpen, onClose, project }: Props) 
                     <FormLabel>{t("list.filters.projectType", { defaultValue: "Project Type" })}</FormLabel>
                     <Select value={field.value} onValueChange={field.onChange} disabled={isEdit}>
                       <FormControl>
-                        <SelectTrigger className="w-full"><SelectValue placeholder="Type" /></SelectTrigger>
+                        <SelectTrigger className="w-full"><SelectValue placeholder={t("upload.form.placeholders.projectType")} /></SelectTrigger>
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="AGILE">{t("project.projectType.agile")}</SelectItem>

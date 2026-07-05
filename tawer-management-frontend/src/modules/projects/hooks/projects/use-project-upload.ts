@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { projectSchema, ProjectFormValues } from "../../validation/project.schema";
+import { getProjectSchema, ProjectFormValues } from "../../validation/project.schema";
 import { uploadProject, archiveProject, restoreProject } from "../../services";
 import { ProjectType, CreateProjectPayload, UpdateProjectPayload, ProjectContentPayload } from "../../types/projects";
 
@@ -36,11 +37,14 @@ interface Params {
 
 export default function useProjectUpload({ project, onSuccess }: Params) {
   const queryClient = useQueryClient();
+  const t = useTranslations("modules.projects.validation.project");
+  const tToasts = useTranslations("modules.projects.entityToasts.project");
+  const tErrors = useTranslations("shared.errors");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
 
   const form = useForm<ProjectFormValues>({
-    resolver: zodResolver(projectSchema),
+    resolver: zodResolver(getProjectSchema({ t })),
     defaultValues: buildDefaults(project),
   });
 
@@ -107,14 +111,14 @@ export default function useProjectUpload({ project, onSuccess }: Params) {
         await uploadProject(payload);
       }
 
-      toast.success(project?.id ? "Project updated" : "Project created");
+      toast.success(project?.id ? tToasts("updated") : tToasts("created"));
       queryClient.invalidateQueries({ queryKey: ["projects"] });
       if (project?.id) {
         queryClient.invalidateQueries({ queryKey: ["project", project.id] });
       }
       onSuccess?.();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "An error occurred.";
+      const msg = err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {

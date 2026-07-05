@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-  timeEntrySchema,
+  getTimeEntrySchema,
   TimeEntryFormValues,
 } from "@/modules/projects/validation/time-entry.schema";
 import {
@@ -35,11 +36,14 @@ export default function useTimeEntryUpload({
   onSuccess,
 }: Params) {
   const queryClient = useQueryClient();
+  const t = useTranslations("modules.projects.validation.timeEntry");
+  const tToasts = useTranslations("modules.projects.entityToasts.timeEntry");
+  const tErrors = useTranslations("shared.errors");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
 
   const form = useForm<TimeEntryFormValues>({
-    resolver: zodResolver(timeEntrySchema) as any,
+    resolver: zodResolver(getTimeEntrySchema({ t })) as any,
     defaultValues: buildDefaults(entry),
   });
 
@@ -57,13 +61,13 @@ export default function useTimeEntryUpload({
           hours: data.hours,
           description: data.description || undefined,
         });
-        toast.success("Time entry updated");
+        toast.success(tToasts("updated"));
       } else {
         await createTimeEntry(projectId, taskId, {
           hours: data.hours,
           description: data.description || undefined,
         });
-        toast.success("Time entry created");
+        toast.success(tToasts("created"));
       }
       queryClient.invalidateQueries({
         queryKey: ["time-entries", projectId, taskId],
@@ -71,7 +75,7 @@ export default function useTimeEntryUpload({
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -84,14 +88,14 @@ export default function useTimeEntryUpload({
     setError("");
     try {
       await deleteTimeEntry(projectId, taskId, entryId);
-      toast.success("Time entry deleted");
+      toast.success(tToasts("deleted"));
       queryClient.invalidateQueries({
         queryKey: ["time-entries", projectId, taskId],
       });
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {

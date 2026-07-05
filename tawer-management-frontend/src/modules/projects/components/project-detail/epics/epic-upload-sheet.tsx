@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { ErrorBanner } from "@/components/error-banner";
+import { useTranslations } from "next-intl";
 import { EpicType } from "@/modules/projects/types/project-epics";
 import useEpicUpload from "@/modules/projects/hooks/epics/use-epic-upload";
 
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export default function EpicUploadSheet({ projectId, isOpen, onClose, epic }: Props) {
+  const t = useTranslations("modules.projects.project.epics");
   const { form, isPending, onSubmit, error } = useEpicUpload({
     projectId,
     epic,
@@ -27,27 +29,27 @@ export default function EpicUploadSheet({ projectId, isOpen, onClose, epic }: Pr
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent className="sm:max-w-md p-0 flex flex-col h-full">
         <SheetHeader className="p-6 pb-4">
-          <SheetTitle>{epic?.id ? "Edit Epic" : "Create Epic"}</SheetTitle>
+          <SheetTitle>{epic?.id ? t("editTitle") : t("createTitle")}</SheetTitle>
         </SheetHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="flex-1 overflow-y-auto space-y-5 px-6 pb-6">
             <FormField control={form.control} name="name" render={({ field }) => (
               <FormItem>
-                <FormLabel>Name *</FormLabel>
-                <FormControl><Input placeholder="Epic name" {...field} /></FormControl>
+                <FormLabel>{t("nameLabel")}</FormLabel>
+                <FormControl><Input placeholder={t("namePlaceholder")} {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name="description" render={({ field }) => (
               <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl><Textarea placeholder="Optional description" className="min-h-[80px]" {...field} /></FormControl>
+                <FormLabel>{t("descriptionLabel")}</FormLabel>
+                <FormControl><Textarea placeholder={t("descriptionPlaceholder")} className="min-h-[80px]" {...field} /></FormControl>
                 <FormMessage />
               </FormItem>
             )} />
             <FormField control={form.control} name="color" render={({ field }) => (
               <FormItem>
-                <FormLabel>Color</FormLabel>
+                <FormLabel>{t("colorLabel")}</FormLabel>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
@@ -63,7 +65,7 @@ export default function EpicUploadSheet({ projectId, isOpen, onClose, epic }: Pr
             <div className="grid grid-cols-2 gap-3">
               <FormField control={form.control} name="startDate" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Start Date</FormLabel>
+                  <FormLabel>{t("startDateLabel")}</FormLabel>
                   <FormControl>
                     <Input
                       type="date"
@@ -76,7 +78,7 @@ export default function EpicUploadSheet({ projectId, isOpen, onClose, epic }: Pr
               )} />
               <FormField control={form.control} name="endDate" render={({ field }) => (
                 <FormItem>
-                  <FormLabel>End Date</FormLabel>
+                  <FormLabel>{t("endDateLabel")}</FormLabel>
                   <FormControl>
                     <Input
                       type="date"
@@ -90,9 +92,9 @@ export default function EpicUploadSheet({ projectId, isOpen, onClose, epic }: Pr
             </div>
             {error && <ErrorBanner error={error} />}
             <div className="flex justify-end gap-2 pt-2 border-t">
-              <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>Cancel</Button>
+              <Button type="button" variant="secondary" onClick={onClose} disabled={isPending}>{t("cancel")}</Button>
               <Button type="submit" disabled={isPending}>
-                {isPending ? "Saving…" : epic?.id ? "Update Epic" : "Create Epic"}
+                {isPending ? t("saving") : epic?.id ? t("updateButton") : t("createButton")}
               </Button>
             </div>
           </form>

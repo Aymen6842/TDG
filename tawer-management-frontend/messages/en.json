@@ -4,7 +4,8 @@
       "languageSelector": {
         "ariaLabel": "Select language",
         "searchPlaceholder": "Search language...",
-        "noLanguageFound": "No language found."
+        "noLanguageFound": "No language found.",
+        "currentLabel": "Language : {name}"
       },
       "search": {
         "placeholder": "Search...",
@@ -54,7 +55,12 @@
         "notifications": "Notifications",
         "viewAllNotifications": "View all notifications",
         "notificationsSettings": "Notifications settings",
-        "myProfile": "My Profile"
+        "myProfile": "My Profile",
+        "rules": "Company Rules"
+      },
+      "badges": {
+        "coming": "Coming",
+        "new": "New"
       }
     },
     "welcome": {
@@ -68,15 +74,65 @@
     "theme": {
       "dark": "Dark",
       "light": "Light",
+      "toggleTheme": "Toggle theme",
       "changement": {
         "title": "Theme",
         "subtitle": "Select the theme for the dashboard."
+      },
+      "validation": {
+        "themeRequired": "Please select a theme."
       }
+    },
+    "themeCustomizer": {
+      "colorMode": "Color mode:",
+      "contentLayout": "Content layout",
+      "full": "Full",
+      "centered": "Centered",
+      "themePreset": "Theme preset:",
+      "selectTheme": "Select a theme",
+      "radius": "Radius:",
+      "scale": "Scale:",
+      "sidebarMode": "Sidebar mode:",
+      "default": "Default",
+      "icon": "Icon",
+      "resetToDefault": "Reset to Default",
+      "sizes": {
+        "xs": "XS",
+        "sm": "SM",
+        "md": "MD",
+        "lg": "LG",
+        "xl": "XL"
+      }
+    },
+    "logo": {
+      "alt": "Tawer Management Logo"
+    },
+    "errorPages": {
+      "notFound": {
+        "title": "Page Not Found"
+      },
+      "serverError": {
+        "title": "Internal Server Error"
+      },
+      "accessDenied": {
+        "title": "Access Denied"
+      },
+      "backToHome": "Back to Home"
+    },
+    "starRating": {
+      "rateAriaLabel": "Rate {index} out of {max}"
+    },
+    "viewToggle": {
+      "listView": "List view",
+      "gridView": "Grid view",
+      "kanbanView": "Kanban view"
     },
     "pagination": {
       "previous": "Previous",
       "next": "Next",
-      "selected": "Page {page} of {pages} ({records} total records)"
+      "selected": "Page {page} of {pages} ({records} total records)",
+      "pageOf": "{current} of {total}",
+      "pageFallback": "Page {page}"
     },
     "filesUpload": {
       "uploadAriaLabel": "Upload image file",
@@ -86,7 +142,14 @@
       "selectImages": "Select images",
       "uploadedFiles": "Uploaded Files ({count})",
       "addMore": "Add more",
-      "imageAlt": "Item image {index}"
+      "imageAlt": "Item image {index}",
+      "uploadImage": "Upload image",
+      "changeImage": "Change image",
+      "unknownFile": "Unknown file",
+      "unknownSize": "Unknown size",
+      "fileTypeImage": "Image",
+      "fileTypePdf": "PDF",
+      "fileTypeFile": "File"
     },
     "dialogs": {
       "deletion": {
@@ -121,7 +184,8 @@
       "deletion": {
         "serverError": "A server error occurred. Please try again later."
       },
-      "permissionDenied": "You don’t have permission to perform this action."
+      "permissionDenied": "You don’t have permission to perform this action.",
+      "generic": "An error occurred."
     },
     "success": {
       "deletion": "Successfully deleted."
@@ -129,6 +193,9 @@
   },
   "modules": {
     "auth": {
+      "authUIWrapper": {
+        "imageAlt": "Login page illustration"
+      },
       "externalAuth": {
         "emailLinkedWithAnAccount": "Authentication Error",
         "generalError": "Google Authentication Failed",
@@ -254,6 +321,10 @@
         }
       },
       "account": {
+        "settingsLayout": {
+          "title": "Account Settings",
+          "description": "Manage your account configuration and preferences."
+        },
         "personalInfoChangement": {
           "fields": {
             "name": {
@@ -332,6 +403,23 @@
         },
         "resetPasswordEmail": {
           "invalid": "Please enter a valid email address"
+        },
+        "accountSettings": {
+          "name": {
+            "minLength": "Name must be at least 2 characters.",
+            "maxLength": "Name must not be longer than 30 characters."
+          },
+          "email": {
+            "invalid": "Please enter a valid email address."
+          },
+          "language": {
+            "required": "Please select a language."
+          }
+        },
+        "nameChangement": {
+          "minLength": "Name must be at least 2 characters long",
+          "maxLength": "Name must be at most 50 characters long",
+          "invalidChars": "Invalid characters in name"
         }
       },
       "success": {
@@ -519,12 +607,17 @@
           },
           "columns": "Columns"
         },
+        "selection": {
+          "selectAll": "Select all",
+          "selectRow": "Select row"
+        },
         "actions": {
           "title": "Actions",
           "viewDetails": "View details",
           "viewProjects": "View Worked Projects",
           "viewWorkedTimeHistory": "View Worked Time History",
           "edit": "Edit",
+          "openMenu": "Open menu",
           "ntfyTopic": {
             "copy": "Copy NTFY App Topic",
             "copied": "Copied to clipboard!"
@@ -719,7 +812,9 @@
         "title": "Daily Performance Review",
         "description": "Please take a moment to rate today’s performance. Your feedback helps us track progress, identify strengths, and provide better support over time.",
         "performanceRating": "Performance rating",
+        "ratingOutOfFive": "{rating} / 5",
         "managerNotes": "Manager notes",
+        "optional": "(optional)",
         "managerNotesPlaceholder": "Add a short note about today’s performance, achievements, or areas to improve.",
         "closeButton": "Close",
         "submitButton": "Submit rating",
@@ -736,6 +831,7 @@
         "noActivityTitle": "No Activity Yet",
         "noActivitySubtitle": "Start logging your work sessions to see them here",
         "workSession": "Work Session",
+        "dayFallback": "Day {index}",
         "sessions": "{count} Sessions",
         "workedTime": "Worked time",
         "rateWorkerDay": "Rate your worker day",
@@ -776,6 +872,7 @@
           "5": "Excellent"
         },
         "workNoteLabel": "What did you work on today?",
+        "optional": "(optional)",
         "workNotePlaceholder": "A short note about what you worked on or achieved today. Every effort counts.",
         "skipButton": "Skip for now",
         "submitButton": "Share my day",
@@ -978,181 +1075,181 @@
       }
     },
     "tasks": {
-        "title": "Tasks List",
-        "tabs": {
-          "personal": "Personal Tasks",
-          "project": "Project Tasks"
-        },
-        "deletion": {
-          "tasks": {
-            "confirmation": {
-              "title": "Delete Task",
-              "message": "Are you sure you want to delete this task? This action cannot be undone.",
-              "cancel": "Cancel",
-              "delete": "Delete",
-              "deleting": "Deleting..."
-            }
-          },
-          "subtasks": {
-            "confirmation": {
-              "title": "Delete Subtask",
-              "message": "Are you sure you want to delete this subtask? This action cannot be undone.",
-              "cancel": "Cancel",
-              "delete": "Delete",
-              "deleting": "Deleting..."
-            }
-          },
-          "comments": {
-            "confirmation": {
-              "title": "Delete Comment",
-              "message": "Are you sure you want to delete this comment? This action cannot be undone.",
-              "cancel": "Cancel",
-              "delete": "Delete",
-              "deleting": "Deleting..."
-            }
+      "title": "Tasks List",
+      "tabs": {
+        "personal": "Personal Tasks",
+        "project": "Project Tasks"
+      },
+      "deletion": {
+        "tasks": {
+          "confirmation": {
+            "title": "Delete Task",
+            "message": "Are you sure you want to delete this task? This action cannot be undone.",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "deleting": "Deleting..."
           }
+        },
+        "subtasks": {
+          "confirmation": {
+            "title": "Delete Subtask",
+            "message": "Are you sure you want to delete this subtask? This action cannot be undone.",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "deleting": "Deleting..."
+          }
+        },
+        "comments": {
+          "confirmation": {
+            "title": "Delete Comment",
+            "message": "Are you sure you want to delete this comment? This action cannot be undone.",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "deleting": "Deleting..."
+          }
+        }
+      },
+      "status": {
+        "pending": "Pending",
+        "inProgress": "In Progress",
+        "completed": "Completed"
+      },
+      "priority": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "upload": {
+        "form": {
+          "labels": {
+            "parentTaskId": "Parent Task ID",
+            "status": "Status",
+            "priority": "Priority",
+            "title": "Title",
+            "description": "Description",
+            "details": "Details",
+            "dueDate": "Due Date",
+            "dueTime": "Due Time",
+            "reminderDate": "Reminder Date",
+            "reminderTime": "Reminder Time",
+            "isArchived": "Archived",
+            "isFavorite": "Favorite",
+            "attachments": "Attachments",
+            "comments": "Comments",
+            "upload": "Upload",
+            "noAttachments": "No attachments yet",
+            "subTasks": "Subtasks",
+            "createdAt": "Created At",
+            "noComments": "No comments yet",
+            "noSubTasks": "No subtasks yet",
+            "noTasks": "No tasks found",
+            "allTasks": "All Tasks"
+          },
+          "placeholders": {
+            "parentTaskId": "Parent Task ID",
+            "status": "Status of the task",
+            "priority": "Priority of the task",
+            "title": "Title of the task",
+            "description": "Description of the task",
+            "details": "Details of the task",
+            "date": "Select a date",
+            "comment": "Add a comment",
+            "search": "Search tasks ...",
+            "dragDropFiles": "Drag & drop files here, or click to select"
+          },
+          "ariaLabels": {
+            "hidePassword": "Hide password",
+            "showPassword": "Show password"
+          },
+          "cancel": "Cancel",
+          "creating": "Creating..."
+        }
+      },
+      "success": {
+        "taskCreated": "Task created successfully.",
+        "subTaskCreated": "Subtask created successfully.",
+        "taskUpdated": "Task updated successfully.",
+        "taskDeleted": "Task deleted successfully.",
+        "commentDeleted": "Comment deleted successfully.",
+        "commentCreated": "Comment created successfully.",
+        "commentUpdated": "Comment updated successfully.",
+        "attachmentsUpdated": "Attachments updated successfully."
+      },
+      "validations": {
+        "title": {
+          "required": "Title is required"
+        },
+        "parentTaskId": {
+          "invalid": "Invalid parent task identifier"
         },
         "status": {
-          "pending": "Pending",
-          "inProgress": "In Progress",
-          "completed": "Completed"
+          "invalid": "Invalid status selected"
         },
         "priority": {
-          "low": "Low",
-          "medium": "Medium",
-          "high": "High"
+          "invalid": "Invalid priority selected"
         },
-        "upload": {
-          "form": {
-            "labels": {
-              "parentTaskId": "Parent Task ID",
-              "status": "Status",
-              "priority": "Priority",
-              "title": "Title",
-              "description": "Description",
-              "details": "Details",
-              "dueDate": "Due Date",
-              "dueTime": "Due Time",
-              "reminderDate": "Reminder Date",
-              "reminderTime": "Reminder Time",
-              "isArchived": "Archived",
-              "isFavorite": "Favorite",
-              "attachments": "Attachments",
-              "comments": "Comments",
-              "upload": "Upload",
-              "noAttachments": "No attachments yet",
-              "subTasks": "Subtasks",
-              "createdAt": "Created At",
-              "noComments": "No comments yet",
-              "noSubTasks": "No subtasks yet",
-              "noTasks": "No tasks found",
-              "allTasks": "All Tasks"
-            },
-            "placeholders": {
-              "parentTaskId": "Parent Task ID",
-              "status": "Status of the task",
-              "priority": "Priority of the task",
-              "title": "Title of the task",
-              "description": "Description of the task",
-              "details": "Details of the task",
-              "date": "Select a date",
-              "comment": "Add a comment",
-              "search": "Search tasks ...",
-              "dragDropFiles": "Drag & drop files here, or click to select"
-            },
-            "ariaLabels": {
-              "hidePassword": "Hide password",
-              "showPassword": "Show password"
-            },
-            "cancel": "Cancel",
-            "creating": "Creating..."
-          }
+        "dueTime": {
+          "required": "Due Time is required"
         },
-        "success": {
-          "taskCreated": "Task created successfully.",
-          "subTaskCreated": "Subtask created successfully.",
-          "taskUpdated": "Task updated successfully.",
-          "taskDeleted": "Task deleted successfully.",
-          "commentDeleted": "Comment deleted successfully.",
-          "commentCreated": "Comment created successfully.",
-          "commentUpdated": "Comment updated successfully.",
-          "attachmentsUpdated": "Attachments updated successfully."
+        "reminderTime": {
+          "required": "Reminder date is required"
         },
-        "validations": {
-          "title": {
-            "required": "Title is required"
-          },
-          "parentTaskId": {
-            "invalid": "Invalid parent task identifier"
-          },
-          "status": {
-            "invalid": "Invalid status selected"
-          },
-          "priority": {
-            "invalid": "Invalid priority selected"
-          },
-          "dueTime": {
-            "required": "Due Time is required"
-          },
-          "reminderTime": {
-            "required": "Reminder date is required"
-          },
-          "timeRange": {
-            "invalid": "Reminder must be before due time"
-          },
-          "attachments": {
-            "invalidImageFormat": "Only JPEG, PNG or WEBP images are allowed"
-          },
-          "taskId": {
-            "invalid": "Invalid task identifier",
-            "required": "Task ID is required"
-          },
-          "comment": {
-            "required": "Comment is required"
-          },
-          "reordered": "The to-do items have been reordered successfully.",
-          "fileAdded": "{{fileName}} has been added to the task"
+        "timeRange": {
+          "invalid": "Reminder must be before due time"
         },
-        "errors": {
-          "invalidFormat": "The provided data format is invalid. Please review and try again.",
-          "taskUploadFailed": "Failed to upload your task. Please try again later.",
-          "serverError": "An unexpected server error occurred. Please try again later.",
-          "loadTasksFailed": "Failed to load tasks. Please try again.",
-          "loadTaskFailed": "Failed to load task. Please try again."
+        "attachments": {
+          "invalidImageFormat": "Only JPEG, PNG or WEBP images are allowed"
         },
-        "actions": {
-          "cancel": "Cancel",
-          "creating": "Creating...",
-          "createTask": "Create Task",
-          "updateTask": "Update Task",
-          "deleteTask": "Delete Task",
-          "createComment": "Create Comment",
-          "createSubTask": "Create Subtask"
+        "taskId": {
+          "invalid": "Invalid task identifier",
+          "required": "Task ID is required"
         },
-        "filters": {
-          "priority": "Priority",
-          "sortBy": "Sort By",
-          "selectSortOption": "Select sort option",
-          "statusAscending": "Status Ascending",
-          "statusDescending": "Status Descending",
-          "priorityAscending": "Priority Ascending",
-          "priorityDescending": "Priority Descending",
-          "dueDateAscending": "Due Date Ascending",
-          "dueDateDescending": "Due Date Descending",
-          "clearFilters": "Clear Filters"
+        "comment": {
+          "required": "Comment is required"
         },
-        "loading": {
-          "tasks": "Loading tasks...",
-          "task": "Loading task...",
-          "button": "Loading...",
-          "uploading": "Uploading..."
-        },
-        "edit": "Edit",
-        "noDescription": "No description provided.",
-        "enterSubTaskTitle": "Enter subtask title",
-        "addTask": "Add Task",
-        "filePreview": "File Preview"
+        "reordered": "The to-do items have been reordered successfully.",
+        "fileAdded": "{{fileName}} has been added to the task"
       },
+      "errors": {
+        "invalidFormat": "The provided data format is invalid. Please review and try again.",
+        "taskUploadFailed": "Failed to upload your task. Please try again later.",
+        "serverError": "An unexpected server error occurred. Please try again later.",
+        "loadTasksFailed": "Failed to load tasks. Please try again.",
+        "loadTaskFailed": "Failed to load task. Please try again."
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "creating": "Creating...",
+        "createTask": "Create Task",
+        "updateTask": "Update Task",
+        "deleteTask": "Delete Task",
+        "createComment": "Create Comment",
+        "createSubTask": "Create Subtask"
+      },
+      "filters": {
+        "priority": "Priority",
+        "sortBy": "Sort By",
+        "selectSortOption": "Select sort option",
+        "statusAscending": "Status Ascending",
+        "statusDescending": "Status Descending",
+        "priorityAscending": "Priority Ascending",
+        "priorityDescending": "Priority Descending",
+        "dueDateAscending": "Due Date Ascending",
+        "dueDateDescending": "Due Date Descending",
+        "clearFilters": "Clear Filters"
+      },
+      "loading": {
+        "tasks": "Loading tasks...",
+        "task": "Loading task...",
+        "button": "Loading...",
+        "uploading": "Uploading..."
+      },
+      "edit": "Edit",
+      "noDescription": "No description provided.",
+      "enterSubTaskTitle": "Enter subtask title",
+      "addTask": "Add Task",
+      "filePreview": "File Preview"
+    },
     "projects": {
       "title": "Projects Management",
       "tasks": {
@@ -1224,7 +1321,11 @@
               "noTasks": "No tasks found",
               "allTasks": "All Tasks",
               "type": "Type",
-              "points": "Story Points"
+              "points": "Story Points",
+              "assignee": "Assignee",
+              "milestone": "Milestone",
+              "epic": "Epic",
+              "sprint": "Sprint"
             },
             "placeholders": {
               "parentTaskId": "Parent Task ID",
@@ -1240,7 +1341,11 @@
               "selectType": "Select a type",
               "selectPriority": "Select a priority",
               "selectStatus": "Select a status",
-              "points": "Story Points"
+              "points": "Story Points",
+              "unassigned": "Unassigned",
+              "noMilestone": "No milestone",
+              "noEpic": "No epic",
+              "noSprint": "No sprint"
             },
             "ariaLabels": {
               "hidePassword": "Hide password",
@@ -1352,10 +1457,12 @@
           "low": "Low"
         },
         "points": "Story Points",
+        "statusReadOnlyHint": "Change status from the task detail view",
         "loading": {
           "tasks": "Loading tasks...",
           "task": "Loading task...",
           "button": "Loading...",
+          "statuses": "Loading…",
           "uploading": "Uploading..."
         },
         "edit": "Edit",
@@ -1363,6 +1470,14 @@
         "enterSubTaskTitle": "Enter subtask title",
         "addTask": "Add Task",
         "filePreview": "File Preview",
+        "assignedToTitle": "Assigned to {name}",
+        "unknownMemberFallback": "User {id}",
+        "saveButton": "Save",
+        "commentUpdatedToast": "Comment updated",
+        "commentUpdateFailedToast": "Failed to update comment",
+        "likeToggleFailedToast": "Failed to toggle like",
+        "subtaskDeletedToast": "Subtask deleted",
+        "subtaskDeleteFailedToast": "Failed to delete subtask",
         "displaySettings": {
           "title": "Display Settings",
           "showAttributes": "Show Attributes",
@@ -1399,10 +1514,20 @@
           "endDate": "End Date: {date}",
           "members": "{count} Members",
           "member": "{count} Member",
+          "backToProjectsAriaLabel": "Back to projects",
+          "unnamedProject": "Unnamed Project",
+          "validation": {
+            "required": "Required",
+            "invalidEmail": "Invalid email"
+          },
           "tabs": {
             "tasks": "Tasks",
             "members": "Members & Invitations",
             "sprints": "Sprints",
+            "epics": "Epics",
+            "milestones": "Milestones",
+            "analytics": "Analytics",
+            "reminders": "Reminders",
             "details": "Details"
           },
           "membersList": {
@@ -1498,6 +1623,8 @@
           "points": "Points",
           "filePreview": "File Preview",
           "edit": "Edit",
+          "deletedToast": "Task deleted",
+          "deleteFailedToast": "Failed to delete task",
           "noDescription": "No description provided.",
           "deletion": {
             "title": "Delete Project Task",
@@ -1562,6 +1689,144 @@
           "stop": "Stop Project",
           "complete": "Mark as Completed"
         }
+      },
+      "analytics": {
+        "capacity": {
+          "title": "Project Capacity",
+          "totalCapacity": "Total Capacity",
+          "allocated": "Allocated",
+          "remaining": "Remaining"
+        },
+        "velocity": {
+          "title": "Sprint Velocity",
+          "noData": "No completed sprints yet"
+        },
+        "burndown": {
+          "title": "Sprint Burndown",
+          "selectSprint": "Select sprint",
+          "noSprintsAvailable": "No sprints available.",
+          "noDatesYet": "Add sprint start/end dates to see burndown"
+        }
+      },
+      "epics": {
+        "sectionTitle": "Epics",
+        "addTooltip": "Add Epic",
+        "emptyMessage": "No epics yet. Create one to group related work.",
+        "editTitle": "Edit Epic",
+        "createTitle": "Create Epic",
+        "nameLabel": "Name *",
+        "namePlaceholder": "Epic name",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Optional description",
+        "colorLabel": "Color",
+        "startDateLabel": "Start Date",
+        "endDateLabel": "End Date",
+        "cancel": "Cancel",
+        "saving": "Saving…",
+        "updateButton": "Update Epic",
+        "createButton": "Create Epic",
+        "deleteTitle": "Delete Epic",
+        "deleteDescription": "Are you sure you want to delete \"{name}\"? This cannot be undone.",
+        "deleteConfirm": "Delete",
+        "deleteCancel": "Cancel"
+      },
+      "milestones": {
+        "sectionTitle": "Milestones",
+        "epicsSectionTitle": "Epics",
+        "sprintsSectionTitle": "Sprints",
+        "addTooltip": "Add Milestone",
+        "emptyMessage": "No milestones yet. Create one to track key delivery dates.",
+        "ganttEmptyMessage": "No milestones, epics, or sprints to display on Gantt.",
+        "noMilestones": "No milestones.",
+        "noDueDate": "No due date",
+        "tasksInScope": "{count, plural, one {# task} other {# tasks}} in scope for this timeline.",
+        "listTab": "List",
+        "ganttTab": "Gantt",
+        "done": "Done",
+        "editTitle": "Edit Milestone",
+        "createTitle": "Create Milestone",
+        "nameLabel": "Name *",
+        "namePlaceholder": "Milestone name",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Optional description",
+        "dueDateLabel": "Due Date *",
+        "cancel": "Cancel",
+        "saving": "Saving…",
+        "updateButton": "Update Milestone",
+        "createButton": "Create Milestone",
+        "deleteTitle": "Delete Milestone",
+        "deleteDescription": "Delete \"{name}\"? This cannot be undone.",
+        "deleteConfirm": "Delete",
+        "deleteCancel": "Cancel"
+      },
+      "userSearch": {
+        "placeholder": "Search users...",
+        "loadFailed": "Failed to load users.",
+        "noResults": "No users found."
+      },
+      "taskSections": {
+        "attachments": {
+          "title": "Attachments",
+          "empty": "No attachments yet"
+        },
+        "dependencies": {
+          "title": "Dependencies",
+          "add": "Add",
+          "blockingTaskIdPlaceholder": "Blocking task ID",
+          "empty": "No dependencies",
+          "addedToast": "Dependency added",
+          "addFailedToast": "Failed to add dependency",
+          "removedToast": "Dependency removed",
+          "removeFailedToast": "Failed to remove dependency"
+        },
+        "labels": {
+          "title": "Labels",
+          "add": "Add",
+          "noneDefined": "No labels defined for this project",
+          "noneAssigned": "No labels assigned"
+        },
+        "timeEntries": {
+          "title": "Time Entries",
+          "totalSuffix": "— {hours}h total",
+          "logTime": "Log time",
+          "hoursLabel": "Hours",
+          "hoursPlaceholder": "e.g. 1.5",
+          "descriptionPlaceholder": "Optional description",
+          "cancel": "Cancel",
+          "save": "Save",
+          "loading": "Loading...",
+          "empty": "No time logged yet"
+        },
+        "statusStepper": {
+          "statusUpdatedToast": "Status → {status}",
+          "updateFailedToast": "Failed to update status"
+        }
+      },
+      "bulkActions": {
+        "selectedCount": "{count} selected",
+        "setStatusPlaceholder": "Set status…",
+        "apply": "Apply"
+      },
+      "taskStatuses": {
+        "editTitle": "Edit Status",
+        "createTitle": "Create Status",
+        "nameLabel": "Name *",
+        "namePlaceholder": "e.g. In Review",
+        "colorLabel": "Color",
+        "orderLabel": "Order *",
+        "cancel": "Cancel",
+        "saving": "Saving…",
+        "update": "Update",
+        "create": "Create",
+        "sectionTitle": "Custom Task Statuses",
+        "sectionDescription": "Define workflow stages for tasks in this project.",
+        "addButton": "Add Status",
+        "emptyMessage": "No custom statuses. Tasks use default statuses.",
+        "orderInline": "order: {order}",
+        "deleteTitle": "Delete Status",
+        "deleteDescription": "Delete status \"{name}\"? This cannot be undone.",
+        "deleteConfirm": "Delete",
+        "deleteCancel": "Cancel"
       },
       "list": {
         "searchPlaceholder": "Search projects...",
@@ -1632,7 +1897,6 @@
           "statusStopped": "Set as stopped",
           "statusCompleted": "Set as completed"
         }
-
       },
       "upload": {
         "createProject": {
@@ -1686,6 +1950,7 @@
             "details": "Add detailed project information...",
             "displayOrder": "0",
             "language": "e.g. English",
+            "selectLanguage": "Select language...",
             "manager": "Select manager..."
           },
           "cancel": "Cancel",
@@ -1791,6 +2056,80 @@
             "create": "Create Sprint",
             "update": "Update Sprint"
           }
+        }
+      },
+      "validation": {
+        "epic": {
+          "nameRequired": "Name is required",
+          "colorInvalid": "Color must be a valid hex color (e.g. #FF5733)"
+        },
+        "label": {
+          "nameRequired": "Name is required",
+          "colorInvalid": "Color must be a valid hex color (e.g. #FF5733)"
+        },
+        "milestone": {
+          "nameRequired": "Name is required",
+          "dueDateRequired": "Due date is required"
+        },
+        "project": {
+          "nameRequired": "Name is required",
+          "startDateRequired": "Start date is required",
+          "endDateRequired": "End date is required"
+        },
+        "sprint": {
+          "nameRequired": "Name is required",
+          "startDateRequired": "Start date is required",
+          "endDateRequired": "End date is required",
+          "estimatedStartDateRequired": "Estimated start date is required",
+          "estimatedEndDateRequired": "Estimated end date is required"
+        },
+        "taskStatus": {
+          "nameRequired": "Name is required",
+          "nameMaxLength": "Name must be at most 50 characters",
+          "colorInvalid": "Color must be a valid hex color (e.g. #FF5733)",
+          "orderNotANumber": "Order must be a number",
+          "orderNotInteger": "Order must be an integer",
+          "orderMin": "Order must be at least 1"
+        },
+        "timeEntry": {
+          "hoursNotANumber": "Hours must be a number",
+          "hoursMin": "Hours must be greater than 0"
+        }
+      },
+      "entityToasts": {
+        "epic": {
+          "created": "Epic created",
+          "updated": "Epic updated",
+          "deleted": "Epic deleted"
+        },
+        "label": {
+          "created": "Label created",
+          "updated": "Label updated",
+          "deleted": "Label deleted"
+        },
+        "milestone": {
+          "created": "Milestone created",
+          "updated": "Milestone updated",
+          "deleted": "Milestone deleted",
+          "completed": "Milestone completed"
+        },
+        "project": {
+          "created": "Project created",
+          "updated": "Project updated"
+        },
+        "sprint": {
+          "created": "Sprint created",
+          "updated": "Sprint updated"
+        },
+        "taskStatus": {
+          "created": "Status created",
+          "updated": "Status updated",
+          "deleted": "Status deleted"
+        },
+        "timeEntry": {
+          "created": "Time entry created",
+          "updated": "Time entry updated",
+          "deleted": "Time entry deleted"
         }
       }
     },
@@ -2148,7 +2487,7 @@
         }
       }
     },
-        "estimator": {
+    "estimator": {
       "title": "Project Estimator",
       "subtitle": "Estimate costs, timelines and effort across multiple projects",
       "config": {
@@ -2263,11 +2602,84 @@
         "serverError": "An unexpected server error occurred.",
         "unauthorized": "Session expired. Please log in again."
       }
+    },
+    "reminders": {
+      "sectionTitle": "Reminders",
+      "addTooltip": "Add Reminder",
+      "emptyMessage": "No reminders yet. Create one to get notified before deadlines.",
+      "noMessage": "(No message)",
+      "recurringFallback": "recurring",
+      "deleteTitle": "Delete Reminder",
+      "deleteDescription": "Delete \"{message}\"? This cannot be undone.",
+      "deleteDescriptionFallback": "this reminder",
+      "deleteConfirm": "Delete",
+      "deleteCancel": "Cancel",
+      "entityTypes": {
+        "custom": "Custom",
+        "task": "Task",
+        "sprint": "Sprint",
+        "milestone": "Milestone",
+        "project": "Project"
+      },
+      "statuses": {
+        "pending": "Pending",
+        "sent": "Sent",
+        "dismissed": "Dismissed",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+      },
+      "picker": {
+        "selectPlaceholder": "Select {entity}...",
+        "searchPlaceholder": "Search {entity}...",
+        "loading": "Loading...",
+        "noResults": "No results"
+      },
+      "upload": {
+        "editTitle": "Edit Reminder",
+        "createTitle": "Create Reminder",
+        "messageLabel": "Message",
+        "messagePlaceholder": "Reminder message (optional)",
+        "remindAtLabel": "Remind At *",
+        "entityTypeLabel": "Entity Type",
+        "linkedLabel": "Linked {entity}",
+        "channelsLabel": "Channels *",
+        "entityIdLabel": "Entity ID",
+        "entityIdPlaceholder": "Optional",
+        "recurringLabel": "Recurring reminder",
+        "recurrenceRuleLabel": "Recurrence Rule (cron) *",
+        "recurrenceRulePlaceholder": "e.g. 0 9 * * *",
+        "cancel": "Cancel",
+        "saving": "Saving…",
+        "update": "Update Reminder",
+        "create": "Create Reminder"
+      },
+      "toasts": {
+        "updated": "Reminder updated",
+        "created": "Reminder created",
+        "deleted": "Reminder deleted"
+      },
+      "validation": {
+        "reminderAtRequired": "Reminder date is required",
+        "reminderAtFuture": "Reminder must be scheduled in the future",
+        "recurrenceRuleRequired": "Recurrence rule (cron expression) is required when recurring is enabled",
+        "userRequired": "User is required",
+        "channelsRequired": "At least one channel is required"
+      }
     }
   },
   "rules": {
     "title": "Company Rules & Internal Policies",
     "company": "Tawer Digital Group (TDG)",
+    "labels": {
+      "mandatory": "Mandatory",
+      "details": "Details",
+      "note": "Note",
+      "criticalRules": "Critical Rules",
+      "breakGuidelines": "Break Guidelines",
+      "morning": "Morning:",
+      "break": "Break:",
+      "afternoon": "Afternoon:"
+    },
     "sections": {
       "generalPrinciples": {
         "title": "General Principles",
@@ -2350,6 +2762,76 @@
         "mandatory": "All employees of Tawer Digital Group must comply with these rules.",
         "warning": "Any violation may result in disciplinary measures in accordance with company policy and applicable labor laws."
       }
+    }
+  },
+  "metadata": {
+    "root": {
+      "title": "Tawer MGT",
+      "description": "A platform to manage teams efficiently"
+    },
+    "login": {
+      "title": "Login",
+      "description": "Log in to your account to access your dashboard."
+    },
+    "register": {
+      "title": "Register",
+      "description": "Create an account to get started."
+    },
+    "accountSettings": {
+      "title": "Account Settings",
+      "description": "Manage your account settings including profile, appearance, and password."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "View and manage your notifications and notification preferences."
+    },
+    "calendarPersonal": {
+      "title": "Personal Calendar",
+      "description": "Plan and manage your personal events and tasks in one place."
+    },
+    "calendarEvents": {
+      "title": "Events Calendar",
+      "description": "Plan and manage your team's events in one place."
+    },
+    "calendarMeetings": {
+      "title": "Meetings Calendar",
+      "description": "Schedule and manage your team's meetings in one place."
+    },
+    "usersList": {
+      "title": "Users List",
+      "description": "A list of users in the dashboard, where you can view and manage user accounts, including their details."
+    },
+    "userProfile": {
+      "title": "User Profile",
+      "description": "View detailed user information, profile settings, and recent activity."
+    },
+    "teamsList": {
+      "title": "Teams List",
+      "description": "The company teams"
+    },
+    "todoListPersonal": {
+      "title": "Personal Tasks",
+      "description": "Your personal task list."
+    },
+    "todoListProject": {
+      "title": "Project Tasks",
+      "description": "Project tasks assigned to you."
+    },
+    "serversList": {
+      "title": "Servers List",
+      "description": "A list of servers"
+    },
+    "servicesList": {
+      "title": "Services List",
+      "description": "A list of services"
+    },
+    "projectsApp": {
+      "title": "Projects",
+      "description": "Manage your projects, tasks, and team collaboration in one place."
+    },
+    "projectDetails": {
+      "title": "Project Details",
+      "description": "View and manage tasks, members, and settings for this project."
     }
   }
 }

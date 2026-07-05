@@ -73,7 +73,7 @@ function StatusSelect({
         <SelectTrigger className="w-full">
           {taskStatusesAreLoading ? (
             <span className="flex items-center gap-2 text-muted-foreground">
-              <Loader2 className="h-3 w-3 animate-spin" /> Loading…
+              <Loader2 className="h-3 w-3 animate-spin" /> {t("loading.statuses")}
             </span>
           ) : (
             <SelectValue placeholder={t("upload.form.placeholders.selectStatus")} />
@@ -283,7 +283,7 @@ export default function ProjectTaskUploadSheet({
                 <div className="space-y-2">
                   <p className="text-sm font-medium">{t("upload.form.labels.status")}</p>
                   <p className="text-xs text-muted-foreground bg-muted rounded px-3 py-2">
-                    Change status from the task detail view
+                    {t("statusReadOnlyHint")}
                   </p>
                 </div>
               )}
@@ -317,18 +317,18 @@ export default function ProjectTaskUploadSheet({
                 name="assigneeId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Assignee</FormLabel>
+                    <FormLabel>{t("upload.form.labels.assignee")}</FormLabel>
                     <Select
                       value={field.value || UNSET}
                       onValueChange={(v) => field.onChange(v === UNSET ? "" : v)}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Unassigned" />
+                          <SelectValue placeholder={t("upload.form.placeholders.unassigned")} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value={UNSET}>Unassigned</SelectItem>
+                        <SelectItem value={UNSET}>{t("upload.form.placeholders.unassigned")}</SelectItem>
                         {members.map((m) => (
                           <SelectItem key={m.userId} value={m.userId}>
                             {m.user?.name ?? m.userId}
@@ -368,18 +368,18 @@ export default function ProjectTaskUploadSheet({
               name="milestoneId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Milestone</FormLabel>
+                  <FormLabel>{t("upload.form.labels.milestone")}</FormLabel>
                   <Select
                     value={field.value || UNSET}
                     onValueChange={(v) => field.onChange(v === UNSET ? "" : v)}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="No milestone" />
+                        <SelectValue placeholder={t("upload.form.placeholders.noMilestone")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value={UNSET}>No milestone</SelectItem>
+                      <SelectItem value={UNSET}>{t("upload.form.placeholders.noMilestone")}</SelectItem>
                       {milestones.map((m) => (
                         <SelectItem key={m.id} value={m.id}>
                           {m.name}
@@ -400,18 +400,18 @@ export default function ProjectTaskUploadSheet({
                   name="epicId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Epic</FormLabel>
+                      <FormLabel>{t("upload.form.labels.epic")}</FormLabel>
                       <Select
                         value={field.value || UNSET}
                         onValueChange={(v) => field.onChange(v === UNSET ? "" : v)}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="No epic" />
+                            <SelectValue placeholder={t("upload.form.placeholders.noEpic")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value={UNSET}>No epic</SelectItem>
+                          <SelectItem value={UNSET}>{t("upload.form.placeholders.noEpic")}</SelectItem>
                           {epics.map((e) => (
                             <SelectItem key={e.id} value={e.id}>
                               <span className="flex items-center gap-2">
@@ -437,18 +437,18 @@ export default function ProjectTaskUploadSheet({
                   name="sprintId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Sprint</FormLabel>
+                      <FormLabel>{t("upload.form.labels.sprint")}</FormLabel>
                       <Select
                         value={field.value || UNSET}
                         onValueChange={(v) => field.onChange(v === UNSET ? "" : v)}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="No sprint" />
+                            <SelectValue placeholder={t("upload.form.placeholders.noSprint")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value={UNSET}>No sprint</SelectItem>
+                          <SelectItem value={UNSET}>{t("upload.form.placeholders.noSprint")}</SelectItem>
                           {sprints.map((s) => (
                             <SelectItem key={s.id} value={s.id}>
                               {s.name}

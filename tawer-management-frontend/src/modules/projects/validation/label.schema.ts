@@ -1,13 +1,15 @@
 import { z } from "zod";
 
-export const labelSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  color: z
-    .string()
-    .regex(
-      /^#[0-9A-Fa-f]{6}$/,
-      "Color must be a valid hex color (e.g. #FF5733)",
-    ),
-});
+interface Params {
+  t: (key: string) => string;
+}
 
-export type LabelFormValues = z.infer<typeof labelSchema>;
+export const getLabelSchema = ({ t }: Params) =>
+  z.object({
+    name: z.string().min(1, t("nameRequired")),
+    color: z
+      .string()
+      .regex(/^#[0-9A-Fa-f]{6}$/, t("colorInvalid")),
+  });
+
+export type LabelFormValues = z.infer<ReturnType<typeof getLabelSchema>>;

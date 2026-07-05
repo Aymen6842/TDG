@@ -3,6 +3,7 @@ import React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
 import retrieveUsers from "@/modules/users/services/extraction/users";
 import { UserType } from "@/modules/users/types/users";
@@ -13,7 +14,8 @@ interface Props {
   placeholder?: string;
 }
 
-export default function UserSearchInput({ value, onChange, placeholder = "Search users..." }: Props) {
+export default function UserSearchInput({ value, onChange, placeholder }: Props) {
+  const t = useTranslations("modules.projects.project.userSearch");
   const [search, setSearch] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -54,7 +56,7 @@ export default function UserSearchInput({ value, onChange, placeholder = "Search
         value={search}
         onChange={(e) => { setSearch(e.target.value); onChange("", ""); }}
         onFocus={() => setOpen(true)}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("placeholder")}
         autoComplete="off"
       />
       {isFetching && (
@@ -64,7 +66,7 @@ export default function UserSearchInput({ value, onChange, placeholder = "Search
         <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md">
           {users.length === 0 && !isFetching ? (
             <p className="px-3 py-2 text-sm text-muted-foreground">
-              {isError ? "Failed to load users." : "No users found."}
+              {isError ? t("loadFailed") : t("noResults")}
             </p>
           ) : (
             <ul className="max-h-52 overflow-y-auto py-1">

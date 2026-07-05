@@ -2,10 +2,11 @@ import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import {
-  createReminderSchema,
-  updateReminderSchema,
+  getCreateReminderSchema,
+  getUpdateReminderSchema,
   CreateReminderFormValues,
   UpdateReminderFormValues,
 } from "@/modules/reminders/validation/reminder.schema";
@@ -54,6 +55,9 @@ export default function useReminderUpload({
   onSuccess,
 }: Params) {
   const queryClient = useQueryClient();
+  const t = useTranslations("modules.reminders.validation");
+  const tToasts = useTranslations("modules.reminders.toasts");
+  const tErrors = useTranslations("shared.errors");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
   const isEdit = !!reminder?.id;
@@ -68,7 +72,7 @@ export default function useReminderUpload({
 
   const form = useForm<CreateReminderFormValues | UpdateReminderFormValues>({
     resolver: zodResolver(
-      isEdit ? updateReminderSchema : createReminderSchema,
+      isEdit ? getUpdateReminderSchema({ t }) : getCreateReminderSchema({ t }),
     ) as any,
     defaultValues,
   });
@@ -96,7 +100,7 @@ export default function useReminderUpload({
           isRecurring: updateData.isRecurring,
           recurrenceRule: updateData.recurrenceRule || undefined,
         });
-        toast.success("Reminder updated");
+        toast.success(tToasts("updated"));
       } else {
         const createData = data as CreateReminderFormValues;
         await createReminder(projectId, {
@@ -109,13 +113,13 @@ export default function useReminderUpload({
           recurrenceRule: createData.recurrenceRule || undefined,
           channels: createData.channels,
         });
-        toast.success("Reminder created");
+        toast.success(tToasts("created"));
       }
       queryClient.invalidateQueries({ queryKey: ["reminders", projectId] });
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {
@@ -128,12 +132,12 @@ export default function useReminderUpload({
     setError("");
     try {
       await deleteReminder(projectId, reminderId);
-      toast.success("Reminder deleted");
+      toast.success(tToasts("deleted"));
       queryClient.invalidateQueries({ queryKey: ["reminders", projectId] });
       onSuccess?.();
     } catch (err: any) {
       const msg =
-        err?.response?.data?.message || err?.message || "An error occurred.";
+        err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {

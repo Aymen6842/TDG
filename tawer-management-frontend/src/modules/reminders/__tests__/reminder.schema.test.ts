@@ -6,10 +6,12 @@
 
 import * as fc from "fast-check";
 import { describe, it, expect } from "vitest";
-import { createReminderSchema } from "@/modules/reminders/validation/reminder.schema";
+import { getCreateReminderSchema } from "@/modules/reminders/validation/reminder.schema";
 import type { ChannelType } from "@/modules/reminders/types/reminders";
 
 const VALID_CHANNELS: ChannelType[] = ["EMAIL", "TELEGRAM", "PUSH", "NTFY"];
+
+const createReminderSchema = getCreateReminderSchema({ t: (key: string) => key });
 
 const futureIso = () => new Date(Date.now() + 60_000).toISOString();
 

@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useProjectTasksStore } from "@/modules/projects/store/project-tasks";
 import useTaskStatuses from "@/modules/projects/hooks/task-statuses/use-task-statuses";
 import useBacklogActions from "@/modules/projects/hooks/backlog/use-backlog-actions";
@@ -20,6 +21,7 @@ interface Props {
 }
 
 export default function BulkActionBar({ projectId }: Props) {
+  const t = useTranslations("modules.projects.bulkActions");
   const { selectedTaskIds, clearSelection } = useProjectTasksStore();
   const { taskStatuses } = useTaskStatuses(projectId);
   const { bulkStatusUpdate, isPending } = useBacklogActions(projectId);
@@ -45,12 +47,12 @@ export default function BulkActionBar({ projectId }: Props) {
   return (
     <div className="flex items-center gap-3 rounded-md border bg-muted/50 px-4 py-2">
       <Badge variant="secondary">
-        {selectedTaskIds.length} selected
+        {t("selectedCount", { count: selectedTaskIds.length })}
       </Badge>
 
       <Select value={selectedStatus} onValueChange={setSelectedStatus}>
         <SelectTrigger className="h-8 w-[180px]">
-          <SelectValue placeholder="Set status…" />
+          <SelectValue placeholder={t("setStatusPlaceholder")} />
         </SelectTrigger>
         <SelectContent>
           {statusOptions.map((opt) => (
@@ -66,7 +68,7 @@ export default function BulkActionBar({ projectId }: Props) {
         disabled={!selectedStatus || isPending}
         onClick={handleApply}
       >
-        Apply
+        {t("apply")}
       </Button>
 
       <Button

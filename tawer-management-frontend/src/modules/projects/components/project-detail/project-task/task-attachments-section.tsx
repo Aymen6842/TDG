@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import AttachementPreview from "./attachement-preview";
 
 interface TaskAttachmentsSectionProps {
@@ -6,9 +7,11 @@ interface TaskAttachmentsSectionProps {
 }
 
 export function TaskAttachmentsSection({ attachments, onViewAttachment }: TaskAttachmentsSectionProps) {
+  const t = useTranslations("modules.projects.taskSections.attachments");
+
   return (
     <div className="space-y-2 p-4">
-      <h4 className="text-sm font-medium">Attachments</h4>
+      <h4 className="text-sm font-medium">{t("title")}</h4>
       {attachments && attachments.length > 0 ? (
         <div className="space-y-2">
           {attachments.map((attachment, idx) => (
@@ -20,7 +23,7 @@ export function TaskAttachmentsSection({ attachments, onViewAttachment }: TaskAt
           ))}
         </div>
       ) : (
-        <div className="bg-muted text-muted-foreground rounded-md p-4 text-center text-sm">No attachments yet</div>
+        <div className="bg-muted text-muted-foreground rounded-md p-4 text-center text-sm">{t("empty")}</div>
       )}
     </div>
   );

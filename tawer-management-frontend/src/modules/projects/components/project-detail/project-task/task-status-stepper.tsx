@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import uploadProjectTask from "@/modules/projects/services/api/project-task-upload";
 import useTaskStatuses from "@/modules/projects/hooks/task-statuses/use-task-statuses";
@@ -27,6 +28,7 @@ interface Props {
 }
 
 export default function TaskStatusStepper({ projectId, taskId, currentStatus }: Props) {
+  const t = useTranslations("modules.projects.taskSections.statusStepper");
   const queryClient = useQueryClient();
   const [isPending, setIsPending] = React.useState(false);
   const { taskStatuses } = useTaskStatuses(projectId);
@@ -53,7 +55,7 @@ export default function TaskStatusStepper({ projectId, taskId, currentStatus }: 
         projectId,
       });
       queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
-      toast.success(`Status → ${formatLabel(newStatus)}`);
+      toast.success(t("statusUpdatedToast", { status: formatLabel(newStatus) }));
     } catch (err: unknown) {
       const message =
         typeof err === "object" &&
@@ -61,7 +63,7 @@ export default function TaskStatusStepper({ projectId, taskId, currentStatus }: 
         "response" in err &&
         typeof (err as { response?: { data?: { message?: string } } }).response?.data?.message === "string"
           ? (err as { response: { data: { message: string } } }).response.data.message
-          : "Failed to update status";
+          : t("updateFailedToast");
       toast.error(message);
     } finally {
       setIsPending(false);

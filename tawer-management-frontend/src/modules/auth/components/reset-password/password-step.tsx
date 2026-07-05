@@ -52,7 +52,7 @@ export default function PasswordStep() {
                 <p className="text-center text-red-500">{passwordWarning.password}</p>
               )}
               <Label htmlFor="password" className="sr-only">
-                Password
+                {t.raw("steps.newPassword.passwordLabel")}
               </Label>
               <Input
                 id="password"
@@ -69,7 +69,7 @@ export default function PasswordStep() {
                 <p className="text-center text-red-500">{passwordWarning.confirmationPassword}</p>
               )}
               <Label htmlFor="confirmationPassword" className="sr-only">
-                New Password
+                {t.raw("steps.newPassword.confirmPasswordLabel")}
               </Label>
               <Input
                 id="confirmationPassword"

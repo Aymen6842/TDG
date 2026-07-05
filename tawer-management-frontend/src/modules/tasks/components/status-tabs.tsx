@@ -3,12 +3,17 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FilterTab } from "@/modules/tasks/types/tasks";
 import { EnumTaskStatus } from "@/modules/tasks/types/tasks";
 import { useTranslations } from "next-intl";
-import { taskStatusNamed } from "../utils/enum";
 
 interface StatusTabsProps {
   onTabChange: (tab: FilterTab) => void;
   activeTab: FilterTab;
 }
+
+const statusLabelKeys: Record<EnumTaskStatus, string> = {
+  [EnumTaskStatus.Pending]: "status.pending",
+  [EnumTaskStatus.InProgress]: "status.inProgress",
+  [EnumTaskStatus.Completed]: "status.completed"
+};
 
 const StatusTabs: React.FC<StatusTabsProps> = ({ onTabChange, activeTab }) => {
   const t = useTranslations("modules.tasks");
@@ -21,7 +26,7 @@ const StatusTabs: React.FC<StatusTabsProps> = ({ onTabChange, activeTab }) => {
         <TabsTrigger value="all">{t("upload.form.labels.allTasks")}</TabsTrigger>
         {Object.values(EnumTaskStatus).map((status) => (
           <TabsTrigger key={status} value={status}>
-            {taskStatusNamed[status]}
+            {t(statusLabelKeys[status])}
           </TabsTrigger>
         ))}
       </TabsList>

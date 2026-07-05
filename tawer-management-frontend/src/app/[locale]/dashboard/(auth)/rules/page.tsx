@@ -46,9 +46,9 @@ export default function RulesPage() {
           icon={<Info className="h-6 w-6 text-blue-600" />}
           title={sections.workMode.title}
           content={[
-            { label: 'Mandatory', text: sections.workMode.mandatory },
-            { label: 'Details', text: sections.workMode.details },
-            { label: 'Note', text: sections.workMode.note },
+            { label: t('labels.mandatory'), text: sections.workMode.mandatory },
+            { label: t('labels.details'), text: sections.workMode.details },
+            { label: t('labels.note'), text: sections.workMode.note },
           ]}
           alerts={[
             {
@@ -68,18 +68,18 @@ export default function RulesPage() {
               label: sections.workingHours.tawerDev.name,
               items: [
                 `${sections.workingHours.tawerDev.days}`,
-                `Morning: ${sections.workingHours.tawerDev.morning}`,
-                `Break: ${sections.workingHours.tawerDev.break}`,
-                `Afternoon: ${sections.workingHours.tawerDev.afternoon}`,
+                `${t('labels.morning')} ${sections.workingHours.tawerDev.morning}`,
+                `${t('labels.break')} ${sections.workingHours.tawerDev.break}`,
+                `${t('labels.afternoon')} ${sections.workingHours.tawerDev.afternoon}`,
               ],
             },
             {
               label: sections.workingHours.tawerCRV.name,
               items: [
                 `${sections.workingHours.tawerCRV.weekday}:`,
-                `  Morning: ${sections.workingHours.tawerCRV.weekdayMorning}`,
-                `  Break: ${sections.workingHours.tawerCRV.weekdayBreak}`,
-                `  Afternoon: ${sections.workingHours.tawerCRV.weekdayAfternoon}`,
+                `  ${t('labels.morning')} ${sections.workingHours.tawerCRV.weekdayMorning}`,
+                `  ${t('labels.break')} ${sections.workingHours.tawerCRV.weekdayBreak}`,
+                `  ${t('labels.afternoon')} ${sections.workingHours.tawerCRV.weekdayAfternoon}`,
                 `${sections.workingHours.tawerCRV.saturday}: ${sections.workingHours.tawerCRV.saturdayHours}`,
               ],
             },
@@ -99,10 +99,10 @@ export default function RulesPage() {
           title={sections.platform.title}
           description={sections.platform.description}
           content={[
-            { label: 'Critical Rules', text: sections.platform.critical },
+            { label: t('labels.criticalRules'), text: sections.platform.critical },
             { label: '', text: sections.platform.checkIn },
             { label: '', text: sections.platform.checkOut },
-            { label: 'Break Guidelines', text: sections.platform.breakRules },
+            { label: t('labels.breakGuidelines'), text: sections.platform.breakRules },
             { label: '', text: sections.platform.breakCheckOut },
             { label: '', text: sections.platform.breakCheckIn },
           ]}

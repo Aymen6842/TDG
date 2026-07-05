@@ -46,10 +46,10 @@ export default function ProjectDetail({ slug }: Props) {
   return (
     <div className="space-y-4">
       <header className="mb-4 flex items-center gap-3">
-        <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard/projects")} aria-label="Back to projects">
+        <Button variant="ghost" size="icon" onClick={() => router.push("/dashboard/projects")} aria-label={t("backToProjectsAriaLabel")}>
           <ArrowLeft className="size-5" />
         </Button>
-        <h1 className="text-2xl font-bold tracking-tight">{(project as any).name || project.contents?.[0]?.name || "Unnamed Project"}</h1>
+        <h1 className="text-2xl font-bold tracking-tight">{(project as any).name || project.contents?.[0]?.name || t("unnamedProject")}</h1>
       </header>
 
       <Tabs defaultValue="tasks" className="w-full">
@@ -61,11 +61,11 @@ export default function ProjectDetail({ slug }: Props) {
               <TabsTrigger value="sprints" className={tabTriggerClass}>{t("tabs.sprints")}</TabsTrigger>
             )}
             {project.projectType === "AGILE" && (
-              <TabsTrigger value="epics" className={tabTriggerClass}>Epics</TabsTrigger>
+              <TabsTrigger value="epics" className={tabTriggerClass}>{t("tabs.epics")}</TabsTrigger>
             )}
-            <TabsTrigger value="milestones" className={tabTriggerClass}>Milestones</TabsTrigger>
-            <TabsTrigger value="analytics" className={tabTriggerClass}>Analytics</TabsTrigger>
-            <TabsTrigger value="reminders" className={tabTriggerClass}>Reminders</TabsTrigger>
+            <TabsTrigger value="milestones" className={tabTriggerClass}>{t("tabs.milestones")}</TabsTrigger>
+            <TabsTrigger value="analytics" className={tabTriggerClass}>{t("tabs.analytics")}</TabsTrigger>
+            <TabsTrigger value="reminders" className={tabTriggerClass}>{t("tabs.reminders")}</TabsTrigger>
             <TabsTrigger value="details" className={tabTriggerClass}>{t("tabs.details")}</TabsTrigger>
           </TabsList>
         </div>

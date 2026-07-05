@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Button } from "../ui/button";
 import { ArrowRight } from "lucide-react";
 
 export default function AccessDenied() {
+  const t = useTranslations("shared.errorPages");
+
   return (
     <div className="from-background to-secondary/10 flex min-h-screen flex-col items-center justify-center bg-gradient-to-b p-4">
       <div className="w-full max-w-3xl space-y-4 lg:space-y-8">
@@ -23,7 +26,9 @@ export default function AccessDenied() {
             <div className="text-primary mb-4 text-8xl font-black tracking-tighter sm:text-9xl">
               403
             </div>
-            <div className="text-foreground text-xl font-medium sm:text-2xl">Access Denied</div>
+            <div className="text-foreground text-xl font-medium sm:text-2xl">
+              {t("accessDenied.title")}
+            </div>
           </div>
 
           <div className="from-background/80 absolute right-0 bottom-0 left-0 h-1/3 bg-gradient-to-t to-transparent" />
@@ -32,7 +37,7 @@ export default function AccessDenied() {
         <div className="flex justify-center">
           <Button asChild variant="outline" size="lg" className="group">
             <Link href="/">
-              Back to Home
+              {t("backToHome")}
               <ArrowRight />
             </Link>
           </Button>

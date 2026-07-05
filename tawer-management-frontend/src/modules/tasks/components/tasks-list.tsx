@@ -51,6 +51,7 @@ interface TodoListProps {
 
 export default function TaskList({ activeTab, onSelectTask, onAddTodoClick }: TodoListProps) {
   const t = useTranslations("modules.tasks");
+  const tView = useTranslations("shared.viewToggle");
 
   const { updateTasksOrders } = useTasksOrdersUpdates({});
   const { tasks, tasksAreLoading, tasksError, statusState, priorityState, sortByState, setDisplayedTasks, searchState } = usePersonalTasks();
@@ -198,8 +199,8 @@ export default function TaskList({ activeTab, onSelectTask, onAddTodoClick }: To
 
               <ToggleGroup type="single" variant="outline" value={viewMode}
                 onValueChange={(v) => v && setViewMode(v as "list" | "grid")}>
-                <ToggleGroupItem value="list" aria-label="List view"><ListIcon /></ToggleGroupItem>
-                <ToggleGroupItem value="grid" aria-label="Grid view"><GridIcon /></ToggleGroupItem>
+                <ToggleGroupItem value="list" aria-label={tView("listView")}><ListIcon /></ToggleGroupItem>
+                <ToggleGroupItem value="grid" aria-label={tView("gridView")}><GridIcon /></ToggleGroupItem>
               </ToggleGroup>
 
               <TooltipProvider>

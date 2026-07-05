@@ -18,12 +18,6 @@ export const statusClasses: Record<EnumTaskStatus, string> = {
   [EnumTaskStatus.Completed]:  "bg-chart-5/10 text-chart-5 border-chart-5/20"
 };
 
-export const taskStatusNamed: Record<EnumTaskStatus, string> = {
-  [EnumTaskStatus.Pending]:    "Pending",
-  [EnumTaskStatus.InProgress]: "In Progress",
-  [EnumTaskStatus.Completed]:  "Completed"
-};
-
 export const statusDotColors: Record<EnumTaskStatus, string> = {
   [EnumTaskStatus.Pending]:    "bg-chart-2",
   [EnumTaskStatus.InProgress]: "bg-chart-1",

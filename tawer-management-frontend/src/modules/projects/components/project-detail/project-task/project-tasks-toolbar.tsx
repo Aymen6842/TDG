@@ -54,6 +54,7 @@ export default function ProjectTasksToolbar({
   epicId, setEpicId,
 }: Props) {
   const tTasks = useTranslations("modules.projects.tasks");
+  const tView = useTranslations("shared.viewToggle");
   const { viewMode, setViewMode, visibleAttributes, toggleAttribute } = useProjectTasksStore();
   const { taskStatuses } = useTaskStatuses(project.id);
 
@@ -100,7 +101,7 @@ export default function ProjectTasksToolbar({
           <SelectContent>
             <SelectItem value="all">{tTasks("filters.all", { defaultValue: "All" })}</SelectItem>
             {project.members?.map((member) => (
-              <SelectItem key={member.id} value={member.userId}>{member.user?.name || `User ${member.userId.split('-').slice(-1)}`}</SelectItem>
+              <SelectItem key={member.id} value={member.userId}>{member.user?.name || tTasks("unknownMemberFallback", { id: member.userId.split('-').slice(-1)[0] })}</SelectItem>
             ))}
           </SelectContent>
         </Select>
@@ -196,8 +197,8 @@ export default function ProjectTasksToolbar({
         </DropdownMenu>
 
         <ToggleGroup type="single" variant="outline" value={viewMode} onValueChange={(value) => value && setViewMode(value as "list" | "grid")}>
-          <ToggleGroupItem value="list" aria-label="List view"><ListIcon /></ToggleGroupItem>
-          <ToggleGroupItem value="grid" aria-label="Kanban view"><SquareKanban /></ToggleGroupItem>
+          <ToggleGroupItem value="list" aria-label={tView("listView")}><ListIcon /></ToggleGroupItem>
+          <ToggleGroupItem value="grid" aria-label={tView("kanbanView")}><SquareKanban /></ToggleGroupItem>
         </ToggleGroup>
       </div>
     </div>

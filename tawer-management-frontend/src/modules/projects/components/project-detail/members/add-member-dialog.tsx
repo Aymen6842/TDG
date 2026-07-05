@@ -11,21 +11,23 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import UserSearchCombobox from "./user-search-combobox";
 import useProjectMembers from "../../../hooks/members/use-project-members";
 
-const addMemberSchema = z.discriminatedUnion("mode", [
-  z.object({
-    mode: z.literal("userId"),
-    value: z.string().min(1, "Required"),
-    isManager: z.boolean(),
-    expiresInDays: z.coerce.number().min(1).max(30).optional(),
-  }),
-  z.object({
-    mode: z.literal("email"),
-    value: z.string().email("Invalid email"),
-    isManager: z.boolean(),
-    expiresInDays: z.coerce.number().min(1).max(30).optional(),
-  }),
-]);
-type AddMemberForm = z.infer<typeof addMemberSchema>;
+function buildAddMemberSchema(t: (key: string) => string) {
+  return z.discriminatedUnion("mode", [
+    z.object({
+      mode: z.literal("userId"),
+      value: z.string().min(1, t("validation.required")),
+      isManager: z.boolean(),
+      expiresInDays: z.coerce.number().min(1).max(30).optional(),
+    }),
+    z.object({
+      mode: z.literal("email"),
+      value: z.string().email(t("validation.invalidEmail")),
+      isManager: z.boolean(),
+      expiresInDays: z.coerce.number().min(1).max(30).optional(),
+    }),
+  ]);
+}
+type AddMemberForm = z.infer<ReturnType<typeof buildAddMemberSchema>>;
 
 interface AddMemberDialogProps {
   open: boolean;
@@ -38,7 +40,7 @@ export function AddMemberDialog({ open, onOpenChange, projectId }: AddMemberDial
   const { addMember, isPending } = useProjectMembers(projectId);
 
   const form = useForm<AddMemberForm>({
-    resolver: zodResolver(addMemberSchema),
+    resolver: zodResolver(buildAddMemberSchema(t)),
     defaultValues: { value: "", isManager: false, expiresInDays: 7, mode: "userId" },
   });
 

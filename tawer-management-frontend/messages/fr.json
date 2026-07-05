@@ -4,7 +4,8 @@
       "languageSelector": {
         "ariaLabel": "Sélectionner la langue",
         "searchPlaceholder": "Rechercher une langue...",
-        "noLanguageFound": "Aucune langue trouvée."
+        "noLanguageFound": "Aucune langue trouvée.",
+        "currentLabel": "Langue : {name}"
       },
       "search": {
         "placeholder": "Rechercher...",
@@ -54,7 +55,12 @@
         "notifications": "Notifications",
         "viewAllNotifications": "Voir toutes les notifications",
         "notificationsSettings": "Paramètres des notifications",
-        "myProfile": "Mon profil"
+        "myProfile": "Mon profil",
+        "rules": "Règlement de l'entreprise"
+      },
+      "badges": {
+        "coming": "Bientôt",
+        "new": "Nouveau"
       }
     },
     "welcome": {
@@ -68,15 +74,65 @@
     "theme": {
       "dark": "Sombre",
       "light": "Clair",
+      "toggleTheme": "Basculer le thème",
       "changement": {
         "title": "Thème",
         "subtitle": "Sélectionnez le thème du tableau de bord."
+      },
+      "validation": {
+        "themeRequired": "Veuillez sélectionner un thème."
       }
+    },
+    "themeCustomizer": {
+      "colorMode": "Mode couleur :",
+      "contentLayout": "Disposition du contenu",
+      "full": "Pleine largeur",
+      "centered": "Centré",
+      "themePreset": "Préréglage du thème :",
+      "selectTheme": "Sélectionner un thème",
+      "radius": "Rayon :",
+      "scale": "Échelle :",
+      "sidebarMode": "Mode de la barre latérale :",
+      "default": "Par défaut",
+      "icon": "Icône",
+      "resetToDefault": "Réinitialiser par défaut",
+      "sizes": {
+        "xs": "XS",
+        "sm": "SM",
+        "md": "MD",
+        "lg": "LG",
+        "xl": "XL"
+      }
+    },
+    "logo": {
+      "alt": "Logo Tawer Management"
+    },
+    "errorPages": {
+      "notFound": {
+        "title": "Page introuvable"
+      },
+      "serverError": {
+        "title": "Erreur interne du serveur"
+      },
+      "accessDenied": {
+        "title": "Accès refusé"
+      },
+      "backToHome": "Retour à l'accueil"
+    },
+    "starRating": {
+      "rateAriaLabel": "Évaluer {index} sur {max}"
+    },
+    "viewToggle": {
+      "listView": "Vue liste",
+      "gridView": "Vue grille",
+      "kanbanView": "Vue kanban"
     },
     "pagination": {
       "previous": "Précédent",
       "next": "Suivant",
-      "selected": "Page {page} sur {pages} ({records} enregistrements au total)"
+      "selected": "Page {page} sur {pages} ({records} enregistrements au total)",
+      "pageOf": "{current} sur {total}",
+      "pageFallback": "Page {page}"
     },
     "filesUpload": {
       "uploadAriaLabel": "Téléverser un fichier image",
@@ -86,7 +142,14 @@
       "selectImages": "Sélectionner des images",
       "uploadedFiles": "Fichiers téléversés ({count})",
       "addMore": "Ajouter plus",
-      "imageAlt": "Image de l'élément {index}"
+      "imageAlt": "Image de l'élément {index}",
+      "uploadImage": "Téléverser une image",
+      "changeImage": "Changer l'image",
+      "unknownFile": "Fichier inconnu",
+      "unknownSize": "Taille inconnue",
+      "fileTypeImage": "Image",
+      "fileTypePdf": "PDF",
+      "fileTypeFile": "Fichier"
     },
     "dialogs": {
       "deletion": {
@@ -121,7 +184,8 @@
       "deletion": {
         "serverError": "Une erreur serveur s'est produite. Veuillez réessayer plus tard."
       },
-      "permissionDenied": "Vous n'avez pas la permission d'effectuer cette action."
+      "permissionDenied": "Vous n'avez pas la permission d'effectuer cette action.",
+      "generic": "Une erreur s'est produite."
     },
     "success": {
       "deletion": "Suppression réussie."
@@ -129,6 +193,9 @@
   },
   "modules": {
     "auth": {
+      "authUIWrapper": {
+        "imageAlt": "Illustration de la page de connexion"
+      },
       "externalAuth": {
         "emailLinkedWithAnAccount": "Erreur d'authentification",
         "generalError": "Échec de l'authentification Google",
@@ -254,6 +321,10 @@
         }
       },
       "account": {
+        "settingsLayout": {
+          "title": "Paramètres du compte",
+          "description": "Gérez la configuration et les préférences de votre compte."
+        },
         "personalInfoChangement": {
           "fields": {
             "name": {
@@ -332,6 +403,23 @@
         },
         "resetPasswordEmail": {
           "invalid": "Veuillez saisir une adresse e-mail valide"
+        },
+        "accountSettings": {
+          "name": {
+            "minLength": "Le nom doit contenir au moins 2 caractères.",
+            "maxLength": "Le nom ne doit pas dépasser 30 caractères."
+          },
+          "email": {
+            "invalid": "Veuillez saisir une adresse e-mail valide."
+          },
+          "language": {
+            "required": "Veuillez sélectionner une langue."
+          }
+        },
+        "nameChangement": {
+          "minLength": "Le nom doit contenir au moins 2 caractères",
+          "maxLength": "Le nom ne doit pas dépasser 50 caractères",
+          "invalidChars": "Caractères invalides dans le nom"
         }
       },
       "success": {
@@ -519,12 +607,17 @@
           },
           "columns": "Colonnes"
         },
+        "selection": {
+          "selectAll": "Tout sélectionner",
+          "selectRow": "Sélectionner la ligne"
+        },
         "actions": {
           "title": "Actions",
           "viewDetails": "Voir les détails",
           "viewProjects": "Voir les projets travaillés",
           "viewWorkedTimeHistory": "Voir l'historique du temps travaillé",
           "edit": "Modifier",
+          "openMenu": "Ouvrir le menu",
           "ntfyTopic": {
             "copy": "Copier le sujet de l'application NTFY",
             "copied": "Copié dans le presse-papiers !"
@@ -719,7 +812,9 @@
         "title": "Évaluation quotidienne de performance",
         "description": "Veuillez prendre un moment pour évaluer la performance d'aujourd'hui. Votre retour nous aide à suivre les progrès, identifier les points forts et offrir un meilleur accompagnement au fil du temps.",
         "performanceRating": "Note de performance",
+        "ratingOutOfFive": "{rating} / 5",
         "managerNotes": "Notes du responsable",
+        "optional": "(facultatif)",
         "managerNotesPlaceholder": "Ajoutez une courte note sur la performance, les réussites ou les axes d'amélioration du jour.",
         "closeButton": "Fermer",
         "submitButton": "Envoyer la note",
@@ -736,6 +831,7 @@
         "noActivityTitle": "Aucune activité pour le moment",
         "noActivitySubtitle": "Commencez à enregistrer vos sessions de travail pour les voir ici",
         "workSession": "Session de travail",
+        "dayFallback": "Jour {index}",
         "sessions": "{count} sessions",
         "workedTime": "Temps travaillé",
         "rateWorkerDay": "Évaluez votre journée de travail",
@@ -776,6 +872,7 @@
           "5": "Excellente"
         },
         "workNoteLabel": "Sur quoi avez-vous travaillé aujourd'hui ?",
+        "optional": "(facultatif)",
         "workNotePlaceholder": "Une courte note sur ce sur quoi vous avez travaillé ou ce que vous avez accompli aujourd'hui. Chaque effort compte.",
         "skipButton": "Passer pour l'instant",
         "submitButton": "Partager ma journée",
@@ -1224,7 +1321,11 @@
               "noTasks": "Aucune tâche trouvée",
               "allTasks": "Toutes les tâches",
               "type": "Type",
-              "points": "Story Points"
+              "points": "Story Points",
+              "assignee": "Assigné",
+              "milestone": "Jalon",
+              "epic": "Epic",
+              "sprint": "Sprint"
             },
             "placeholders": {
               "parentTaskId": "ID de la tâche parente",
@@ -1240,7 +1341,11 @@
               "selectType": "Sélectionner un type",
               "selectPriority": "Sélectionner une priorité",
               "selectStatus": "Sélectionner un statut",
-              "points": "Story Points"
+              "points": "Story Points",
+              "unassigned": "Non assigné",
+              "noMilestone": "Aucun jalon",
+              "noEpic": "Aucun epic",
+              "noSprint": "Aucun sprint"
             },
             "ariaLabels": {
               "hidePassword": "Masquer le mot de passe",
@@ -1352,10 +1457,12 @@
           "low": "Basse"
         },
         "points": "Story Points",
+        "statusReadOnlyHint": "Changez le statut depuis la vue détaillée de la tâche",
         "loading": {
           "tasks": "Chargement des tâches...",
           "task": "Chargement de la tâche...",
           "button": "Chargement...",
+          "statuses": "Chargement…",
           "uploading": "Téléversement en cours..."
         },
         "edit": "Modifier",
@@ -1363,6 +1470,14 @@
         "enterSubTaskTitle": "Saisissez le titre de la sous-tâche",
         "addTask": "Ajouter une tâche",
         "filePreview": "Aperçu du fichier",
+        "assignedToTitle": "Assigné à {name}",
+        "unknownMemberFallback": "Utilisateur {id}",
+        "saveButton": "Enregistrer",
+        "commentUpdatedToast": "Commentaire mis à jour",
+        "commentUpdateFailedToast": "Échec de la mise à jour du commentaire",
+        "likeToggleFailedToast": "Échec du basculement du like",
+        "subtaskDeletedToast": "Sous-tâche supprimée",
+        "subtaskDeleteFailedToast": "Échec de la suppression de la sous-tâche",
         "displaySettings": {
           "title": "Paramètres d'affichage",
           "showAttributes": "Afficher les attributs",
@@ -1399,10 +1514,20 @@
           "endDate": "Date de fin : {date}",
           "members": "{count} membres",
           "member": "{count} membre",
+          "backToProjectsAriaLabel": "Retour aux projets",
+          "unnamedProject": "Projet sans nom",
+          "validation": {
+            "required": "Requis",
+            "invalidEmail": "E-mail invalide"
+          },
           "tabs": {
             "tasks": "Tâches",
             "members": "Membres et invitations",
             "sprints": "Sprints",
+            "epics": "Epics",
+            "milestones": "Jalons",
+            "analytics": "Analytique",
+            "reminders": "Rappels",
             "details": "Détails"
           },
           "membersList": {
@@ -1498,6 +1623,8 @@
           "points": "Points",
           "filePreview": "Aperçu du fichier",
           "edit": "Modifier",
+          "deletedToast": "Tâche supprimée",
+          "deleteFailedToast": "Échec de la suppression de la tâche",
           "noDescription": "Aucune description fournie.",
           "deletion": {
             "title": "Supprimer la tâche du projet",
@@ -1562,6 +1689,144 @@
           "stop": "Arrêter le projet",
           "complete": "Marquer comme terminé"
         }
+      },
+      "analytics": {
+        "capacity": {
+          "title": "Capacité du projet",
+          "totalCapacity": "Capacité totale",
+          "allocated": "Allouée",
+          "remaining": "Restante"
+        },
+        "velocity": {
+          "title": "Vélocité du sprint",
+          "noData": "Aucun sprint terminé pour le moment"
+        },
+        "burndown": {
+          "title": "Burndown du sprint",
+          "selectSprint": "Sélectionner un sprint",
+          "noSprintsAvailable": "Aucun sprint disponible.",
+          "noDatesYet": "Ajoutez des dates de début/fin de sprint pour voir le burndown"
+        }
+      },
+      "epics": {
+        "sectionTitle": "Epics",
+        "addTooltip": "Ajouter un epic",
+        "emptyMessage": "Aucun epic pour le moment. Créez-en un pour regrouper les tâches liées.",
+        "editTitle": "Modifier l'epic",
+        "createTitle": "Créer un epic",
+        "nameLabel": "Nom *",
+        "namePlaceholder": "Nom de l'epic",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Description facultative",
+        "colorLabel": "Couleur",
+        "startDateLabel": "Date de début",
+        "endDateLabel": "Date de fin",
+        "cancel": "Annuler",
+        "saving": "Enregistrement…",
+        "updateButton": "Mettre à jour l'epic",
+        "createButton": "Créer l'epic",
+        "deleteTitle": "Supprimer l'epic",
+        "deleteDescription": "Êtes-vous sûr de vouloir supprimer « {name} » ? Cette action est irréversible.",
+        "deleteConfirm": "Supprimer",
+        "deleteCancel": "Annuler"
+      },
+      "milestones": {
+        "sectionTitle": "Jalons",
+        "epicsSectionTitle": "Epics",
+        "sprintsSectionTitle": "Sprints",
+        "addTooltip": "Ajouter un jalon",
+        "emptyMessage": "Aucun jalon pour le moment. Créez-en un pour suivre les dates de livraison clés.",
+        "ganttEmptyMessage": "Aucun jalon, epic ou sprint à afficher sur le Gantt.",
+        "noMilestones": "Aucun jalon.",
+        "noDueDate": "Aucune date d'échéance",
+        "tasksInScope": "{count, plural, one {# tâche} other {# tâches}} dans le périmètre de cette chronologie.",
+        "listTab": "Liste",
+        "ganttTab": "Gantt",
+        "done": "Terminé",
+        "editTitle": "Modifier le jalon",
+        "createTitle": "Créer un jalon",
+        "nameLabel": "Nom *",
+        "namePlaceholder": "Nom du jalon",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Description facultative",
+        "dueDateLabel": "Date d'échéance *",
+        "cancel": "Annuler",
+        "saving": "Enregistrement…",
+        "updateButton": "Mettre à jour le jalon",
+        "createButton": "Créer le jalon",
+        "deleteTitle": "Supprimer le jalon",
+        "deleteDescription": "Supprimer « {name} » ? Cette action est irréversible.",
+        "deleteConfirm": "Supprimer",
+        "deleteCancel": "Annuler"
+      },
+      "userSearch": {
+        "placeholder": "Rechercher des utilisateurs...",
+        "loadFailed": "Échec du chargement des utilisateurs.",
+        "noResults": "Aucun utilisateur trouvé."
+      },
+      "taskSections": {
+        "attachments": {
+          "title": "Pièces jointes",
+          "empty": "Aucune pièce jointe pour le moment"
+        },
+        "dependencies": {
+          "title": "Dépendances",
+          "add": "Ajouter",
+          "blockingTaskIdPlaceholder": "ID de la tâche bloquante",
+          "empty": "Aucune dépendance",
+          "addedToast": "Dépendance ajoutée",
+          "addFailedToast": "Échec de l'ajout de la dépendance",
+          "removedToast": "Dépendance supprimée",
+          "removeFailedToast": "Échec de la suppression de la dépendance"
+        },
+        "labels": {
+          "title": "Étiquettes",
+          "add": "Ajouter",
+          "noneDefined": "Aucune étiquette définie pour ce projet",
+          "noneAssigned": "Aucune étiquette assignée"
+        },
+        "timeEntries": {
+          "title": "Entrées de temps",
+          "totalSuffix": "— {hours} h au total",
+          "logTime": "Enregistrer du temps",
+          "hoursLabel": "Heures",
+          "hoursPlaceholder": "ex. 1.5",
+          "descriptionPlaceholder": "Description facultative",
+          "cancel": "Annuler",
+          "save": "Enregistrer",
+          "loading": "Chargement...",
+          "empty": "Aucun temps enregistré pour le moment"
+        },
+        "statusStepper": {
+          "statusUpdatedToast": "Statut → {status}",
+          "updateFailedToast": "Échec de la mise à jour du statut"
+        }
+      },
+      "bulkActions": {
+        "selectedCount": "{count} sélectionné(s)",
+        "setStatusPlaceholder": "Définir le statut…",
+        "apply": "Appliquer"
+      },
+      "taskStatuses": {
+        "editTitle": "Modifier le statut",
+        "createTitle": "Créer un statut",
+        "nameLabel": "Nom *",
+        "namePlaceholder": "ex. En révision",
+        "colorLabel": "Couleur",
+        "orderLabel": "Ordre *",
+        "cancel": "Annuler",
+        "saving": "Enregistrement…",
+        "update": "Mettre à jour",
+        "create": "Créer",
+        "sectionTitle": "Statuts de tâches personnalisés",
+        "sectionDescription": "Définissez les étapes du flux de travail pour les tâches de ce projet.",
+        "addButton": "Ajouter un statut",
+        "emptyMessage": "Aucun statut personnalisé. Les tâches utilisent les statuts par défaut.",
+        "orderInline": "ordre : {order}",
+        "deleteTitle": "Supprimer le statut",
+        "deleteDescription": "Supprimer le statut « {name} » ? Cette action est irréversible.",
+        "deleteConfirm": "Supprimer",
+        "deleteCancel": "Annuler"
       },
       "list": {
         "searchPlaceholder": "Rechercher des projets...",
@@ -1685,6 +1950,7 @@
             "details": "Ajoutez des informations détaillées sur le projet...",
             "displayOrder": "0",
             "language": "ex. Anglais",
+            "selectLanguage": "Sélectionner une langue...",
             "manager": "Sélectionner un responsable..."
           },
           "cancel": "Annuler",
@@ -1790,6 +2056,80 @@
             "create": "Créer le sprint",
             "update": "Mettre à jour le sprint"
           }
+        }
+      },
+      "validation": {
+        "epic": {
+          "nameRequired": "Le nom est requis",
+          "colorInvalid": "La couleur doit être une couleur hexadécimale valide (ex. #FF5733)"
+        },
+        "label": {
+          "nameRequired": "Le nom est requis",
+          "colorInvalid": "La couleur doit être une couleur hexadécimale valide (ex. #FF5733)"
+        },
+        "milestone": {
+          "nameRequired": "Le nom est requis",
+          "dueDateRequired": "La date d'échéance est requise"
+        },
+        "project": {
+          "nameRequired": "Le nom est requis",
+          "startDateRequired": "La date de début est requise",
+          "endDateRequired": "La date de fin est requise"
+        },
+        "sprint": {
+          "nameRequired": "Le nom est requis",
+          "startDateRequired": "La date de début est requise",
+          "endDateRequired": "La date de fin est requise",
+          "estimatedStartDateRequired": "La date de début estimée est requise",
+          "estimatedEndDateRequired": "La date de fin estimée est requise"
+        },
+        "taskStatus": {
+          "nameRequired": "Le nom est requis",
+          "nameMaxLength": "Le nom ne doit pas dépasser 50 caractères",
+          "colorInvalid": "La couleur doit être une couleur hexadécimale valide (ex. #FF5733)",
+          "orderNotANumber": "L'ordre doit être un nombre",
+          "orderNotInteger": "L'ordre doit être un nombre entier",
+          "orderMin": "L'ordre doit être au moins égal à 1"
+        },
+        "timeEntry": {
+          "hoursNotANumber": "Les heures doivent être un nombre",
+          "hoursMin": "Les heures doivent être supérieures à 0"
+        }
+      },
+      "entityToasts": {
+        "epic": {
+          "created": "Epic créé",
+          "updated": "Epic mis à jour",
+          "deleted": "Epic supprimé"
+        },
+        "label": {
+          "created": "Étiquette créée",
+          "updated": "Étiquette mise à jour",
+          "deleted": "Étiquette supprimée"
+        },
+        "milestone": {
+          "created": "Jalon créé",
+          "updated": "Jalon mis à jour",
+          "deleted": "Jalon supprimé",
+          "completed": "Jalon terminé"
+        },
+        "project": {
+          "created": "Projet créé",
+          "updated": "Projet mis à jour"
+        },
+        "sprint": {
+          "created": "Sprint créé",
+          "updated": "Sprint mis à jour"
+        },
+        "taskStatus": {
+          "created": "Statut créé",
+          "updated": "Statut mis à jour",
+          "deleted": "Statut supprimé"
+        },
+        "timeEntry": {
+          "created": "Entrée de temps créée",
+          "updated": "Entrée de temps mise à jour",
+          "deleted": "Entrée de temps supprimée"
         }
       }
     },
@@ -2262,11 +2602,84 @@
         "serverError": "Une erreur serveur inattendue s'est produite.",
         "unauthorized": "Session expirée. Veuillez vous reconnecter."
       }
+    },
+    "reminders": {
+      "sectionTitle": "Rappels",
+      "addTooltip": "Ajouter un rappel",
+      "emptyMessage": "Aucun rappel pour le moment. Créez-en un pour être notifié avant les échéances.",
+      "noMessage": "(Aucun message)",
+      "recurringFallback": "récurrent",
+      "deleteTitle": "Supprimer le rappel",
+      "deleteDescription": "Supprimer « {message} » ? Cette action est irréversible.",
+      "deleteDescriptionFallback": "ce rappel",
+      "deleteConfirm": "Supprimer",
+      "deleteCancel": "Annuler",
+      "entityTypes": {
+        "custom": "Personnalisé",
+        "task": "Tâche",
+        "sprint": "Sprint",
+        "milestone": "Jalon",
+        "project": "Projet"
+      },
+      "statuses": {
+        "pending": "En attente",
+        "sent": "Envoyé",
+        "dismissed": "Ignoré",
+        "failed": "Échoué",
+        "cancelled": "Annulé"
+      },
+      "picker": {
+        "selectPlaceholder": "Sélectionner {entity}...",
+        "searchPlaceholder": "Rechercher {entity}...",
+        "loading": "Chargement...",
+        "noResults": "Aucun résultat"
+      },
+      "upload": {
+        "editTitle": "Modifier le rappel",
+        "createTitle": "Créer un rappel",
+        "messageLabel": "Message",
+        "messagePlaceholder": "Message du rappel (facultatif)",
+        "remindAtLabel": "Rappeler le *",
+        "entityTypeLabel": "Type d'entité",
+        "linkedLabel": "Lié à : {entity}",
+        "channelsLabel": "Canaux *",
+        "entityIdLabel": "ID de l'entité",
+        "entityIdPlaceholder": "Facultatif",
+        "recurringLabel": "Rappel récurrent",
+        "recurrenceRuleLabel": "Règle de récurrence (cron) *",
+        "recurrenceRulePlaceholder": "ex. 0 9 * * *",
+        "cancel": "Annuler",
+        "saving": "Enregistrement…",
+        "update": "Mettre à jour le rappel",
+        "create": "Créer le rappel"
+      },
+      "toasts": {
+        "updated": "Rappel mis à jour",
+        "created": "Rappel créé",
+        "deleted": "Rappel supprimé"
+      },
+      "validation": {
+        "reminderAtRequired": "La date du rappel est requise",
+        "reminderAtFuture": "Le rappel doit être programmé dans le futur",
+        "recurrenceRuleRequired": "La règle de récurrence (expression cron) est requise lorsque la récurrence est activée",
+        "userRequired": "L'utilisateur est requis",
+        "channelsRequired": "Au moins un canal est requis"
+      }
     }
   },
   "rules": {
     "title": "Règlement intérieur et politiques de l'entreprise",
     "company": "Tawer Digital Group (TDG)",
+    "labels": {
+      "mandatory": "Obligatoire",
+      "details": "Détails",
+      "note": "Remarque",
+      "criticalRules": "Règles critiques",
+      "breakGuidelines": "Consignes de pause",
+      "morning": "Matin :",
+      "break": "Pause :",
+      "afternoon": "Après-midi :"
+    },
     "sections": {
       "generalPrinciples": {
         "title": "Principes généraux",
@@ -2349,6 +2762,76 @@
         "mandatory": "Tous les employés de Tawer Digital Group doivent se conformer à ces règles.",
         "warning": "Toute violation peut entraîner des mesures disciplinaires conformément à la politique de l'entreprise et aux lois du travail applicables."
       }
+    }
+  },
+  "metadata": {
+    "root": {
+      "title": "Tawer MGT",
+      "description": "Une plateforme pour gérer les équipes efficacement"
+    },
+    "login": {
+      "title": "Connexion",
+      "description": "Connectez-vous à votre compte pour accéder à votre tableau de bord."
+    },
+    "register": {
+      "title": "Inscription",
+      "description": "Créez un compte pour commencer."
+    },
+    "accountSettings": {
+      "title": "Paramètres du compte",
+      "description": "Gérez les paramètres de votre compte, notamment le profil, l'apparence et le mot de passe."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Consultez et gérez vos notifications et vos préférences de notification."
+    },
+    "calendarPersonal": {
+      "title": "Calendrier personnel",
+      "description": "Planifiez et gérez vos événements et tâches personnels en un seul endroit."
+    },
+    "calendarEvents": {
+      "title": "Calendrier des événements",
+      "description": "Planifiez et gérez les événements de votre équipe en un seul endroit."
+    },
+    "calendarMeetings": {
+      "title": "Calendrier des réunions",
+      "description": "Planifiez et gérez les réunions de votre équipe en un seul endroit."
+    },
+    "usersList": {
+      "title": "Liste des utilisateurs",
+      "description": "Une liste des utilisateurs du tableau de bord, où vous pouvez consulter et gérer les comptes utilisateurs, y compris leurs détails."
+    },
+    "userProfile": {
+      "title": "Profil utilisateur",
+      "description": "Consultez les informations détaillées de l'utilisateur, les paramètres du profil et l'activité récente."
+    },
+    "teamsList": {
+      "title": "Liste des équipes",
+      "description": "Les équipes de l'entreprise"
+    },
+    "todoListPersonal": {
+      "title": "Tâches personnelles",
+      "description": "Votre liste de tâches personnelles."
+    },
+    "todoListProject": {
+      "title": "Tâches du projet",
+      "description": "Tâches du projet qui vous sont assignées."
+    },
+    "serversList": {
+      "title": "Liste des serveurs",
+      "description": "Une liste des serveurs"
+    },
+    "servicesList": {
+      "title": "Liste des services",
+      "description": "Une liste des services"
+    },
+    "projectsApp": {
+      "title": "Projets",
+      "description": "Gérez vos projets, vos tâches et la collaboration de votre équipe en un seul endroit."
+    },
+    "projectDetails": {
+      "title": "Détails du projet",
+      "description": "Consultez et gérez les tâches, les membres et les paramètres de ce projet."
     }
   }
 }

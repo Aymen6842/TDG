@@ -113,7 +113,7 @@ export default function ProjectTasksKanbanCard({ task, projectType, projectId, o
       {visibleAttributes.assignee && task.assigneeId && (
         <CardFooter className="flex items-center justify-between border-t py-2 px-3">
           <div className="flex items-center gap-1.5">
-            <div className="flex size-5 items-center justify-center rounded-full bg-muted text-[8px] font-bold" title={`Assigned to ${assigneeName}`}>
+            <div className="flex size-5 items-center justify-center rounded-full bg-muted text-[8px] font-bold" title={tTasks("assignedToTitle", { name: assigneeName ?? "" })}>
               {assigneeName?.split(' ').slice(0, 2).map(w => w[0]).join('').substring(0, 2).toUpperCase() || "UN"}
             </div>
             <span className="text-[10px] text-muted-foreground truncate max-w-[80px]">{assigneeName}</span>

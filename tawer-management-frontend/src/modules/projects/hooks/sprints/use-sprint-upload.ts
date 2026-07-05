@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { toast } from "sonner";
-import { sprintSchema, SprintFormValues } from "../../validation/sprint.schema";
+import { getSprintSchema, SprintFormValues } from "../../validation/sprint.schema";
 import { uploadSprint } from "../../services";
 import { SprintType, SprintContentPayload } from "../../types/project-sprints";
 
@@ -32,11 +33,14 @@ interface Params {
 
 export default function useSprintUpload({ projectId, sprint, onSuccess }: Params) {
   const queryClient = useQueryClient();
+  const t = useTranslations("modules.projects.validation.sprint");
+  const tToasts = useTranslations("modules.projects.entityToasts.sprint");
+  const tErrors = useTranslations("shared.errors");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
 
   const form = useForm<SprintFormValues>({
-    resolver: zodResolver(sprintSchema) as any,
+    resolver: zodResolver(getSprintSchema({ t })) as any,
     defaultValues: buildDefaults(sprint),
   });
 
@@ -72,11 +76,11 @@ export default function useSprintUpload({ projectId, sprint, onSuccess }: Params
         sprint?.id
       );
 
-      toast.success(sprint?.id ? "Sprint updated" : "Sprint created");
+      toast.success(sprint?.id ? tToasts("updated") : tToasts("created"));
       queryClient.invalidateQueries({ queryKey: ["project-sprints", projectId] });
       onSuccess?.();
     } catch (err: any) {
-      const msg = err?.response?.data?.message || err?.message || "An error occurred.";
+      const msg = err?.response?.data?.message || err?.message || tErrors("generic");
       setError(msg);
       toast.error(msg);
     } finally {

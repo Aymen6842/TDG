@@ -10,12 +10,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import useProjectInvitations from "../../../hooks/members/use-project-invitations";
 
-const inviteSchema = z.object({
-  email: z.string().email("Invalid email"),
-  isManager: z.boolean(),
-  expiresInDays: z.coerce.number().min(1).max(30).optional(),
-});
-type InviteForm = z.infer<typeof inviteSchema>;
+function buildInviteSchema(t: (key: string) => string) {
+  return z.object({
+    email: z.string().email(t("validation.invalidEmail")),
+    isManager: z.boolean(),
+    expiresInDays: z.coerce.number().min(1).max(30).optional(),
+  });
+}
+type InviteForm = z.infer<ReturnType<typeof buildInviteSchema>>;
 
 interface InviteByEmailDialogProps {
   open: boolean;
@@ -28,7 +30,7 @@ export function InviteByEmailDialog({ open, onOpenChange, projectId }: InviteByE
   const { createInvitation, isPending } = useProjectInvitations(projectId);
 
   const form = useForm<InviteForm>({
-    resolver: zodResolver(inviteSchema),
+    resolver: zodResolver(buildInviteSchema(t)),
     defaultValues: { email: "", isManager: false, expiresInDays: 7 },
   });
 

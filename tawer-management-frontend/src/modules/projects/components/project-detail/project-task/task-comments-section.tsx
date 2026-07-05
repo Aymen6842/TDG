@@ -34,10 +34,10 @@ export function TaskCommentsSection({ projectId, taskId, comments }: TaskComment
     try {
       await editProjectTaskComment(projectId, taskId, commentId, editText);
       queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
-      toast.success("Comment updated");
+      toast.success(tCommon("commentUpdatedToast"));
       setEditingId(null);
     } catch (err: any) {
-      toast.error(err?.message || "Failed to update comment");
+      toast.error(err?.message || tCommon("commentUpdateFailedToast"));
     }
   }
 
@@ -47,7 +47,7 @@ export function TaskCommentsSection({ projectId, taskId, comments }: TaskComment
       await likeProjectTaskComment(projectId, taskId, commentId);
       queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
     } catch (err: any) {
-      toast.error(err?.message || "Failed to toggle like");
+      toast.error(err?.message || tCommon("likeToggleFailedToast"));
     } finally {
       setLikingId(null);
     }
@@ -76,7 +76,7 @@ export function TaskCommentsSection({ projectId, taskId, comments }: TaskComment
                         <X className="size-3" />
                       </Button>
                       <Button size="sm" onClick={() => handleSaveEdit(comment.id)}>
-                        <Check className="size-3 mr-1" /> Save
+                        <Check className="size-3 mr-1" /> {tCommon("saveButton")}
                       </Button>
                     </div>
                   </div>
