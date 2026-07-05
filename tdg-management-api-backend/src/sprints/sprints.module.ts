@@ -14,6 +14,7 @@ import { TokensModule } from 'src/tokens/tokens.module';
 import { RemindersModule } from 'src/reminders/reminders.module';
 import { UploadModule } from 'src/common/upload/upload.module';
 import { NotificationsModule } from 'src/notifications/notifications.module';
+import { AiModule } from 'src/ai/ai.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
     RemindersModule,
     UploadModule,
     NotificationsModule,
+    AiModule,
   ],
   controllers: [SprintsController],
   providers: [

@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, UserType, BusinessUnit } from '@prisma/client';
+import {
+  Prisma,
+  UserType,
+  BusinessUnit,
+  EmbeddingEntityType,
+} from '@prisma/client';
 
 import { CreateMilestoneRepository } from '../repositories/create-milestone.repository';
 import { FetchMilestoneRepository } from '../repositories/fetch-milestone.repository';
@@ -17,6 +22,7 @@ import { ConflictCustomException } from 'src/common/exceptions/custom-exceptions
 import { BadRequestCustomException } from 'src/common/exceptions/custom-exceptions/bad-request.exception';
 import { ErrorCode } from 'src/common/exceptions/error-codes/error.code';
 import { AutoReminderService } from 'src/reminders/services/auto-reminder.service';
+import { IndexOutboxService } from 'src/ai/services/index-outbox.service';
 
 @Injectable()
 export class MilestonesService {
@@ -26,6 +32,7 @@ export class MilestonesService {
     private readonly updateMilestoneRepository: UpdateMilestoneRepository,
     private readonly deleteMilestoneRepository: DeleteMilestoneRepository,
     private readonly autoReminderService: AutoReminderService,
+    private readonly indexOutboxService: IndexOutboxService,
   ) {}
 
   private isExecutive(roles: UserType[]): boolean {
@@ -136,6 +143,12 @@ export class MilestonesService {
           dueDate: milestone.dueDate,
         });
       }
+
+      await this.indexOutboxService.enqueueUpsert(
+        projectId,
+        EmbeddingEntityType.MILESTONE,
+        milestone.id,
+      );
 
       return milestone;
     } catch (error) {
@@ -270,11 +283,17 @@ export class MilestonesService {
     }
 
     try {
-      return await this.updateMilestoneRepository.updateMilestone({
+      const updated = await this.updateMilestoneRepository.updateMilestone({
         milestoneId,
         projectId,
         dto,
       });
+      await this.indexOutboxService.enqueueUpsert(
+        projectId,
+        EmbeddingEntityType.MILESTONE,
+        milestoneId,
+      );
+      return updated;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -332,6 +351,11 @@ export class MilestonesService {
         milestoneId,
         projectId,
       });
+      await this.indexOutboxService.enqueueDelete(
+        projectId,
+        EmbeddingEntityType.MILESTONE,
+        milestoneId,
+      );
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {

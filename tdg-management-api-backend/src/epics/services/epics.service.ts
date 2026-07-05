@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, UserType, BusinessUnit } from '@prisma/client';
+import {
+  Prisma,
+  UserType,
+  BusinessUnit,
+  EmbeddingEntityType,
+} from '@prisma/client';
 
 import { CreateEpicRepository } from '../repositories/create-epic.repository';
 import { FetchEpicRepository } from '../repositories/fetch-epic.repository';
@@ -16,6 +21,7 @@ import { ForbiddenCustomException } from 'src/common/exceptions/custom-exception
 import { ConflictCustomException } from 'src/common/exceptions/custom-exceptions/conflict.exception';
 import { BadRequestCustomException } from 'src/common/exceptions/custom-exceptions/bad-request.exception';
 import { ErrorCode } from 'src/common/exceptions/error-codes/error.code';
+import { IndexOutboxService } from 'src/ai/services/index-outbox.service';
 
 @Injectable()
 export class EpicsService {
@@ -24,6 +30,7 @@ export class EpicsService {
     private readonly fetchEpicRepository: FetchEpicRepository,
     private readonly updateEpicRepository: UpdateEpicRepository,
     private readonly deleteEpicRepository: DeleteEpicRepository,
+    private readonly indexOutboxService: IndexOutboxService,
   ) {}
 
   private isExecutive(roles: UserType[]): boolean {
@@ -158,10 +165,16 @@ export class EpicsService {
     await this.validateEpicDatesWithinProject(projectId, startDate, endDate);
 
     try {
-      return await this.createEpicRepository.createEpic({
+      const epic = await this.createEpicRepository.createEpic({
         projectId,
         dto,
       });
+      await this.indexOutboxService.enqueueUpsert(
+        projectId,
+        EmbeddingEntityType.EPIC,
+        epic.id,
+      );
+      return epic;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -320,11 +333,17 @@ export class EpicsService {
       this.validateEpicDateRange(startDate, endDate);
       await this.validateEpicDatesWithinProject(projectId, startDate, endDate);
 
-      return await this.updateEpicRepository.updateEpic({
+      const updated = await this.updateEpicRepository.updateEpic({
         epicId,
         projectId,
         dto,
       });
+      await this.indexOutboxService.enqueueUpsert(
+        projectId,
+        EmbeddingEntityType.EPIC,
+        epicId,
+      );
+      return updated;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -374,6 +393,11 @@ export class EpicsService {
 
     try {
       await this.deleteEpicRepository.deleteEpic({ epicId, projectId });
+      await this.indexOutboxService.enqueueDelete(
+        projectId,
+        EmbeddingEntityType.EPIC,
+        epicId,
+      );
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {

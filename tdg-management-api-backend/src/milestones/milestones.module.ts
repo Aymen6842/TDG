@@ -13,6 +13,7 @@ import { LoggerModule } from 'src/common/logger/logger.module';
 import { AuthsModule } from 'src/auths/auths.module';
 import { TokensModule } from 'src/tokens/tokens.module';
 import { RemindersModule } from 'src/reminders/reminders.module';
+import { AiModule } from 'src/ai/ai.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { RemindersModule } from 'src/reminders/reminders.module';
     AuthsModule,
     TokensModule,
     RemindersModule,
+    AiModule,
   ],
   controllers: [MilestonesController],
   providers: [

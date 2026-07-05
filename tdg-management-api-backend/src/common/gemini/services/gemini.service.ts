@@ -65,4 +65,35 @@ export class GeminiService {
       return null;
     }
   }
+
+  /**
+   * Streaming variant of {@link generateGrounded} for the SSE copilot (§4.5
+   * step 5). Yields answer text incrementally as `gemini-2.5-flash` produces it,
+   * then returns the prompt token count (carried on the final chunk's
+   * `usageMetadata`) for `CopilotQueryLog` telemetry. Same system/user split and
+   * low temperature as the non-streaming call. Errors propagate to the caller,
+   * which decides how to surface a partial/failed stream.
+   */
+  async *generateGroundedStream(params: {
+    systemInstruction: string;
+    prompt: string;
+  }): AsyncGenerator<string, { promptTokens: number }, void> {
+    const stream = await this.googleGenAI.models.generateContentStream({
+      model: 'gemini-2.5-flash',
+      contents: params.prompt,
+      config: {
+        systemInstruction: params.systemInstruction,
+        temperature: 0.2,
+      },
+    });
+
+    let promptTokens = 0;
+    for await (const chunk of stream) {
+      const usage = chunk.usageMetadata?.promptTokenCount;
+      if (usage) promptTokens = usage;
+      const text = chunk.text;
+      if (text) yield text;
+    }
+    return { promptTokens };
+  }
 }

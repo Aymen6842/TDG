@@ -2,11 +2,16 @@ import {
   Body,
   Controller,
   Post,
+  Get,
+  Query,
+  Sse,
   HttpCode,
   HttpStatus,
   Request,
   UseGuards,
+  MessageEvent,
 } from '@nestjs/common';
+import { Observable } from 'rxjs';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 
 import { HasPermissionGuard } from 'src/auths/guards/has-permission.guard';
@@ -20,6 +25,7 @@ import { CopilotService } from '../services/copilot.service';
 import { EstimateTaskDto } from '../dto/request/estimate-task.dto';
 import { EstimateResultDto } from '../dto/response/estimate-result.dto';
 import { CopilotQueryDto } from '../dto/request/copilot-query.dto';
+import { CopilotStreamQueryDto } from '../dto/request/copilot-stream-query.dto';
 import { CopilotAnswerDto } from '../dto/response/copilot-answer.dto';
 
 @ApiTags('AI')
@@ -56,6 +62,32 @@ export class AiController {
   ): Promise<CopilotAnswerDto> {
     const user = req.user!;
     return this.copilotService.answer({
+      userId: user.id,
+      roles: user.roles,
+      projectId: dto.projectId,
+      question: dto.question,
+    });
+  }
+
+  /**
+   * Streaming (SSE) counterpart of `POST /ai/copilot/query` (§4.5 step 5 / §4.7).
+   * Runs the identical permission-scoped retrieve→ground pipeline, but streams
+   * the answer token-by-token as `token` events and delivers the resolved
+   * `citations[]` in a final `final` event. A GET so the browser can open it as
+   * an event stream; guarded and scoped exactly like the JSON endpoint (an
+   * out-of-scope `projectId` yields an `error` event). The `CopilotQueryLog`
+   * receipt is still written when the stream ends.
+   */
+  @Sse('copilot/stream')
+  @UseGuards(HasPermissionGuard)
+  @Permissions([PERMISSIONS.TASKS.TASK_READ_MANY])
+  @ApiOperation({ summary: 'Stream a grounded copilot answer over SSE' })
+  copilotStream(
+    @Request() req: CustomRequest,
+    @Query() dto: CopilotStreamQueryDto,
+  ): Observable<MessageEvent> {
+    const user = req.user!;
+    return this.copilotService.answerStream({
       userId: user.id,
       roles: user.roles,
       projectId: dto.projectId,

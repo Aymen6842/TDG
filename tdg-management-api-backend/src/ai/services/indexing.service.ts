@@ -4,6 +4,7 @@ import { PrismaService } from 'src/common/prisma/service/prisma.service';
 import { BackgroundActivitiesLoggerService } from 'src/common/logger/background-activities-logger/background-activities-logger.service';
 import { EmbeddingService } from './embedding.service';
 import { EmbeddingRepository } from '../repositories/embedding.repository';
+import { OutboxRepository } from '../repositories/outbox.repository';
 
 /** A chunk of source content ready to be embedded and stored. */
 interface ChunkRecord {
@@ -45,6 +46,7 @@ export class IndexingService {
     private readonly prismaService: PrismaService,
     private readonly embeddingService: EmbeddingService,
     private readonly embeddingRepository: EmbeddingRepository,
+    private readonly outboxRepository: OutboxRepository,
     private readonly backgroundActivitiesLoggerService: BackgroundActivitiesLoggerService,
   ) {}
 
@@ -207,6 +209,254 @@ export class IndexingService {
     entityId: string,
   ): Promise<void> {
     await this.embeddingRepository.deleteByEntity(entityType, entityId);
+  }
+
+  // ─── Incremental drain + reconciliation (§4.2 freshness) ───────────────────
+
+  /**
+   * Bring one entity's embeddings in line with its current source row — the
+   * unit of work the `IndexSweeperJob` runs for each UPSERT outbox job. Re-reads
+   * the live row (so a stale queued edit uses fresh content), rebuilds its
+   * chunks and upserts them (unchanged chunks are skipped by hash). If the
+   * source has since been deleted, its embeddings are removed instead — the
+   * drain is self-healing whether the row still exists or not.
+   */
+  async syncEntity(
+    entityType: EmbeddingEntityType,
+    entityId: string,
+  ): Promise<void> {
+    const resolved = await this.resolveEntityChunks(entityType, entityId);
+    if (!resolved || resolved.chunks.length === 0) {
+      await this.deleteEmbedding(entityType, entityId);
+      return;
+    }
+    await this.upsertEmbedding({
+      projectId: resolved.projectId,
+      entityType,
+      entityId,
+      chunks: resolved.chunks,
+    });
+  }
+
+  /**
+   * Nightly consistency backfill (§4.2): re-enqueue anything whose source
+   * `updatedAt` is newer than its embedding's (so the index can't silently drift
+   * if a write-path enqueue was ever missed), and enqueue a DELETE for any
+   * embedding whose source row no longer exists. Enqueues only — the sweeper does
+   * the embedding — so a full reconciliation is cheap and idempotent.
+   */
+  async reconcile(): Promise<{ requeued: number; removed: number }> {
+    let requeued = 0;
+    let removed = 0;
+
+    const embeddingsByType = await this.embeddingStateByType();
+    const sources = await this.loadReconciliationSources();
+
+    for (const { type, rows } of sources) {
+      const embMap = embeddingsByType.get(type) ?? new Map();
+      const liveIds = new Set<string>();
+
+      for (const row of rows) {
+        liveIds.add(row.id);
+        const existing = embMap.get(row.id);
+        if (!existing || row.updatedAt > existing.updatedAt) {
+          await this.outboxRepository.enqueue({
+            projectId: row.projectId,
+            entityType: type,
+            entityId: row.id,
+            op: 'UPSERT',
+          });
+          requeued += 1;
+        }
+      }
+
+      for (const [entityId, existing] of embMap) {
+        if (!liveIds.has(entityId)) {
+          await this.outboxRepository.enqueue({
+            projectId: existing.projectId,
+            entityType: type,
+            entityId,
+            op: 'DELETE',
+          });
+          removed += 1;
+        }
+      }
+    }
+
+    this.backgroundActivitiesLoggerService.log(
+      `AI reconciliation queued ${requeued} re-index and ${removed} delete jobs`,
+      { service: 'Indexing Service', method: 'reconcile' },
+    );
+
+    return { requeued, removed };
+  }
+
+  /** Fetch the live source row for an entity and turn it into chunks (or null). */
+  private async resolveEntityChunks(
+    entityType: EmbeddingEntityType,
+    entityId: string,
+  ): Promise<{ projectId: string; chunks: string[] } | null> {
+    switch (entityType) {
+      case EmbeddingEntityType.TASK: {
+        const task = await this.prismaService.task.findUnique({
+          where: { id: entityId },
+          select: {
+            projectId: true,
+            key: true,
+            title: true,
+            description: true,
+            status: true,
+            priority: true,
+            type: true,
+            storyPoints: true,
+            assignee: { select: { name: true } },
+            epic: { select: { name: true } },
+            milestone: { select: { name: true } },
+          },
+        });
+        return task
+          ? { projectId: task.projectId, chunks: this.buildTaskChunks(task) }
+          : null;
+      }
+      case EmbeddingEntityType.TASK_COMMENT: {
+        const comment = await this.prismaService.taskComment.findUnique({
+          where: { id: entityId },
+          select: {
+            content: true,
+            author: { select: { name: true } },
+            task: { select: { key: true, projectId: true } },
+          },
+        });
+        return comment
+          ? {
+              projectId: comment.task.projectId,
+              chunks: this.buildCommentChunks(comment),
+            }
+          : null;
+      }
+      case EmbeddingEntityType.EPIC: {
+        const epic = await this.prismaService.epic.findUnique({
+          where: { id: entityId },
+          select: { projectId: true, name: true, description: true },
+        });
+        return epic
+          ? {
+              projectId: epic.projectId,
+              chunks: this.buildNamedEntityChunks('Epic', epic),
+            }
+          : null;
+      }
+      case EmbeddingEntityType.MILESTONE: {
+        const milestone = await this.prismaService.milestone.findUnique({
+          where: { id: entityId },
+          select: { projectId: true, name: true, description: true },
+        });
+        return milestone
+          ? {
+              projectId: milestone.projectId,
+              chunks: this.buildNamedEntityChunks('Milestone', milestone),
+            }
+          : null;
+      }
+      case EmbeddingEntityType.SPRINT: {
+        const sprint = await this.prismaService.sprint.findUnique({
+          where: { id: entityId },
+          select: {
+            projectId: true,
+            contents: {
+              select: {
+                name: true,
+                description: true,
+                details: true,
+                language: true,
+              },
+            },
+          },
+        });
+        if (!sprint) return null;
+        const content =
+          sprint.contents.find((row) => row.language === 'English') ??
+          sprint.contents[0];
+        return content
+          ? {
+              projectId: sprint.projectId,
+              chunks: this.buildNamedEntityChunks('Sprint', content),
+            }
+          : { projectId: sprint.projectId, chunks: [] };
+      }
+      default:
+        return null;
+    }
+  }
+
+  /** Max embedding `updatedAt` + projectId per (entityType, entityId). */
+  private async embeddingStateByType(): Promise<
+    Map<EmbeddingEntityType, Map<string, { updatedAt: Date; projectId: string }>>
+  > {
+    const grouped = await this.prismaService.documentEmbedding.groupBy({
+      by: ['entityType', 'entityId', 'projectId'],
+      _max: { updatedAt: true },
+    });
+
+    const byType = new Map<
+      EmbeddingEntityType,
+      Map<string, { updatedAt: Date; projectId: string }>
+    >();
+    for (const row of grouped) {
+      const map = byType.get(row.entityType) ?? new Map();
+      const updatedAt = row._max.updatedAt ?? new Date(0);
+      const existing = map.get(row.entityId);
+      if (!existing || updatedAt > existing.updatedAt) {
+        map.set(row.entityId, { updatedAt, projectId: row.projectId });
+      }
+      byType.set(row.entityType, map);
+    }
+    return byType;
+  }
+
+  /** Live source rows (`id`, `projectId`, `updatedAt`) for every indexed type. */
+  private async loadReconciliationSources(): Promise<
+    {
+      type: EmbeddingEntityType;
+      rows: { id: string; projectId: string; updatedAt: Date }[];
+    }[]
+  > {
+    const [tasks, comments, epics, milestones, sprints] = await Promise.all([
+      this.prismaService.task.findMany({
+        select: { id: true, projectId: true, updatedAt: true },
+      }),
+      this.prismaService.taskComment.findMany({
+        select: {
+          id: true,
+          updatedAt: true,
+          task: { select: { projectId: true } },
+        },
+      }),
+      this.prismaService.epic.findMany({
+        select: { id: true, projectId: true, updatedAt: true },
+      }),
+      this.prismaService.milestone.findMany({
+        select: { id: true, projectId: true, updatedAt: true },
+      }),
+      this.prismaService.sprint.findMany({
+        select: { id: true, projectId: true, updatedAt: true },
+      }),
+    ]);
+
+    return [
+      { type: EmbeddingEntityType.TASK, rows: tasks },
+      {
+        type: EmbeddingEntityType.TASK_COMMENT,
+        rows: comments.map((comment) => ({
+          id: comment.id,
+          projectId: comment.task.projectId,
+          updatedAt: comment.updatedAt,
+        })),
+      },
+      { type: EmbeddingEntityType.EPIC, rows: epics },
+      { type: EmbeddingEntityType.MILESTONE, rows: milestones },
+      { type: EmbeddingEntityType.SPRINT, rows: sprints },
+    ];
   }
 
   // ─── One-shot backfill ─────────────────────────────────────────────────────

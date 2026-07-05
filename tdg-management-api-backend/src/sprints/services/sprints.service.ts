@@ -5,6 +5,7 @@ import {
   Language,
   BusinessUnit,
   ReminderStatus,
+  EmbeddingEntityType,
 } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
@@ -29,6 +30,7 @@ import { AutoReminderService } from 'src/reminders/services/auto-reminder.servic
 import { UploadService } from 'src/common/upload/service/upload.service';
 import { NotificationsService } from 'src/notifications/services/notifications.service';
 import { PrismaService } from 'src/common/prisma/service/prisma.service';
+import { IndexOutboxService } from 'src/ai/services/index-outbox.service';
 
 @Injectable()
 export class SprintsService {
@@ -41,6 +43,7 @@ export class SprintsService {
     private readonly uploadService: UploadService,
     private readonly notificationsService: NotificationsService,
     private readonly prismaService: PrismaService,
+    private readonly indexOutboxService: IndexOutboxService,
   ) {}
 
   async createSprintForProject(
@@ -123,6 +126,12 @@ export class SprintsService {
         startDate: new Date(dto.startDate),
         endDate: new Date(dto.endDate),
       });
+
+      await this.indexOutboxService.enqueueUpsert(
+        projectId,
+        EmbeddingEntityType.SPRINT,
+        sprint.id,
+      );
 
       return sprint;
     } catch (error) {
@@ -397,6 +406,13 @@ export class SprintsService {
       const updatedSprint = await this.fetchSprintRepository.findById({
         id: sprintId,
       });
+
+      await this.indexOutboxService.enqueueUpsert(
+        sprint.projectId,
+        EmbeddingEntityType.SPRINT,
+        sprintId,
+      );
+
       return updatedSprint;
     } catch (error) {
       if (
@@ -472,6 +488,12 @@ export class SprintsService {
         sprintId,
         projectId: sprint.projectId,
       });
+
+      await this.indexOutboxService.enqueueDelete(
+        sprint.projectId,
+        EmbeddingEntityType.SPRINT,
+        sprintId,
+      );
     } catch (error) {
       if (
         error instanceof ForbiddenCustomException ||

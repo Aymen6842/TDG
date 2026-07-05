@@ -22,7 +22,16 @@ interface Props {
  */
 export default function CopilotPanel({ projectId }: Props) {
   const t = useTranslations("modules.ai.copilot");
-  const { ask, answer, isAsking, isError, reset } = useCopilot();
+  const {
+    ask,
+    answer,
+    citations,
+    insufficientContext,
+    isStreaming,
+    isError,
+    hasStarted,
+    reset,
+  } = useCopilot();
   const [question, setQuestion] = React.useState("");
 
   // Clear any previous answer when switching to another project.
@@ -32,7 +41,7 @@ export default function CopilotPanel({ projectId }: Props) {
   }, [projectId, reset]);
 
   const trimmed = question.trim();
-  const canAsk = trimmed.length >= 3 && !isAsking;
+  const canAsk = trimmed.length >= 3 && !isStreaming;
 
   const submit = () => {
     if (!canAsk) return;
@@ -68,7 +77,7 @@ export default function CopilotPanel({ projectId }: Props) {
         <div className="flex items-center justify-between">
           <span className="text-xs text-muted-foreground">{t("hint")}</span>
           <Button onClick={submit} disabled={!canAsk} size="sm">
-            {isAsking ? (
+            {isStreaming ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
               <Send className="h-4 w-4" />
@@ -78,23 +87,25 @@ export default function CopilotPanel({ projectId }: Props) {
         </div>
       </div>
 
-      {isAsking && (
+      {/* Show the "thinking" hint only until the first token lands. */}
+      {isStreaming && !hasStarted && (
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Loader2 className="h-4 w-4 animate-spin" /> {t("thinking")}
         </div>
       )}
 
-      {isError && !isAsking && (
+      {isError && !isStreaming && (
         <div className="rounded-md border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
           {t("error")}
         </div>
       )}
 
-      {answer && !isAsking && (
+      {hasStarted && (
         <AnswerBlock
-          answer={answer.answer}
-          citations={answer.citations}
-          insufficientContext={answer.insufficientContext}
+          answer={answer}
+          citations={citations}
+          insufficientContext={insufficientContext}
+          isStreaming={isStreaming}
           sourcesLabel={t("sources")}
           refusalNote={t("refusalNote")}
         />
@@ -107,12 +118,14 @@ function AnswerBlock({
   answer,
   citations,
   insufficientContext,
+  isStreaming,
   sourcesLabel,
   refusalNote,
 }: {
   answer: string;
   citations: CopilotCitation[];
   insufficientContext: boolean;
+  isStreaming: boolean;
   sourcesLabel: string;
   refusalNote: string;
 }) {
@@ -120,30 +133,36 @@ function AnswerBlock({
     <div className="rounded-lg border bg-card p-4 shadow-sm">
       <p className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
         {answer}
+        {/* Blinking caret while tokens are still streaming in. */}
+        {isStreaming && (
+          <span className="ml-0.5 inline-block h-4 w-1.5 translate-y-0.5 animate-pulse bg-primary/70 align-middle" />
+        )}
       </p>
 
-      {insufficientContext ? (
-        <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
-          <Info className="h-3.5 w-3.5" />
-          {refusalNote}
-        </div>
-      ) : (
-        citations.length > 0 && (
-          <div className="mt-4 border-t pt-3">
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {sourcesLabel}
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {citations.map((citation) => (
-                <CitationChip
-                  key={`${citation.marker}-${citation.entityId}`}
-                  citation={citation}
-                />
-              ))}
-            </div>
+      {/* Citations / refusal note resolve only once the stream completes. */}
+      {!isStreaming &&
+        (insufficientContext ? (
+          <div className="mt-3 flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Info className="h-3.5 w-3.5" />
+            {refusalNote}
           </div>
-        )
-      )}
+        ) : (
+          citations.length > 0 && (
+            <div className="mt-4 border-t pt-3">
+              <p className="mb-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                {sourcesLabel}
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {citations.map((citation) => (
+                  <CitationChip
+                    key={`${citation.marker}-${citation.entityId}`}
+                    citation={citation}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        ))}
     </div>
   );
 }

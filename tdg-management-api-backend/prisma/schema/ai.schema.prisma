@@ -20,17 +20,22 @@ model DocumentEmbedding {
 
 /// Work queue: a row here means "(re)embed this entity". Written by app events, drained by the cron.
 model IndexOutbox {
-  id         String              @id @default(dbgenerated("gen_random_uuid()"))
-  projectId  String
-  entityType EmbeddingEntityType
-  entityId   String
-  op         IndexOp             @default(UPSERT)
-  status     OutboxStatus        @default(PENDING)
-  attempts   Int                 @default(0)
-  createdAt  DateTime            @default(now()) @db.Timestamp(6)
+  id            String              @id @default(dbgenerated("gen_random_uuid()"))
+  projectId     String
+  entityType    EmbeddingEntityType
+  entityId      String
+  op            IndexOp             @default(UPSERT)
+  status        OutboxStatus        @default(PENDING)
+  attempts      Int                 @default(0)
+  /// Earliest time the sweeper may (re)try this row — powers exponential backoff.
+  nextAttemptAt DateTime            @default(now()) @db.Timestamp(6)
+  /// Last failure message, for debugging FAILED rows (null once DONE).
+  lastError     String?
+  createdAt     DateTime            @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime            @default(now()) @updatedAt @db.Timestamp(6)
 
   @@unique([entityType, entityId]) // collapse repeated edits into one pending job
-  @@index([status, createdAt])
+  @@index([status, nextAttemptAt])
 }
 
 /// Telemetry for every copilot call — powers the eval dashboard and demo "receipts".

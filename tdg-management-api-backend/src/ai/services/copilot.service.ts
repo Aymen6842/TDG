@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, MessageEvent } from '@nestjs/common';
+import { Observable, Subscriber } from 'rxjs';
 import { EmbeddingEntityType, UserType } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma/service/prisma.service';
 import { BackgroundActivitiesLoggerService } from 'src/common/logger/background-activities-logger/background-activities-logger.service';
 import { GeminiService } from 'src/common/gemini/services/gemini.service';
+import { ForbiddenCustomException } from 'src/common/exceptions/custom-exceptions/forbidden.exception';
 import { RetrievalService, RetrievalCandidate } from './retrieval.service';
 
 /** A resolved, clickable citation the UI renders as a chip (§4.5). */
@@ -150,6 +152,174 @@ export class CopilotService {
       citations,
       insufficientContext: refused,
     };
+  }
+
+  // ─── Streaming variant (§4.5 step 5, SSE) ──────────────────────────────────
+
+  /**
+   * SSE variant of {@link answer}: same retrieve→ground pipeline, but the answer
+   * is streamed token-by-token and the resolved `citations[]` are delivered in a
+   * final event once generation completes. Emits three event types:
+   * `token` (`{ text }` deltas), `final` (`{ citations, insufficientContext }`),
+   * and `error` (`{ message }` for an out-of-scope project). The
+   * `CopilotQueryLog` receipt is still written at the end, exactly like the
+   * non-streaming path.
+   */
+  answerStream(params: {
+    userId: string;
+    roles: UserType[];
+    question: string;
+    projectId?: string | null;
+  }): Observable<MessageEvent> {
+    return new Observable<MessageEvent>((subscriber) => {
+      let cancelled = false;
+      void this.runStream(params, subscriber, () => cancelled).catch(
+        (error: unknown) => subscriber.error(error),
+      );
+      return () => {
+        cancelled = true;
+      };
+    });
+  }
+
+  private async runStream(
+    params: {
+      userId: string;
+      roles: UserType[];
+      question: string;
+      projectId?: string | null;
+    },
+    subscriber: Subscriber<MessageEvent>,
+    isCancelled: () => boolean,
+  ): Promise<void> {
+    const { userId, roles, question, projectId } = params;
+    const startedAt = Date.now();
+
+    // ── Retrieve (permission-scoped; 403s on out-of-scope projectId) ─────────
+    let retrieval: Awaited<ReturnType<RetrievalService['retrieve']>>;
+    try {
+      retrieval = await this.retrievalService.retrieve({
+        userId,
+        roles,
+        question,
+        projectId,
+      });
+    } catch (error: unknown) {
+      if (error instanceof ForbiddenCustomException) {
+        subscriber.next({
+          type: 'error',
+          data: { message: 'You do not have access to this project.' },
+        });
+        subscriber.complete();
+        return;
+      }
+      throw error;
+    }
+
+    // ── Weak/empty retrieval → stream the honest refusal, don't call the model ─
+    if (!retrieval.sufficient) {
+      subscriber.next({ type: 'token', data: { text: CopilotService.REFUSAL } });
+      subscriber.next({
+        type: 'final',
+        data: { citations: [], insufficientContext: true },
+      });
+      subscriber.complete();
+      await this.logQuery({
+        userId,
+        projectId,
+        question,
+        retrievedIds: retrieval.candidates.map((candidate) => candidate.id),
+        topScore: retrieval.topScore,
+        answer: CopilotService.REFUSAL,
+        citationsCount: 0,
+        promptTokens: 0,
+        latencyMs: Date.now() - startedAt,
+      });
+      return;
+    }
+
+    // ── Stream grounded generation ───────────────────────────────────────────
+    const candidates = retrieval.candidates;
+    let answerText = '';
+    let promptTokens = 0;
+
+    try {
+      const generator = this.geminiService.generateGroundedStream({
+        systemInstruction: this.systemInstruction(),
+        prompt: this.buildPrompt(question, candidates),
+      });
+
+      let next = await generator.next();
+      while (!next.done) {
+        if (isCancelled()) {
+          await generator.return({ promptTokens });
+          return;
+        }
+        const text = next.value;
+        answerText += text;
+        subscriber.next({ type: 'token', data: { text } });
+        next = await generator.next();
+      }
+      promptTokens = next.value.promptTokens;
+    } catch (error: unknown) {
+      // Generation failed mid-stream: stay honest, never fabricate.
+      this.backgroundActivitiesLoggerService.log(
+        `Copilot stream generation failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+        { service: 'Copilot Service', method: 'runStream' },
+      );
+      if (answerText.length === 0) {
+        subscriber.next({
+          type: 'token',
+          data: {
+            text: 'The assistant is temporarily unavailable. Please try again in a moment.',
+          },
+        });
+      }
+      subscriber.next({
+        type: 'final',
+        data: { citations: [], insufficientContext: false },
+      });
+      subscriber.complete();
+      await this.logQuery({
+        userId,
+        projectId,
+        question,
+        retrievedIds: candidates.map((candidate) => candidate.id),
+        topScore: retrieval.topScore,
+        answer: answerText,
+        citationsCount: 0,
+        promptTokens: 0,
+        latencyMs: Date.now() - startedAt,
+      });
+      return;
+    }
+
+    if (isCancelled()) return;
+
+    const refused = this.isRefusal(answerText);
+    const citations = refused
+      ? []
+      : await this.resolveCitations(answerText, candidates);
+
+    subscriber.next({
+      type: 'final',
+      data: { citations, insufficientContext: refused },
+    });
+    subscriber.complete();
+
+    await this.logQuery({
+      userId,
+      projectId,
+      question,
+      retrievedIds: candidates.map((candidate) => candidate.id),
+      topScore: retrieval.topScore,
+      answer: answerText,
+      citationsCount: citations.length,
+      promptTokens,
+      latencyMs: Date.now() - startedAt,
+    });
   }
 
   // ─── Prompt construction (§4.5 step 4) ─────────────────────────────────────

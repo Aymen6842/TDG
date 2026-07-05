@@ -4,6 +4,7 @@ import {
   UserType,
   ProjectType,
   BusinessUnit,
+  EmbeddingEntityType,
 } from '@prisma/client';
 
 import { CreateTaskRepository } from '../repositories/create-task.repository';
@@ -41,6 +42,7 @@ import { ErrorCode } from 'src/common/exceptions/error-codes/error.code';
 import { AutoReminderService } from 'src/reminders/services/auto-reminder.service';
 import { UploadService } from 'src/common/upload/service/upload.service';
 import { NotificationsService } from 'src/notifications/services/notifications.service';
+import { IndexOutboxService } from 'src/ai/services/index-outbox.service';
 
 const DEFAULT_TASK_LABEL_COLOR = '#6B7280';
 
@@ -56,6 +58,7 @@ export class TasksService {
     private readonly autoReminderService: AutoReminderService,
     private readonly uploadService: UploadService,
     private readonly notificationsService: NotificationsService,
+    private readonly indexOutboxService: IndexOutboxService,
   ) {}
 
   // ===== DYNAMIC TASK STATUS INTEGRATION =====
@@ -945,6 +948,13 @@ export class TasksService {
         });
       }
 
+      // Queue the new task for incremental (re)indexing (§4.2 freshness).
+      await this.indexOutboxService.enqueueUpsert(
+        task.projectId,
+        EmbeddingEntityType.TASK,
+        task.id,
+      );
+
       return task;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -1149,6 +1159,13 @@ export class TasksService {
         );
       }
 
+      // Re-index the edited task (collapsed with any prior pending edit).
+      await this.indexOutboxService.enqueueUpsert(
+        projectId,
+        EmbeddingEntityType.TASK,
+        taskId,
+      );
+
       return updatedTask;
     } catch (error) {
       if (error instanceof BadRequestCustomException) {
@@ -1189,6 +1206,14 @@ export class TasksService {
 
     try {
       await this.deleteTaskRepository.deleteTask({ taskId, projectId });
+
+      // Remove the task's embeddings from retrieval (§4.2). Its comments'
+      // embeddings are cleaned up by the nightly reconciliation.
+      await this.indexOutboxService.enqueueDelete(
+        projectId,
+        EmbeddingEntityType.TASK,
+        taskId,
+      );
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2025') {
@@ -1379,6 +1404,13 @@ export class TasksService {
         );
       }
     }
+
+    // Index the comment separately (decisions hide in comments, §4.2).
+    await this.indexOutboxService.enqueueUpsert(
+      projectId,
+      EmbeddingEntityType.TASK_COMMENT,
+      comment.id,
+    );
 
     return comment;
   }

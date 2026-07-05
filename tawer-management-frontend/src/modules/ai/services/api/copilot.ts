@@ -66,3 +66,125 @@ export async function askCopilot(
     throw error;
   }
 }
+
+/** The payload of the terminal `final` SSE event. */
+export interface CopilotStreamFinal {
+  citations: CopilotCitation[];
+  insufficientContext: boolean;
+}
+
+/** Callbacks the panel supplies to render an SSE answer as it arrives. */
+export interface CopilotStreamHandlers {
+  /** A generated text delta — append it to the answer being rendered. */
+  onToken: (text: string) => void;
+  /** Fired once when generation finishes, carrying the resolved citations. */
+  onFinal: (payload: CopilotStreamFinal) => void;
+  /** Fired for an out-of-scope project / server error event. */
+  onError?: (message: string) => void;
+}
+
+/**
+ * GET /ai/copilot/stream — the SSE counterpart of {@link askCopilot}. Uses a
+ * `fetch` reader rather than `EventSource` so we can send the `Authorization`
+ * header, then parses the `token` / `final` / `error` SSE frames and dispatches
+ * them to `handlers`. Retries once through `refreshToken` on a 401, and honours
+ * an `AbortSignal` so switching projects (or asking again) cancels the stream.
+ */
+export async function streamCopilot(
+  input: CopilotQueryInput,
+  handlers: CopilotStreamHandlers,
+  signal?: AbortSignal,
+): Promise<void> {
+  const { access } = extractJWTokens();
+
+  const params = new URLSearchParams();
+  params.set("question", input.question);
+  if (input.projectId) params.set("projectId", input.projectId);
+  const url = `${process.env.BACKEND_ADDRESS}/ai/copilot/stream?${params.toString()}`;
+
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${access}`,
+      Accept: "text/event-stream",
+      "ngrok-skip-browser-warning": "true",
+    },
+    signal,
+  });
+
+  if (res.status === 401) {
+    await refreshToken(() => streamCopilot(input, handlers, signal));
+    return;
+  }
+  if (!res.ok || !res.body) {
+    throw new Error(`Copilot stream failed with status ${res.status}`);
+  }
+
+  await consumeSseStream(res.body, handlers);
+}
+
+/** Read a fetch body stream and dispatch complete SSE frames as they arrive. */
+async function consumeSseStream(
+  body: ReadableStream<Uint8Array>,
+  handlers: CopilotStreamHandlers,
+): Promise<void> {
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+
+  const flushFrames = () => {
+    let sep: number;
+    while ((sep = buffer.indexOf("\n\n")) !== -1) {
+      const frame = buffer.slice(0, sep);
+      buffer = buffer.slice(sep + 2);
+      dispatchSseFrame(frame, handlers);
+    }
+  };
+
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true }).replace(/\r\n/g, "\n");
+    flushFrames();
+  }
+  buffer += decoder.decode().replace(/\r\n/g, "\n");
+  flushFrames();
+  if (buffer.trim().length > 0) dispatchSseFrame(buffer, handlers);
+}
+
+/** Parse one `event:`/`data:` SSE frame and route it to the right handler. */
+function dispatchSseFrame(
+  frame: string,
+  handlers: CopilotStreamHandlers,
+): void {
+  let event = "message";
+  const dataLines: string[] = [];
+  for (const line of frame.split("\n")) {
+    if (line.startsWith("event:")) event = line.slice(6).trim();
+    else if (line.startsWith("data:")) dataLines.push(line.slice(5).trimStart());
+  }
+  if (dataLines.length === 0) return;
+
+  let payload: {
+    text?: string;
+    citations?: CopilotCitation[];
+    insufficientContext?: boolean;
+    message?: string;
+  };
+  try {
+    payload = JSON.parse(dataLines.join("\n"));
+  } catch {
+    return;
+  }
+
+  if (event === "token") {
+    handlers.onToken(payload.text ?? "");
+  } else if (event === "final") {
+    handlers.onFinal({
+      citations: payload.citations ?? [],
+      insufficientContext: Boolean(payload.insufficientContext),
+    });
+  } else if (event === "error") {
+    handlers.onError?.(payload.message ?? "Something went wrong.");
+  }
+}

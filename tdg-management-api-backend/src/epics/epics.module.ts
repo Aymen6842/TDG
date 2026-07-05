@@ -12,9 +12,10 @@ import { PrismaModule } from 'src/common/prisma/prisma.module';
 import { LoggerModule } from 'src/common/logger/logger.module';
 import { AuthsModule } from 'src/auths/auths.module';
 import { TokensModule } from 'src/tokens/tokens.module';
+import { AiModule } from 'src/ai/ai.module';
 
 @Module({
-  imports: [PrismaModule, LoggerModule, AuthsModule, TokensModule],
+  imports: [PrismaModule, LoggerModule, AuthsModule, TokensModule, AiModule],
   controllers: [EpicsController],
   providers: [
     EpicsService,
