@@ -14,6 +14,7 @@ import { AiAccessService } from './services/ai-access.service';
 import { EstimationService } from './services/estimation.service';
 import { RetrievalService } from './services/retrieval.service';
 import { CopilotService } from './services/copilot.service';
+import { TelemetryService } from './services/telemetry.service';
 import { EmbeddingRepository } from './repositories/embedding.repository';
 import { OutboxRepository } from './repositories/outbox.repository';
 import { IndexSweeperJob } from './jobs/index-sweeper.job';
@@ -45,6 +46,7 @@ import { IndexSweeperJob } from './jobs/index-sweeper.job';
     EstimationService,
     RetrievalService,
     CopilotService,
+    TelemetryService,
     EmbeddingRepository,
     OutboxRepository,
     IndexSweeperJob,
@@ -57,6 +59,7 @@ import { IndexSweeperJob } from './jobs/index-sweeper.job';
     EstimationService,
     RetrievalService,
     CopilotService,
+    TelemetryService,
     EmbeddingRepository,
   ],
 })

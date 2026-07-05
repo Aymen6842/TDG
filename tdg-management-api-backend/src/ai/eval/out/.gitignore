@@ -1,0 +1,4 @@
+# Generated eval artifacts — reproducible via the ai:eval:* scripts.
+*.json
+*.csv
+!.gitkeep

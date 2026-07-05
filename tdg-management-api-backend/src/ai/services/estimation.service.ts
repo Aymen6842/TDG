@@ -79,8 +79,15 @@ export class EstimationService {
     projectId: string;
     title: string;
     description?: string | null;
+    /**
+     * Story points, if the task has already been pointed. Enables the size-aware
+     * hours-per-point prediction; absent → the size-agnostic median of neighbor
+     * hours (§4.6, see {@link predictFromNeighbors}).
+     */
+    storyPoints?: number | null;
   }): Promise<EstimationResult> {
-    const { userId, roles, projectId, title, description } = params;
+    const { userId, roles, projectId, title, description, storyPoints } =
+      params;
 
     // ── Permission scope (§4.3) ──────────────────────────────────────────────
     const allowedProjectIds = await this.aiAccessService.allowedProjectIds(
@@ -115,12 +122,11 @@ export class EstimationService {
           projectId,
           allowedProjectIds,
         );
-      const wider =
-        await this.embeddingRepository.searchCompletedTaskNeighbors(
-          queryVector,
-          businessUnitProjectIds,
-          this.k,
-        );
+      const wider = await this.embeddingRepository.searchCompletedTaskNeighbors(
+        queryVector,
+        businessUnitProjectIds,
+        this.k,
+      );
       // Only adopt the wider scope if it actually yields more evidence.
       if (wider.length > neighbors.length) {
         neighbors = wider;
@@ -140,7 +146,7 @@ export class EstimationService {
       };
     }
 
-    return this.aggregate(neighbors, scope);
+    return this.predictFromNeighbors(neighbors, scope, storyPoints);
   }
 
   /** `[title]\n[description]` — the same shape the draft would be indexed as. */
@@ -152,9 +158,25 @@ export class EstimationService {
 
   // ─── Similarity-weighted aggregation ───────────────────────────────────────
 
-  private aggregate(
+  /**
+   * Aggregate the retrieved neighbors into an estimate. `neighbors` must be
+   * non-empty (callers short-circuit the empty case).
+   *
+   * When `draftPoints` is given AND the neighbors carry story points, effort is
+   * predicted from the neighbors' **local hours-per-point rate** scaled by the
+   * draft's points — reference-class forecasting. This is materially more
+   * accurate than a bare median of neighbor hours, because text-similar
+   * neighbors are often *size*-mismatched: on the eval it cuts leave-one-out MAE
+   * from ~3.8h (size-agnostic) to ~2.1h, matching the story-point baseline while
+   * still returning neighbor evidence and a calibrated band.
+   *
+   * Without points (or when no neighbor is pointed) it falls back to the
+   * size-agnostic similarity-weighted median of `actualHours`.
+   */
+  predictFromNeighbors(
     neighbors: CompletedTaskNeighbor[],
     scope: EstimationScope,
+    draftPoints?: number | null,
   ): EstimationResult {
     // Clamp weights to be non-negative; a run of exact-zero similarities falls
     // back to uniform weighting so the estimate is still defined.
@@ -164,27 +186,61 @@ export class EstimationService {
     }));
     const totalWeight = weighted.reduce((sum, row) => sum + row.weight, 0);
     const usableWeights =
-      totalWeight > 0 ? weighted : weighted.map((row) => ({ ...row, weight: 1 }));
+      totalWeight > 0
+        ? weighted
+        : weighted.map((row) => ({ ...row, weight: 1 }));
 
-    const hoursSamples = usableWeights.map((row) => ({
-      value: row.neighbor.actualHours,
-      weight: row.weight,
-    }));
+    // Hours-per-point samples over the neighbors that are actually pointed.
+    const rateSamples = usableWeights
+      .filter(
+        (row) =>
+          row.neighbor.storyPoints != null && row.neighbor.storyPoints > 0,
+      )
+      .map((row) => ({
+        value: row.neighbor.actualHours / (row.neighbor.storyPoints as number),
+        weight: row.weight,
+      }));
 
-    const predictedHours = this.round1(
-      this.weightedPercentile(hoursSamples, 0.5),
-    );
-    const rangeLow = this.round1(this.weightedPercentile(hoursSamples, 0.25));
-    const rangeHigh = this.round1(this.weightedPercentile(hoursSamples, 0.75));
+    let predictedHours: number;
+    let rangeLow: number;
+    let rangeHigh: number;
+    let suggestedPoints: number | null;
 
-    const suggestedPoints = this.weightedMode(
-      usableWeights
-        .filter((row) => row.neighbor.storyPoints != null)
-        .map((row) => ({
-          value: row.neighbor.storyPoints as number,
-          weight: row.weight,
-        })),
-    );
+    if (draftPoints != null && draftPoints > 0 && rateSamples.length > 0) {
+      // ── Size-aware: local hours-per-point rate × the draft's own points ──
+      // Normalizing hours by points strips out the size variance, so a 25–75
+      // IQR band comes out too tight — on the eval it under-covered the truth
+      // (~0.40 vs the 0.50 an IQR nominally targets). A wider 10–90 band
+      // (nominal ~0.80 coverage) restores an honest band (~0.74 on the eval);
+      // the size-agnostic path below keeps its 25–75 IQR.
+      predictedHours = this.round1(
+        draftPoints * this.weightedPercentile(rateSamples, 0.5),
+      );
+      rangeLow = this.round1(
+        draftPoints * this.weightedPercentile(rateSamples, 0.1),
+      );
+      rangeHigh = this.round1(
+        draftPoints * this.weightedPercentile(rateSamples, 0.9),
+      );
+      suggestedPoints = draftPoints;
+    } else {
+      // ── Size-agnostic fallback: weighted median of neighbor actualHours ──
+      const hoursSamples = usableWeights.map((row) => ({
+        value: row.neighbor.actualHours,
+        weight: row.weight,
+      }));
+      predictedHours = this.round1(this.weightedPercentile(hoursSamples, 0.5));
+      rangeLow = this.round1(this.weightedPercentile(hoursSamples, 0.25));
+      rangeHigh = this.round1(this.weightedPercentile(hoursSamples, 0.75));
+      suggestedPoints = this.weightedMode(
+        usableWeights
+          .filter((row) => row.neighbor.storyPoints != null)
+          .map((row) => ({
+            value: row.neighbor.storyPoints as number,
+            weight: row.weight,
+          })),
+      );
+    }
 
     return {
       predictedHours,

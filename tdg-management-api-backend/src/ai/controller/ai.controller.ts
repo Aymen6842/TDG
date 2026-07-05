@@ -12,7 +12,12 @@ import {
   MessageEvent,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 import { HasPermissionGuard } from 'src/auths/guards/has-permission.guard';
 import { Permissions } from 'src/auths/decorators/permissions.decorator';
@@ -22,6 +27,10 @@ import { CustomRequest } from 'src/common/types/request.type';
 import { IndexingService } from '../services/indexing.service';
 import { EstimationService } from '../services/estimation.service';
 import { CopilotService } from '../services/copilot.service';
+import {
+  TelemetryService,
+  CopilotTelemetrySummary,
+} from '../services/telemetry.service';
 import { EstimateTaskDto } from '../dto/request/estimate-task.dto';
 import { EstimateResultDto } from '../dto/response/estimate-result.dto';
 import { CopilotQueryDto } from '../dto/request/copilot-query.dto';
@@ -36,6 +45,7 @@ export class AiController {
     private readonly indexingService: IndexingService,
     private readonly estimationService: EstimationService,
     private readonly copilotService: CopilotService,
+    private readonly telemetryService: TelemetryService,
   ) {}
 
   /**
@@ -123,6 +133,7 @@ export class AiController {
       projectId: dto.projectId,
       title: dto.title,
       description: dto.description,
+      storyPoints: dto.storyPoints,
     });
   }
 
@@ -135,9 +146,28 @@ export class AiController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(HasPermissionGuard)
   @Permissions([PERMISSIONS.PROJECTS.PROJECT_CREATE])
-  @ApiOperation({ summary: 'Backfill / rebuild all content embeddings (admin)' })
-  @ApiResponse({ status: 200, description: 'Reindex summary (per-entity counts).' })
+  @ApiOperation({
+    summary: 'Backfill / rebuild all content embeddings (admin)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Reindex summary (per-entity counts).',
+  })
   reindex() {
     return this.indexingService.reindexAll();
+  }
+
+  /**
+   * Copilot telemetry rollup for the eval dashboard (§6): latency p50/p95, mean
+   * faithfulness, refusal rate, average retrieval top-score and citations over
+   * all logged `CopilotQueryLog` calls. Executive-only, like the reindex trigger.
+   */
+  @Get('telemetry')
+  @UseGuards(HasPermissionGuard)
+  @Permissions([PERMISSIONS.PROJECTS.PROJECT_CREATE])
+  @ApiOperation({ summary: 'Copilot telemetry summary (admin dashboard)' })
+  @ApiResponse({ status: 200, description: 'Aggregated copilot telemetry.' })
+  telemetry(): Promise<CopilotTelemetrySummary> {
+    return this.telemetryService.copilotSummary();
   }
 }
