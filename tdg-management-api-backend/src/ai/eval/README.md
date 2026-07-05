@@ -109,24 +109,27 @@ neighbors *excluding itself*, exactly as `EstimationService` would.
 - **Baselines** — `project-mean` and a `storypoints→hours` OLS fit (both
   leave-one-out) that the k-NN predictor is compared against.
 
-**Predictor variants (the k-NN finding).** The eval reports two extra predictors
-alongside the plain text-only k-NN, because the harness surfaced that on this
-corpus **text similarity carries no effort signal** (corr(k-NN, actual) ≈ 0; the
-predictions collapse to the project mean). Both variants reuse the *same* text
-neighbors but fold in the draft's story points — the dominant effort driver:
+**The k-NN finding (and the fix that shipped).** The harness surfaced that on
+this corpus **text similarity carries no effort signal** (corr(k-NN, actual) ≈ 0;
+plain text-only k-NN collapses to the project mean — MAE 3.83 ≈ project-mean
+3.82). The fix, now in `EstimationService`, is **size-aware prediction**: when the
+draft's story points are supplied (`EstimateTaskDto.storyPoints`), the estimate
+scales the neighbors' *local hours-per-point rate* by those points
+(reference-class forecasting) instead of taking a bare median of neighbor hours.
 
-- `k-NN + size weight` — re-weights neighbors by story-point proximity, so a
-  topically-similar but size-mismatched neighbor stops dominating.
-- `k-NN hours/point` — local reference-class forecasting: draft points ×
-  similarity-weighted median of the neighbors' hours-per-point.
+The eval therefore measures the real `EstimationService.predictFromNeighbors` in
+both modes:
 
-On the seed these move MAE from **3.83 → 3.10 → 2.12**, the last matching/beating
-the `storypoints→hours` baseline **while keeping k-NN's neighbor evidence and
-calibrated band**. Caveat: both variants need the draft's story points as an
-input (the current `/ai/estimate` DTO does not collect them) — the production fix
-is to accept optional story points, or to predict points from text first
-(`suggestedPoints`) and then apply the local rate. This is left for a follow-up;
-the harness is what *proved* the plain predictor was regressing to the mean.
+- `k-NN (text only)` — no draft points (size-agnostic median): MAE **3.83**.
+- `k-NN + points` — draft points supplied (hours-per-point): MAE **2.12**,
+  ±25% hit-rate **0.67** — matching/beating the `storypoints→hours` baseline
+  while keeping neighbor evidence and a band.
+
+Trade-off the harness also caught: the size-aware IQR band is a touch
+overconfident (calibration ~0.40 vs the text-only ~0.49, ideal 0.50) because
+normalizing by size removes variance — a candidate follow-up is to widen it to a
+10–90 band. When points are *not* supplied the service keeps the size-agnostic
+path unchanged.
 
 ### Telemetry (`telemetry-summary.ts` / `GET /ai/telemetry`)
 

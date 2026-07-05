@@ -3,10 +3,11 @@
  *
  * For each DONE task with real logged effort we re-embed its text as a fresh
  * draft (RETRIEVAL_QUERY), retrieve its nearest completed neighbors *excluding
- * itself*, and predict hours exactly the way `EstimationService` does (similarity-
- * weighted median, with a weighted IQR band). We then score the prediction
- * against the task's real `actualHours` and compare the k-NN predictor to two
- * baselines it must beat:
+ * itself*, and run the real `EstimationService.predictFromNeighbors` in BOTH
+ * modes — text-only (size-agnostic) and size-aware (given the draft's own story
+ * points) — scoring each against the task's real `actualHours`. This is what
+ * shows the size-aware path fixes the text-only predictor's regression-to-mean.
+ * Both are compared to two baselines:
  *
  *   - project-mean  — predict the mean actualHours of the other tasks in the
  *     same project.
@@ -26,6 +27,10 @@ import { PrismaService } from 'src/common/prisma/service/prisma.service';
 import { EmbeddingService } from 'src/ai/services/embedding.service';
 import { EmbeddingRepository } from 'src/ai/repositories/embedding.repository';
 import { AiAccessService } from 'src/ai/services/ai-access.service';
+import {
+  EstimationService,
+  EstimationScope,
+} from 'src/ai/services/estimation.service';
 
 import {
   withApp,
@@ -35,7 +40,6 @@ import {
 } from './lib/bootstrap';
 import {
   regressionScores,
-  weightedPercentile,
   linearFit,
   mean,
   round,
@@ -56,14 +60,14 @@ interface CompletedTask {
 interface Prediction {
   key: string;
   actual: number;
-  knn: number | null;
-  knnLow: number | null;
-  knnHigh: number | null;
-  inBand: boolean | null;
-  /** Variant A: text neighbors re-weighted by story-point proximity to the draft. */
-  knnSizeWeighted: number | null;
-  /** Variant B: draft points × similarity-weighted median of neighbor hours/point. */
-  knnHoursPerPoint: number | null;
+  /** Production text-only predictor: EstimationService with no draft points. */
+  knnText: number | null;
+  knnTextInBand: boolean | null;
+  /** Production size-aware predictor: EstimationService given the draft's points. */
+  knnPoints: number | null;
+  knnPointsLow: number | null;
+  knnPointsHigh: number | null;
+  knnPointsInBand: boolean | null;
   projectMean: number | null;
   storyPointFit: number | null;
   neighborCount: number;
@@ -80,6 +84,7 @@ async function main(): Promise<void> {
     const embeddingService = app.get(EmbeddingService);
     const embeddingRepository = app.get(EmbeddingRepository);
     const aiAccess = app.get(AiAccessService);
+    const estimationService = app.get(EstimationService);
 
     const actor = await resolveActor(app, actorEmail);
     const allowed = await aiAccess.allowedProjectIds(actor.userId, actor.roles);
@@ -103,6 +108,7 @@ async function main(): Promise<void> {
         embeddingService,
         embeddingRepository,
         aiAccess,
+        estimationService,
         allowed,
       );
       predictions.push(p);
@@ -126,12 +132,12 @@ async function main(): Promise<void> {
       predictions.map((p) => ({
         key: p.key,
         actual: p.actual,
-        knn: p.knn,
-        knnLow: p.knnLow,
-        knnHigh: p.knnHigh,
-        inBand: p.inBand,
-        knnSizeWeighted: p.knnSizeWeighted,
-        knnHoursPerPoint: p.knnHoursPerPoint,
+        knnText: p.knnText,
+        knnTextInBand: p.knnTextInBand,
+        knnPoints: p.knnPoints,
+        knnPointsLow: p.knnPointsLow,
+        knnPointsHigh: p.knnPointsHigh,
+        knnPointsInBand: p.knnPointsInBand,
         projectMean: p.projectMean,
         storyPointFit: p.storyPointFit,
         neighborCount: p.neighborCount,
@@ -139,12 +145,12 @@ async function main(): Promise<void> {
       [
         'key',
         'actual',
-        'knn',
-        'knnLow',
-        'knnHigh',
-        'inBand',
-        'knnSizeWeighted',
-        'knnHoursPerPoint',
+        'knnText',
+        'knnTextInBand',
+        'knnPoints',
+        'knnPointsLow',
+        'knnPointsHigh',
+        'knnPointsInBand',
         'projectMean',
         'storyPointFit',
         'neighborCount',
@@ -187,9 +193,11 @@ async function predictOne(
   embeddingService: EmbeddingService,
   embeddingRepository: EmbeddingRepository,
   aiAccess: AiAccessService,
+  estimationService: EstimationService,
   allowedProjectIds: string[],
 ): Promise<Prediction> {
-  // ── k-NN predictor (mirrors EstimationService, but excluding the held task) ──
+  // Embed the held task as a fresh draft and retrieve its neighbors *excluding
+  // itself*, mirroring EstimationService's scope + fallback (§4.6).
   const draftText = held.description?.trim()
     ? `${held.title}\n${held.description}`
     : held.title;
@@ -198,8 +206,8 @@ async function predictOne(
     'RETRIEVAL_QUERY',
   );
 
-  // Over-fetch so we can drop the held task itself and still keep k neighbors.
-  const buffer = k + 5;
+  const buffer = k + 5; // over-fetch so we can drop the held task and keep k
+  let scope: EstimationScope = 'PROJECT';
   let neighbors = (
     await embeddingRepository.searchCompletedTaskNeighbors(
       queryVector,
@@ -208,7 +216,6 @@ async function predictOne(
     )
   ).filter((n) => n.key !== held.key);
 
-  // Project → business-unit fallback, exactly like EstimationService (§4.6).
   if (neighbors.length < 3) {
     const buProjectIds = await aiAccess.sameBusinessUnitProjectIds(
       held.projectId,
@@ -221,61 +228,43 @@ async function predictOne(
         buffer,
       )
     ).filter((n) => n.key !== held.key);
-    if (wider.length > neighbors.length) neighbors = wider;
+    if (wider.length > neighbors.length) {
+      neighbors = wider;
+      scope = 'BUSINESS_UNIT';
+    }
   }
   neighbors = neighbors.slice(0, k);
 
-  let knn: number | null = null;
-  let knnLow: number | null = null;
-  let knnHigh: number | null = null;
-  let inBand: boolean | null = null;
+  // ── Measure the REAL production predictor, both modes ──────────────────────
+  // text-only (no draft points) vs size-aware (given the draft's own points).
+  let knnText: number | null = null;
+  let knnTextInBand: boolean | null = null;
+  let knnPoints: number | null = null;
+  let knnPointsLow: number | null = null;
+  let knnPointsHigh: number | null = null;
+  let knnPointsInBand: boolean | null = null;
   if (neighbors.length > 0) {
-    const total = neighbors.reduce((s, n) => s + Math.max(n.similarity, 0), 0);
-    const samples = neighbors.map((n) => ({
-      value: n.actualHours,
-      weight: total > 0 ? Math.max(n.similarity, 0) : 1,
-    }));
-    knn = round1(weightedPercentile(samples, 0.5));
-    knnLow = round1(weightedPercentile(samples, 0.25));
-    knnHigh = round1(weightedPercentile(samples, 0.75));
-    inBand = held.actualHours >= knnLow && held.actualHours <= knnHigh;
-  }
+    const text = estimationService.predictFromNeighbors(neighbors, scope, null);
+    knnText = text.predictedHours;
+    knnTextInBand =
+      text.rangeLow != null && text.rangeHigh != null
+        ? held.actualHours >= text.rangeLow &&
+          held.actualHours <= text.rangeHigh
+        : null;
 
-  // ── Variants that fold a SIZE signal into the text neighbors ───────────────
-  // The plain k-NN above regresses to the mean because text similarity does not
-  // track effort (corr ≈ 0). These reuse the same neighbors but bring in the
-  // draft's story points — the dominant effort driver — to show what fixes it.
-  let knnSizeWeighted: number | null = null;
-  let knnHoursPerPoint: number | null = null;
-  if (neighbors.length > 0 && held.storyPoints != null) {
-    const draftPoints = held.storyPoints;
-
-    // Variant A: re-weight text neighbors by story-point proximity, so a
-    // topically-similar BUT size-mismatched neighbor stops dominating.
-    const sizeSamples = neighbors.map((n) => {
-      const textSim = Math.max(n.similarity, 0);
-      const sizeProximity =
-        n.storyPoints != null
-          ? 1 / (1 + Math.abs(n.storyPoints - draftPoints))
-          : 0.1;
-      return { value: n.actualHours, weight: textSim * sizeProximity };
-    });
-    if (sizeSamples.some((s) => s.weight > 0)) {
-      knnSizeWeighted = round1(weightedPercentile(sizeSamples, 0.5));
-    }
-
-    // Variant B: predict the local hours-per-point rate from the neighbors, then
-    // scale by the draft's own points (local reference-class forecasting).
-    const rateSamples = neighbors
-      .filter((n) => n.storyPoints != null && n.storyPoints > 0)
-      .map((n) => ({
-        value: n.actualHours / (n.storyPoints as number),
-        weight: Math.max(n.similarity, 0),
-      }));
-    if (rateSamples.length > 0) {
-      const rate = weightedPercentile(rateSamples, 0.5);
-      knnHoursPerPoint = round1(rate * draftPoints);
-    }
+    const points = estimationService.predictFromNeighbors(
+      neighbors,
+      scope,
+      held.storyPoints,
+    );
+    knnPoints = points.predictedHours;
+    knnPointsLow = points.rangeLow;
+    knnPointsHigh = points.rangeHigh;
+    knnPointsInBand =
+      points.rangeLow != null && points.rangeHigh != null
+        ? held.actualHours >= points.rangeLow &&
+          held.actualHours <= points.rangeHigh
+        : null;
   }
 
   // ── Baseline 1: project mean of the OTHER completed tasks ──────────────────
@@ -302,12 +291,12 @@ async function predictOne(
   return {
     key: held.key,
     actual: held.actualHours,
-    knn,
-    knnLow,
-    knnHigh,
-    inBand,
-    knnSizeWeighted,
-    knnHoursPerPoint,
+    knnText,
+    knnTextInBand,
+    knnPoints,
+    knnPointsLow,
+    knnPointsHigh,
+    knnPointsInBand,
     projectMean,
     storyPointFit,
     neighborCount: neighbors.length,
@@ -316,13 +305,13 @@ async function predictOne(
 
 interface Summary {
   taskCount: number;
-  knn: RegressionScores;
-  knnSizeWeighted: RegressionScores;
-  knnHoursPerPoint: RegressionScores;
+  knnText: RegressionScores;
+  knnPoints: RegressionScores;
   projectMean: RegressionScores;
   storyPointFit: RegressionScores;
-  /** Fraction of held-out tasks whose true value fell inside the IQR band. */
-  bandCalibration: number;
+  /** IQR-band calibration for the text-only vs size-aware predictor (ideal ≈ 0.50). */
+  bandCalibrationText: number;
+  bandCalibrationPoints: number;
   bandN: number;
 }
 
@@ -334,19 +323,23 @@ function summarize(predictions: Prediction[]): Summary {
       ),
     );
 
-  const banded = predictions.filter((p) => p.inBand !== null);
-  const bandCalibration = banded.length
-    ? round(mean(banded.map((p) => (p.inBand ? 1 : 0))))
-    : 0;
+  const calibration = (pick: (p: Prediction) => boolean | null): number => {
+    const banded = predictions.filter((p) => pick(p) !== null);
+    return banded.length
+      ? round(mean(banded.map((p) => (pick(p) ? 1 : 0))))
+      : 0;
+  };
+
+  const banded = predictions.filter((p) => p.knnPointsInBand !== null);
 
   return {
     taskCount: predictions.length,
-    knn: score((p) => p.knn),
-    knnSizeWeighted: score((p) => p.knnSizeWeighted),
-    knnHoursPerPoint: score((p) => p.knnHoursPerPoint),
+    knnText: score((p) => p.knnText),
+    knnPoints: score((p) => p.knnPoints),
     projectMean: score((p) => p.projectMean),
     storyPointFit: score((p) => p.storyPointFit),
-    bandCalibration,
+    bandCalibrationText: calibration((p) => p.knnTextInBand),
+    bandCalibrationPoints: calibration((p) => p.knnPointsInBand),
     bandN: banded.length,
   };
 }
@@ -371,9 +364,8 @@ function printSummary(s: Summary): void {
     sc.n,
   ];
   const rows = [
-    scoreRow('k-NN (text only)', s.knn),
-    scoreRow('k-NN + size weight', s.knnSizeWeighted),
-    scoreRow('k-NN hours/point', s.knnHoursPerPoint),
+    scoreRow('k-NN (text only)', s.knnText),
+    scoreRow('k-NN + points', s.knnPoints),
     scoreRow('project-mean', s.projectMean),
     scoreRow('storypoints→hours', s.storyPointFit),
   ].map((r) => r.map((c) => String(c)));
@@ -386,7 +378,9 @@ function printSummary(s: Summary): void {
   console.log(widths.map((w) => '-'.repeat(w)).join('  '));
   for (const row of rows) console.log(fmt(row));
   console.log(
-    `\n  IQR-band calibration : ${s.bandCalibration.toFixed(3)} of true values inside the predicted range (n=${s.bandN}, ideal ≈ 0.50)`,
+    `\n  IQR-band calibration : text-only ${s.bandCalibrationText.toFixed(3)} · ` +
+      `+points ${s.bandCalibrationPoints.toFixed(3)} of true values inside the band ` +
+      `(n=${s.bandN}, ideal ≈ 0.50)`,
   );
 }
 

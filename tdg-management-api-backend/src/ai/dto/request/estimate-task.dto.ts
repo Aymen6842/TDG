@@ -1,5 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsOptional, IsString, IsUUID, MaxLength } from 'class-validator';
+import {
+  IsInt,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Max,
+  MaxLength,
+  Min,
+} from 'class-validator';
 
 /**
  * Request body for `POST /ai/estimate` — the draft task the user is typing.
@@ -31,4 +39,20 @@ export class EstimateTaskDto {
   @IsString()
   @MaxLength(10000)
   description?: string | null;
+
+  @ApiPropertyOptional({
+    description:
+      'Story points, if the task has already been pointed. When present the ' +
+      'estimate uses the neighbors’ local hours-per-point rate scaled by ' +
+      'these points (far more accurate than a bare median of neighbor hours).',
+    example: 8,
+    minimum: 1,
+    maximum: 100,
+    nullable: true,
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  storyPoints?: number | null;
 }

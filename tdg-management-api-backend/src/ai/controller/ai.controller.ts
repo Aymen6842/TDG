@@ -12,7 +12,12 @@ import {
   MessageEvent,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 import { HasPermissionGuard } from 'src/auths/guards/has-permission.guard';
 import { Permissions } from 'src/auths/decorators/permissions.decorator';
@@ -128,6 +133,7 @@ export class AiController {
       projectId: dto.projectId,
       title: dto.title,
       description: dto.description,
+      storyPoints: dto.storyPoints,
     });
   }
 
@@ -140,8 +146,13 @@ export class AiController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(HasPermissionGuard)
   @Permissions([PERMISSIONS.PROJECTS.PROJECT_CREATE])
-  @ApiOperation({ summary: 'Backfill / rebuild all content embeddings (admin)' })
-  @ApiResponse({ status: 200, description: 'Reindex summary (per-entity counts).' })
+  @ApiOperation({
+    summary: 'Backfill / rebuild all content embeddings (admin)',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Reindex summary (per-entity counts).',
+  })
   reindex() {
     return this.indexingService.reindexAll();
   }
