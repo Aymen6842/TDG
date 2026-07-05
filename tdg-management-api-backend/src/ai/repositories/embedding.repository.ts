@@ -1,0 +1,150 @@
+import { Injectable } from '@nestjs/common';
+import { Prisma, EmbeddingEntityType } from '@prisma/client';
+import { PrismaService } from 'src/common/prisma/service/prisma.service';
+import { EmbeddingService } from '../services/embedding.service';
+
+/** A single ANN hit returned by {@link EmbeddingRepository.searchVector}. */
+export interface VectorSearchResult {
+  id: string;
+  projectId: string;
+  entityType: EmbeddingEntityType;
+  entityId: string;
+  chunkIndex: number;
+  content: string;
+  /** Cosine similarity in [0, 1] (1 = identical direction). */
+  score: number;
+}
+
+export interface VectorSearchFilters {
+  entityType?: EmbeddingEntityType;
+}
+
+/**
+ * All raw-SQL access to the pgvector `DocumentEmbedding.embedding` column.
+ *
+ * Prisma cannot type the `vector` column, so every read/write of it goes
+ * through `$queryRaw` / `$executeRaw` here. Vectors cross the wire as the
+ * pgvector text literal `[v1,v2,...]` cast with `::vector`.
+ */
+@Injectable()
+export class EmbeddingRepository {
+  constructor(private readonly prismaService: PrismaService) {}
+
+  /** pgvector text literal, e.g. `[0.1,0.2,0.3]`. */
+  private toVectorLiteral(vector: number[]): string {
+    return `[${vector.join(',')}]`;
+  }
+
+  /** Existing chunks for an entity, so the indexer can skip unchanged content. */
+  async getExistingChunks(
+    entityType: EmbeddingEntityType,
+    entityId: string,
+  ): Promise<{ chunkIndex: number; contentHash: string }[]> {
+    return this.prismaService.documentEmbedding.findMany({
+      where: { entityType, entityId },
+      select: { chunkIndex: true, contentHash: true },
+      orderBy: { chunkIndex: 'asc' },
+    });
+  }
+
+  /** Insert or replace one embedded chunk (keyed by entityType+entityId+chunkIndex). */
+  async upsertChunk(params: {
+    projectId: string;
+    entityType: EmbeddingEntityType;
+    entityId: string;
+    chunkIndex: number;
+    content: string;
+    tokenCount: number;
+    embedding: number[];
+    contentHash: string;
+  }): Promise<void> {
+    const vectorLiteral = this.toVectorLiteral(params.embedding);
+
+    await this.prismaService.$executeRaw`
+      INSERT INTO "DocumentEmbedding"
+        ("projectId", "entityType", "entityId", "chunkIndex", "content",
+         "tokenCount", "embedding", "contentHash", "model", "updatedAt")
+      VALUES (
+        ${params.projectId},
+        ${params.entityType}::"EmbeddingEntityType",
+        ${params.entityId},
+        ${params.chunkIndex},
+        ${params.content},
+        ${params.tokenCount},
+        ${vectorLiteral}::vector,
+        ${params.contentHash},
+        ${EmbeddingService.MODEL},
+        NOW()
+      )
+      ON CONFLICT ("entityType", "entityId", "chunkIndex")
+      DO UPDATE SET
+        "projectId"   = EXCLUDED."projectId",
+        "content"     = EXCLUDED."content",
+        "tokenCount"  = EXCLUDED."tokenCount",
+        "embedding"   = EXCLUDED."embedding",
+        "contentHash" = EXCLUDED."contentHash",
+        "model"       = EXCLUDED."model",
+        "updatedAt"   = NOW();
+    `;
+  }
+
+  /** Delete every chunk of an entity (used on entity delete / re-chunk shrink). */
+  async deleteByEntity(
+    entityType: EmbeddingEntityType,
+    entityId: string,
+  ): Promise<void> {
+    await this.prismaService.documentEmbedding.deleteMany({
+      where: { entityType, entityId },
+    });
+  }
+
+  /** Delete specific chunk indexes of an entity (stale tail after re-chunking). */
+  async deleteChunks(
+    entityType: EmbeddingEntityType,
+    entityId: string,
+    chunkIndexes: number[],
+  ): Promise<void> {
+    if (chunkIndexes.length === 0) return;
+    await this.prismaService.documentEmbedding.deleteMany({
+      where: { entityType, entityId, chunkIndex: { in: chunkIndexes } },
+    });
+  }
+
+  /**
+   * Permission-scoped ANN search: nearest `k` chunks to `queryVector` among the
+   * allowed projects, ordered by pgvector cosine distance (`<=>`). The
+   * `projectId = ANY(...)` filter is applied in SQL *before* ranking — there is
+   * no code path that can return a chunk from a project outside the allowed set.
+   */
+  async searchVector(
+    queryVector: number[],
+    allowedProjectIds: string[],
+    filters: VectorSearchFilters,
+    k: number,
+  ): Promise<VectorSearchResult[]> {
+    if (allowedProjectIds.length === 0) return [];
+
+    const vectorLiteral = this.toVectorLiteral(queryVector);
+    const entityTypeFilter = filters.entityType
+      ? Prisma.sql`AND "entityType" = ${filters.entityType}::"EmbeddingEntityType"`
+      : Prisma.empty;
+
+    const rows = await this.prismaService.$queryRaw<VectorSearchResult[]>`
+      SELECT
+        "id",
+        "projectId",
+        "entityType",
+        "entityId",
+        "chunkIndex",
+        "content",
+        1 - ("embedding" <=> ${vectorLiteral}::vector) AS score
+      FROM "DocumentEmbedding"
+      WHERE "projectId" = ANY(${allowedProjectIds})
+        ${entityTypeFilter}
+      ORDER BY "embedding" <=> ${vectorLiteral}::vector
+      LIMIT ${k};
+    `;
+
+    return rows;
+  }
+}

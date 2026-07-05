@@ -16,6 +16,7 @@
     "prisma:migrate": "prisma migrate dev --schema=./prisma/schema",
     "prisma:reset": "prisma migrate reset --schema=./prisma/schema",
     "prisma:seed": "ts-node -r tsconfig-paths/register prisma/seed.ts",
+    "ai:backfill": "ts-node -r tsconfig-paths/register prisma/ai-backfill.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "node node_modules/jest/bin/jest.js",
     "test:watch": "node node_modules/jest/bin/jest.js --watch",

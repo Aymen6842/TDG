@@ -29,6 +29,7 @@ import { TasksModule } from './tasks/tasks.module';
 import { EpicsModule } from './epics/epics.module';
 import { MilestonesModule } from './milestones/milestones.module';
 import { RemindersModule } from './reminders/reminders.module';
+import { AiModule } from './ai/ai.module';
 import { HealthController } from './health/controller/health.controller';
 
 @Module({
@@ -68,6 +69,7 @@ import { HealthController } from './health/controller/health.controller';
     EpicsModule,
     MilestonesModule,
     RemindersModule,
+    AiModule,
   ],
   providers: [
     {

@@ -20,7 +20,7 @@ import { LoggerModule } from '../logger/logger.module';
       inject: [ConfigService],
     },
   ],
-  exports: [GeminiService],
+  exports: [GeminiService, 'GEMINI_CLIENT'],
   imports: [LoggerModule],
 })
 export class GeminiModule {}
