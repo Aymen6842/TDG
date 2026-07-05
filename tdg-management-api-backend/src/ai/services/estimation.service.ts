@@ -208,14 +208,19 @@ export class EstimationService {
 
     if (draftPoints != null && draftPoints > 0 && rateSamples.length > 0) {
       // ── Size-aware: local hours-per-point rate × the draft's own points ──
+      // Normalizing hours by points strips out the size variance, so a 25–75
+      // IQR band comes out too tight — on the eval it under-covered the truth
+      // (~0.40 vs the 0.50 an IQR nominally targets). A wider 10–90 band
+      // (nominal ~0.80 coverage) restores an honest band (~0.74 on the eval);
+      // the size-agnostic path below keeps its 25–75 IQR.
       predictedHours = this.round1(
         draftPoints * this.weightedPercentile(rateSamples, 0.5),
       );
       rangeLow = this.round1(
-        draftPoints * this.weightedPercentile(rateSamples, 0.25),
+        draftPoints * this.weightedPercentile(rateSamples, 0.1),
       );
       rangeHigh = this.round1(
-        draftPoints * this.weightedPercentile(rateSamples, 0.75),
+        draftPoints * this.weightedPercentile(rateSamples, 0.9),
       );
       suggestedPoints = draftPoints;
     } else {

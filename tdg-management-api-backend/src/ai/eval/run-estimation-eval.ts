@@ -378,9 +378,9 @@ function printSummary(s: Summary): void {
   console.log(widths.map((w) => '-'.repeat(w)).join('  '));
   for (const row of rows) console.log(fmt(row));
   console.log(
-    `\n  IQR-band calibration : text-only ${s.bandCalibrationText.toFixed(3)} · ` +
-      `+points ${s.bandCalibrationPoints.toFixed(3)} of true values inside the band ` +
-      `(n=${s.bandN}, ideal ≈ 0.50)`,
+    `\n  Band calibration (fraction of truths inside the band, n=${s.bandN}):` +
+      `\n    text-only 25–75 IQR : ${s.bandCalibrationText.toFixed(3)} (nominal ≈ 0.50)` +
+      `\n    +points   10–90     : ${s.bandCalibrationPoints.toFixed(3)} (nominal ≈ 0.80)`,
   );
 }
 

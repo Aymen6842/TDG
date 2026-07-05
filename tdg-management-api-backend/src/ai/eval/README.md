@@ -125,11 +125,15 @@ both modes:
   ±25% hit-rate **0.67** — matching/beating the `storypoints→hours` baseline
   while keeping neighbor evidence and a band.
 
-Trade-off the harness also caught: the size-aware IQR band is a touch
-overconfident (calibration ~0.40 vs the text-only ~0.49, ideal 0.50) because
-normalizing by size removes variance — a candidate follow-up is to widen it to a
-10–90 band. When points are *not* supplied the service keeps the size-agnostic
-path unchanged.
+Uncertainty band: normalizing hours by points strips out the size variance, so a
+25–75 IQR band on the size-aware path came out too tight — it under-covered the
+truth (calibration **0.40** vs the **0.50** an IQR nominally targets). The
+size-aware path therefore uses a wider **10–90 band** (nominal ~0.80 coverage),
+which restores an honest band: calibration **0.744** on the eval, close to the
+0.80 a 10–90 band should cover, up from 0.40 — without moving MAE (2.12) or the
+±25% hit-rate (0.674), since only the band percentiles changed, not the median.
+The size-agnostic (text-only) path keeps its 25–75 IQR (calibration 0.488,
+nominal 0.50). When points are *not* supplied the service is unchanged.
 
 ### Telemetry (`telemetry-summary.ts` / `GET /ai/telemetry`)
 
