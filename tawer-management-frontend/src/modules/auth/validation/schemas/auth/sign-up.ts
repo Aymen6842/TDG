@@ -16,26 +16,26 @@ export function getSignUpFormSchema(t?: TranslateFunction) {
         (file) =>
           file.type.startsWith("image/") &&
           ["image/jpeg", "image/png", "image/webp"].includes(file.type),
-        { message: t ? t("image.invalid") : "Format d'adresse e-mail invalide." }
+        { message: t ? t("image.invalid") : "Only JPEG/PNG/WEBP images allowed." }
       ),
     email: z
       .string()
-      .email(t ? t("email.invalid") : "Format d'adresse e-mail invalide.")
+      .email(t ? t("email.invalid") : "Email address is invalid.")
       .min(1, {
-        message: t ? t("email.required") : "L'adresse e-mail est requise."
+        message: t ? t("email.required") : "Email address is required."
       }),
     phone: z
       .string()
       .min(1, {
-        message: t ? t("phone.required") : ""
+        message: t ? t("phone.required") : "Phone number is required."
       })
       .refine((value) => validatePhoneNumber(value, process.env.COUNTRY_CODE as CountryCode), {
-        message: t ? t("phone.invalid") : ""
+        message: t ? t("phone.invalid") : "Phone number is invalid."
       }),
     password: z.string().min(8, {
       message: t
         ? t("password.passwordTooShort", { min: 8 })
-        : "Le mot de passe doit contenir au moins 8 caractères."
+        : "Password must be at least 8 characters"
     })
   });
 }
