@@ -18,8 +18,14 @@
  *    client directly so product code (`EmbeddingService`, fixed at 1536) is never
  *    touched.
  *
- * Hybrid (BM25+RRF) and reranking are deliberately OUT of scope this sprint (M5);
- * the config names are reserved so they can be dropped in and measured next.
+ *  - `hybrid` — the REAL hybrid path: `RetrievalService.searchScoped` fuses the
+ *    vector ANN with a Postgres full-text (BM25-style) ranking via RRF, optionally
+ *    followed by the LLM reranker. Like `pgvector` it measures exactly what ships;
+ *    it just drives the production ranking through one more code path so the
+ *    ablation compares vector-only vs hybrid vs hybrid+rerank apples-to-apples.
+ *
+ * Hybrid (BM25+RRF) and reranking are the M5 stretch delivered this sprint; HyDE /
+ * query decomposition remain reserved for a future sprint.
  */
 import { GoogleGenAI } from '@google/genai';
 import { EmbeddingEntityType } from '@prisma/client';
@@ -29,6 +35,7 @@ import {
   EmbeddingTaskType,
 } from '../../services/embedding.service';
 import { EmbeddingRepository } from '../../repositories/embedding.repository';
+import { RetrievalService } from '../../services/retrieval.service';
 
 export interface RetrievalHit {
   entityType: EmbeddingEntityType;
@@ -44,11 +51,13 @@ export interface Retriever {
 
 export interface RetrievalConfig {
   name: string;
-  backend: 'pgvector' | 'memory';
+  backend: 'pgvector' | 'memory' | 'hybrid';
   queryTaskType: EmbeddingTaskType;
   /** Document task type — only meaningful for the `memory` backend. */
   docTaskType?: EmbeddingTaskType;
   dims: 1536 | 3072;
+  /** For the `hybrid` backend: run the LLM reranker over the fused pool. */
+  rerank?: boolean;
   note: string;
 }
 
@@ -84,10 +93,25 @@ export const RETRIEVAL_CONFIGS: Record<string, RetrievalConfig> = {
     dims: 3072,
     note: 'Ablation: full 3072-dim embeddings (max quality, 2x storage).',
   },
+  hybrid: {
+    name: 'hybrid',
+    backend: 'hybrid',
+    queryTaskType: 'RETRIEVAL_QUERY',
+    dims: 1536,
+    note: 'M5: vector ANN fused with BM25-style FTS via Reciprocal Rank Fusion.',
+  },
+  'hybrid-rerank': {
+    name: 'hybrid-rerank',
+    backend: 'hybrid',
+    queryTaskType: 'RETRIEVAL_QUERY',
+    dims: 1536,
+    rerank: true,
+    note: 'M5: hybrid + RRF, then an LLM reranker re-orders the fused pool.',
+  },
 };
 
-/** Config names reserved for the M5 stretch — recognized but not implemented. */
-export const RESERVED_CONFIGS = ['hybrid', 'rerank'];
+/** Config names reserved for a future sprint — recognized but not implemented. */
+export const RESERVED_CONFIGS = ['hyde'];
 
 // ─── pgvector (production) retriever ───────────────────────────────────────────
 
@@ -117,6 +141,42 @@ export class PgVectorRetriever implements Retriever {
       k,
     );
     return rows.map((row) => ({
+      entityType: row.entityType,
+      entityId: row.entityId,
+      score: row.score,
+    }));
+  }
+}
+
+// ─── hybrid (production) retriever ─────────────────────────────────────────────
+
+/**
+ * Drives the real hybrid ranking through `RetrievalService.searchScoped` against
+ * a precomputed project scope (the eval already resolved the actor's allowed
+ * projects), so the ablation measures exactly what the copilot uses — RRF fusion
+ * of vector + BM25, optionally reranked — with no duplicated fusion logic.
+ */
+export class HybridRetriever implements Retriever {
+  readonly name: string;
+  readonly description: string;
+
+  constructor(
+    private readonly config: RetrievalConfig,
+    private readonly retrievalService: RetrievalService,
+    private readonly allowedProjectIds: string[],
+  ) {
+    this.name = config.name;
+    this.description = config.note;
+  }
+
+  async retrieve(question: string, k: number): Promise<RetrievalHit[]> {
+    const { candidates } = await this.retrievalService.searchScoped({
+      question,
+      scopedProjectIds: this.allowedProjectIds,
+      k,
+      options: { hybrid: true, rerank: this.config.rerank ?? false },
+    });
+    return candidates.map((row) => ({
       entityType: row.entityType,
       entityId: row.entityId,
       score: row.score,

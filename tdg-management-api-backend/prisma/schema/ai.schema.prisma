@@ -9,6 +9,9 @@ model DocumentEmbedding {
   tokenCount  Int                 @default(0)
   // 1536-dim Matryoshka-truncated Gemini embedding (see §4.1)
   embedding   Unsupported("vector(1536)")
+  // Generated FTS vector over `content` for hybrid lexical search (§4.4, M5).
+  // STORED generated column; the GIN index is created in raw migration SQL.
+  contentTsv  Unsupported("tsvector")?
   contentHash String // sha256(content) — skip re-embed if unchanged
   model       String              @default("gemini-embedding-001")
   createdAt   DateTime            @default(now()) @db.Timestamp(6)

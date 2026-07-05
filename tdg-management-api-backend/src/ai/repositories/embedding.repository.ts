@@ -164,6 +164,54 @@ export class EmbeddingRepository {
   }
 
   /**
+   * Permission-scoped lexical (BM25-style) search: the `k` chunks whose generated
+   * `contentTsv` best matches `query` by `ts_rank_cd`, among the allowed projects
+   * (§4.4). This is the keyword arm of hybrid retrieval — it shines on the queries
+   * pure-vector search is weakest on (exact task keys like "NDF-3", error codes,
+   * acronyms, proper nouns). The query is parsed with `websearch_to_tsquery`,
+   * which tolerates arbitrary user input (quotes, `or`, `-term`) without throwing,
+   * so no query is ever "malformed". Like {@link searchVector}, the
+   * `projectId = ANY(...)` filter runs in SQL before ranking — no code path can
+   * surface a chunk from a project outside the allowed set.
+   *
+   * `score` is the raw `ts_rank_cd` (unbounded, corpus-relative), returned for
+   * transparency only; hybrid fusion ranks by *position*, not this magnitude, so
+   * it is never mixed with the cosine scale.
+   */
+  async searchLexical(
+    query: string,
+    allowedProjectIds: string[],
+    filters: VectorSearchFilters,
+    k: number,
+  ): Promise<VectorSearchResult[]> {
+    if (allowedProjectIds.length === 0) return [];
+    if (query.trim().length === 0) return [];
+
+    const entityTypeFilter = filters.entityType
+      ? Prisma.sql`AND "entityType" = ${filters.entityType}::"EmbeddingEntityType"`
+      : Prisma.empty;
+
+    const rows = await this.prismaService.$queryRaw<VectorSearchResult[]>`
+      SELECT
+        "id",
+        "projectId",
+        "entityType",
+        "entityId",
+        "chunkIndex",
+        "content",
+        ts_rank_cd("contentTsv", websearch_to_tsquery('english', ${query})) AS score
+      FROM "DocumentEmbedding"
+      WHERE "projectId" = ANY(${allowedProjectIds})
+        AND "contentTsv" @@ websearch_to_tsquery('english', ${query})
+        ${entityTypeFilter}
+      ORDER BY score DESC
+      LIMIT ${k};
+    `;
+
+    return rows;
+  }
+
+  /**
    * Permission-scoped k-NN over *completed* tasks: the `k` DONE tasks (with real
    * logged effort) whose embedding is nearest `queryVector`, among `projectIds`.
    *

@@ -5,13 +5,16 @@
  * nDCG@k — then prints a config-vs-config comparison table and writes
  * `out/retrieval-eval.{json,csv}`.
  *
- * The default configs (`baseline`, `wrong-task-type`) run against the real
- * pgvector index and only cost query embeddings. Add `--configs=...,dims-3072`
- * for the dimensionality ablation, which re-embeds the corpus in memory. Hybrid
- * and reranking are reserved for M5 (§ out of scope) but recognized as names.
+ * The default configs (`baseline`, `hybrid`, `hybrid-rerank`) are the headline M5
+ * comparison — vector-only vs hybrid+RRF vs hybrid+RRF+reranker — run against the
+ * real pgvector + FTS index. `baseline`/`hybrid` only cost query embeddings;
+ * `hybrid-rerank` adds one LLM call per question. Add `--configs=...,dims-3072`
+ * for the dimensionality ablation (re-embeds the corpus in memory) or
+ * `wrong-task-type` for the task-type ablation.
  *
  * Usage:
  *   npm run ai:eval:retrieval
+ *   npm run ai:eval:retrieval -- --configs=baseline,hybrid,hybrid-rerank
  *   npm run ai:eval:retrieval -- --configs=baseline,wrong-task-type,dims-3072
  *   npm run ai:eval:retrieval -- --k=10 --actor=mohamed@tawer.tn
  */
@@ -20,6 +23,7 @@ import { PrismaService } from 'src/common/prisma/service/prisma.service';
 import { EmbeddingService } from 'src/ai/services/embedding.service';
 import { EmbeddingRepository } from 'src/ai/repositories/embedding.repository';
 import { AiAccessService } from 'src/ai/services/ai-access.service';
+import { RetrievalService } from 'src/ai/services/retrieval.service';
 
 import {
   withApp,
@@ -29,6 +33,7 @@ import {
 } from './lib/bootstrap';
 import { RefResolver } from './lib/refs';
 import { loadRetrievalGold } from './lib/gold';
+import type { RetrievalGoldItem } from './lib/gold';
 import {
   recallAtK,
   precisionAtK,
@@ -44,6 +49,7 @@ import {
   RESERVED_CONFIGS,
   PgVectorRetriever,
   InMemoryRetriever,
+  HybridRetriever,
 } from './lib/retrievers';
 
 const K_VALUES = [1, 3, 5, 10];
@@ -68,9 +74,8 @@ async function evalConfig(
   note: string,
   depth: number,
   reportKs: number[],
+  gold: RetrievalGoldItem[],
 ): Promise<ConfigMetrics> {
-  const gold = loadRetrievalGold();
-
   const perQuestion: ConfigMetrics['perQuestion'] = [];
   const rrs: number[] = [];
   const recallByK: Record<number, number[]> = {};
@@ -141,19 +146,22 @@ async function main(): Promise<void> {
   if (!reportKs.includes(depth)) reportKs.push(depth);
   const actorEmail =
     typeof args.actor === 'string' ? args.actor : DEFAULT_ACTOR_EMAIL;
+  const goldSet = typeof args.gold === 'string' ? args.gold : 'semantic';
+  const gold = loadRetrievalGold(goldSet);
   const configNames =
     typeof args.configs === 'string'
       ? args.configs
           .split(',')
           .map((s) => s.trim())
           .filter(Boolean)
-      : ['baseline', 'wrong-task-type'];
+      : ['baseline', 'hybrid', 'hybrid-rerank'];
 
   await withApp(async (app) => {
     const prisma = app.get(PrismaService);
     const embeddingService = app.get(EmbeddingService);
     const embeddingRepository = app.get(EmbeddingRepository);
     const aiAccess = app.get(AiAccessService);
+    const retrievalService = app.get(RetrievalService);
     const client = app.get<GoogleGenAI>('GEMINI_CLIENT');
 
     const actor = await resolveActor(app, actorEmail);
@@ -165,7 +173,8 @@ async function main(): Promise<void> {
 
     console.log(
       `\nRetrieval eval — actor ${actor.name} (${actor.roles.join(', ')}), ` +
-        `${allowedProjectIds.length} project(s) in scope, depth ${depth}\n`,
+        `${allowedProjectIds.length} project(s) in scope, depth ${depth}, ` +
+        `gold "${goldSet}" (${gold.length} questions)\n`,
     );
 
     const results: ConfigMetrics[] = [];
@@ -186,19 +195,32 @@ async function main(): Promise<void> {
         continue;
       }
 
-      const retriever: Retriever =
-        config.backend === 'pgvector'
-          ? new PgVectorRetriever(
-              config,
-              embeddingService,
-              embeddingRepository,
-              allowedProjectIds,
-            )
-          : new InMemoryRetriever(config, client, prisma, allowedProjectIds);
+      let retriever: Retriever;
+      if (config.backend === 'pgvector') {
+        retriever = new PgVectorRetriever(
+          config,
+          embeddingService,
+          embeddingRepository,
+          allowedProjectIds,
+        );
+      } else if (config.backend === 'hybrid') {
+        retriever = new HybridRetriever(
+          config,
+          retrievalService,
+          allowedProjectIds,
+        );
+      } else {
+        retriever = new InMemoryRetriever(
+          config,
+          client,
+          prisma,
+          allowedProjectIds,
+        );
+      }
 
       console.log(`  · running "${name}" (${config.backend})…`);
       results.push(
-        await evalConfig(retriever, resolver, config.note, depth, reportKs),
+        await evalConfig(retriever, resolver, config.note, depth, reportKs, gold),
       );
     }
 
@@ -211,6 +233,7 @@ async function main(): Promise<void> {
     const jsonPath = writeJson('retrieval-eval', {
       generatedAt: new Date().toISOString(),
       actor: { email: actor.email, roles: actor.roles },
+      goldSet,
       depth,
       reportKs,
       results,
