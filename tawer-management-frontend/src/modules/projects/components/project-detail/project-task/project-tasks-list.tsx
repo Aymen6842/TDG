@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -108,6 +109,27 @@ export default function ProjectTasksList({ project }: Props) {
     setSelectedTask(task);
     setIsDetailSheetOpen(true);
   };
+
+  // Deep-link: when a copilot citation navigates here with `?taskId=`, open that
+  // task's detail sheet once it's loaded, then strip the param so re-renders /
+  // manual closes don't re-open it.
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  React.useEffect(() => {
+    const taskId = searchParams.get("taskId");
+    if (!taskId || tasks.length === 0) return;
+    const target = tasks.find((task) => task.id === taskId);
+    if (!target) return;
+    setSelectedTask(target);
+    setIsDetailSheetOpen(true);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("taskId");
+    router.replace(
+      `${pathname}${params.toString() ? `?${params.toString()}` : ""}`,
+      { scroll: false },
+    );
+  }, [searchParams, tasks, router, pathname]);
 
   const handleOpenUploadSheet = (task?: ProjectTaskType) => {
     setSelectedTask(task || null);

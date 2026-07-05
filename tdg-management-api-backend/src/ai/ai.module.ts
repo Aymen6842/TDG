@@ -10,13 +10,16 @@ import { EmbeddingService } from './services/embedding.service';
 import { IndexingService } from './services/indexing.service';
 import { AiAccessService } from './services/ai-access.service';
 import { EstimationService } from './services/estimation.service';
+import { RetrievalService } from './services/retrieval.service';
+import { CopilotService } from './services/copilot.service';
 import { EmbeddingRepository } from './repositories/embedding.repository';
 
 /**
  * Vector-search foundation (Sprint 2 / M0) plus retrieval-based estimation
  * (Sprint 3 / M1): embedding, indexing and raw-SQL ANN over pgvector, the
- * permission-scoping service, and the k-NN estimation assistant. Later sprints
- * add the copilot on top of these providers.
+ * permission-scoping service, and the k-NN estimation assistant. Sprint 4 / M2
+ * adds the permission-scoped RAG copilot (retrieval + grounded generation with
+ * citations) on top of these providers.
  */
 @Module({
   imports: [PrismaModule, LoggerModule, GeminiModule, TokensModule],
@@ -26,6 +29,8 @@ import { EmbeddingRepository } from './repositories/embedding.repository';
     IndexingService,
     AiAccessService,
     EstimationService,
+    RetrievalService,
+    CopilotService,
     EmbeddingRepository,
   ],
   exports: [
@@ -33,6 +38,8 @@ import { EmbeddingRepository } from './repositories/embedding.repository';
     IndexingService,
     AiAccessService,
     EstimationService,
+    RetrievalService,
+    CopilotService,
     EmbeddingRepository,
   ],
 })

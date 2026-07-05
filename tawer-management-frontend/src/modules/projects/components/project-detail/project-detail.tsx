@@ -1,6 +1,7 @@
 "use client";
+import React from "react";
 import { useTranslations } from "next-intl";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,6 +18,7 @@ import ProjectEpics from "./epics/project-epics";
 import ProjectMilestones from "./milestones/project-milestones";
 import ProjectReminders from "./reminders/project-reminders";
 import ProjectAnalytics from "./analytics/project-analytics";
+import CopilotPanel from "@/modules/ai/components/copilot-panel";
 
 interface Props {
   slug: string;
@@ -25,8 +27,20 @@ interface Props {
 export default function ProjectDetail({ slug }: Props) {
   const t = useTranslations("modules.projects.project.details");
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const { user, isLoading: userLoading } = useCurrentUser();
   const { project, projectIsLoading } = useProject(slug);
+
+  // The active tab is driven by the `?tab=` param so citation chips in the
+  // copilot can deep-link into any tab (and open a task via `?taskId=`).
+  const activeTab = searchParams.get("tab") ?? "tasks";
+  const handleTabChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("tab", value);
+    if (value !== "tasks") params.delete("taskId");
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   if (userLoading || projectIsLoading) return <Loading />;
 
@@ -52,10 +66,11 @@ export default function ProjectDetail({ slug }: Props) {
         <h1 className="text-2xl font-bold tracking-tight">{(project as any).name || project.contents?.[0]?.name || t("unnamedProject")}</h1>
       </header>
 
-      <Tabs defaultValue="tasks" className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <div className="border-b mb-6">
           <TabsList className="h-10 bg-transparent p-0 flex-wrap">
             <TabsTrigger value="tasks" className={tabTriggerClass}>{t("tabs.tasks")}</TabsTrigger>
+            <TabsTrigger value="copilot" className={tabTriggerClass}>{t("tabs.copilot")}</TabsTrigger>
             <TabsTrigger value="members" className={tabTriggerClass}>{t("tabs.members")}</TabsTrigger>
             {project.projectType === "AGILE" && (
               <TabsTrigger value="sprints" className={tabTriggerClass}>{t("tabs.sprints")}</TabsTrigger>
@@ -72,6 +87,9 @@ export default function ProjectDetail({ slug }: Props) {
 
         <TabsContent value="tasks" className="space-y-4 outline-none!">
           <ProjectTasks project={project} />
+        </TabsContent>
+        <TabsContent value="copilot" className="outline-none!">
+          <CopilotPanel projectId={project.id} />
         </TabsContent>
         <TabsContent value="members" className="outline-none!">
           <ProjectMembers project={project} />

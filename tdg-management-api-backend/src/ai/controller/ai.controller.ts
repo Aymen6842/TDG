@@ -16,8 +16,11 @@ import { CustomRequest } from 'src/common/types/request.type';
 
 import { IndexingService } from '../services/indexing.service';
 import { EstimationService } from '../services/estimation.service';
+import { CopilotService } from '../services/copilot.service';
 import { EstimateTaskDto } from '../dto/request/estimate-task.dto';
 import { EstimateResultDto } from '../dto/response/estimate-result.dto';
+import { CopilotQueryDto } from '../dto/request/copilot-query.dto';
+import { CopilotAnswerDto } from '../dto/response/copilot-answer.dto';
 
 @ApiTags('AI')
 @ApiBearerAuth()
@@ -26,7 +29,39 @@ export class AiController {
   constructor(
     private readonly indexingService: IndexingService,
     private readonly estimationService: EstimationService,
+    private readonly copilotService: CopilotService,
   ) {}
+
+  /**
+   * Permission-scoped RAG copilot (§4.5 / §4.7). Answers a natural-language
+   * question grounded ONLY in retrieved project content, with clickable
+   * citations to the exact task/comment used. Non-streaming JSON this sprint.
+   * Guarded like task reads; 403s if `projectId` is outside the caller's scope,
+   * and refuses honestly when retrieval is too weak to answer.
+   */
+  @Post('copilot/query')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(HasPermissionGuard)
+  @Permissions([PERMISSIONS.TASKS.TASK_READ_MANY])
+  @ApiOperation({ summary: 'Ask the project copilot a grounded question' })
+  @ApiResponse({
+    status: 200,
+    description: 'Grounded answer with citations (or an honest refusal).',
+    type: CopilotAnswerDto,
+  })
+  @ApiResponse({ status: 403, description: 'Project outside allowed scope.' })
+  copilotQuery(
+    @Request() req: CustomRequest,
+    @Body() dto: CopilotQueryDto,
+  ): Promise<CopilotAnswerDto> {
+    const user = req.user!;
+    return this.copilotService.answer({
+      userId: user.id,
+      roles: user.roles,
+      projectId: dto.projectId,
+      question: dto.question,
+    });
+  }
 
   /**
    * Retrieval-based effort estimate for a draft task (§4.6). Grounded in the

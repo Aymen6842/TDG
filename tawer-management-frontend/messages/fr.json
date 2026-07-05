@@ -204,6 +204,17 @@
         "noHistory": "Pas encore assez de tâches terminées pour estimer celle-ci.",
         "businessUnitScope": "D’après des tâches similaires dans toute l’unité.",
         "error": "Impossible d’obtenir une estimation pour le moment."
+      },
+      "copilot": {
+        "title": "Copilote du projet",
+        "subtitle": "Posez une question sur ce projet. Les réponses s’appuient uniquement sur ses tâches, commentaires et autres contenus, avec des citations que vous pouvez ouvrir.",
+        "placeholder": "Posez une question sur ce projet…",
+        "hint": "Entrée pour envoyer · Maj+Entrée pour un saut de ligne",
+        "ask": "Demander",
+        "thinking": "Recherche dans ce projet et rédaction d’une réponse…",
+        "error": "Impossible d’obtenir une réponse pour le moment. Veuillez réessayer.",
+        "sources": "Sources",
+        "refusalNote": "Aucun contenu correspondant n’a été trouvé dans ce projet, le copilote n’a donc pas répondu."
       }
     },
     "auth": {
@@ -1537,6 +1548,7 @@
           },
           "tabs": {
             "tasks": "Tâches",
+            "copilot": "Copilote",
             "members": "Membres et invitations",
             "sprints": "Sprints",
             "epics": "Epics",

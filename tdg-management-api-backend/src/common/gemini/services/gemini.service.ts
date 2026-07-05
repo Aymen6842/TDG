@@ -28,4 +28,41 @@ export class GeminiService {
       return null;
     }
   }
+
+  /**
+   * Grounded generation for the RAG copilot (§4.5). The system instruction is
+   * passed separately from the user turn so the retrieved (untrusted) context in
+   * `prompt` can never override the answering directive — a deliberate
+   * prompt-injection boundary (§7). Temperature is kept low for faithful,
+   * low-creativity answers. Returns the answer text plus the prompt token count
+   * (for `CopilotQueryLog` telemetry), or `null` if the call fails.
+   */
+  async generateGrounded(params: {
+    systemInstruction: string;
+    prompt: string;
+  }): Promise<{ text: string; promptTokens: number } | null> {
+    try {
+      const response = await this.googleGenAI.models.generateContent({
+        model: 'gemini-2.5-flash',
+        contents: params.prompt,
+        config: {
+          systemInstruction: params.systemInstruction,
+          temperature: 0.2,
+        },
+      });
+
+      const text = response.text ?? '';
+      const promptTokens = response.usageMetadata?.promptTokenCount ?? 0;
+      return { text, promptTokens };
+    } catch (error: unknown) {
+      this.backgroundActivitiesLoggerService.log(
+        `Gemini Service Error: ${error instanceof Error ? error.message : String(error)}`,
+        {
+          service: 'Gemini Service',
+          method: 'Grounded Generation',
+        },
+      );
+      return null;
+    }
+  }
 }

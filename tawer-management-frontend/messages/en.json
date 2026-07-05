@@ -204,6 +204,17 @@
         "noHistory": "Not enough completed tasks yet to estimate this one.",
         "businessUnitScope": "Based on similar tasks across the business unit.",
         "error": "Couldn’t fetch an estimate right now."
+      },
+      "copilot": {
+        "title": "Project copilot",
+        "subtitle": "Ask about this project. Answers are grounded only in its tasks, comments and other content, with citations you can open.",
+        "placeholder": "Ask a question about this project…",
+        "hint": "Enter to send · Shift+Enter for a new line",
+        "ask": "Ask",
+        "thinking": "Searching this project and drafting an answer…",
+        "error": "Couldn’t get an answer right now. Please try again.",
+        "sources": "Sources",
+        "refusalNote": "No matching content was found in this project, so the copilot didn’t answer."
       }
     },
     "auth": {
@@ -1537,6 +1548,7 @@
           },
           "tabs": {
             "tasks": "Tasks",
+            "copilot": "Copilot",
             "members": "Members & Invitations",
             "sprints": "Sprints",
             "epics": "Epics",
