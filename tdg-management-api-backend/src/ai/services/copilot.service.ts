@@ -5,7 +5,11 @@ import { PrismaService } from 'src/common/prisma/service/prisma.service';
 import { BackgroundActivitiesLoggerService } from 'src/common/logger/background-activities-logger/background-activities-logger.service';
 import { GeminiService } from 'src/common/gemini/services/gemini.service';
 import { ForbiddenCustomException } from 'src/common/exceptions/custom-exceptions/forbidden.exception';
-import { RetrievalService, RetrievalCandidate } from './retrieval.service';
+import {
+  RetrievalService,
+  RetrievalCandidate,
+  RetrievalOptions,
+} from './retrieval.service';
 
 /** A resolved, clickable citation the UI renders as a chip (§4.5). */
 export interface CopilotCitation {
@@ -72,6 +76,8 @@ export class CopilotService {
     roles: UserType[];
     question: string;
     projectId?: string | null;
+    /** Override the default ranking mode (hybrid/rerank); used by the eval. */
+    options?: RetrievalOptions;
   }): Promise<CopilotAnswer> {
     const { userId, roles, question, projectId } = params;
     const startedAt = Date.now();
@@ -82,6 +88,7 @@ export class CopilotService {
       roles,
       question,
       projectId,
+      options: params.options,
     });
 
     // ── Weak/empty retrieval → refuse without calling the model ──────────────

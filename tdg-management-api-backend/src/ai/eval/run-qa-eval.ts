@@ -11,13 +11,23 @@
  * Writes `out/qa-eval.{json,csv}`.
  *
  * Usage:
+ * `--retrieval` selects the ranking mode the copilot answers with, so answer
+ * quality can be compared across the same M5 ablation as the retrieval eval:
+ *   vector        → vector-only ANN
+ *   hybrid        → hybrid + RRF (default)
+ *   hybrid-rerank → hybrid + RRF + LLM reranker
+ *
+ * Usage:
  *   npm run ai:eval:qa
  *   npm run ai:eval:qa -- --actor=mohamed@tawer.tn
+ *   npm run ai:eval:qa -- --retrieval=vector
+ *   npm run ai:eval:qa -- --retrieval=hybrid-rerank
  */
 import { EmbeddingEntityType } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma/service/prisma.service';
 import { GeminiService } from 'src/common/gemini/services/gemini.service';
 import { CopilotService } from 'src/ai/services/copilot.service';
+import { RetrievalOptions } from 'src/ai/services/retrieval.service';
 import { AiAccessService } from 'src/ai/services/ai-access.service';
 
 import {
@@ -51,10 +61,34 @@ interface QuestionResult {
 const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+/** Map a `--retrieval=` value to explicit ranking flags (undefined → defaults). */
+function parseRetrievalMode(value: string | boolean | undefined): {
+  label: string;
+  options?: RetrievalOptions;
+} {
+  if (typeof value !== 'string') return { label: 'default (service config)' };
+  switch (value) {
+    case 'vector':
+      return { label: 'vector-only', options: { hybrid: false, rerank: false } };
+    case 'hybrid':
+      return { label: 'hybrid+RRF', options: { hybrid: true, rerank: false } };
+    case 'hybrid-rerank':
+      return {
+        label: 'hybrid+RRF+rerank',
+        options: { hybrid: true, rerank: true },
+      };
+    default:
+      throw new Error(
+        `Unknown --retrieval="${value}". Use vector | hybrid | hybrid-rerank.`,
+      );
+  }
+}
+
 async function main(): Promise<void> {
   const args = parseArgs(process.argv.slice(2));
   const actorEmail =
     typeof args.actor === 'string' ? args.actor : DEFAULT_ACTOR_EMAIL;
+  const retrieval = parseRetrievalMode(args.retrieval);
   // Space out questions so the copilot + judge calls stay under the Gemini
   // free-tier generation RPM; a genuine throttle is still retried below.
   const delayMs = args.delayMs ? Number(args.delayMs) : 6000;
@@ -74,7 +108,8 @@ async function main(): Promise<void> {
 
     console.log(
       `\nQA eval — actor ${actor.name} (${actor.roles.join(', ')}), ` +
-        `${allowed.length} project(s) in scope, ${gold.length} questions\n`,
+        `${allowed.length} project(s) in scope, ${gold.length} questions, ` +
+        `retrieval: ${retrieval.label}\n`,
     );
 
     const results: QuestionResult[] = [];
@@ -88,6 +123,7 @@ async function main(): Promise<void> {
         resolver,
         judge,
         actor,
+        retrieval.options,
       );
       results.push(result);
       console.log(
@@ -144,6 +180,7 @@ async function gradeWithRetry(
   resolver: RefResolver,
   judge: FaithfulnessJudge,
   actor: EvalActor,
+  options: RetrievalOptions | undefined,
   maxRetries = 4,
 ): Promise<QuestionResult> {
   for (let attempt = 0; ; attempt += 1) {
@@ -154,6 +191,7 @@ async function gradeWithRetry(
       resolver,
       judge,
       actor,
+      options,
     );
     const throttled = result.answer.startsWith(CopilotService.UNAVAILABLE);
     if (!throttled || attempt >= maxRetries) return result;
@@ -169,11 +207,13 @@ async function gradeQuestion(
   resolver: RefResolver,
   judge: FaithfulnessJudge,
   actor: EvalActor,
+  options: RetrievalOptions | undefined,
 ): Promise<QuestionResult> {
   const answer = await copilot.answer({
     userId: actor.userId,
     roles: actor.roles,
     question: item.question,
+    options,
   });
 
   const refused = answer.insufficientContext;

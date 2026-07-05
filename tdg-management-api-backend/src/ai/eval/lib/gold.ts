@@ -44,7 +44,29 @@ export function loadJsonl<T>(fileName: string): T[] {
     });
 }
 
-export const loadRetrievalGold = (): RetrievalGoldItem[] =>
-  loadJsonl<RetrievalGoldItem>('retrieval.jsonl');
+/**
+ * Named retrieval gold sets. `semantic` (default) is the original natural-language
+ * set; `keyword` is a lexical-stress set of identifier / acronym / proper-noun
+ * queries (task keys like "NDF-24", "LoRaWAN vs NB-IoT", "e-Dinar") — the queries
+ * a pure bi-encoder is weakest on and where hybrid+RRF is expected to help.
+ */
+export const RETRIEVAL_GOLD_SETS: Record<string, string> = {
+  semantic: 'retrieval.jsonl',
+  keyword: 'retrieval-keyword.jsonl',
+};
+
+export const loadRetrievalGold = (
+  set: string = 'semantic',
+): RetrievalGoldItem[] => {
+  const fileName = RETRIEVAL_GOLD_SETS[set];
+  if (!fileName) {
+    throw new Error(
+      `Unknown retrieval gold set "${set}". Available: ${Object.keys(
+        RETRIEVAL_GOLD_SETS,
+      ).join(', ')}.`,
+    );
+  }
+  return loadJsonl<RetrievalGoldItem>(fileName);
+};
 
 export const loadQaGold = (): QaGoldItem[] => loadJsonl<QaGoldItem>('qa.jsonl');
