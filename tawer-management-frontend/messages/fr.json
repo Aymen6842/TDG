@@ -1,0 +1,2354 @@
+{
+  "shared": {
+    "header": {
+      "languageSelector": {
+        "ariaLabel": "Sélectionner la langue",
+        "searchPlaceholder": "Rechercher une langue...",
+        "noLanguageFound": "Aucune langue trouvée."
+      },
+      "search": {
+        "placeholder": "Rechercher...",
+        "commandPlaceholder": "Tapez une commande ou recherchez...",
+        "noResults": "Aucun résultat trouvé."
+      },
+      "userMenu": {
+        "defaultName": "Utilisateur",
+        "defaultEmail": "user@example.com",
+        "myAccount": "Mon compte",
+        "accountSettings": "Paramètres du compte",
+        "notifications": "Notifications",
+        "upgrade": "Passer à la version Pro",
+        "logout": "Déconnexion"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "empty": "Vous n'avez encore aucune notification",
+        "viewAll": "Voir tout",
+        "accept": "Accepter",
+        "decline": "Refuser"
+      }
+    },
+    "sidebar": {
+      "navigation": {
+        "welcome": "Bienvenue",
+        "projectsManagement": "Gestion des projets",
+        "kanban": "Kanban",
+        "runningProjects": "Projets en cours",
+        "todoList": "Liste de tâches",
+        "personalTasks": "Tâches personnelles",
+        "projectTasks": "Tâches du projet",
+        "calendar": "Calendrier",
+        "meetings": "Réunions",
+        "events": "Événements",
+        "infrastructure": "Infrastructure",
+        "servers": "Gestion des serveurs",
+        "services": "Gestion des services",
+        "personalCalendar": "Mon calendrier personnel",
+        "usersManagement": "Gestion des utilisateurs",
+        "users": "Utilisateurs",
+        "teams": "Équipes",
+        "accountSettings": "Paramètres du compte",
+        "account": "Compte",
+        "passwords": "Mots de passe",
+        "appearance": "Apparence",
+        "notifications": "Notifications",
+        "viewAllNotifications": "Voir toutes les notifications",
+        "notificationsSettings": "Paramètres des notifications",
+        "myProfile": "Mon profil"
+      }
+    },
+    "welcome": {
+      "pleaseLogIn": "Veuillez vous connecter",
+      "needSignIn": "Vous devez être connecté pour accéder à cette page.",
+      "userDefault": "Utilisateur",
+      "companyDefault": "Votre entreprise",
+      "welcome": "Bienvenue <name></name>",
+      "hopeEnjoyDay": "Nous espérons que vous passerez une bonne journée chez"
+    },
+    "theme": {
+      "dark": "Sombre",
+      "light": "Clair",
+      "changement": {
+        "title": "Thème",
+        "subtitle": "Sélectionnez le thème du tableau de bord."
+      }
+    },
+    "pagination": {
+      "previous": "Précédent",
+      "next": "Suivant",
+      "selected": "Page {page} sur {pages} ({records} enregistrements au total)"
+    },
+    "filesUpload": {
+      "uploadAriaLabel": "Téléverser un fichier image",
+      "defaultImageAlt": "Aperçu de l'image par défaut",
+      "dropHere": "Déposez votre image ici",
+      "selectImage": "Sélectionner une image",
+      "selectImages": "Sélectionner des images",
+      "uploadedFiles": "Fichiers téléversés ({count})",
+      "addMore": "Ajouter plus",
+      "imageAlt": "Image de l'élément {index}"
+    },
+    "dialogs": {
+      "deletion": {
+        "confirm": "Supprimer",
+        "cancel": "Annuler",
+        "deleting": "Suppression..."
+      }
+    },
+    "forms": {
+      "textEditor": {
+        "link": {
+          "labels": {
+            "title": "Lien",
+            "url": "URL",
+            "cancel": "Annuler",
+            "save": "Enregistrer"
+          },
+          "tooltip": "Insérer un lien"
+        },
+        "unlink": {
+          "tooltip": "Supprimer le lien"
+        }
+      }
+    },
+    "errors": {
+      "fileUploads": {
+        "maxSize": "La taille du fichier ne doit pas dépasser {size}.",
+        "maxSizeMultipleFilesUpload": "Certains fichiers dépassent la taille maximale de {size}.",
+        "invalidType": "Le fichier « {name} » n'est pas dans un format pris en charge.",
+        "maxFiles": "Vous pouvez téléverser un maximum de {max} fichiers."
+      },
+      "deletion": {
+        "serverError": "Une erreur serveur s'est produite. Veuillez réessayer plus tard."
+      },
+      "permissionDenied": "Vous n'avez pas la permission d'effectuer cette action."
+    },
+    "success": {
+      "deletion": "Suppression réussie."
+    }
+  },
+  "modules": {
+    "auth": {
+      "externalAuth": {
+        "emailLinkedWithAnAccount": "Erreur d'authentification",
+        "generalError": "Échec de l'authentification Google",
+        "tryAgainOrUseAnotherMethod": "Cet e-mail est déjà lié à un autre compte. Essayez d'utiliser le formulaire de connexion à la place."
+      },
+      "signUp": {
+        "title": "Créez votre compte",
+        "description": "Saisissez vos informations ci-dessous pour créer un compte.",
+        "fields": {
+          "fullName": {
+            "label": "Nom complet",
+            "placeholder": "John Doe"
+          },
+          "email": {
+            "label": "Adresse e-mail",
+            "placeholder": "example@domain.com"
+          },
+          "phone": {
+            "label": "Numéro de téléphone",
+            "placeholder": "+21629123456"
+          },
+          "password": {
+            "label": "Mot de passe",
+            "placeholder": "Saisissez votre mot de passe",
+            "forgot": "Mot de passe oublié ?"
+          }
+        },
+        "actions": {
+          "signingUp": "Création du compte...",
+          "signup": "Créer un compte",
+          "signUpWithGoogle": "S'inscrire avec Google",
+          "login": "Se connecter"
+        },
+        "orContinueWith": "Ou continuer avec",
+        "hasAccount": "Vous avez déjà un compte ?",
+        "linkText": "Vous avez déjà un compte ? <link>Se connecter</link>"
+      },
+      "signIn": {
+        "title": "Connectez-vous à votre compte",
+        "description": "Saisissez votre adresse e-mail pour vous connecter.",
+        "subtitle": "Saisissez votre adresse e-mail pour vous connecter.",
+        "requestDescription": "Saisissez votre e-mail ou votre numéro de téléphone pour recevoir un code de connexion.",
+        "fields": {
+          "email": {
+            "label": "E-mail",
+            "placeholder": "example@domain.com"
+          },
+          "password": {
+            "label": "Mot de passe",
+            "placeholder": "Saisissez votre mot de passe",
+            "forgot": "Mot de passe oublié ?"
+          }
+        },
+        "orContinueWith": "Ou continuer avec",
+        "actions": {
+          "login": "Se connecter",
+          "loggingIn": "Connexion en cours...",
+          "loginWithGoogle": "Se connecter avec Google",
+          "signup": "S'inscrire",
+          "back": "Retour"
+        },
+        "noAccount": "Vous n'avez pas de compte ?",
+        "noAccountText": "Vous n'avez pas de compte ?",
+        "createNow": "créez-en un maintenant",
+        "linkText": "Vous n'avez pas de compte ? <link>créez-en un maintenant</link>"
+      },
+      "resetPassword": {
+        "title": "Mot de passe oublié",
+        "description": "Saisissez votre adresse e-mail et nous vous enverrons les instructions pour réinitialiser votre mot de passe.",
+        "fields": {
+          "email": {
+            "label": "Adresse e-mail",
+            "placeholder": "Saisissez votre adresse e-mail"
+          }
+        },
+        "actions": {
+          "sendResetInstructions": "Envoyer les instructions de réinitialisation",
+          "sending": "Envoi en cours...",
+          "login": "Se connecter"
+        },
+        "rememberPassword": "Vous vous souvenez de votre mot de passe ?",
+        "success": "Instructions de réinitialisation envoyées ! Vérifiez votre e-mail.",
+        "alreadyHaveAccount": "Vous avez déjà un compte ?",
+        "comebackButton": "Se connecter",
+        "steps": {
+          "email": {
+            "label": "E-mail",
+            "placeholder": "m@example.com",
+            "button": {
+              "default": "Envoyer l'e-mail",
+              "loading": "Envoi en cours..."
+            },
+            "successMessage": "Un code de vérification a été envoyé à votre adresse e-mail.",
+            "description": "Saisissez votre adresse e-mail pour recevoir un lien de réinitialisation."
+          },
+          "otp": {
+            "title": "Saisissez le code de vérification",
+            "description": "Veuillez saisir le code à 6 chiffres envoyé à votre adresse e-mail.",
+            "label": "Code de vérification",
+            "placeholder": "123456",
+            "button": {
+              "default": "Vérifier le code",
+              "loading": "Vérification en cours..."
+            }
+          },
+          "newPassword": {
+            "title": "Définir un nouveau mot de passe",
+            "description": "Saisissez votre nouveau mot de passe ci-dessous.",
+            "passwordLabel": "Nouveau mot de passe",
+            "passwordPlaceholder": "••••••••",
+            "confirmPasswordLabel": "Confirmer le nouveau mot de passe",
+            "confirmPasswordPlaceholder": "••••••••",
+            "button": {
+              "default": "Réinitialiser le mot de passe",
+              "loading": "Réinitialisation en cours..."
+            }
+          },
+          "success": {
+            "title": "Mot de passe réinitialisé avec succès !",
+            "description": "Votre mot de passe a été modifié. Vous pouvez maintenant vous connecter avec votre nouveau mot de passe.",
+            "button": "Retour à l'accueil"
+          }
+        }
+      },
+      "account": {
+        "personalInfoChangement": {
+          "fields": {
+            "name": {
+              "label": "Nom",
+              "placeholder": "Votre nom",
+              "description": "C'est le nom qui sera affiché sur votre profil et dans les e-mails."
+            },
+            "phone": {
+              "label": "Téléphone",
+              "placeholder": "Votre téléphone",
+              "description": "C'est le numéro de téléphone qui sera affiché sur votre profil"
+            },
+            "image": {
+              "label": "Photo de profil"
+            },
+            "email": {
+              "label": "E-mail",
+              "placeholder": "your.email@example.com",
+              "description": "Votre adresse e-mail ne peut pas être modifiée."
+            },
+            "language": {
+              "label": "Langue"
+            }
+          },
+          "actions": {
+            "update": "Mettre à jour le compte",
+            "updating": "Mise à jour en cours..."
+          }
+        },
+        "passwordChangement": {
+          "currentPassword": "Mot de passe actuel",
+          "currentPasswordPlaceholder": "Saisissez le mot de passe actuel",
+          "currentPasswordDescription": "Saisissez votre mot de passe actuel pour vérification.",
+          "newPassword": "Nouveau mot de passe",
+          "newPasswordPlaceholder": "Saisissez le nouveau mot de passe",
+          "newPasswordDescription": "Votre nouveau mot de passe doit contenir au moins 8 caractères.",
+          "confirmationPassword": "Confirmer le mot de passe",
+          "confirmationPasswordPlaceholder": "Confirmez le nouveau mot de passe",
+          "confirmationPasswordDescription": "Ressaisissez votre nouveau mot de passe pour confirmer.",
+          "updateButton": "Mettre à jour le mot de passe",
+          "updatingButton": "Mise à jour en cours..."
+        }
+      },
+      "validations": {
+        "fullName": {
+          "required": "Votre nom est requis.",
+          "invalid": "Le nom complet est invalide"
+        },
+        "email": {
+          "invalid": "L'adresse e-mail est invalide.",
+          "required": "L'adresse e-mail est requise."
+        },
+        "phone": {
+          "invalid": "Le numéro de téléphone est invalide.",
+          "required": "Le numéro de téléphone est requis."
+        },
+        "password": {
+          "passwordRequired": "Le mot de passe est requis",
+          "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+          "mismatch": "Les mots de passe ne correspondent pas."
+        },
+        "image": {
+          "invalid": "Seules les images JPEG/PNG/WEBP sont autorisées.",
+          "required": "La photo de profil est requise."
+        },
+        "otp": {
+          "exactLength": "Le code doit contenir exactement {length} chiffres.",
+          "required": {
+            "title": "Code requis",
+            "description": "Le code est requis pour se connecter"
+          }
+        },
+        "emailOrPasswordRequired": {
+          "title": "E-mail ou numéro de téléphone requis",
+          "description": "Veuillez fournir une adresse e-mail ou un numéro de téléphone pour continuer."
+        },
+        "resetPasswordEmail": {
+          "invalid": "Veuillez saisir une adresse e-mail valide"
+        }
+      },
+      "success": {
+        "updatedInfo": "Informations mises à jour avec succès",
+        "passwordUpdated": "Mot de passe mis à jour avec succès"
+      },
+      "errors": {
+        "serverError": "Une erreur serveur inattendue s'est produite. Veuillez réessayer plus tard.",
+        "incorrectEmailOrPassword": "E-mail ou mot de passe incorrect.",
+        "invalidData": "Veuillez vérifier les informations saisies.",
+        "notFound": "Utilisateur introuvable.",
+        "userNotFound": "Utilisateur introuvable.",
+        "accountCreatedWithSocialLogin": "Compte créé avec Facebook ou Google.",
+        "technicalIssue": "Une erreur technique s'est produite. Veuillez réessayer plus tard.",
+        "emailAlreadyExist": "Cet e-mail existe déjà.",
+        "invalidCode": "Le code que vous avez saisi est invalide.",
+        "signInAfterSignUpFailed": "Compte créé avec succès mais la connexion automatique a échoué. Veuillez essayer de vous connecter manuellement.",
+        "invalidOrExpiredCode": "Le code d'authentification à deux facteurs est invalide ou expiré !",
+        "exceededAttempts": "Nombre maximum de tentatives dépassé pour l'authentification à deux facteurs !",
+        "unexpectedError": "Une erreur inattendue s'est produite.",
+        "passwordChangementFailed": "Échec de la modification du mot de passe",
+        "resetPasswordFailedToSend": "Échec de l'envoi des instructions de réinitialisation. Veuillez réessayer.",
+        "invalidPassword": "Votre mot de passe actuel est invalide. Veuillez saisir le bon mot de passe ou vous déconnecter et réinitialiser votre mot de passe."
+      },
+      "warnings": {
+        "incorrectEmailOrPassword": "E-mail ou mot de passe incorrect.",
+        "invalidData": "Données fournies invalides.",
+        "userNotFound": "Utilisateur introuvable.",
+        "accountCreatedWithFacebookOrGoogle": "Ce compte a été créé avec Facebook ou Google.",
+        "unexpectedError": "Une erreur inattendue s'est produite.",
+        "emailAlreadyExist": "Cet e-mail existe déjà.",
+        "featureNotAvailableForFacebookOrGoogle": "Cette fonctionnalité n'est pas disponible pour les comptes créés avec Facebook ou Google.",
+        "oldPasswordIncorrect": "Le mot de passe actuel que vous avez saisi est incorrect.",
+        "serverError": "Une erreur serveur s'est produite. Veuillez réessayer plus tard.",
+        "yourTokenHasExpired": "Votre jeton a expiré. Veuillez en demander un nouveau.",
+        "tokenIsInvalid": "Le jeton est invalide.",
+        "passwordMinLengthError": "Le mot de passe doit contenir au moins 8 caractères.",
+        "passwordsDoNotMatchError": "Les mots de passe ne correspondent pas.",
+        "nameMinLengthError": "Le nom doit contenir au moins 2 caractères.",
+        "fillAllFields": "Veuillez remplir tous les champs requis.",
+        "emailPasswordError": "L'e-mail et le mot de passe sont requis.",
+        "emailError": "Veuillez saisir une adresse e-mail valide.",
+        "passwordError": "Le mot de passe est requis."
+      }
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "usersExtractionInput": {
+        "labels": {
+          "users": "Utilisateurs"
+        },
+        "placeholders": {
+          "users": "Rechercher des utilisateurs..."
+        },
+        "noResults": {
+          "users": "Aucun utilisateur trouvé"
+        }
+      },
+      "profile": {
+        "userProfile": "Profil utilisateur",
+        "profile": "Profil",
+        "about": "À propos",
+        "contacts": "Coordonnées",
+        "experienceAndMetrics": "Expérience et statistiques",
+        "employedSince": "Employé depuis",
+        "totalTimeWorked": "Temps de travail total",
+        "workedOnProjects": "Projets travaillés",
+        "projectsNumber": "{count, plural, one {# projet} other {# projets}}",
+        "averageSession": "Session moyenne",
+        "avgDailyMood": "Humeur quotidienne moyenne",
+        "avgRatedPerformance": "Note de performance moyenne",
+        "employeePerformance": "Performance de l'employé"
+      },
+      "connections": {
+        "title": "Connexions"
+      },
+      "teams": {
+        "title": "Équipes",
+        "members": "Membres {count}",
+        "upload": {
+          "createTeam": {
+            "button": "Créer une équipe",
+            "title": "Créer une nouvelle équipe",
+            "description": "Remplissez les détails ci-dessous pour créer une nouvelle équipe et assigner des membres et des responsables."
+          },
+          "updateTeam": {
+            "button": "Mettre à jour l'équipe",
+            "title": "Mettre à jour l'équipe",
+            "description": "Mettez à jour les informations, membres ou responsables de l'équipe."
+          },
+          "form": {
+            "labels": {
+              "name": "Nom de l'équipe",
+              "managers": "Responsables",
+              "members": "Membres"
+            },
+            "placeholders": {
+              "name": "Saisissez le nom de l'équipe",
+              "managers": "Rechercher des responsables...",
+              "members": "Rechercher des membres..."
+            },
+            "noResults": {
+              "managers": "Aucun responsable trouvé",
+              "members": "Aucun membre trouvé"
+            }
+          }
+        },
+        "actions": {
+          "create": "Créer une équipe",
+          "creating": "Création en cours...",
+          "createTeam": "Créer une équipe",
+          "updateTeam": "Mettre à jour l'équipe",
+          "cancel": "Annuler"
+        },
+        "table": {
+          "loading": "Chargement des équipes...",
+          "noResults": "Aucun résultat trouvé.",
+          "headers": {
+            "name": "Nom de l'équipe",
+            "members": "Membres",
+            "managers": "Responsables",
+            "actions": "Actions"
+          },
+          "actions": {
+            "view": "Voir les détails",
+            "edit": "Modifier",
+            "delete": "Supprimer"
+          },
+          "filters": {
+            "columns": "Colonnes",
+            "search": {
+              "placeholder": "Rechercher des équipes..."
+            }
+          }
+        },
+        "deletion": {
+          "title": "Supprimer des équipes",
+          "description": "Êtes-vous sûr de vouloir supprimer les équipes sélectionnées ?"
+        },
+        "success": {
+          "upload": "Équipe enregistrée avec succès"
+        }
+      },
+      "table": {
+        "more": "+{count} de plus",
+        "headers": {
+          "name": "Nom complet",
+          "createdAt": "Membre depuis",
+          "workedProjects": "Projets travaillés",
+          "workedHours": "Heures travaillées",
+          "avgSession": "Session moy.",
+          "role": "Rôle",
+          "email": "E-mail",
+          "performance": "Performance",
+          "avgPerformanceRating": "Note de performance moy.",
+          "avgDailyMood": "Humeur quotidienne moy.",
+          "teams": "Équipes",
+          "notifications": "Paramètres des notifications"
+        },
+        "notifications": {
+          "email": {
+            "enabled": "Notifications par e-mail activées",
+            "disabled": "Notifications par e-mail désactivées"
+          },
+          "telegram": {
+            "enabled": "Notifications Telegram activées",
+            "disabled": "Notifications Telegram désactivées"
+          },
+          "ntfy": {
+            "enabled": "Notifications NTFY activées",
+            "disabled": "Notifications NTFY désactivées"
+          }
+        },
+        "filters": {
+          "search": {
+            "placeholder": "Rechercher des utilisateurs...",
+            "by": "Par :",
+            "name": "Nom",
+            "email": "E-mail"
+          },
+          "roles": {
+            "label": "Rôles",
+            "placeholder": "Sélectionner un rôle",
+            "noResults": "Aucun résultat trouvé."
+          },
+          "columns": "Colonnes"
+        },
+        "actions": {
+          "title": "Actions",
+          "viewDetails": "Voir les détails",
+          "viewProjects": "Voir les projets travaillés",
+          "viewWorkedTimeHistory": "Voir l'historique du temps travaillé",
+          "edit": "Modifier",
+          "ntfyTopic": {
+            "copy": "Copier le sujet de l'application NTFY",
+            "copied": "Copié dans le presse-papiers !"
+          },
+          "delete": "Supprimer"
+        },
+        "loading": "Chargement...",
+        "noResults": "Aucun résultat."
+      },
+      "roles": {
+        "ceo": "Directeur Général",
+        "cto": "Directeur Technique",
+        "cmo": "Directeur Marketing",
+        "tawerCreativeProjectManager": "Chef de Projet Créatif",
+        "graphicDesigner": "Graphiste",
+        "socialMediaManager": "Responsable des Réseaux Sociaux",
+        "contentWriter": "Rédacteur de Contenu",
+        "videoEditor": "Monteur Vidéo",
+        "uiUxDesigner": "Designer UI/UX",
+        "tawerDevProjectManager": "Chef de Projet Développement",
+        "softwareEngineer": "Ingénieur Logiciel",
+        "dataEngineer": "Ingénieur Data",
+        "devopsEngineer": "Ingénieur DevOps",
+        "qualityAssuranceEngineer": "Ingénieur Assurance Qualité",
+        "productOwner": "Product Owner",
+        "scrumMaster": "Scrum Master",
+        "businessAnalyst": "Analyste Métier",
+        "mobileAppDeveloper": "Développeur d'Applications Mobiles",
+        "frontendDeveloper": "Développeur Frontend",
+        "backendDeveloper": "Développeur Backend",
+        "fullStackDeveloper": "Développeur Full Stack",
+        "databaseAdministrator": "Administrateur de Base de Données",
+        "systemsArchitect": "Architecte Systèmes",
+        "networkEngineer": "Ingénieur Réseau",
+        "cyberSecuritySpecialist": "Spécialiste en Cybersécurité",
+        "seoSpecialist": "Spécialiste SEO",
+        "customerSupport": "Support Client",
+        "hrManager": "Responsable RH",
+        "pendingApproval": "Approbation en attente",
+        "tawerCreativeIntern": "Stagiaire Créatif",
+        "tawerDevIntern": "Stagiaire Développement"
+      },
+      "deletion": {
+        "confirmation": {
+          "title": "Supprimer l'utilisateur",
+          "message": "Êtes-vous sûr de vouloir supprimer cet utilisateur ? Cette action est irréversible.",
+          "cancel": "Annuler",
+          "delete": "Supprimer",
+          "deleting": "Suppression en cours..."
+        }
+      },
+      "upload": {
+        "createUser": {
+          "title": "Créer un nouvel utilisateur",
+          "description": "Ajoutez un nouvel utilisateur au système. Remplissez les informations requises ci-dessous.",
+          "button": "Créer l'utilisateur"
+        },
+        "updateUser": {
+          "title": "Mettre à jour l'utilisateur",
+          "description": "Mettez à jour l'utilisateur dans le système. Remplissez les informations requises ci-dessous.",
+          "button": "Mettre à jour l'utilisateur"
+        },
+        "form": {
+          "labels": {
+            "fullName": "Nom complet",
+            "email": "E-mail",
+            "phone": "Téléphone",
+            "password": "Mot de passe",
+            "roles": "Rôles de l'utilisateur",
+            "image": "Photo de l'utilisateur",
+            "notificationMethod": "Préférences de notification",
+            "telegramChatId": "ID de chat Telegram"
+          },
+          "placeholders": {
+            "fullName": "John Doe",
+            "email": "john.doe@example.com",
+            "phone": "+21621232932",
+            "password": "Saisissez un mot de passe fort",
+            "role": "Sélectionner les rôles",
+            "telegramChatId": "Saisissez votre ID de chat Telegram"
+          },
+          "ariaLabels": {
+            "hidePassword": "Masquer le mot de passe",
+            "showPassword": "Afficher le mot de passe"
+          },
+          "options": {
+            "email": "Notifications par e-mail",
+            "telegram": "Notifications Telegram",
+            "ntfy": "Notifications push NTFY"
+          },
+          "descriptions": {
+            "notificationMethod": "Choisissez comment vous souhaitez recevoir les notifications.",
+            "telegramChatId": "Collez votre ID de chat Telegram pour recevoir des notifications via Telegram."
+          },
+          "hints": {
+            "telegramChatId": "Vous pouvez obtenir votre ID de chat via @userinfobot sur Telegram."
+          },
+          "cancel": "Annuler",
+          "creating": "Création en cours...",
+          "createUser": "Créer l'utilisateur"
+        }
+      },
+      "success": {
+        "upload": "Utilisateur enregistré avec succès",
+        "ntfyTopicCopied": "Sujet de l'application NTFY copié dans le presse-papiers !"
+      },
+      "validations": {
+        "teams": {
+          "name": {
+            "required": "Le nom de l'équipe est requis",
+            "invalid": "Le nom de l'équipe est invalide"
+          },
+          "members": {
+            "required": "Au moins un membre doit être ajouté",
+            "cannotContainManagers": "Les responsables ne peuvent pas être sélectionnés comme membres de l'équipe"
+          },
+          "managers": {
+            "required": "Au moins un responsable doit être ajouté",
+            "cannotBeMembers": "Les responsables ne peuvent pas également être membres de l'équipe"
+          }
+        },
+        "fullName": {
+          "required": "Votre nom est requis.",
+          "invalid": "Le nom complet est invalide"
+        },
+        "email": {
+          "invalid": "L'adresse e-mail est invalide.",
+          "required": "L'adresse e-mail est requise."
+        },
+        "phone": {
+          "invalid": "Le numéro de téléphone est invalide.",
+          "required": "Le numéro de téléphone est requis."
+        },
+        "password": {
+          "required": "Le mot de passe est requis",
+          "tooShort": "Le mot de passe doit contenir au moins 8 caractères",
+          "mismatch": "Les mots de passe ne correspondent pas."
+        },
+        "image": {
+          "invalid": "Seules les images JPEG/PNG/WEBP sont autorisées.",
+          "required": "La photo de profil est requise."
+        },
+        "roles": {
+          "required": "Au moins un rôle doit être sélectionné"
+        },
+        "notificationsSettings": {
+          "noNotificationsReceivedWithoutTelegramChatId": "Aucune notification reçue sans ID de chat Telegram"
+        }
+      },
+      "errors": {
+        "teamAlreadyExist": "Une équipe avec ces informations existe déjà.",
+        "userAlreadyExist": "Un utilisateur avec ces informations existe déjà.",
+        "invalidFormat": "Le format des données fournies est invalide. Veuillez vérifier et réessayer.",
+        "updateUserFailed": "Échec de la mise à jour de l'utilisateur. Veuillez réessayer plus tard.",
+        "updateTeamFailed": "Échec de la mise à jour de l'équipe. Veuillez réessayer plus tard.",
+        "serverError": "Une erreur serveur inattendue s'est produite. Veuillez réessayer plus tard."
+      },
+      "actions": {
+        "cancel": "Annuler",
+        "creating": "Création en cours...",
+        "createUser": "Créer l'utilisateur",
+        "updateUser": "Mettre à jour l'utilisateur"
+      }
+    },
+    "tracking": {
+      "welcome": {
+        "daily": {
+          "title": "Bienvenue !",
+          "description": "Nous espérons que vous passerez une bonne journée chez <company></company>"
+        }
+      },
+      "workedDaysTracking": {
+        "loadingTitle": "Chargement des jours travaillés...",
+        "loadingSubtitle": "Veuillez patienter pendant que nous récupérons les données.",
+        "noWorkedDaysTitle": "Aucun jour travaillé enregistré",
+        "noWorkedDaysSubtitle": "Aucun enregistrement disponible pour cette année.",
+        "overviewTitle": "Aperçu des jours travaillés",
+        "calendar": {
+          "office": "Bureau",
+          "remote": "Télétravail",
+          "total": "Total",
+          "hours": "h",
+          "legend": {
+            "office": "Bureau",
+            "remote": "Télétravail",
+            "mixed": "Mixte",
+            "none": "Aucun travail"
+          }
+        }
+      },
+      "workerRating": {
+        "title": "Évaluation quotidienne de performance",
+        "description": "Veuillez prendre un moment pour évaluer la performance d'aujourd'hui. Votre retour nous aide à suivre les progrès, identifier les points forts et offrir un meilleur accompagnement au fil du temps.",
+        "performanceRating": "Note de performance",
+        "managerNotes": "Notes du responsable",
+        "managerNotesPlaceholder": "Ajoutez une courte note sur la performance, les réussites ou les axes d'amélioration du jour.",
+        "closeButton": "Fermer",
+        "submitButton": "Envoyer la note",
+        "success": {
+          "upload": "Votre note a été envoyée avec succès"
+        }
+      },
+      "userActivity": {
+        "period": "du {from} au {to}",
+        "activityTimelineTitle": "Chronologie d'activité",
+        "activityTimelineSubtitle": "Suivez vos sessions de travail, votre humeur et vos notes quotidiennes",
+        "loadingTitle": "Chargement de l'activité",
+        "loadingSubtitle": "Veuillez patienter pendant que nous récupérons vos données d'activité",
+        "noActivityTitle": "Aucune activité pour le moment",
+        "noActivitySubtitle": "Commencez à enregistrer vos sessions de travail pour les voir ici",
+        "workSession": "Session de travail",
+        "sessions": "{count} sessions",
+        "workedTime": "Temps travaillé",
+        "rateWorkerDay": "Évaluez votre journée de travail",
+        "start": "Début",
+        "end": "Fin",
+        "mood": "Humeur du jour",
+        "workerNotes": "Notes de l'employé",
+        "managerRating": "Note du responsable",
+        "managerNotes": "Notes du responsable",
+        "deviceType": {
+          "desktop": "Ordinateur de bureau",
+          "mobile": "Mobile",
+          "tablet": "Tablette",
+          "other": "Autre"
+        }
+      },
+      "checkIn": {
+        "title": "<company></company>",
+        "subtitle": "Content de vous revoir ! Prêt à commencer votre journée ?",
+        "checkIn": "Pointer l'arrivée",
+        "checkingIn": "Pointage en cours...",
+        "remoteCheckIn": "Pointer à distance",
+        "officeCheckIn": "Pointer au bureau",
+        "joinPlatformWithoutCheckIn": "Rejoindre la plateforme (sans pointage)",
+        "joiningPlatform": "Connexion à la plateforme...",
+        "viewerTooltip": "Vous rejoindrez la plateforme en tant qu'observateur. Votre temps ne sera pas suivi et vous ne serez pas considéré comme en activité."
+      },
+      "journeyNotes": {
+        "title": "Réflexion quotidienne",
+        "description": "Prenez un moment pour réfléchir à votre journée. Partager votre humeur et ce sur quoi vous avez travaillé nous aide à mieux comprendre votre expérience et à soutenir votre progression.",
+        "moodLabel": "Comment s'est passée votre journée ?",
+        "moodDescriptions": {
+          "0": "Très difficile",
+          "1": "Difficile",
+          "2": "Neutre",
+          "3": "Productive",
+          "4": "Très bonne",
+          "5": "Excellente"
+        },
+        "workNoteLabel": "Sur quoi avez-vous travaillé aujourd'hui ?",
+        "workNotePlaceholder": "Une courte note sur ce sur quoi vous avez travaillé ou ce que vous avez accompli aujourd'hui. Chaque effort compte.",
+        "skipButton": "Passer pour l'instant",
+        "submitButton": "Partager ma journée",
+        "success": {
+          "upload": "Merci d'avoir pris le temps de partager vos notes de journée avec nous. Votre effort compte beaucoup et nous vous en sommes vraiment reconnaissants."
+        }
+      },
+      "checkout": "Pointer le départ",
+      "viewerExitHint": "Vous êtes en mode observateur. Quittez ce mode pour pointer votre arrivée.",
+      "success": {
+        "checkout": "Votre départ a été enregistré avec succès.",
+        "viewerCheckout": "Sortie du mode observateur effectuée avec succès."
+      },
+      "warnings": {
+        "joinedViewerMode": "Vous êtes maintenant en mode observateur. Cela ne compte pas comme temps de travail actif."
+      },
+      "errors": {
+        "checkOutFailed": "Échec du pointage de départ. Veuillez réessayer ou contacter l'équipe technique si le problème persiste.",
+        "checkInFailed": "Échec du pointage d'arrivée. Veuillez réessayer ou contacter l'équipe technique si le problème persiste.",
+        "failedToUploadWorkerRating": "Échec de l'envoi de votre évaluation. Veuillez réessayer ou contacter l'équipe technique.",
+        "workSessionTrackingFailed": "Échec du suivi de l'état de votre session de travail. Veuillez réessayer !",
+        "failedToSubmitJourneyNotes": "Merci d'avoir essayé de soumettre vos notes de fin de journée, nous apprécions vraiment votre effort. Malheureusement, nous n'avons pas pu envoyer votre soumission en raison d'un problème technique. Vous pouvez passer cette étape pour l'instant et en informer l'équipe technique afin qu'elle puisse résoudre le problème.",
+        "workSessionAlreadyOpenned": "Votre session de travail est déjà ouverte. Essayez de la fermer si elle est ouverte dans un autre espace de travail."
+      }
+    },
+    "notifications": {
+      "title": "Notifications",
+      "subtitle": "Gérez vos notifications et restez informé des dernières actualités et mises à jour. Vous pouvez ici consulter toutes vos notifications et personnaliser vos préférences de notification.",
+      "empty": "Vous n'avez encore aucune notification",
+      "viewAll": "Voir toutes les notifications",
+      "settings": {
+        "title": "Paramètres de notification",
+        "subtitle": "Vous pouvez ici personnaliser vos préférences de notification. Choisissez comment vous souhaitez recevoir les mises à jour et rester informé des événements importants.",
+        "button": {
+          "saveChanges": "Enregistrer les modifications",
+          "saving": "Enregistrement en cours..."
+        },
+        "email": {
+          "label": "Notifications par e-mail",
+          "description": "Recevoir des notifications par e-mail",
+          "details": "En activant les notifications par e-mail, vous recevrez automatiquement les mises à jour sur l'e-mail de votre entreprise associé à la plateforme."
+        },
+        "telegram": {
+          "label": "Notifications Telegram",
+          "description": "Recevoir des notifications via Telegram",
+          "details": "En activant les notifications Telegram, vous recevrez automatiquement des notifications sur votre compte Telegram. Saisissez simplement votre ID de chat Telegram pour commencer à recevoir des notifications.",
+          "chatId": {
+            "label": "ID de chat Telegram",
+            "placeholder": "Saisissez votre ID de chat ici",
+            "hint": "Vous pouvez obtenir votre ID de chat via @get_id_bot sur Telegram",
+            "error": "Veuillez saisir un ID de chat Telegram valide."
+          }
+        },
+        "ntfy": {
+          "label": "Notifications de l'application NTFY",
+          "description": "Comment puis-je m'abonner pour recevoir des notifications push sur mon téléphone via l'application NTFY ?",
+          "toggle": {
+            "label": "Notifications ntfy",
+            "description": "Recevez des notifications en temps réel sur votre téléphone via l'application ntfy.",
+            "details": "En activant les notifications ntfy, vous recevrez des mises à jour instantanées sur votre téléphone pour les événements et mises à jour importants. Pour commencer, abonnez-vous simplement au sujet de notification fourni via l'application ntfy, et vous serez notifié immédiatement de toute mise à jour ou changement pertinent dans vos projets."
+          },
+          "steps": {
+            "step1": "Téléchargez l'application NTFY depuis l'App Store ou Google Play <link>ici</link>",
+            "step2": "Cliquez sur le bouton '+' pour ajouter un nouvel abonnement",
+            "step3": "Choisissez 'Définir un autre serveur' et saisissez cette URL de serveur : <url></url>",
+            "step4": "Copiez-collez votre sujet de notification ci-dessous",
+            "step5": "Appuyez sur 'S'abonner' - vous recevrez les notifications immédiatement"
+          },
+          "topic": {
+            "label": "Votre sujet de notification",
+            "copy": "Copier le sujet",
+            "copied": "Copié dans le presse-papiers !"
+          }
+        },
+        "support": "Pour plus d'informations sur la configuration des notifications par e-mail et Telegram, veuillez contacter notre équipe de support."
+      },
+      "errors": {
+        "noNotificationsReceivedWithoutTelegramChatId": "Vous avez activé les notifications Telegram mais n'avez pas fourni d'ID de chat valide. Veuillez saisir votre ID de chat Telegram dans les paramètres de notification pour commencer à recevoir des notifications via Telegram.",
+        "technicalIssue": "Une erreur technique s'est produite lors de la mise à jour de vos paramètres de notification. Veuillez réessayer ou contacter l'équipe technique si le problème persiste."
+      },
+      "success": {
+        "settingsUpdated": "Vos paramètres de notification ont été mis à jour avec succès."
+      }
+    },
+    "events": {
+      "notifications": {
+        "eventAdded": "Événement « {title} » ajouté",
+        "eventUpdated": "Événement « {title} » mis à jour",
+        "eventDeleted": "Événement « {title} » supprimé",
+        "eventMoved": "Événement « {title} » déplacé"
+      },
+      "calendar": {
+        "actions": {
+          "today": "Aujourd'hui",
+          "previous": "Précédent",
+          "next": "Suivant",
+          "newEvent": "Nouvel événement",
+          "newMeeting": "Nouvelle réunion"
+        },
+        "views": {
+          "month": {
+            "name": "Mois",
+            "more": "de plus"
+          },
+          "week": {
+            "name": "Semaine",
+            "allDay": "Toute la journée"
+          },
+          "day": {
+            "name": "Jour",
+            "allDay": "Toute la journée"
+          },
+          "agenda": {
+            "name": "Agenda",
+            "noEvents": {
+              "title": "Aucun événement trouvé",
+              "description": "Aucun événement prévu pour cette période."
+            }
+          }
+        }
+      },
+      "upload": {
+        "dialog": {
+          "title": {
+            "edit": "Modifier l'événement",
+            "create": "Créer un événement"
+          },
+          "description": {
+            "edit": "Modifiez les détails de cet événement",
+            "create": "Ajoutez un nouvel événement à votre calendrier"
+          },
+          "fields": {
+            "title": "Titre",
+            "description": "Description",
+            "startDate": "Date de début",
+            "startTime": "Heure de début",
+            "endDate": "Date de fin",
+            "endTime": "Heure de fin",
+            "allDay": "Toute la journée",
+            "location": "Lieu",
+            "color": "Couleur",
+            "allUsers": "Assigner à tous les utilisateurs",
+            "getNotified": "Recevoir une notification",
+            "participants": "Participants",
+            "participantsDescription": "Utilisateurs spécifiques qui verront cet événement."
+          },
+          "placeholders": {
+            "selectDate": "Choisir une date",
+            "selectTime": "Sélectionner une heure",
+            "addParticipant": "Sélectionner des participants..."
+          },
+          "actions": {
+            "cancel": "Annuler",
+            "save": "Enregistrer",
+            "delete": "Supprimer l'événement"
+          },
+          "colors": {
+            "sky": "Ciel",
+            "amber": "Ambre",
+            "violet": "Violet",
+            "rose": "Rose",
+            "emerald": "Émeraude",
+            "orange": "Orange"
+          },
+          "defaultTitle": "(sans titre)",
+          "errors": {
+            "timeRange": "L'heure sélectionnée doit être comprise entre {startHour}:00 et {endHour}:00",
+            "endBeforeStart": "La date de fin ne peut pas être antérieure à la date de début"
+          }
+        }
+      },
+      "popup": {
+        "noEvents": "Aucun événement",
+        "close": "Fermer"
+      },
+      "success": {
+        "eventCreated": "Événement créé avec succès.",
+        "eventUpdated": "Événement mis à jour avec succès.",
+        "eventDeleted": "Événement supprimé avec succès."
+      },
+      "errors": {
+        "eventCreationFailed": "Échec de la création de l'événement. Veuillez vérifier les données soumises ou contacter l'équipe de support.",
+        "eventUpdateFailed": "Échec de la mise à jour de l'événement. Veuillez vérifier les données soumises ou contacter l'équipe de support.",
+        "eventDeletionFailed": "Échec de la suppression de l'événement. Veuillez vérifier les données soumises ou contacter l'équipe de support.",
+        "serverError": "Échec de la création de votre événement, veuillez réessayer ou contacter l'équipe technique."
+      },
+      "validations": {
+        "title": {
+          "required": "Le titre est requis"
+        },
+        "startTime": {
+          "isRequired": "L'heure de début est requise"
+        },
+        "endTime": {
+          "isRequired": "L'heure de fin est requise"
+        },
+        "timeRange": {
+          "invalid": "L'heure de début doit être antérieure ou égale à l'heure de fin"
+        }
+      }
+    },
+    "tasks": {
+      "title": "Liste des tâches",
+      "tabs": {
+        "personal": "Tâches personnelles",
+        "project": "Tâches du projet"
+      },
+      "deletion": {
+        "tasks": {
+          "confirmation": {
+            "title": "Supprimer la tâche",
+            "message": "Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action est irréversible.",
+            "cancel": "Annuler",
+            "delete": "Supprimer",
+            "deleting": "Suppression en cours..."
+          }
+        },
+        "subtasks": {
+          "confirmation": {
+            "title": "Supprimer la sous-tâche",
+            "message": "Êtes-vous sûr de vouloir supprimer cette sous-tâche ? Cette action est irréversible.",
+            "cancel": "Annuler",
+            "delete": "Supprimer",
+            "deleting": "Suppression en cours..."
+          }
+        },
+        "comments": {
+          "confirmation": {
+            "title": "Supprimer le commentaire",
+            "message": "Êtes-vous sûr de vouloir supprimer ce commentaire ? Cette action est irréversible.",
+            "cancel": "Annuler",
+            "delete": "Supprimer",
+            "deleting": "Suppression en cours..."
+          }
+        }
+      },
+      "status": {
+        "pending": "En attente",
+        "inProgress": "En cours",
+        "completed": "Terminée"
+      },
+      "priority": {
+        "low": "Basse",
+        "medium": "Moyenne",
+        "high": "Haute"
+      },
+      "upload": {
+        "form": {
+          "labels": {
+            "parentTaskId": "ID de la tâche parente",
+            "status": "Statut",
+            "priority": "Priorité",
+            "title": "Titre",
+            "description": "Description",
+            "details": "Détails",
+            "dueDate": "Date d'échéance",
+            "dueTime": "Heure d'échéance",
+            "reminderDate": "Date de rappel",
+            "reminderTime": "Heure de rappel",
+            "isArchived": "Archivée",
+            "isFavorite": "Favorite",
+            "attachments": "Pièces jointes",
+            "comments": "Commentaires",
+            "upload": "Téléverser",
+            "noAttachments": "Aucune pièce jointe pour le moment",
+            "subTasks": "Sous-tâches",
+            "createdAt": "Créée le",
+            "noComments": "Aucun commentaire pour le moment",
+            "noSubTasks": "Aucune sous-tâche pour le moment",
+            "noTasks": "Aucune tâche trouvée",
+            "allTasks": "Toutes les tâches"
+          },
+          "placeholders": {
+            "parentTaskId": "ID de la tâche parente",
+            "status": "Statut de la tâche",
+            "priority": "Priorité de la tâche",
+            "title": "Titre de la tâche",
+            "description": "Description de la tâche",
+            "details": "Détails de la tâche",
+            "date": "Sélectionner une date",
+            "comment": "Ajouter un commentaire",
+            "search": "Rechercher des tâches...",
+            "dragDropFiles": "Glissez-déposez des fichiers ici, ou cliquez pour sélectionner"
+          },
+          "ariaLabels": {
+            "hidePassword": "Masquer le mot de passe",
+            "showPassword": "Afficher le mot de passe"
+          },
+          "cancel": "Annuler",
+          "creating": "Création en cours..."
+        }
+      },
+      "success": {
+        "taskCreated": "Tâche créée avec succès.",
+        "subTaskCreated": "Sous-tâche créée avec succès.",
+        "taskUpdated": "Tâche mise à jour avec succès.",
+        "taskDeleted": "Tâche supprimée avec succès.",
+        "commentDeleted": "Commentaire supprimé avec succès.",
+        "commentCreated": "Commentaire créé avec succès.",
+        "commentUpdated": "Commentaire mis à jour avec succès.",
+        "attachmentsUpdated": "Pièces jointes mises à jour avec succès."
+      },
+      "validations": {
+        "title": {
+          "required": "Le titre est requis"
+        },
+        "parentTaskId": {
+          "invalid": "Identifiant de la tâche parente invalide"
+        },
+        "status": {
+          "invalid": "Statut sélectionné invalide"
+        },
+        "priority": {
+          "invalid": "Priorité sélectionnée invalide"
+        },
+        "dueTime": {
+          "required": "L'heure d'échéance est requise"
+        },
+        "reminderTime": {
+          "required": "La date de rappel est requise"
+        },
+        "timeRange": {
+          "invalid": "Le rappel doit être antérieur à l'heure d'échéance"
+        },
+        "attachments": {
+          "invalidImageFormat": "Seules les images JPEG, PNG ou WEBP sont autorisées"
+        },
+        "taskId": {
+          "invalid": "Identifiant de tâche invalide",
+          "required": "L'ID de la tâche est requis"
+        },
+        "comment": {
+          "required": "Le commentaire est requis"
+        },
+        "reordered": "Les éléments de la liste ont été réorganisés avec succès.",
+        "fileAdded": "{{fileName}} a été ajouté à la tâche"
+      },
+      "errors": {
+        "invalidFormat": "Le format des données fournies est invalide. Veuillez vérifier et réessayer.",
+        "taskUploadFailed": "Échec de l'envoi de votre tâche. Veuillez réessayer plus tard.",
+        "serverError": "Une erreur serveur inattendue s'est produite. Veuillez réessayer plus tard.",
+        "loadTasksFailed": "Échec du chargement des tâches. Veuillez réessayer.",
+        "loadTaskFailed": "Échec du chargement de la tâche. Veuillez réessayer."
+      },
+      "actions": {
+        "cancel": "Annuler",
+        "creating": "Création en cours...",
+        "createTask": "Créer la tâche",
+        "updateTask": "Mettre à jour la tâche",
+        "deleteTask": "Supprimer la tâche",
+        "createComment": "Créer le commentaire",
+        "createSubTask": "Créer la sous-tâche"
+      },
+      "filters": {
+        "priority": "Priorité",
+        "sortBy": "Trier par",
+        "selectSortOption": "Sélectionner l'option de tri",
+        "statusAscending": "Statut croissant",
+        "statusDescending": "Statut décroissant",
+        "priorityAscending": "Priorité croissante",
+        "priorityDescending": "Priorité décroissante",
+        "dueDateAscending": "Date d'échéance croissante",
+        "dueDateDescending": "Date d'échéance décroissante",
+        "clearFilters": "Effacer les filtres"
+      },
+      "loading": {
+        "tasks": "Chargement des tâches...",
+        "task": "Chargement de la tâche...",
+        "button": "Chargement...",
+        "uploading": "Téléversement en cours..."
+      },
+      "edit": "Modifier",
+      "noDescription": "Aucune description fournie.",
+      "enterSubTaskTitle": "Saisissez le titre de la sous-tâche",
+      "addTask": "Ajouter une tâche",
+      "filePreview": "Aperçu du fichier"
+    },
+    "projects": {
+      "title": "Gestion des projets",
+      "tasks": {
+        "title": "Liste des tâches",
+        "pageTitle": "Tâches du projet",
+        "duplicateTask": "Dupliquer cette tâche",
+        "deletion": {
+          "tasks": {
+            "confirmation": {
+              "title": "Supprimer la tâche",
+              "message": "Êtes-vous sûr de vouloir supprimer cette tâche ? Cette action est irréversible.",
+              "cancel": "Annuler",
+              "delete": "Supprimer",
+              "deleting": "Suppression en cours..."
+            }
+          },
+          "subtasks": {
+            "confirmation": {
+              "title": "Supprimer la sous-tâche",
+              "message": "Êtes-vous sûr de vouloir supprimer cette sous-tâche ? Cette action est irréversible.",
+              "cancel": "Annuler",
+              "delete": "Supprimer",
+              "deleting": "Suppression en cours..."
+            }
+          },
+          "comments": {
+            "confirmation": {
+              "title": "Supprimer le commentaire",
+              "message": "Êtes-vous sûr de vouloir supprimer ce commentaire ? Cette action est irréversible.",
+              "cancel": "Annuler",
+              "delete": "Supprimer",
+              "deleting": "Suppression en cours..."
+            }
+          }
+        },
+        "status": {
+          "pending": "En attente",
+          "inProgress": "En cours",
+          "completed": "Terminée"
+        },
+        "priority": {
+          "low": "Basse",
+          "medium": "Moyenne",
+          "high": "Haute"
+        },
+        "upload": {
+          "form": {
+            "labels": {
+              "parentTaskId": "ID de la tâche parente",
+              "status": "Statut",
+              "priority": "Priorité",
+              "title": "Titre",
+              "description": "Description",
+              "details": "Détails",
+              "dueDate": "Date d'échéance",
+              "dueTime": "Heure d'échéance",
+              "reminderDate": "Date de rappel",
+              "reminderTime": "Heure de rappel",
+              "isArchived": "Archivée",
+              "isFavorite": "Favorite",
+              "attachments": "Pièces jointes",
+              "comments": "Commentaires",
+              "upload": "Téléverser",
+              "noAttachments": "Aucune pièce jointe pour le moment",
+              "subTasks": "Sous-tâches",
+              "createdAt": "Créée le",
+              "noComments": "Aucun commentaire pour le moment",
+              "noSubTasks": "Aucune sous-tâche pour le moment",
+              "noTasks": "Aucune tâche trouvée",
+              "allTasks": "Toutes les tâches",
+              "type": "Type",
+              "points": "Story Points"
+            },
+            "placeholders": {
+              "parentTaskId": "ID de la tâche parente",
+              "status": "Statut de la tâche",
+              "priority": "Priorité de la tâche",
+              "title": "Titre de la tâche",
+              "description": "Description de la tâche",
+              "details": "Détails de la tâche",
+              "date": "Sélectionner une date",
+              "comment": "Ajouter un commentaire",
+              "search": "Rechercher des tâches...",
+              "dragDropFiles": "Glissez-déposez des fichiers ici, ou cliquez pour sélectionner",
+              "selectType": "Sélectionner un type",
+              "selectPriority": "Sélectionner une priorité",
+              "selectStatus": "Sélectionner un statut",
+              "points": "Story Points"
+            },
+            "ariaLabels": {
+              "hidePassword": "Masquer le mot de passe",
+              "showPassword": "Afficher le mot de passe"
+            },
+            "cancel": "Annuler",
+            "creating": "Création en cours..."
+          }
+        },
+        "success": {
+          "taskCreated": "Tâche créée avec succès.",
+          "subTaskCreated": "Sous-tâche créée avec succès.",
+          "taskUpdated": "Tâche mise à jour avec succès.",
+          "taskDeleted": "Tâche supprimée avec succès.",
+          "commentDeleted": "Commentaire supprimé avec succès.",
+          "commentCreated": "Commentaire créé avec succès.",
+          "commentUpdated": "Commentaire mis à jour avec succès.",
+          "attachmentsUpdated": "Pièces jointes mises à jour avec succès."
+        },
+        "validations": {
+          "title": {
+            "required": "Le titre est requis"
+          },
+          "parentTaskId": {
+            "invalid": "Identifiant de la tâche parente invalide"
+          },
+          "status": {
+            "invalid": "Statut sélectionné invalide"
+          },
+          "priority": {
+            "invalid": "Priorité sélectionnée invalide"
+          },
+          "dueTime": {
+            "required": "L'heure d'échéance est requise"
+          },
+          "reminderTime": {
+            "required": "La date de rappel est requise"
+          },
+          "timeRange": {
+            "invalid": "Le rappel doit être antérieur à l'heure d'échéance"
+          },
+          "attachments": {
+            "invalidImageFormat": "Seules les images JPEG, PNG ou WEBP sont autorisées"
+          },
+          "taskId": {
+            "invalid": "Identifiant de tâche invalide",
+            "required": "L'ID de la tâche est requis"
+          },
+          "comment": {
+            "required": "Le commentaire est requis"
+          },
+          "reordered": "Les éléments de la liste ont été réorganisés avec succès.",
+          "fileAdded": "{{fileName}} a été ajouté à la tâche"
+        },
+        "errors": {
+          "invalidFormat": "Le format des données fournies est invalide. Veuillez vérifier et réessayer.",
+          "taskUploadFailed": "Échec de l'envoi de votre tâche. Veuillez réessayer plus tard.",
+          "serverError": "Une erreur serveur inattendue s'est produite. Veuillez réessayer plus tard.",
+          "loadTasksFailed": "Échec du chargement des tâches. Veuillez réessayer.",
+          "loadTaskFailed": "Échec du chargement de la tâche. Veuillez réessayer."
+        },
+        "actions": {
+          "cancel": "Annuler",
+          "creating": "Création en cours...",
+          "createTask": "Créer la tâche",
+          "updateTask": "Mettre à jour la tâche",
+          "deleteTask": "Supprimer la tâche",
+          "createComment": "Créer le commentaire",
+          "createSubTask": "Créer la sous-tâche"
+        },
+        "filters": {
+          "title": "Filtres",
+          "all": "Tous",
+          "type": "Type",
+          "status": "Statut",
+          "priority": "Priorité",
+          "manager": "Responsable",
+          "milestones": "Jalons",
+          "epics": "Epics",
+          "sortBy": "Trier par",
+          "selectSortOption": "Sélectionner l'option de tri",
+          "statusAscending": "Statut croissant",
+          "statusDescending": "Statut décroissant",
+          "priorityAscending": "Priorité croissante",
+          "priorityDescending": "Priorité décroissante",
+          "dueDateAscending": "Date d'échéance croissante",
+          "dueDateDescending": "Date d'échéance décroissante",
+          "clearFilters": "Effacer les filtres"
+        },
+        "types": {
+          "story": "Story",
+          "task": "Tâche",
+          "bug": "Bug",
+          "spike": "Spike",
+          "epic": "Epic"
+        },
+        "statusLabels": {
+          "backlog": "Backlog",
+          "todo": "À faire",
+          "in_progress": "En cours",
+          "testing": "En test",
+          "in_review": "En revue",
+          "done": "Terminé"
+        },
+        "priorityLabels": {
+          "urgent": "Urgente",
+          "high": "Haute",
+          "medium": "Moyenne",
+          "low": "Basse"
+        },
+        "points": "Story Points",
+        "loading": {
+          "tasks": "Chargement des tâches...",
+          "task": "Chargement de la tâche...",
+          "button": "Chargement...",
+          "uploading": "Téléversement en cours..."
+        },
+        "edit": "Modifier",
+        "noDescription": "Aucune description fournie.",
+        "enterSubTaskTitle": "Saisissez le titre de la sous-tâche",
+        "addTask": "Ajouter une tâche",
+        "filePreview": "Aperçu du fichier",
+        "displaySettings": {
+          "title": "Paramètres d'affichage",
+          "showAttributes": "Afficher les attributs",
+          "attributes": {
+            "key": "Clé de la tâche",
+            "type": "Type",
+            "priority": "Priorité",
+            "status": "Statut",
+            "assignee": "Assigné",
+            "milestone": "Jalon",
+            "epic": "Epic",
+            "points": "Story Points"
+          }
+        },
+        "kanban": {
+          "addColumn": "Ajouter une colonne",
+          "deleteColumn": "Supprimer la colonne",
+          "deleteColumnConfirm": "Êtes-vous sûr ? Les tâches de cette colonne seront déplacées vers « Aucun statut ».",
+          "newColumnTitle": "Nouvelle colonne",
+          "enterColumnName": "Saisissez le nom de la colonne...",
+          "noStatus": "Aucun statut",
+          "noTasks": "Aucune tâche dans cette colonne",
+          "cancel": "Annuler",
+          "confirm": "Confirmer",
+          "localColumnBlocked": "Les colonnes personnalisées sont pour l'instant locales uniquement, ce déplacement ne peut donc pas être enregistré."
+        }
+      },
+      "project": {
+        "details": {
+          "period": "du {from} au {to}",
+          "timeProgressLabel": "Progression temporelle",
+          "viewProject": "Voir le projet",
+          "deleteProject": "Supprimer le projet",
+          "endDate": "Date de fin : {date}",
+          "members": "{count} membres",
+          "member": "{count} membre",
+          "tabs": {
+            "tasks": "Tâches",
+            "members": "Membres et invitations",
+            "sprints": "Sprints",
+            "details": "Détails"
+          },
+          "membersList": {
+            "title": "Membres du projet",
+            "description": "Utilisateurs ayant accès à ce projet.",
+            "invite": "Inviter un membre",
+            "addMember": "Ajouter un membre",
+            "addBy": "Ajouter par",
+            "byUser": "Utilisateur",
+            "byEmail": "E-mail",
+            "cancel": "Annuler",
+            "adding": "Ajout en cours...",
+            "sending": "Envoi en cours...",
+            "emailPlaceholder": "user@example.com",
+            "manager": "Responsable",
+            "member": "Membre",
+            "joined": "Rejoint le",
+            "actions": "Actions",
+            "remove": "Retirer",
+            "removeTitle": "Retirer le membre",
+            "removeDescription": "Êtes-vous sûr de vouloir retirer ce membre du projet ?",
+            "promote": "Promouvoir responsable",
+            "demote": "Retirer le rôle de responsable",
+            "emailLabel": "Adresse e-mail",
+            "userIdLabel": "Utilisateur",
+            "empty": "Aucun membre actif."
+          },
+          "invitationsList": {
+            "title": "Invitations en attente",
+            "description": "Invitations envoyées aux utilisateurs pour rejoindre ce projet.",
+            "email": "E-mail",
+            "role": "Rôle",
+            "expires": "Expire",
+            "expiresInDays": "Expire dans (jours)",
+            "status": "Statut",
+            "cancel": "Annuler l'invitation",
+            "resend": "Renvoyer",
+            "revokeTitle": "Révoquer l'invitation",
+            "revokeDescription": "Êtes-vous sûr de vouloir révoquer cette invitation ?",
+            "empty": "Aucune invitation en attente."
+          },
+          "settings": {
+            "title": "Détails du projet",
+            "description": "Configuration et informations générales sur ce projet.",
+            "general": "Informations générales",
+            "status": "Statut actuel",
+            "timeline": "Chronologie",
+            "name": "Nom du projet",
+            "desc": "Description",
+            "noDescription": "Aucune description fournie.",
+            "businessUnit": "Unité commerciale",
+            "type": "Type de projet",
+            "paid": "Projet payant",
+            "archived": "Archivé",
+            "yes": "Oui",
+            "no": "Non",
+            "lifecycleStatus": "Statut du cycle de vie",
+            "startDate": "Date de début",
+            "endDate": "Date de fin"
+          },
+          "placeholders": {
+            "members": "Cette section affichera les membres du projet et les invitations en attente.",
+            "details": "Cette section affichera la configuration complète et les détails du projet."
+          },
+          "notFound": {
+            "title": "Projet introuvable",
+            "description": "Le projet que vous recherchez n'existe pas ou a été déplacé."
+          }
+        },
+        "deletionDialog": {
+          "title": "Supprimer le projet",
+          "description": "Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.",
+          "confirm": "Supprimer",
+          "cancel": "Annuler"
+        },
+        "status": {
+          "running": "En cours",
+          "pending": "En attente",
+          "stopped": "Arrêté",
+          "completed": "Terminé"
+        },
+        "projectType": {
+          "agile": "Agile",
+          "freestyle": "Libre"
+        },
+        "taskAttributes": {
+          "key": "Clé",
+          "type": "Type",
+          "priority": "Priorité",
+          "status": "Statut",
+          "assignee": "Assigné",
+          "reporter": "Rapporteur",
+          "points": "Points",
+          "filePreview": "Aperçu du fichier",
+          "edit": "Modifier",
+          "noDescription": "Aucune description fournie.",
+          "deletion": {
+            "title": "Supprimer la tâche du projet",
+            "description": "Êtes-vous sûr de vouloir supprimer cette tâche du projet ? Cette action est irréversible."
+          },
+          "subtasks": {
+            "deletion": {
+              "title": "Supprimer la sous-tâche",
+              "description": "Êtes-vous sûr de vouloir supprimer cette sous-tâche ?"
+            }
+          },
+          "comments": {
+            "deletion": {
+              "title": "Supprimer le commentaire",
+              "description": "Êtes-vous sûr de vouloir supprimer ce commentaire ?"
+            }
+          },
+          "validations": {
+            "title": {
+              "required": "Le titre est requis"
+            },
+            "type": {
+              "invalid": "Type de tâche invalide"
+            },
+            "status": {
+              "invalid": "Statut invalide"
+            },
+            "priority": {
+              "invalid": "Priorité invalide"
+            }
+          },
+          "form": {
+            "createTask": "Créer une tâche de projet",
+            "updateTask": "Mettre à jour la tâche de projet",
+            "labels": {
+              "title": "Titre",
+              "description": "Description",
+              "type": "Type",
+              "status": "Statut",
+              "priority": "Priorité",
+              "points": "Story Points",
+              "dueDate": "Date d'échéance",
+              "createdAt": "Créée le"
+            },
+            "placeholders": {
+              "title": "Saisissez le titre de la tâche",
+              "description": "Saisissez la description de la tâche",
+              "points": "ex. 5",
+              "selectType": "Sélectionner le type",
+              "selectStatus": "Sélectionner le statut",
+              "selectPriority": "Sélectionner la priorité"
+            }
+          }
+        },
+        "tooltips": {
+          "view": "Voir le projet",
+          "edit": "Modifier le projet",
+          "archive": "Archiver le projet",
+          "restore": "Restaurer le projet",
+          "delete": "Supprimer le projet",
+          "start": "Démarrer le projet",
+          "stop": "Arrêter le projet",
+          "complete": "Marquer comme terminé"
+        }
+      },
+      "list": {
+        "searchPlaceholder": "Rechercher des projets...",
+        "addProject": "Ajouter un projet",
+        "noProjects": "Aucun projet trouvé.",
+        "viewList": "Vue liste",
+        "viewGrid": "Vue grille",
+        "filters": {
+          "sortBy": "Trier par",
+          "selectSortOption": "Sélectionner l'option de tri",
+          "defaultOrder": "Par défaut",
+          "displayOrder": "Ordre d'affichage",
+          "nameAscending": "Nom (A-Z)",
+          "nameDescending": "Nom (Z-A)",
+          "startDateAscending": "Date de début (plus ancienne)",
+          "startDateDescending": "Date de début (plus récente)",
+          "estimatedStartAsc": "Début est. (plus ancien)",
+          "estimatedStartDesc": "Début est. (plus récent)",
+          "estimatedEndAsc": "Fin est. (plus ancienne)",
+          "estimatedEndDesc": "Fin est. (plus récente)",
+          "createdAtAscending": "Créé (plus ancien)",
+          "createdAtDescending": "Créé (plus récent)",
+          "projectType": "Type de projet",
+          "businessUnit": "Unité commerciale",
+          "isArchived": "Archivé",
+          "paid": "Payant",
+          "createdBy": "Créé par",
+          "allCreators": "Tous les créateurs",
+          "createdByMe": "Créé par moi",
+          "clearFilters": "Effacer les filtres",
+          "allTypes": "Tous les types",
+          "agile": "Agile",
+          "freestyle": "Libre",
+          "allUnits": "Toutes les unités",
+          "tawerDev": "Tawer Dev",
+          "tawerCreative": "Tawer Creative",
+          "all": "Tous",
+          "archived": "Archivé",
+          "active": "Actif",
+          "free": "Gratuit"
+        },
+        "tabs": {
+          "all": "Tous les projets",
+          "running": "En cours",
+          "pending": "En attente",
+          "completed": "Terminés",
+          "stopped": "Arrêtés"
+        },
+        "deleteDialog": {
+          "title": "Supprimer le projet",
+          "description": "Êtes-vous sûr de vouloir supprimer ce projet ? Cette action est irréversible.",
+          "bulkTitle": "Supprimer {count} projets ?",
+          "bulkDescription": "Cette action supprimera définitivement tous les projets sélectionnés. Cette action est irréversible.",
+          "cancel": "Annuler",
+          "confirm": "Supprimer",
+          "confirmBulk": "Tout supprimer"
+        },
+        "selection": {
+          "selectAll": "Tout sélectionner",
+          "selected": "{count} sélectionné(s)",
+          "applyAction": "Appliquer une action...",
+          "deleteSelected": "Supprimer la sélection",
+          "archiveSelected": "Archiver la sélection",
+          "restoreSelected": "Restaurer la sélection",
+          "clearSelection": "Effacer la sélection",
+          "statusPending": "Définir comme en attente",
+          "statusRunning": "Définir comme en cours",
+          "statusStopped": "Définir comme arrêté",
+          "statusCompleted": "Définir comme terminé"
+        }
+      },
+      "upload": {
+        "createProject": {
+          "title": "Créer un nouveau projet",
+          "description": "Ajoutez un nouveau projet au système. Remplissez les informations requises ci-dessous.",
+          "button": "Créer le projet"
+        },
+        "updateProject": {
+          "title": "Mettre à jour le projet",
+          "description": "Mettez à jour les informations du projet. Modifiez les champs ci-dessous si nécessaire.",
+          "button": "Mettre à jour le projet"
+        },
+        "form": {
+          "labels": {
+            "name": "Nom du projet",
+            "description": "Description",
+            "repositoryUrl": "URL du dépôt",
+            "liveUrl": "URL en production",
+            "projectColor": "Couleur du projet",
+            "startDate": "Date de début",
+            "endDate": "Date de fin",
+            "startTime": "Heure de début",
+            "endTime": "Heure de fin",
+            "status": "Statut",
+            "projectType": "Type de projet",
+            "businessUnit": "Unité commerciale",
+            "details": "Détails",
+            "paid": "Projet payant",
+            "isArchived": "Archivé",
+            "displayOrder": "Ordre d'affichage",
+            "language": "Langue",
+            "estimatedStartDate": "Date de début est.",
+            "estimatedEndDate": "Date de fin est.",
+            "estimatedStartTime": "Heure de début est.",
+            "estimatedEndTime": "Heure de fin est.",
+            "manager": "Responsable"
+          },
+          "hints": {
+            "paid": "Ce projet est une mission payante",
+            "isArchived": "Masquer ce projet de la liste active"
+          },
+          "placeholders": {
+            "name": "Nom de votre projet",
+            "description": "Décrivez brièvement le projet...",
+            "repositoryUrl": "Le dépôt de votre projet s'il existe",
+            "liveUrl": "L'URL en production de votre projet dans l'environnement de préproduction",
+            "projectColor": "Sélectionner une couleur",
+            "status": "Sélectionner le statut",
+            "projectType": "Sélectionner le type",
+            "businessUnit": "Sélectionner l'unité commerciale",
+            "details": "Ajoutez des informations détaillées sur le projet...",
+            "displayOrder": "0",
+            "language": "ex. Anglais",
+            "manager": "Sélectionner un responsable..."
+          },
+          "cancel": "Annuler",
+          "creating": "Création en cours...",
+          "updating": "Mise à jour en cours...",
+          "createProject": "Créer le projet",
+          "updateProject": "Mettre à jour le projet",
+          "noUsersFound": "Aucun utilisateur trouvé.",
+          "languageOptions": {
+            "english": "Anglais",
+            "french": "Français",
+            "arabic": "Arabe"
+          }
+        }
+      },
+      "sprints": {
+        "noSprints": "Aucun sprint trouvé.",
+        "addSprint": "Ajouter un sprint",
+        "searchPlaceholder": "Rechercher des sprints...",
+        "statusTabs": {
+          "all": "Tous",
+          "pending": "En attente",
+          "running": "En cours",
+          "stopped": "Arrêtés",
+          "completed": "Terminés"
+        },
+        "filters": {
+          "sortBy": "Trier par",
+          "selectSortOption": "Sélectionner l'option de tri",
+          "defaultOrder": "Par défaut",
+          "startDateAsc": "Date de début (plus ancienne)",
+          "startDateDesc": "Date de début (plus récente)",
+          "endDateAsc": "Date de fin (plus ancienne)",
+          "endDateDesc": "Date de fin (plus récente)",
+          "clearFilters": "Effacer les filtres"
+        },
+        "card": {
+          "startDate": "Début",
+          "endDate": "Fin",
+          "estimatedStart": "Début est.",
+          "estimatedEnd": "Fin est.",
+          "capacity": "Capacité"
+        },
+        "tooltips": {
+          "edit": "Modifier le sprint",
+          "delete": "Supprimer le sprint",
+          "start": "Démarrer le sprint",
+          "stop": "Arrêter le sprint",
+          "complete": "Terminer le sprint",
+          "restart": "Redémarrer le sprint"
+        },
+        "statusToast": {
+          "running": "Sprint démarré",
+          "stopped": "Sprint arrêté",
+          "completed": "Sprint terminé",
+          "error": "Échec de la mise à jour du statut du sprint"
+        },
+        "status": {
+          "pending": "En attente",
+          "running": "En cours",
+          "stopped": "Arrêté",
+          "completed": "Terminé"
+        },
+        "deleteDialog": {
+          "title": "Supprimer le sprint",
+          "description": "Êtes-vous sûr de vouloir supprimer ce sprint ? Cette action est irréversible.",
+          "cancel": "Annuler",
+          "confirm": "Supprimer",
+          "successToast": "Sprint supprimé avec succès"
+        },
+        "upload": {
+          "createTitle": "Créer un sprint",
+          "updateTitle": "Mettre à jour le sprint",
+          "form": {
+            "labels": {
+              "name": "Nom du sprint",
+              "description": "Description",
+              "details": "Détails",
+              "language": "Langue",
+              "status": "Statut",
+              "startDate": "Date de début",
+              "startTime": "Heure de début",
+              "endDate": "Date de fin",
+              "endTime": "Heure de fin",
+              "estimatedStartDate": "Date de début est.",
+              "estimatedStartTime": "Heure de début est.",
+              "estimatedEndDate": "Date de fin est.",
+              "estimatedEndTime": "Heure de fin est.",
+              "capacity": "Capacité"
+            },
+            "placeholders": {
+              "name": "Nom du sprint...",
+              "description": "Décrivez ce sprint...",
+              "details": "Ajoutez des informations détaillées sur le sprint...",
+              "capacity": "ex. 40"
+            },
+            "hints": {
+              "capacity": "Capacité totale en story points ou en heures pour ce sprint"
+            },
+            "cancel": "Annuler",
+            "creating": "Création en cours...",
+            "updating": "Mise à jour en cours...",
+            "create": "Créer le sprint",
+            "update": "Mettre à jour le sprint"
+          }
+        }
+      }
+    },
+    "infrastructure": {
+      "servers": {
+        "title": "Serveurs",
+        "list": {
+          "title": "Serveurs",
+          "noResults": "Aucun serveur trouvé"
+        },
+        "serverDetails": {
+          "modal": {
+            "title": "Détails du serveur",
+            "description": "Consultez les informations détaillées sur ce serveur",
+            "close": "Fermer",
+            "edit": "Modifier le serveur"
+          },
+          "details": {
+            "name": "Nom du serveur",
+            "status": "Statut",
+            "description": "Description",
+            "networkInfo": "Informations réseau",
+            "domain": "Domaine",
+            "ip": "Adresse IP",
+            "hardwareInfo": "Informations matérielles",
+            "cpus": "CPU",
+            "ram": "RAM",
+            "storage": "Stockage",
+            "bandwidth": "Bande passante",
+            "backupCloudProvider": "Sauvegarde cloud",
+            "enabled": "Activé",
+            "disabled": "Désactivé",
+            "managers": "Responsables du serveur",
+            "billingInfo": "Informations de facturation",
+            "paymentStatus": "Statut de paiement",
+            "paidStatus": "Payé",
+            "unpaidStatus": "Impayé",
+            "paidAt": "Date de paiement",
+            "expiredAt": "Date d'expiration",
+            "createdAt": "Créé le",
+            "updatedAt": "Dernière mise à jour"
+          }
+        },
+        "filters": {
+          "searchPlaceholder": "Rechercher des serveurs...",
+          "statusButton": "Statut",
+          "statusSearchPlaceholder": "Rechercher un statut...",
+          "noStatusFound": "Aucun statut trouvé"
+        },
+        "columnsDropdown": {
+          "label": "Colonnes"
+        },
+        "search": {
+          "placeholder": "Rechercher des serveurs..."
+        },
+        "statuses": {
+          "running": "En cours",
+          "stopped": "Arrêté",
+          "maintenance": "Maintenance"
+        },
+        "table": {
+          "headers": {
+            "select": "Sélectionner",
+            "name": "Nom",
+            "domain": "Domaine",
+            "ip": "Adresse IP",
+            "cpus": "CPU",
+            "ram": "RAM",
+            "storage": "Stockage",
+            "status": "Statut",
+            "paid": "Paiement"
+          },
+          "paid": "Payé",
+          "unpaid": "Impayé",
+          "noResults": "Aucun serveur trouvé.",
+          "actionsMenu": {
+            "label": "Actions",
+            "viewDetails": "Voir les détails",
+            "edit": "Modifier",
+            "copyId": "Copier l'ID",
+            "delete": "Supprimer"
+          }
+        },
+        "upload": {
+          "createServer": {
+            "button": "Ajouter un serveur",
+            "title": "Créer un serveur",
+            "description": "Remplissez les informations ci-dessous pour créer un nouveau serveur."
+          },
+          "updateServer": {
+            "button": "Modifier le serveur",
+            "title": "Mettre à jour le serveur",
+            "description": "Mettez à jour les informations du serveur ci-dessous."
+          },
+          "form": {
+            "labels": {
+              "name": "Nom du serveur",
+              "domain": "Domaine",
+              "description": "Description",
+              "ip": "Adresse IP",
+              "cpus": "Cœurs CPU",
+              "ram": "RAM",
+              "storage": "Stockage",
+              "bandwidth": "Bande passante",
+              "status": "Statut",
+              "backupCloudProvider": "Sauvegarde par le fournisseur cloud",
+              "paid": "Paiement effectué",
+              "managers": "Responsables du serveur",
+              "paidDate": "Date de paiement",
+              "paidTime": "Heure de paiement",
+              "expiredDate": "Date d'expiration",
+              "expiredTime": "Heure d'expiration"
+            },
+            "placeholders": {
+              "name": "Saisissez le nom du serveur",
+              "domain": "example.com",
+              "description": "Courte description du serveur",
+              "ip": "192.168.1.1",
+              "cpus": "Nombre de cœurs CPU",
+              "ram": "Taille de la RAM (ex. 16 Go)",
+              "storage": "Taille du stockage (ex. 500 Go)",
+              "bandwidth": "Limite de bande passante",
+              "managers": "Sélectionner un responsable"
+            },
+            "statuses": {
+              "running": "En cours",
+              "stopped": "Arrêté",
+              "maintenance": "Maintenance"
+            },
+            "noResults": {
+              "managers": "Aucun utilisateur trouvé"
+            },
+            "actions": {
+              "cancel": "Annuler",
+              "createServer": "Créer le serveur",
+              "updateServer": "Mettre à jour le serveur",
+              "creating": "Enregistrement en cours..."
+            }
+          },
+          "success": "Serveur enregistré avec succès"
+        },
+        "deletion": {
+          "confirmation": {
+            "title": "Supprimer le serveur",
+            "message": "Êtes-vous sûr de vouloir supprimer ce serveur ? Cette action est irréversible."
+          }
+        }
+      },
+      "services": {
+        "title": "Services",
+        "upload": {
+          "success": "Service enregistré avec succès",
+          "createService": {
+            "button": "Ajouter un service",
+            "title": "Créer un service",
+            "description": "Remplissez les informations ci-dessous pour créer un nouveau service."
+          },
+          "updateService": {
+            "button": "Modifier le service",
+            "title": "Mettre à jour le service",
+            "description": "Mettez à jour les informations du service ci-dessous."
+          },
+          "form": {
+            "labels": {
+              "name": "Nom du service",
+              "domain": "Domaine",
+              "description": "Description",
+              "status": "Statut",
+              "sslCertificate": "Certificat SSL",
+              "sslCertificateByCloudProvider": "SSL par le fournisseur cloud",
+              "hasBackup": "Sauvegarde activée",
+              "backupDestination": "Destination de sauvegarde",
+              "paid": "Paiement effectué",
+              "paidDate": "Date de paiement",
+              "paidTime": "Heure de paiement",
+              "expiredDate": "Date d'expiration",
+              "expiredTime": "Heure d'expiration",
+              "serverId": "Serveur"
+            },
+            "placeholders": {
+              "name": "Saisissez le nom du service",
+              "domain": "example.com",
+              "description": "Courte description du service",
+              "backupDestination": "Destination de sauvegarde",
+              "serverId": "Sélectionner un serveur"
+            },
+            "statuses": {
+              "running": "En cours",
+              "stopped": "Arrêté",
+              "maintenance": "Maintenance"
+            },
+            "noResults": {
+              "serverId": "Aucun serveur trouvé"
+            },
+            "actions": {
+              "cancel": "Annuler",
+              "createService": "Créer le service",
+              "updateService": "Mettre à jour le service",
+              "creating": "Enregistrement en cours..."
+            }
+          }
+        },
+        "filters": {
+          "searchPlaceholder": "Rechercher des services...",
+          "statusButton": "Statut",
+          "statusSearchPlaceholder": "Rechercher un statut...",
+          "noStatusFound": "Aucun statut trouvé"
+        },
+        "columnsDropdown": {
+          "label": "Colonnes"
+        },
+        "statuses": {
+          "running": "En cours",
+          "stopped": "Arrêté",
+          "maintenance": "Maintenance"
+        },
+        "table": {
+          "headers": {
+            "select": "Sélectionner",
+            "name": "Nom du service",
+            "domain": "Domaine",
+            "status": "Statut",
+            "paid": "Statut de paiement"
+          },
+          "paid": "Payé",
+          "unpaid": "Impayé",
+          "noResults": "Aucun service trouvé.",
+          "actionsMenu": {
+            "label": "Actions",
+            "viewDetails": "Voir les détails",
+            "edit": "Modifier le service",
+            "delete": "Supprimer le service"
+          }
+        },
+        "serviceDetails": {
+          "modal": {
+            "title": "Détails du service",
+            "description": "Consultez les informations détaillées sur ce service",
+            "close": "Fermer",
+            "edit": "Modifier le service"
+          },
+          "sections": {
+            "basicInfo": "Informations de base",
+            "sslAndBackup": "SSL et sauvegarde",
+            "billing": "Statut et facturation",
+            "timestamps": "Horodatages",
+            "server": "Informations sur le serveur"
+          },
+          "fields": {
+            "name": "Nom du service",
+            "serviceDomain": "Domaine du service",
+            "serverName": "Nom du serveur",
+            "serverIp": "IP du serveur",
+            "serverDomain": "Domaine du serveur",
+            "domain": "Domaine",
+            "description": "Description",
+            "status": "Statut",
+            "sslCertificate": "Certificat SSL",
+            "sslCertificateByCloudProvider": "SSL par le fournisseur cloud",
+            "hasBackup": "Sauvegarde activée",
+            "backupDestination": "Destination de sauvegarde",
+            "paidAt": "Payé le",
+            "expiredAt": "Expire le",
+            "createdAt": "Créé le",
+            "updatedAt": "Dernière mise à jour"
+          },
+          "details": {
+            "paid": "Statut de paiement",
+            "paidStatus": "Payé",
+            "unpaidStatus": "Impayé"
+          },
+          "common": {
+            "yes": "Oui",
+            "no": "Non"
+          }
+        },
+        "deletion": {
+          "confirmation": {
+            "title": "Supprimer le service",
+            "message": "Êtes-vous sûr de vouloir supprimer ce service ? Cette action est irréversible."
+          }
+        }
+      },
+      "validations": {
+        "servers": {
+          "name": {
+            "required": "Le nom du serveur est requis"
+          },
+          "domain": {
+            "required": "Le domaine est requis"
+          },
+          "description": {
+            "required": "La description est requise"
+          },
+          "ip": {
+            "required": "L'adresse IP est requise"
+          },
+          "cpus": {
+            "required": "Les informations CPU sont requises"
+          },
+          "ram": {
+            "required": "Les informations RAM sont requises"
+          },
+          "storage": {
+            "required": "Les informations de stockage sont requises"
+          },
+          "bandwidth": {
+            "required": "Les informations de bande passante sont requises"
+          },
+          "status": {
+            "required": "Le statut du serveur est requis",
+            "invalid": "Statut du serveur invalide"
+          },
+          "managers": {
+            "required": "Au moins un responsable doit être sélectionné"
+          }
+        },
+        "services": {
+          "name": {
+            "required": "Le nom du service est requis"
+          },
+          "sslCertificate": {
+            "required": "Veuillez préciser si le service dispose d'un certificat SSL"
+          },
+          "sslCertificateByCloudProvider": {
+            "required": "Veuillez préciser si le certificat SSL est fourni par le fournisseur cloud"
+          },
+          "hasBackup": {
+            "required": "Veuillez préciser si le service dispose d'une sauvegarde"
+          },
+          "status": {
+            "required": "Le statut du service est requis",
+            "invalid": "Statut du service invalide"
+          },
+          "paymentStatus": {
+            "required": "Veuillez préciser le statut de paiement"
+          },
+          "serverId": {
+            "required": "La sélection d'un serveur est requise"
+          }
+        }
+      },
+      "errors": {
+        "servers": {
+          "serverAlreadyExist": "Un serveur avec ce nom ou ce domaine existe déjà",
+          "invalidFormat": "Certains champs ont un format invalide",
+          "serverError": "Une erreur serveur s'est produite. Veuillez réessayer plus tard",
+          "uploadServerFailed": "Échec de l'enregistrement du serveur. Veuillez réessayer"
+        },
+        "services": {
+          "serviceAlreadyExist": "Un service avec ce nom existe déjà",
+          "invalidFormat": "Certains champs ont un format invalide",
+          "serverError": "Une erreur serveur s'est produite. Veuillez réessayer plus tard",
+          "uploadServiceFailed": "Échec de l'enregistrement du service. Veuillez réessayer"
+        }
+      }
+    },
+    "estimator": {
+      "title": "Estimateur de projet",
+      "subtitle": "Estimez les coûts, délais et efforts pour plusieurs projets",
+      "config": {
+        "aiBoost": "Boost IA",
+        "teamSize": "Taille de l'équipe",
+        "currency": "Devise",
+        "discount": "Remise (%)",
+        "tva": "TVA (%)",
+        "ratePerDay": "Tarif journalier HT (DT)",
+        "boostOptions": {
+          "1_0": "1,0× – Sans IA",
+          "1_4": "1,4× – IA légère",
+          "1_8": "1,8× – IA standard",
+          "2_2": "2,2× – IA intensive",
+          "2_5": "2,5× – IA maximale"
+        }
+      },
+      "summary": {
+        "rawDays": "Jours-homme bruts",
+        "rawDaysSub": "Sans outils IA",
+        "adjDays": "Jours ajustés IA",
+        "costBreakdown": "Répartition des coûts",
+        "grossHt": "Brut HT",
+        "discount": "Remise",
+        "totalHt": "Total HT",
+        "totalTtc": "Total TTC",
+        "rateNote": "Basé sur {rate} DT/jour (HT) — tous les montants sont hors taxe sauf mention TTC",
+        "timeline": "Chronologie",
+        "timelineUnit": "{weeks} semaines",
+        "timelineSub": "{team} développeur(s) à temps plein"
+      },
+      "projects": {
+        "addProject": "Nouveau projet",
+        "deleteProject": "Supprimer le projet",
+        "renameProject": "Renommer",
+        "defaultName": "Nouveau projet"
+      },
+      "table": {
+        "headers": {
+          "name": "Fonctionnalité",
+          "priority": "Priorité",
+          "rawDays": "Jours-homme",
+          "adjDays": "Ajusté IA",
+          "cost": "Coût"
+        },
+        "tooltips": {
+          "name": "Nom ou description de l'élément de travail ou du livrable.",
+          "priority": "Niveau d'urgence — Critique est livré en premier, Basse peut attendre. Aide les parties prenantes à prioriser le périmètre.",
+          "rawDays": "Jours de travail bruts estimés sans outils IA. 1 jour-homme = 1 développeur travaillant une journée complète.",
+          "adjDays": "Jours-homme après application du multiplicateur de productivité IA ×{boost}. Formule : Brut ÷ {boost}.",
+          "cost": "Coût unitaire = jours ajustés IA × {rate} DT/jour. Affiché HT (hors TVA). Voir les cartes de synthèse pour le total TTC."
+        },
+        "priorities": {
+          "Critical": "Critique",
+          "High": "Haute",
+          "Medium": "Moyenne",
+          "Low": "Basse"
+        },
+        "addFeature": "Ajouter une fonctionnalité",
+        "addSection": "Ajouter une section",
+        "noItems": "Aucun élément pour le moment. Ajoutez une fonctionnalité ou une section pour commencer.",
+        "total": "Total"
+      },
+      "csv": {
+        "exportButton": "Exporter CSV",
+        "importButton": "Importer CSV",
+        "guideButton": "Format CSV",
+        "guideTitle": "Format d'import / export CSV",
+        "guideIntro": "Le CSV de l'estimateur prend en charge plusieurs projets dans un seul fichier. Chaque ligne est soit un en-tête de section, soit une fonctionnalité facturable. Utilisez la référence des colonnes ci-dessous pour créer ou modifier des fichiers manuellement.",
+        "guideColumns": "Référence des colonnes",
+        "guideTableColumn": "Colonne",
+        "guideTableDescription": "Description",
+        "guideTableRequired": "Requis",
+        "guideTableExample": "Exemple",
+        "guideRequiredYes": "Oui",
+        "guideRequiredNo": "Non",
+        "guideColProjectDesc": "Nom du projet — chaque valeur unique devient un onglet de projet distinct",
+        "guideColProjectExample": "Mon App",
+        "guideColEntryTypeDesc": "« feature » (élément facturable) ou « section » (étiquette / en-tête de groupe)",
+        "guideColEntryTypeExample": "feature",
+        "guideColNameDesc": "Description de la fonctionnalité ou de la section",
+        "guideColNameExample": "Système d'authentification",
+        "guideColPriorityDesc": "Critical | High | Medium | Low",
+        "guideColPriorityExample": "Critical",
+        "guideColWorkingDaysDesc": "Jours-homme estimés, décimales autorisées (fonctionnalités uniquement), ex. 2.5",
+        "guideColWorkingDaysExample": "3",
+        "guideExample": "Exemple de fichier",
+        "guideExampleNote": "Deux projets (My App et Client B) dans un seul CSV — chacun s'ouvrira dans un onglet distinct lors de l'import.",
+        "guideTipMultiProject": "Plusieurs projets — utilisez des valeurs différentes dans la colonne <code>project</code> ; chacune devient un onglet.",
+        "guideTipSections": "Sections — laissez <code>priority</code> et <code>working_days</code> vides pour les lignes de section.",
+        "guideTipComments": "Les lignes de commentaire commençant par <code>#</code> sont ignorées lors de l'import (utilisées dans nos exports à des fins de documentation).",
+        "guideTipLegacy": "Format hérité — les fichiers utilisant les noms de colonnes <code>type</code> / <code>rawDays</code> sont toujours acceptés.",
+        "cloudSaveButton": "Enregistrer",
+        "cloudSaveTooltip": "Enregistrez toutes les estimations de projet sur le serveur. Vos données seront accessibles depuis n'importe quel appareil.",
+        "cloudLoadButton": "Charger",
+        "cloudLoadTooltip": "Chargez vos dernières estimations enregistrées depuis le serveur. Cela remplacera vos données locales actuelles.",
+        "importSuccess": "CSV importé avec succès",
+        "importError": "Échec de l'import du CSV — vérifiez le format du fichier",
+        "invalidRows": "{count} ligne(s) ignorée(s) en raison de données invalides"
+      },
+      "print": {
+        "button": "Imprimer / Enregistrer en PDF"
+      },
+      "note": "Les coûts n'incluent pas le design UI/UX (~20 %), la rédaction de contenu, ni l'hébergement/maintenance mensuel.",
+      "errors": {
+        "saveSuccess": "Estimations enregistrées sur le serveur.",
+        "saveFailed": "Échec de l'enregistrement des estimations. Veuillez réessayer.",
+        "loadSuccess": "Estimations chargées depuis le serveur.",
+        "loadFailed": "Échec du chargement des estimations. Veuillez réessayer.",
+        "noSavedData": "Aucune estimation enregistrée trouvée sur le serveur.",
+        "permissionDenied": "Vous n'avez pas la permission d'effectuer cette action.",
+        "serverError": "Une erreur serveur inattendue s'est produite.",
+        "unauthorized": "Session expirée. Veuillez vous reconnecter."
+      }
+    }
+  },
+  "rules": {
+    "title": "Règlement intérieur et politiques de l'entreprise",
+    "company": "Tawer Digital Group (TDG)",
+    "sections": {
+      "generalPrinciples": {
+        "title": "Principes généraux",
+        "description": "Tawer Digital Group (TDG) établit les règles internes suivantes afin d'assurer discipline, transparence, productivité et clarté organisationnelle.",
+        "important": "Tous les employés sont tenus de lire, comprendre et respecter strictement ces règles."
+      },
+      "workMode": {
+        "title": "Politique de mode de travail (télétravail et présentiel)",
+        "mandatory": "Chaque employé a droit à UN (1) jour de télétravail par semaine.",
+        "details": "Tous les autres jours de travail doivent se faire EN PRÉSENTIEL.",
+        "note": "Le jour de télétravail doit être planifié et approuvé selon les besoins de l'équipe.",
+        "warning": "Le télétravail non autorisé n'est pas permis."
+      },
+      "workingHours": {
+        "title": "Horaires de travail",
+        "tawerDev": {
+          "name": "Tawer Dev",
+          "days": "Du lundi au vendredi",
+          "morning": "08:30 → 12:30",
+          "break": "12:30 → 13:15",
+          "afternoon": "13:15 → 17:15"
+        },
+        "tawerCRV": {
+          "name": "Tawer CRV",
+          "weekday": "Du lundi au vendredi",
+          "weekdayMorning": "08:30 → 12:30",
+          "weekdayBreak": "12:30 → 13:15",
+          "weekdayAfternoon": "13:15 → 17:15",
+          "saturday": "Samedi",
+          "saturdayHours": "08:30 → 13:30"
+        },
+        "mandatory": "Le respect des horaires de travail et de la ponctualité est obligatoire."
+      },
+      "platform": {
+        "title": "Plateforme de gestion (obligatoire)",
+        "description": "TDG utilise une plateforme de gestion interne pour suivre la présence, le temps de travail et les pauses.",
+        "critical": "L'utilisation de la plateforme est OBLIGATOIRE pour tous les employés",
+        "checkIn": "Le pointage d'arrivée est requis au début du travail",
+        "checkOut": "Le pointage de départ est requis à la fin du travail",
+        "breakRules": "Toute pause prise pendant les heures de travail DOIT être enregistrée",
+        "breakCheckOut": "Pointer le départ au début d'une pause",
+        "breakCheckIn": "Pointer l'arrivée à la reprise du travail",
+        "warning": "Le non-respect des règles d'utilisation de la plateforme peut entraîner des mesures administratives ou disciplinaires."
+      },
+      "leaves": {
+        "title": "Congés et jours fériés",
+        "paidLeave": {
+          "title": "Congé annuel payé",
+          "mandatory": "Les employés acquièrent 1,5 jour de congé payé par mois",
+          "annual": "Total annuel : 1,5 × 12 = 18 jours de congé payé par an",
+          "note": "Les congés sont accumulés mensuellement",
+          "planning": "La planification des congés doit respecter l'organisation de l'équipe et les besoins de l'entreprise"
+        },
+        "sickLeave": {
+          "title": "Congé maladie",
+          "requirement": "Un certificat médical doit être fourni dans un délai de 48 heures",
+          "verification": "L'entreprise peut demander une vérification médicale si nécessaire"
+        },
+        "specialLeave": {
+          "title": "Congé payé spécial (événements familiaux)",
+          "marriage": "3 jours ouvrables : Mariage de l'employé",
+          "birth": "2 jours ouvrables : Naissance d'un enfant",
+          "circumcision": "1 jour ouvrable : Circoncision ou mariage de l'enfant d'un employé"
+        },
+        "publicHolidays": {
+          "title": "Jours fériés payés",
+          "dates": [
+            "20 mars – Fête de l'Indépendance",
+            "1er mai – Fête du Travail",
+            "25 juillet – Fête de la République",
+            "17 décembre – Fête de la Révolution",
+            "Mawlid Nabawi Sherif",
+            "Aïd el-Fitr (2 jours)",
+            "Aïd el-Adha (2 jours)"
+          ]
+        }
+      },
+      "compliance": {
+        "title": "Conformité",
+        "mandatory": "Tous les employés de Tawer Digital Group doivent se conformer à ces règles.",
+        "warning": "Toute violation peut entraîner des mesures disciplinaires conformément à la politique de l'entreprise et aux lois du travail applicables."
+      }
+    }
+  }
+}

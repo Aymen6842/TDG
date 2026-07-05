@@ -1,2 +1,2 @@
 export type BackendLocale = "en" | "ar";
-export type FrontendLocale = "en";
+export type FrontendLocale = "en" | "fr";
