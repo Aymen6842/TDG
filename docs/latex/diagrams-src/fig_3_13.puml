@@ -1,0 +1,59 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+left to right direction
+
+actor "Project Manager" as PM
+actor "Product Owner" as PO
+actor "Scrum Master" as SM
+actor "Assignee /\nDeveloper" as Dev
+
+rectangle "Tawer Management — Sprint 3" {
+  usecase "Manage epics" as UC_Epic
+  usecase "Manage milestones" as UC_Miles
+  usecase "Plan sprint\n(dates + capacity)" as UC_Plan
+  usecase "Run sprint lifecycle\n(start / stop / complete)" as UC_Life
+  usecase "Groom & reorder\nbacklog" as UC_Backlog
+  usecase "Assign task to sprint" as UC_ToSprint
+  usecase "View analytics\n(burndown / velocity / Gantt)" as UC_Analytics
+  usecase "Create task\n(type, priority, estimate)" as UC_Task
+  usecase "Configure kanban\n(columns + WIP)" as UC_Kanban
+  usecase "Move task in kanban" as UC_Move
+  usecase "Declare dependencies" as UC_Deps
+  usecase "Log time" as UC_Time
+  usecase "Comment / @mention / like" as UC_Comment
+}
+
+PM --> UC_Epic
+PM --> UC_Miles
+PM --> UC_Task
+PM --> UC_Kanban
+PM --> UC_Backlog
+PM --> UC_Analytics
+PO --> UC_Epic
+PO --> UC_Miles
+PO --> UC_Task
+PO --> UC_Backlog
+PO --> UC_Deps
+SM --> UC_Plan
+SM --> UC_Life
+SM --> UC_Backlog
+SM --> UC_ToSprint
+Dev --> UC_Move
+Dev --> UC_Time
+Dev --> UC_Comment
+
+UC_ToSprint ..> UC_Backlog : <<extend>>
+UC_Move ..> UC_Deps : <<include>>
+UC_Life ..> UC_Plan : <<extend>>
+@enduml

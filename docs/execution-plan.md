@@ -153,6 +153,14 @@ Frontend-first per constraint; backend items are called out with justification.
 - Why this phase: one-line-ish cache-key addition; removes stale detail sheet after label changes.
 - Acceptance: assigning/removing a label updates the open detail sheet without a manual refresh.
 
+- **Status: DONE.** All three shipped together: `cast-project-task.ts` normalizes both the flat and nested
+  label shapes so chips never render `undefined` names/keys (1.1); user-added kanban columns render but no
+  longer send an unresolvable status to the backend on drop, eliminating that P8002 (1.2); label
+  assign/unassign now invalidates the task-detail query key so an open detail sheet updates immediately
+  (1.3). Also fixed in the same pass: `project-task-statuses.test.ts`'s fixture (didn't match the current
+  `TaskStatusType` shape) and an orphaned `facebook-api` gitlink that was breaking the frontend's TypeScript
+  build step entirely.
+
 ### Phase 2 — API-parity fixes required *before* disabling mock (root cause)
 
 **2.1 — Restore `name`/`description` on the project list endpoint**
@@ -181,6 +189,13 @@ Frontend-first per constraint; backend items are called out with justification.
 - Acceptance: saving a task with a cleared assignee/epic/sprint/milestone via multipart succeeds (field omitted,
   not sent as `""`).
 
+- **Status: DONE.** Backend fix taken for both 2.1 and 2.2 (not the frontend alt): `project-list.dto.ts` /
+  `project-summary.dto.ts` now instantiate array items via `@Type` and force `name`/`description` to compute
+  via `@Expose`, fixing `GET /projects` returning blank names; `task-list.dto.ts` now instantiates
+  `TaskSummaryDto` items via `@Type` so the labels transform runs, fixing the nested `{label:{...}}` shape.
+  2.3: `project-task-upload.ts` strips empty-string UUID fields before appending to `FormData` instead of
+  sending `""`.
+
 ### Phase 3 — Remove mock mode (the core request; do after Phase 2)
 
 **3.1 — Delete mock infrastructure and wire services to the API only**
@@ -195,6 +210,13 @@ Frontend-first per constraint; backend items are called out with justification.
   change per module and smoke-test each module (projects, tasks, sprints, auth, notifications, tracking).
 - Acceptance: no `USE_MOCK`/`useMockStore`/`MOCK_USER` references remain; all data/auth flows hit the real API;
   app builds and each listed module loads real data.
+
+- **Status: DONE.** Both mock toggle mechanisms deleted (the module-import-time freeze in
+  `projects/services/index.ts` and the live-reading `USE_MOCK()`/`getUseMockAuth()` branches in tasks, auth,
+  notifications, and tracking services), along with the Zustand mock-toggle store, the floating dev panel,
+  and all mock fixture data (`mock.json` x2, `personal-tasks.json`). Verified live against the real backend:
+  login, projects list, task list, notifications, and work-day tracking (check-in/check-out round trip) all
+  confirmed working with no leftover mock branches.
 
 ### Phase 4 — UX / feature gaps (medium, isolated)
 
@@ -221,6 +243,18 @@ Frontend-first per constraint; backend items are called out with justification.
   instead of a blank chart, so empty series read as intentional rather than broken. (Backend date-precondition
   behavior is by design; no BE change.)
 - Acceptance: date-less/new-project analytics show a clear empty state, not an unhoverable flat chart.
+
+- **Status: DONE.** 4.1: free-text "Entity ID" replaced with a searchable picker scoped to `entityType`
+  (task/sprint/milestone), reusing existing list hooks; the linked entity's title now shows in the reminder
+  list and edit mode instead of the raw `entityId`. 4.2: `GanttType` widened to include `epics/sprints/tasks`
+  matching the backend payload instead of discarding them at the cast layer; surfaced as extra list sections
+  alongside milestones. 4.3: burndown and velocity charts render an explicit empty-state message instead of a
+  blank/flat chart when there's no data. **Bonus fix found during 4.3 populated-state verification:**
+  `hsl(var(--primary))` is an invalid CSS color because `--primary` is an `oklch(...)` value, not raw `H S% L%`
+  components — the browser silently fell back to the SVG default (black fill, no stroke), so the velocity bar
+  was the wrong color and the burndown line never rendered despite having real data. Fixed in
+  `burndown-chart.tsx`/`velocity-chart.tsx`; the same pattern still exists in `sidebar.tsx` and the TipTap
+  editor's `three.tsx`, tracked separately as 6.5.
 
 ### Phase 5 — De-duplication (drift source)
 
@@ -272,6 +306,39 @@ Frontend-first per constraint; backend items are called out with justification.
   an unused custom status all succeed. **Two pre-existing (not migration-caused) cosmetic gaps deferred:** custom
   statuses render uncolored in `project-task-item.tsx` (badge map keyed to system names only) and are dropped from
   the assignee-swimlane kanban view (`groupTasksByAssignee` hardcodes columns by project type).
+
+**5.3 — E2E test suite was silently non-functional — NEW, DONE**
+- Files: `tdg-management-api-backend/src/common/pipes/transform-language.pipe.ts`,
+  `test/sprints.e2e-spec.ts`, `test/agile-permissions.e2e-spec.ts`, `test/tasks.e2e-spec.ts`,
+  `test/milestones.e2e-spec.ts`
+- Layer: Backend (pipe) + test-only · Effort: S · Risk: Low
+- The bug: none of the 8 e2e suites (agile-permissions, epics, milestones, projects, reminders, sprints,
+  tasks, users) had ever actually run — they silently failed to compile. Root cause:
+  `transform-language.pipe.ts` referenced `Language.Arabic`/`Language.French`, but the Prisma `Language` enum
+  has only ever contained `English` (true since the very first migration); every real backend call site
+  already hardcodes `Language.English`, and the frontend explicitly limits i18n routing to `locales: ["en"]`.
+  This was dead/aspirational scaffolding for a multi-language feature that was never implemented, not a real
+  feature waiting on a schema change — confirmed via git history (both files introduced in the same squashed
+  initial commit, never diverged since) and a repo-wide usage sweep.
+- Once the compile blocker was cleared, 3 more latent bugs surfaced (invisible until now because the suites
+  had never executed):
+  - `sprints.e2e-spec.ts` also referenced the nonexistent `Language.French` in a test fixture.
+  - `agile-permissions.e2e-spec.ts` (6 tests) and `tasks.e2e-spec.ts` (3 tests) asserted against
+    `GET /tasks/me`, a route that was never implemented; the real cross-project endpoint is
+    `GET /project-tasks/assigned`.
+  - `milestones.e2e-spec.ts` used fixed literal fixture names (no run-suffix, unlike `sprints.e2e-spec.ts`)
+    plus an `afterAll` cleanup that broke entirely if `beforeAll` threw partway through — a stale
+    `ProjectContent` row from an earlier partial run permanently blocked every later run via a
+    unique-constraint collision.
+- Fix: simplified the pipe to always return `Language.English`; changed the `sprints.e2e-spec.ts` fixture to
+  `Language.English`; repointed all 9 `/tasks/me` call sites to `/project-tasks/assigned`; added a
+  `runSuffix` to the milestones fixture names and made its `afterAll` filter out unset IDs before querying so
+  a partial `beforeAll` failure can no longer wedge the database; deleted the pre-existing stale rows from
+  the local dev DB.
+- Acceptance: all 8 e2e suites compile and execute.
+- **Status: DONE.** Before: 0 of 8 suites could even compile (hard `tsc` errors on the `Language` enum).
+  After: all 8 suites run; **512/512 tests passing** (the 3 suites that hit the two latent bugs above —
+  agile-permissions, tasks, milestones — are now also green).
 
 ### Phase 6 — Hardening (OPTIONAL — separate approval, not bugs today)
 

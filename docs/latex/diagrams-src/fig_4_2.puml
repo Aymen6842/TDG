@@ -1,0 +1,62 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+skinparam component {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+skinparam database {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+skinparam cloud {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+
+package "Write path — indexing (async)" {
+  [Task / Epic / Sprint /\nMilestone services] as PROD
+  [IndexOutbox seam\n(fire-and-forget)] as SEAM
+  [IndexSweeperJob\n(cron 1 min · locked)] as SWEEP
+  [IndexingService\n(chunk · hash · upsert)] as IDX
+}
+
+package "Read path — query (sync)" {
+  [CopilotService\n(ground + cite)] as COP
+  [EstimationService\n(k-NN)] as EST
+  [RetrievalService\n(hybrid + RRF + gate)] as RET
+  [AiAccessService\n(scope resolved in SQL)] as ACC
+  [RerankerService\n(flash-lite · optional)] as RER
+}
+
+cloud "Google Gemini" {
+  [gemini-embedding-001\n(1536-dim)] as EMB
+  [gemini-2.5-flash\n(grounded answer)] as GEN
+}
+
+database "PostgreSQL + pgvector" {
+  [IndexOutbox\n(work queue)] as OBT
+  [DocumentEmbedding\nHNSW (vector) + GIN (tsvector)] as DE
+  [CopilotQueryLog\n(telemetry)] as LOG
+}
+
+PROD --> SEAM : enqueue on write
+SEAM --> OBT : idempotent upsert
+SWEEP --> OBT : claimDue(25)
+SWEEP --> IDX
+IDX --> EMB : embedBatch(changed chunks)
+IDX --> DE : upsertChunk ON CONFLICT
+
+COP --> RET
+EST --> RET
+RET --> ACC : allowedProjectIds()
+RET --> DE : vector + lexical search\n(projectId = ANY(allowed))
+RET --> RER
+COP --> GEN : generateGrounded(sources)
+COP --> LOG : write receipt
+EST --> DE : k-NN over DONE tasks
+@enduml

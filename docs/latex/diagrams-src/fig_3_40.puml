@@ -1,0 +1,174 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+package "Identity & Access (Sprint 1)" {
+  class User {
+    +id : UUID
+    +email : String <<unique>>
+  }
+  class Role {
+    +type : UserType
+  }
+  class Team {
+    +name : String <<unique>>
+  }
+}
+
+package "Projects & Membership (Sprint 2)" {
+  class Project {
+    +id : UUID
+    +businessUnit : BusinessUnit
+  }
+  class ProjectMember {
+    +isManager : Boolean
+  }
+}
+
+package "Agile Planning (Sprint 3)" {
+  class Epic {
+    +id : UUID
+  }
+  class Sprint {
+    +status : SprintStatus
+  }
+  class Milestone {
+    +dueDate : DateTime
+  }
+}
+
+package "Tasks & Kanban (Sprint 3)" {
+  class Task {
+    +key : String
+    +status : String
+  }
+  class TaskTimeEntry {
+    +hours : Float
+  }
+}
+
+package "Productivity Suite (Sprint 4)" {
+  class UserTask {
+    +status : UserTaskStatus
+  }
+  class WorkDay {
+    +createdAt : DateTime «business-day key»
+  }
+  class WorkSession {
+    +timeSpentInMinutes : Decimal
+  }
+  class Event {
+    +type : EventType
+  }
+  class Reminder {
+    +entityType : ReminderEntityType
+    +status : ReminderStatus
+  }
+  class ReminderChannel {
+    +channel : ChannelType
+  }
+}
+
+package "Communication & Operations (Sprint 5)" {
+  ' --- Notifications ---
+  class Notification #LightYellow {
+    +id : UUID
+    +image : String
+    -sendBy : UUID «nullable»
+  }
+  class NotificationContent #LightYellow {
+    +title : String
+    +body : String
+  }
+  class UserNotification #LightYellow {
+    +isSeen : Boolean
+  }
+  class NotificationToken #LightYellow {
+    +token : String <<unique>>
+    +deviceType : DeviceType
+  }
+  class UserNotificationSettings #LightYellow {
+    +emailNotificationsEnabled : Boolean
+    +pushNotificationsEnabled : Boolean
+    +telegramNotificationsEnabled : Boolean
+    +ntfyNotificationsEnabled : Boolean
+  }
+  class UserTelegramBot #LightYellow {
+    +chatId : String
+  }
+  class UserNtfyIntegration #LightYellow {
+    +topic : String
+  }
+  ' --- Infra monitoring ---
+  class Server #LightYellow {
+    +id : UUID
+    +ip : String
+    +status : ServerServiceStatus
+    +expiredAt : DateTime
+  }
+  class Service #LightYellow {
+    +domain : String
+    +status : ServerServiceStatus
+    +expiredAt : DateTime
+  }
+  class ServerNotification #LightYellow {
+    +message : String
+    +isSent : Boolean
+  }
+  class ServiceNotification #LightYellow {
+    +message : String
+    +isSent : Boolean
+  }
+  class UserServerManagement #LightYellow {
+    +id : UUID
+  }
+}
+
+' Prior-sprint relations (compacted)
+User "1" --> "0..*" Role : has
+User "1" --> "0..*" Team : "member of"
+User "1" --> "0..*" Project : creates
+Project "1" --> "0..*" ProjectMember : team
+Project "1" --> "0..*" Epic : has
+Project "1" --> "0..*" Sprint : has
+Project "1" --> "0..*" Milestone : has
+Project "1" --> "0..*" Task : owns
+Task "1" --> "0..*" TaskTimeEntry : logs
+User "1" --> "0..*" UserTask : owns
+User "1" --> "0..*" WorkDay : has
+WorkDay "1" --> "0..*" WorkSession : has
+User "1" --> "0..*" Event : creates
+User "1" --> "0..*" Reminder : "recipient / author"
+Reminder "1" --> "1..*" ReminderChannel : channels
+
+' Sprint 5 — Notifications
+User "1" --> "0..*" Notification : "sends (sendBy?)"
+User "1" --> "0..*" UserNotification : receives
+User "1" --> "0..*" NotificationToken : devices
+User "1" --> "1" UserNotificationSettings : has
+User "1" --> "1" UserTelegramBot : has
+User "1" --> "1" UserNtfyIntegration : has
+Notification "1" --> "1..*" NotificationContent : content
+Notification "1" --> "0..*" UserNotification : fan-out
+
+' Sprint 5 — Infra monitoring
+Server "1" --> "0..*" Service : "hosts (cascade)"
+Server "1" --> "0..*" ServerNotification : raises
+Service "1" --> "0..*" ServiceNotification : raises
+Server "1" --> "0..*" UserServerManagement : "managed via"
+User "1" --> "0..*" UserServerManagement : manages
+
+' Cross-package seam: channel config feeds both reminders and infra alerts
+ReminderChannel ..> UserNotificationSettings : "reads (fan-out)"
+ServerNotification ..> UserNotificationSettings : "reads (fan-out)"
+@enduml

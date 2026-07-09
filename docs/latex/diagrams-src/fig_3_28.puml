@@ -1,0 +1,28 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "@Cron\nEVERY_MINUTE" as Cron
+participant "LockManagement\n(Postgres)" as Lock
+participant "FetchEvent\nRepository" as F
+participant "EventsService" as S
+participant "Mail / Telegram /\nPush / Ntfy" as Ch
+participant "UpdateEvent\nRepository" as U
+
+Cron -> Lock : lock(notifyUsersAboutEventLock, 55s)
+alt not acquired
+  Lock --> Cron : false (skip)
+else acquired
+  S -> F : fetchNextEventsToNotify(now)
+  F --> S : events (isNotified=false, due, future)
+  loop each event
+    S -> S : resolve audience\n(all users / participants / creator)
+    S -> Ch : send per enabled channel (Africa/Tunis time)
+    S -> U : recompute nextNotificationTime;\nisNotified = within ~25 min
+  end
+end
+@enduml

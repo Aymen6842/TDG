@@ -1,0 +1,73 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+class User {
+  +id : UUID
+}
+class Project {
+  +id : UUID
+}
+class Task {
+  +id : UUID
+}
+class Milestone {
+  +id : UUID
+}
+
+enum ReminderEntityType <<enum>> #LightYellow {
+  TASK
+  SPRINT
+  MILESTONE
+  PROJECT
+  CUSTOM
+}
+enum ReminderStatus <<enum>> #LightYellow {
+  PENDING
+  SENT
+  DISMISSED
+  FAILED
+  CANCELLED
+}
+enum ChannelType <<enum>> #LightYellow {
+  EMAIL
+  TELEGRAM
+  PUSH
+  NTFY
+}
+
+class Reminder #LightYellow {
+  +id : UUID
+  -userId : UUID «recipient»
+  -createdById : UUID «author»
+  +entityType : ReminderEntityType
+  +entityId : UUID «polymorphic»
+  +message : String
+  +reminderAt : DateTime
+  +isRecurring : Boolean
+  +recurrenceRule : String
+  +status : ReminderStatus
+  +sentAt : DateTime
+  +dismissedAt : DateTime
+}
+class ReminderChannel #LightYellow {
+  +id : UUID
+  +channel : ChannelType
+}
+
+User "1" --> "0..*" Reminder : "recipient / author"
+Reminder "1" --> "1..*" ReminderChannel : "channels (cascade)"
+Project "0..1" --> "0..*" Reminder : "projectId?"
+Task "0..1" ..> "0..*" Reminder : "entityId (dormant FK)"
+Milestone "0..1" ..> "0..*" Reminder : "entityId (dormant FK)"
+@enduml

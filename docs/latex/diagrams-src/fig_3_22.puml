@@ -1,0 +1,205 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+package "Identity & Access (Sprint 1)" {
+  class User {
+    +id : UUID
+    +email : String <<unique>>
+    +name : String
+  }
+  class Role {
+    +id : UUID
+    +type : UserType
+  }
+  class RefreshToken {
+    +token : String <<PK>>
+  }
+  class ResetPasswordCode {
+    +id : UUID
+    +code : String
+  }
+  class Team {
+    +id : UUID
+    +name : String <<unique>>
+  }
+  class UserTeam {
+    +id : UUID
+    +isManager : Boolean
+  }
+}
+
+package "Projects & Membership (Sprint 2)" {
+  class Project {
+    +id : UUID
+    +businessUnit : BusinessUnit
+    +projectType : ProjectType
+    +status : ProjectStatus
+    +kanbanSettings : Json
+  }
+  class ProjectContent {
+    +id : UUID
+    +name : String
+    +language : Language
+  }
+  class ProjectMember {
+    +id : UUID
+    +isManager : Boolean
+  }
+  class ProjectInvitation {
+    +id : UUID
+    +token : String <<unique>>
+    +status : InvitationStatus
+  }
+}
+
+package "Agile Planning (Sprint 3)" {
+  enum SprintStatus <<enum>> #LightYellow {
+    Pending
+    Running
+    Stopped
+    Completed
+  }
+  class Epic #LightYellow {
+    +id : UUID
+    +name : String
+    +color : String
+    +startDate : DateTime
+    +endDate : DateTime
+  }
+  class Sprint #LightYellow {
+    +id : UUID
+    +status : SprintStatus
+    +capacity : Integer
+    +startDate : DateTime
+    +endDate : DateTime
+  }
+  class SprintContent #LightYellow {
+    +id : UUID
+    +name : String
+    +language : Language
+  }
+  class SprintAttachment #LightYellow {
+    +id : UUID
+    +attachment : String
+  }
+  class Milestone #LightYellow {
+    +id : UUID
+    +name : String
+    +dueDate : DateTime
+    +completedAt : DateTime
+  }
+}
+
+package "Tasks & Kanban (Sprint 3)" {
+  enum TaskType <<enum>> #LightYellow {
+    TASK
+    BUG
+    STORY
+  }
+  enum TaskPriority <<enum>> #LightYellow {
+    LOW
+    MEDIUM
+    HIGH
+    URGENT
+  }
+  class Task #LightYellow {
+    +id : UUID
+    +key : String <<unique/project>>
+    +type : TaskType
+    +priority : TaskPriority
+    +status : String
+    +storyPoints : Integer
+    +estimatedHours : Float
+    +actualHours : Float
+    +displayOrder : Integer
+    +completedAt : DateTime
+  }
+  class ProjectTaskStatus #LightYellow {
+    +id : UUID
+    +name : String
+    +order : Integer
+    +isSystem : Boolean
+    +allowedTransitions : String[]
+  }
+  class TaskComment #LightYellow {
+    +id : UUID
+    +content : String
+  }
+  class TaskCommentLike #LightYellow {
+    +id : UUID
+  }
+  class TaskCommentMention #LightYellow {
+    +id : UUID
+  }
+  class TaskLabel #LightYellow {
+    +id : UUID
+    +name : String
+    +color : String
+  }
+  class TaskLabelAssignment #LightYellow {
+    +id : UUID
+  }
+  class TaskDependency #LightYellow {
+    +id : UUID
+    +dependencyType : String
+  }
+  class TaskTimeEntry #LightYellow {
+    +id : UUID
+    +hours : Float
+  }
+  class TaskAttachment #LightYellow {
+    +id : UUID
+    +file : String
+  }
+}
+
+' Sprint 1 relations
+User "1" --> "0..*" Role : has
+User "1" --> "0..*" RefreshToken : issues
+User "1" --> "0..1" ResetPasswordCode : has
+User "1" --> "0..*" UserTeam : "member of"
+Team "1" --> "0..*" UserTeam : "has members"
+
+' Sprint 2 relations
+User "1" --> "0..*" Project : creates
+Project "1" --> "1..*" ProjectContent : "has (i18n)"
+Project "1" --> "1..*" ProjectMember : "has team"
+Project "1" --> "0..*" ProjectInvitation : "has invites"
+User "1" --> "0..*" ProjectMember : "member of"
+
+' Sprint 3 — Agile relations
+Project "1" --> "0..*" Epic : has
+Project "1" --> "0..*" Sprint : has
+Project "1" --> "0..*" Milestone : has
+User "1" --> "0..*" Sprint : creates
+Sprint "1" --> "1..*" SprintContent : "has (i18n)"
+Sprint "1" --> "0..*" SprintAttachment : files
+
+' Sprint 3 — Task relations
+Project "1" --> "0..*" Task : owns
+Project "1" --> "0..*" ProjectTaskStatus : columns
+Epic "1" --> "0..*" Task : "epicId?"
+Sprint "1" --> "0..*" Task : "sprintId?"
+Milestone "1" --> "0..*" Task : "milestoneId?"
+User "1" --> "0..*" Task : "assignee / reporter"
+Task "1" --> "0..*" Task : subtasks
+Task "1" --> "0..*" TaskComment : has
+TaskComment "1" --> "0..*" TaskCommentLike : likes
+TaskComment "1" --> "0..*" TaskCommentMention : mentions
+Task "1" --> "0..*" TaskLabelAssignment : tagged
+TaskLabel "1" --> "0..*" TaskLabelAssignment : "used by"
+Task "1" --> "0..*" TaskDependency : "blocks / blocked by"
+Task "1" --> "0..*" TaskTimeEntry : logs
+Task "1" --> "0..*" TaskAttachment : has
+@enduml

@@ -1,0 +1,102 @@
+\chapter*{Conclusion \& Perspectives}
+\addcontentsline{toc}{chapter}{Conclusion \& Perspectives}
+
+\section*{What was built, and what it demonstrates}
+
+Over six sprints this project delivered \textbf{Tawer Management}, a two-application platform that consolidates
+an agency's operational work into one authenticated, bilingual system: a stateless NestJS~11 REST API of
+146~endpoints across 20~controllers, and a Next.js~16 / React~19 client, backed by PostgreSQL + pgvector
+and Redis. The four objectives set out in Section~1.6 were met. The breadth objective is visible in
+the ten operational domains that Chapters~3 and~4 walk through sprint by sprint: projects and membership,
+the agile backlog, a data-driven kanban, personal to-dos, attendance, calendar, reminders, multi-channel
+notifications, infrastructure monitoring, and the AI copilot. The access-control objective is met by a
+single centralized RBAC model that lets roughly 31 role types share one API across the two business units,
+refined per-resource in the services rather than only at the guard (Chapter~3, Section~3.1). The maintainability
+objective shows in the uniform four-layer, per-feature convention (controller → service → repository →
+DTO) that made every module in this report readable the same way once the pattern was learned (Section~2.4). The
+differentiator is the RAG subsystem of Chapter~4, and it is the objective the project most fully realizes.
+
+Three things make the AI sprint the technical climax rather than an add-on. Its retrieval is
+\textbf{permission-scoped in SQL}, so the same \texttt{projectId = ANY(\$allowedIds)} filter that governs the rest of
+the platform also governs what the copilot can see. A CEO and an intern asking the identical question
+retrieve from disjoint candidate sets, and the evaluation measured \textbf{zero cross-role leakage} (Sections~4.6
+and~4.8). Its freshness is maintained by a \textbf{transactional-outbox seam} drained by a locked sweeper, with a
+self-healing nightly reconcile, so the domain never depends on the AI subsystem to save its data (Section~4.5).
+And its quality is \textbf{measured rather than asserted}: an offline evaluation harness with committed gold
+sets showed hybrid retrieval lifting MRR from 0.57 to 1.00 and Recall@1 from 0.30 to 1.00 on the
+identifier gold set, while tying the already-saturated semantic set. That is the evidence the hybrid
+lexical+vector design earns its place (Section~4.8). In a report built entirely from evidence, this is the one
+feature that stands on numbers.
+
+\section*{Limitations \& Perspectives}
+
+The platform is a functional system delivered under a strict six-sprint timeline: breadth was the priority,
+and the hardening path ahead is short and well defined. The report flagged each gap at the sprint where
+it arose rather than saving it for the end, and \textbf{Annex~A} gathers every item into one ordered backlog,
+each root-caused and paired with a designed remediation. Consolidated, the verified
+debt falls into five themes:
+
+\begin{itemize}
+  \item \textbf{Security.} Before any non-local deployment the posture needs the auth hardening named in Sprint~1 and
+  the access-control gates from Sprints~4 and~5: shorter token TTLs with an enforced \texttt{type} claim, request
+  throttling and a global guard, \texttt{ValidationPipe(\{ whitelist: true \})} against mass-assignment, tighter
+  CORS, moving frontend tokens off \texttt{localStorage} to HttpOnly cookies with edge auth re-enabled, and the
+  \texttt{deleteUserByAdmin}/IDOR fixes (Annex~A; Section~3.1.5).
+  \item \textbf{Correctness.} A handful of concrete, code-verified defects, each root-caused and paired with a fix in
+  Annex~A: the check-in dead zone, server-side archived filtering, the racy \texttt{generateTaskKey},
+  reminder recurrence, \texttt{checkHttp} on a schemeless domain, event ownership on edit, and the AI
+  comment-delete freshness gap.
+  \item \textbf{Maintainability.} The duplicated executive-RBAC helpers and the copy-pasted notification fan-out
+  consolidate behind a shared \texttt{ProjectAccessService} and a single notification dispatcher; a set of dormant
+  structures (the single-value \texttt{Language} enum, the dead \texttt{RedisModule}/\texttt{RolesGuard}/\texttt{UserManager}/
+  \texttt{Task.statusType}, stale branding) should be wired or removed rather than left misleading.
+  \item \textbf{Testing.} Backend behavioural coverage is near-zero outside the projects module (the 854-line
+  \texttt{projects.service.spec.ts}, cited as genuine coverage in Section~3.2.3) and the frontend property-based suites;
+  the highest-value missing tests are the ones the bugs above name, and a business-day-boundary test would
+  have caught the check-in dead zone.
+  \item \textbf{DevOps.} No CI/CD, app Dockerfiles not yet orchestrated by compose, uploads on an ephemeral local
+  filesystem, and a frontend \texttt{BACKEND\_ADDRESS} hard-coded to \texttt{localhost}, so the platform runs but is not
+  yet portably deployable.
+\end{itemize}
+
+None of these undermine the architecture. They are the finishing work that separates a functional platform
+from a production system, and naming them precisely, with remediations gathered in Annex~A, is what makes
+the prioritized path below actionable.
+
+\section*{Perspectives: prioritized future work}
+
+The roadmap follows the order in which the debt actually hurts:
+
+\begin{enumerate}
+  \item \textbf{Security first.} Shorten token TTLs and enforce the \texttt{type} claim, add \texttt{@nestjs/throttler} plus a
+   global auth guard, enable \texttt{whitelist} validation, restrict CORS, move the frontend to HttpOnly cookies
+   with edge auth re-enabled, and fix \texttt{deleteUserByAdmin} and the two IDOR writes. These are the changes
+   that gate any real deployment.
+  \item \textbf{Correctness.} Key WorkDays on an explicit \texttt{businessDate} column to fix the dead zone; replace
+   \texttt{generateTaskKey} with a monotonic per-project counter; enqueue comment edits and deletes into the AI
+   outbox so the copilot never cites content that is gone; and scope \texttt{ProjectContent}/\texttt{SprintContent}
+   uniqueness by project.
+  \item \textbf{Quality \& maintainability.} Extract a shared \texttt{ProjectAccessService}, split the large \texttt{TasksService},
+   introduce a central notification dispatcher to replace the duplicated four-channel fan-out, and add an
+   axios interceptor to remove the \textasciitilde60× duplicated frontend auth/refresh logic. Add the cheap unit tests
+   around the AI subsystem's pure functions (RRF fusion, weighted percentiles, citation parsing).
+  \item \textbf{DevOps.} Add CI (lint + build + \texttt{prisma validate} + the existing suites), a multi-stage Dockerfile,
+   persistent upload storage, and a runtime-configurable \texttt{BACKEND\_ADDRESS}.
+  \item \textbf{AI depth.} Make the confidence gate hybrid-aware so the answer path inherits the proven keyword win,
+   add a retention/redaction policy for the plaintext \texttt{CopilotQueryLog}, and refresh the answer-quality
+   evaluation figures.
+  \item \textbf{i18n.} Either populate the \texttt{Language} enum and wire the content tables end to end, or remove the
+   dormant split, since the current half-state is the misleading option.
+\end{enumerate}
+
+\section*{Closing}
+
+Tawer Management set out to consolidate fragmented team-management workflows into one coherent, localized
+application, and to add an evidence-grounded AI layer on top of the organization's own data. It meets that
+goal: ten operational domains sit behind one RBAC-governed API, and the RAG copilot answers only from
+content the user is allowed to see, with citations and a measured quality score. The main engineering
+strengths are real. The architecture is uniformly layered, access control is centralized, and the RAG
+pipeline is built to production shape. The remaining work is hardening, and it is prioritized in Annex~A
+rather than left vague. The retrieval numbers are the clearest evidence that the hardest part already
+works: on the identifier gold set, MRR rose from 0.57 to 1.00 and Recall@1 from 0.30 to 1.00, with no
+cross-role leakage.

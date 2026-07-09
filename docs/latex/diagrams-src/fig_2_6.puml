@@ -1,0 +1,33 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+start
+:Request any /[locale]/... path;
+:proxy.ts — next-intl only (no auth);
+:render layout tree;
+:useUser → GET /users/me;
+switch (result?)
+case ( loading )
+  :render <Loading/>;
+  stop
+case ( user resolved )
+  if (route group?) then ((auth))
+    :render app shell;
+  else ((guest))
+    :redirect → /dashboard;
+  endif
+  stop
+case ( no user )
+  if (in (auth) group?) then (yes)
+    :router.push('/login');
+  else (no)
+    :render guest page;
+  endif
+  stop
+endswitch
+@enduml

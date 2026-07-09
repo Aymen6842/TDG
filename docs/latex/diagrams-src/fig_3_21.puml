@@ -1,0 +1,126 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+enum TaskType <<enum>> #LightYellow {
+  TASK
+  BUG
+  STORY
+  ..
+}
+enum TaskPriority <<enum>> #LightYellow {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+class Task #LightYellow {
+  +id : UUID
+  -projectId : UUID
+  +key : String <<unique per project>>
+  +type : TaskType
+  +priority : TaskPriority
+  +status : String
+  +statusType : String <<dormant>>
+  -assigneeId : UUID
+  -reporterId : UUID
+  -sprintId : UUID
+  -epicId : UUID
+  -milestoneId : UUID
+  -parentTaskId : UUID
+  +storyPoints : Integer
+  +estimatedHours : Float
+  +actualHours : Float
+  +displayOrder : Integer
+  +progressPercent : Integer
+  +completedAt : DateTime
+}
+
+class ProjectTaskStatus #LightYellow {
+  +id : UUID
+  -projectId : UUID
+  +name : String
+  +color : String
+  +order : Integer
+  +isSystem : Boolean
+  +isDefault : Boolean
+  +allowedTransitions : String[]
+}
+
+class TaskComment #LightYellow {
+  +id : UUID
+  -taskId : UUID
+  -authorId : UUID
+  +content : String
+}
+class TaskCommentLike #LightYellow {
+  +id : UUID
+  -commentId : UUID
+  -userId : UUID
+}
+class TaskCommentMention #LightYellow {
+  +id : UUID
+  -commentId : UUID
+  -userId : UUID
+}
+class TaskLabel #LightYellow {
+  +id : UUID
+  -projectId : UUID
+  +name : String
+  +color : String
+}
+class TaskLabelAssignment #LightYellow {
+  +id : UUID
+  -taskId : UUID
+  -labelId : UUID
+}
+class TaskDependency #LightYellow {
+  +id : UUID
+  -blockingTaskId : UUID
+  -blockedTaskId : UUID
+  +dependencyType : String
+}
+class TaskTimeEntry #LightYellow {
+  +id : UUID
+  -taskId : UUID
+  -userId : UUID
+  -workSessionId : UUID
+  +hours : Float
+}
+class TaskAttachment #LightYellow {
+  +id : UUID
+  -taskId : UUID
+  +file : String
+}
+class TaskContent <<dormant>> #LightYellow {
+  +id : UUID
+  -taskId : UUID
+  +title : String
+  +language : Language
+}
+
+Task "1" --> "0..*" TaskComment : has
+TaskComment "1" --> "0..*" TaskCommentLike : likes
+TaskComment "1" --> "0..*" TaskCommentMention : mentions
+Task "1" --> "0..*" TaskLabelAssignment : tagged
+TaskLabel "1" --> "0..*" TaskLabelAssignment : "used by"
+Task "1" --> "0..*" TaskTimeEntry : logs
+Task "1" --> "0..*" TaskAttachment : has
+Task "1" --> "0..*" TaskContent : "i18n (dormant)"
+Task "1" --> "0..*" Task : subtasks
+Task "1" --> "0..*" TaskDependency : "blocking"
+Task "1" --> "0..*" TaskDependency : "blocked by"
+Task ..> TaskType
+Task ..> TaskPriority
+@enduml

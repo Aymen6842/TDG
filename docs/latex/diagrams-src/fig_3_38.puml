@@ -1,0 +1,34 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+skinparam componentStyle rectangle
+left to right direction
+
+package "Per-minute detector crons" #FBFCFE {
+  component "checkServersStatus /\ncheckServicesStatus" as A
+  component "updateServer/Services\nNextNotificationDate" as B
+}
+database "Server/ServiceNotification\n(isSent = false)" as N
+A --> N : insert (down)
+B --> N : insert (expiry band)
+
+package "Per-minute sender crons" #FBFCFE {
+  component "sendNotificationsForServers /\n...Services" as S
+}
+N --> S : poll isSent = false
+
+component "TelegramService" as TG
+component "NtfyService" as NT
+component "MailService" as ML
+component "NotificationsService\n(in-app + push)" as PS
+
+S --> TG : telegramEnabled
+S --> NT : ntfyEnabled
+S --> ML : emailEnabled
+S --> PS : pushEnabled
+S --> N : mark isSent = true
+@enduml

@@ -1,0 +1,35 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+actor "User (browser)" as U
+participant "AttendanceWrapper /\nCheckInScreen" as GATE
+participant "WorkDaysController" as API
+participant "WorkDaysService" as SVC
+participant "FilterWorkSessions\nRepository" as REPO
+participant "Postgres" as DB
+
+U -> GATE : open dashboard route
+GATE -> API : GET /work-days/current
+API -> SVC : getCurrentWorkDayForUser
+SVC -> REPO : query window [today 03:00Z, tmrw 02:59Z]
+REPO -> DB : WorkDay where createdAt in window
+DB --> GATE : 404 (status = out)
+
+U -> GATE : pick Remote/Onsite -> Check In
+GATE -> API : POST /work-days/sessions/start
+API -> SVC : createWorkSession (startTime=now, userId)
+SVC -> DB : get-or-create WorkDay + open WorkSession
+SVC --> GATE : 201 + WorkDay ("Welcome!")
+
+GATE -> API : GET /work-days/current (refetch)
+alt now in 03:00-23:59 UTC (normal)
+  DB --> GATE : 200 WorkDay -> status = in -> gate hides
+else now in 00:00-02:59 UTC (dead zone, P1-1)
+  DB --> GATE : 404 (createdAt < today 03:00Z) -> gate loops forever
+end
+@enduml

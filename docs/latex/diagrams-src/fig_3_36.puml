@@ -1,0 +1,73 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+class User {
+  +id : UUID
+}
+
+enum DeviceType <<enum>> #LightYellow {
+  Ios
+  Android
+  Computer
+}
+
+class Notification #LightYellow {
+  +id : UUID
+  +image : String
+  -sendBy : UUID «nullable»
+}
+class NotificationContent #LightYellow {
+  +id : UUID
+  +title : String
+  +body : String
+  +url : String
+  +language : Language «English only»
+}
+class UserNotification #LightYellow {
+  +id : UUID
+  +isSeen : Boolean
+  ' @@unique(notificationId, userId)
+}
+class NotificationToken #LightYellow {
+  +id : UUID
+  +token : String <<unique>>
+  +device : String
+  +deviceType : DeviceType
+}
+class UserNotificationSettings #LightYellow {
+  +userId : UUID <<unique>>
+  +emailNotificationsEnabled : Boolean = true
+  +pushNotificationsEnabled : Boolean = true
+  +telegramNotificationsEnabled : Boolean = false
+  +ntfyNotificationsEnabled : Boolean = false
+}
+class UserTelegramBot #LightYellow {
+  +userId : UUID <<unique>>
+  +chatId : String
+}
+class UserNtfyIntegration #LightYellow {
+  +userId : UUID <<unique>>
+  +topic : String
+  +token : String
+}
+
+User "1" --> "0..*" Notification : "sends (sendBy?)"
+User "1" --> "0..*" UserNotification : receives
+User "1" --> "0..*" NotificationToken : devices
+User "1" --> "1" UserNotificationSettings : has
+User "1" --> "1" UserTelegramBot : has
+User "1" --> "1" UserNtfyIntegration : has
+Notification "1" --> "1..*" NotificationContent : "content (English only)"
+Notification "1" --> "0..*" UserNotification : "fan-out (unique per user)"
+@enduml

@@ -1,0 +1,49 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+left to right direction
+
+actor "Executive\n(CEO / CTO / CMO)" as Exec
+actor "Project Manager" as PM
+actor "Scrum Master /\nProduct Owner" as SM
+actor "Member /\nDeveloper" as Dev
+actor "DevOps Engineer" as Ops
+actor "HR / Admin" as HR
+
+rectangle "Tawer Management" {
+  usecase "Administer users,\nroles & teams" as UC_Admin
+  usecase "Manage projects\n& membership" as UC_Proj
+  usecase "Run agile backlog\n& sprints" as UC_Agile
+  usecase "Track tasks on\ndata-driven kanban" as UC_Tasks
+  usecase "Manage personal productivity\n(to-dos, calendar, attendance)" as UC_Prod
+  usecase "Receive multi-channel\nnotifications & reminders" as UC_Notif
+  usecase "Monitor servers\n& services" as UC_Infra
+  usecase "Ask AI copilot\n(grounded, cited answers)" as UC_AI
+  usecase "Estimate task\neffort (AI)" as UC_Est
+  usecase "Oversee portfolio\n& analytics" as UC_Over
+}
+
+HR --> UC_Admin
+PM --> UC_Proj
+Exec --> UC_Proj
+Exec --> UC_Over
+Exec --> UC_AI
+SM --> UC_Agile
+Dev --> UC_Tasks
+Dev --> UC_Prod
+Dev --> UC_Notif
+Dev --> UC_AI
+Ops --> UC_Infra
+
+UC_Tasks ..> UC_Est : <<extend>>
+@enduml

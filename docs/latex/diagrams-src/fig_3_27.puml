@@ -1,0 +1,56 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+class User {
+  +id : UUID
+  +email : String
+}
+class TaskTimeEntry {
+  +id : UUID
+  +hours : Float
+}
+
+enum WorkSessionLocation <<enum>> #LightYellow {
+  REMOTE
+  ONSITE
+}
+enum WorkSessionDevice <<enum>> #LightYellow {
+  DESKTOP
+  MOBILE
+  TABLET
+  OTHER
+}
+
+class WorkDay #LightYellow {
+  +id : UUID
+  -userId : UUID
+  +dailyMood : Integer
+  +performanceRating : Integer
+  +workerNotes : String
+  +managerNotes : String
+  +createdAt : DateTime «business-day key»
+}
+class WorkSession #LightYellow {
+  +id : UUID
+  +startTime : DateTime
+  +endTime : DateTime «null = open»
+  +timeSpentInMinutes : Decimal
+  +location : WorkSessionLocation
+  +device : WorkSessionDevice
+}
+
+User "1" --> "0..*" WorkDay : "has (cascade)"
+WorkDay "1" --> "0..*" WorkSession : "has (cascade)"
+WorkSession "1" --> "0..*" TaskTimeEntry : "logs (Sprint 3)"
+@enduml

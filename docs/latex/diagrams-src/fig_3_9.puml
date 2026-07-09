@@ -1,0 +1,35 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "Frontend\n(use-project-upload)" as FE
+participant "HasPermissionGuard" as G
+participant "ProjectsService" as S
+participant "CreateProjectRepository" as R
+database "Postgres" as DB
+
+FE -> G : POST /projects/register (Bearer)
+G -> G : caller has project.create ?
+G -> S : pass (req.user set)
+activate S
+S -> S : isExecutive? + ensureProjectBusinessUnitAccess
+alt not executive / wrong unit
+  S --> FE : 403 Forbidden
+else allowed
+  S -> S : normalize + default manager→creator\n+ validate exactly one isManager
+  S -> R : create Project + members[] + contents[]
+  R -> DB : INSERT Project, ProjectMember[], ProjectContent[]
+  alt duplicate name (P2002)
+    R --> S : P2002
+    S --> FE : 409 "already exists"
+  else
+    R --> S : ProjectWithRelations
+    S --> FE : 201 CreatedProjectDto
+  end
+end
+deactivate S
+@enduml

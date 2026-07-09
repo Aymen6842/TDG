@@ -1,0 +1,170 @@
+% ===========================================================================
+% Front matter for the Tawer Management PFE report.
+% Compile via main.tex (XeLaTeX / LuaLaTeX).
+% ===========================================================================
+
+% --------------------------------------------------------------------------
+% TITLE PAGE
+% --------------------------------------------------------------------------
+\begin{titlepage}
+\centering
+\vspace*{\fill}
+
+{\Huge\bfseries Design and Implementation of \textit{Tawer Management}\par}
+\vspace{1.2em}
+{\Large\itshape A Full-Stack Team-Management Platform with a Retrieval-Augmented AI Copilot\par}
+\vspace{2em}
+
+{\large Projet de Fin d'Études (PFE)\par}
+\vspace{3em}
+
+\begin{tabular}{rl}
+\textit{Author:} & Aymen BenHsan \\[4pt]
+\textit{Institution:} & International Institute of Technology of Sfax (IIT) \\[4pt]
+\textit{Academic supervisor:} & Ahmed Ben Arab \\[4pt]
+\textit{Company supervisors:} & Ahmed Awedi (Co-Founder \& CEO, TDG) $\cdot$ \\
+ & Mohamed Awedi (Co-Founder \& CTO, TDG) \\[4pt]
+\textit{Host organization:} & Tawer Digital Group (TDG) \\[4pt]
+\textit{Academic year:} & 2025--2026 \\
+\end{tabular}
+
+\vspace*{\fill}
+\end{titlepage}
+
+\clearpage
+
+% --------------------------------------------------------------------------
+% REMERCIEMENTS
+% --------------------------------------------------------------------------
+\chapter*{Remerciements (Acknowledgements)}
+\addcontentsline{toc}{chapter}{Remerciements (Acknowledgements)}
+
+\authoraction{TO PROVIDE: acknowledgements --- the people and institutions the author wishes to thank (academic and company supervisors, the host team, family).}
+
+% --------------------------------------------------------------------------
+% RÉSUMÉ
+% --------------------------------------------------------------------------
+\chapter*{Résumé}
+\addcontentsline{toc}{chapter}{Résumé}
+
+Tawer Management est une plateforme interne d'exploitation pour une agence digitale, conçue pour
+consolider en une seule application web authentifiée et bilingue (en/fr) des flux de travail aujourd'hui
+dispersés sur de multiples outils : gestion de projets et de leurs membres, backlog agile (epics →
+sprints → tâches, jalons), tâches avec un kanban piloté par les données, to-dos personnels, pointage
+(check-in/out), calendrier d'événements, rappels, notifications multi-canaux et supervision
+d'infrastructure. Le système repose sur une architecture deux-applications : une API REST NestJS 11 sans
+état (20 contrôleurs, 146 endpoints) et un client Next.js 16 / React 19, adossés à PostgreSQL (avec
+l'extension pgvector) et Redis. Un contrôle d'accès à base de rôles (RBAC) centralisé gouverne environ 31
+types de rôles répartis sur deux unités d'affaires. L'élément différenciant est un \textbf{copilote IA à
+génération augmentée par la récupération (RAG)} : indexation par \textit{outbox} transactionnel, embeddings
+Gemini, récupération hybride (vectorielle + lexicale) fusionnée par RRF, reranker LLM, réponses citées et
+estimation d'effort par k plus proches voisins. Le tout est validé par un harnais d'évaluation hors ligne :
+la récupération hybride porte le MRR de 0,57 à 1,00 et le Recall@1 de 0,30 à 1,00 sur le jeu de tests par
+identifiant, avec une fuite inter-rôles nulle à la récupération. Le développement est mené en six sprints
+selon une méthodologie Scrum, livrant une plateforme fonctionnelle dont la large couverture s'appuie sur une
+architecture uniforme et sur une IA validée par la mesure.
+
+\vspace{1em}
+\noindent\textbf{Mots-clés :} gestion d'équipe, Scrum, NestJS, Next.js, Prisma, PostgreSQL, pgvector, RBAC, RAG,
+récupération hybride, embeddings, estimation d'effort.
+
+% --------------------------------------------------------------------------
+% ABSTRACT
+% --------------------------------------------------------------------------
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Tawer Management is an internal operations platform for a digital agency, built to consolidate, in one
+authenticated, bilingual (en/fr) web application, workflows that today are scattered across many separate
+tools: project and membership management, an agile backlog (epics → sprints → tasks, milestones), tasks on
+a data-driven kanban, personal to-dos, attendance (check-in/out), a calendar of events, reminders,
+multi-channel notifications, and infrastructure monitoring. The system follows a two-application
+architecture: a stateless NestJS~11 REST API (20 controllers, 146 endpoints) and a Next.js~16 / React~19
+web client, backed by PostgreSQL (with the pgvector extension) and Redis. A centralized role-based access
+control (RBAC) model governs roughly 31 role types across two business units. The differentiator is a
+\textbf{Retrieval-Augmented Generation (RAG) AI copilot}: transactional-outbox indexing, Gemini embeddings,
+hybrid vector + lexical retrieval fused with RRF, an LLM reranker, cited grounded answers, and k-NN effort
+estimation. All of it is validated by an offline evaluation harness (hybrid retrieval lifts MRR from 0.57 to
+1.00 and Recall@1 from 0.30 to 1.00 on the identifier gold set, with zero cross-role retrieval leakage). The
+build is delivered across six sprints under a Scrum methodology, yielding a functional platform whose broad
+feature coverage rests on a uniform architecture and on AI validated by measurement.
+
+\vspace{1em}
+\noindent\textbf{Keywords:} team management, Scrum, NestJS, Next.js, Prisma, PostgreSQL, pgvector, RBAC, RAG, hybrid
+retrieval, embeddings, effort estimation.
+
+% --------------------------------------------------------------------------
+% CONTENTS / LISTS (auto-generated)
+% --------------------------------------------------------------------------
+\clearpage
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+% --------------------------------------------------------------------------
+% GLOSSARY & ACRONYMS
+% --------------------------------------------------------------------------
+\chapter*{Glossary \& Acronyms}
+\addcontentsline{toc}{chapter}{Glossary \& Acronyms}
+
+\begingroup
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{@{}p{0.22\textwidth}p{0.72\textwidth}@{}}
+\toprule
+\textbf{Term} & \textbf{Meaning} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Term} & \textbf{Meaning} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\bottomrule
+\endlastfoot
+
+\textbf{AGILE / FREESTYLE} & The two \texttt{ProjectType} workflows: agile backlog (Tawer Dev) vs.\ free-form (Tawer Creative) \\
+\textbf{ANN} & Approximate Nearest Neighbour (vector search) \\
+\textbf{API} & Application Programming Interface (here, the REST API) \\
+\textbf{CI/CD} & Continuous Integration / Continuous Delivery \\
+\textbf{CORS} & Cross-Origin Resource Sharing \\
+\textbf{CRISP-DM} & Cross-Industry Standard Process for Data Mining (framing of the AI sub-process, Section~4.4) \\
+\textbf{DTO} & Data Transfer Object (request/response validation layer) \\
+\textbf{ERD} & Entity-Relationship Diagram \\
+\textbf{FCM} & Firebase Cloud Messaging (push notifications) \\
+\textbf{GIN} & Generalized Inverted Index (Postgres full-text index) \\
+\textbf{HNSW} & Hierarchical Navigable Small World (pgvector ANN index) \\
+\textbf{i18n} & Internationalization (en/fr localization) \\
+\textbf{IDOR} & Insecure Direct Object Reference (an access-control flaw) \\
+\textbf{JWT} & JSON Web Token \\
+\textbf{JTI} & JWT ID (unique token identifier) \\
+\textbf{k-NN} & k-Nearest Neighbours (used for effort estimation) \\
+\textbf{LLM} & Large Language Model \\
+\textbf{MAE / RMSE} & Mean Absolute Error / Root Mean Square Error (estimation metrics) \\
+\textbf{Matryoshka} & Truncatable embeddings --- the first 1536 of 3072 dimensions remain usable \\
+\textbf{MRR} & Mean Reciprocal Rank (retrieval metric) \\
+\textbf{nDCG@k} & Normalized Discounted Cumulative Gain at rank k (retrieval metric) \\
+\textbf{ntfy} & A pub/sub HTTP notification service (a delivery channel) \\
+\textbf{ORM} & Object-Relational Mapper (here, Prisma) \\
+\textbf{PFE} & Projet de Fin d'Études (final-year project) \\
+\textbf{pgvector} & PostgreSQL extension providing the \texttt{vector} type and ANN indexes \\
+\textbf{PM / PO / SM} & Project Manager / Product Owner / Scrum Master (Scrum roles) \\
+\textbf{PWA} & Progressive Web App \\
+\textbf{R@k} & Recall at rank k (retrieval metric) \\
+\textbf{RAG} & Retrieval-Augmented Generation \\
+\textbf{RBAC} & Role-Based Access Control \\
+\textbf{RRF} & Reciprocal Rank Fusion (fuses the vector and lexical ranked lists, k = 60) \\
+\textbf{SP / US} & Story Points / User Story (backlog units) \\
+\textbf{SMTP} & Simple Mail Transfer Protocol (email channel) \\
+\textbf{SSE} & Server-Sent Events (streams the copilot answer) \\
+\textbf{SSR} & Server-Side Rendering \\
+\textbf{TDG} & Tawer Digital Group --- the host organization (the digital agency the platform is built for) \\
+\textbf{TTL} & Time To Live (token lifetime) \\
+\textbf{tsvector} & Postgres full-text search type (generated, stored) \\
+\textbf{UML} & Unified Modeling Language \\
+\textbf{WIP} & Work In Progress (kanban column limit) \\
+\end{longtable}
+\endgroup

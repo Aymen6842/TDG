@@ -1,0 +1,46 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+left to right direction
+
+actor "User" as U
+actor "Manager" as M
+
+rectangle "Tawer Management — Sprint 4" {
+  usecase "Manage personal to-dos\n(sub-tasks, priorities, reorder)" as UC_Todo
+  usecase "Comment / attach\non a to-do" as UC_TodoC
+  usecase "Check in / out\n(remote / onsite)" as UC_Check
+  usecase "View own attendance\n& mood stats" as UC_Stats
+  usecase "Review team\nattendance stats" as UC_TeamStats
+  usecase "Create events / meetings\n(participants)" as UC_Event
+  usecase "Schedule project /\npersonal reminders" as UC_Rem
+  usecase "See & dismiss\npending reminders" as UC_Dismiss
+  usecase "Notify across channels\n(email / telegram / ntfy / push)" as UC_Notify
+}
+
+U --> UC_Todo
+U --> UC_TodoC
+U --> UC_Check
+U --> UC_Stats
+U --> UC_Event
+U --> UC_Rem
+U --> UC_Dismiss
+M --> UC_TeamStats
+M --> UC_Rem
+
+UC_TodoC ..> UC_Todo : <<extend>>
+UC_Todo ..> UC_Notify : <<include>>
+UC_Event ..> UC_Notify : <<include>>
+UC_Rem ..> UC_Notify : <<include>>
+UC_Check ..> UC_Notify : <<include>>
+@enduml

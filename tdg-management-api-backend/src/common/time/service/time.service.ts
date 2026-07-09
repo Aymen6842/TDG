@@ -185,7 +185,7 @@ export class TimeService {
   }
 
   static getExpirationTimeForResetPasswordCode() {
-    return moment.utc().add(10, 'minutes').format();
+    return moment.utc().add(15, 'minutes').format();
   }
 
   static getExpirationTimeForTwoFactorAuthCode() {

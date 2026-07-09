@@ -1,0 +1,38 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "Consumer cron" as Cron
+participant "user settings /\nintegrations" as Set
+participant "NotificationsService" as NS
+participant "FirebaseService" as FCM
+participant "Prisma / Postgres" as DB
+participant "MailService" as Mail
+participant "TelegramService" as TG
+participant "NtfyService" as NT
+
+Cron -> Set : load notificationSettings,\ntelegramBot, ntfyIntegration
+alt pushNotificationsEnabled
+  Cron -> NS : createNotificationFromSystem(userId, {title, body})
+  activate NS
+  NS -> DB : getNotificationTokensBy([userId])
+  NS -> FCM : sendEachForMulticast(tokens)
+  NS -> DB : create Notification + Content + UserNotification
+  note over NS : errors swallowed to background logger
+  deactivate NS
+end
+opt emailNotificationsEnabled
+  Cron -> Mail : sendHtmlEmail(...)
+  note right of Mail : re-throws on failure —\nonly channel that propagates
+end
+opt telegramNotificationsEnabled && chatId
+  Cron -> TG : sendTelegramMessage(chatId, text)
+end
+opt ntfyNotificationsEnabled && topic
+  Cron -> NT : sendNtfyMessage(topic, {...})
+end
+@enduml

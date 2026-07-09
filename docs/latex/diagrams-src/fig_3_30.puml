@@ -1,0 +1,32 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "ReminderScheduler\n@Cron EVERY_MINUTE" as Cron
+participant "LockManagement" as Lock
+participant "FetchReminder\nRepository" as Repo
+participant "AutoReminderService" as Auto
+participant "Postgres" as DB
+participant "Mail / Push /\nTelegram / Ntfy" as Ch
+
+Cron -> Lock : lock(handlePendingRemindersLock, 55s)
+alt not acquired
+  Lock --> Cron : false (another instance) -> return
+else acquired
+  Cron -> Repo : findPending(now)
+  Repo -> DB : SELECT status=PENDING AND reminderAt<=now\n(+ user, + channels)
+  DB --> Repo : reminders[]
+  loop each reminder
+    Cron -> Auto : sendReminder(reminder)
+    loop each channel
+      Auto -> DB : load user settings + integrations
+      Auto -> Ch : dispatch if channel enabled
+    end
+    Cron -> Repo : markAsSent(id) -> status=SENT, sentAt=now
+  end
+end
+@enduml

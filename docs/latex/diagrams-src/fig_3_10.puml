@@ -1,0 +1,36 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "AddMemberDialog" as FE
+participant "ProjectsService\n.addMemberSmart" as S
+participant "FetchProjectRepository" as F
+participant "CreateInvitationRepository" as I
+participant "MailService" as M
+participant "NotificationsService" as N
+
+FE -> S : POST /:projectId/members {userId | email, isManager}
+activate S
+S -> S : ensureProjectExists; isExecutive / isProjectManager
+alt userId provided (executives only)
+  S -> F : findMember(projectId, userId)
+  F --> S : existing?
+  alt already member
+    S --> FE : 409 member exists
+  else
+    S -> F : addMember → ProjectMember
+    S --> FE : 201 CreatedProjectMemberDto
+  end
+else email provided (executive or manager)
+  S -> S : ensureInvitationEligibility
+  S -> I : upsert invitation (token, expiry 7d)
+  S -> M : sendHtmlEmail(join link)
+  S ->> N : createNotification (if invitee has account)
+  S --> FE : 201 CreatedInvitationDto
+end
+deactivate S
+@enduml

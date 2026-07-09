@@ -1,0 +1,32 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "Frontend\n(useUserUpload)" as FE
+participant "HasPermissionGuard" as G
+participant "UsersService" as S
+participant "PermissionsService" as P
+participant "CreateUserRepository" as R
+participant "MailService" as M
+
+FE -> G : POST /users/register (FormData + Bearer)
+G -> G : caller has user.create.by.admin ?
+G -> S : pass
+activate S
+S -> P : canRolesManageRoles(caller.roles, data.roles)
+P --> S : allowed / forbidden
+alt not allowed
+  S --> FE : 403 Forbidden
+else allowed
+  S -> S : require image, bcrypt.hash(pw), slugify(name)
+  S -> R : create User + Role[] + notif rows
+  R --> S : created user (no password)
+  S ->> M : sendHtmlEmail(welcome)  [fire-and-forget]
+  S --> FE : 201 CreatedUserByAdminDto
+end
+deactivate S
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "@Cron\nEVERY_MINUTE" as Cron
+participant "LockManagement\n(Postgres)" as Lock
+participant "FetchPersonalTasks\nRepository" as R
+participant "Postgres" as DB
+participant "Mail / Telegram /\nNtfy / Push" as N
+participant "UpdatePersonalTasks\nRepository" as UR
+
+Cron -> Lock : lock(reminderLock, 55s)
+alt not acquired
+  Lock --> Cron : false (skip this minute)
+else acquired
+  Cron -> R : getUsersStillNotNotified(now UTC)
+  R -> DB : findMany(notified=false, reminderDate<=now)\n+ user channel settings
+  DB --> R : due tasks
+  loop each due task
+    Cron -> N : send on each enabled channel
+    Cron -> UR : mark notified=true (id, userId)
+  end
+end
+@enduml

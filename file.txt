@@ -1,0 +1,152 @@
+Chapter 1: Context & Problem Statement
+
+This chapter frames the work: the organization and internship it was carried out in, the business context
+of the product, the problem it addresses, the state of existing solutions, the proposed solution and its
+objectives, and the outcomes expected of it. The remaining chapters then tell the build story sprint by
+sprint (Chapters 2–3), with the AI sprint as the technical climax (Chapter 4).
+
+1.1 Host organization & internship context
+
+The host organization is **Tawer Digital Group (TDG)**, a digital agency; its full presentation is left to
+the author to supply.
+
+
+
+
+1.2 Business context
+
+The system is the **internal operations platform of Tawer Digital Group (TDG)**, a digital agency. Its
+scope and vocabulary are read directly from the domain model rather than assumed. Tawer is organized into
+two business units, and this split is encoded directly in the schema rather than left to convention
+: Tawer Dev runs software projects the `AGILE` way, tracked through epics, sprints, tasks, and
+milestones, while Tawer Creative runs design and marketing projects `FREESTYLE`, without that structure.
+
+Concretely, the model carries a `BusinessUnit` enum (`TawerDev`, `TawerCreative`) and a `ProjectType` enum
+(`AGILE`, `FREESTYLE`), and the same split is visible in the seed dataset. Because the distinction is a
+first-class part of the data model, it flows through the whole platform: a project belongs to a business
+unit, and its type selects which workflow (agile backlog vs. free-form) the project follows.
+
+
+
+The platform unifies, in a single application, every operational workflow the agency runs:
+managing client **projects** and their **agile backlog** (epics → sprints → tasks, milestones), tracking
+**personal to-dos**, recording **work sessions** (check-in/out attendance), scheduling **events/meetings**
+on a calendar, sending **reminders** and **notifications** across channels (in-app, push, ntfy, Telegram,
+email), and **monitoring servers and services**. The differentiator is an **AI copilot** that answers
+questions grounded in the organization's own project content and estimates task effort from historical
+data.
+
+1.3 Problem statement (problématique)
+
+A growing agency typically runs its work across many disconnected tools: one app for projects, another for
+the agile backlog, spreadsheets for attendance, a separate calendar, ad-hoc channels for reminders and
+notifications, and isolated dashboards for infrastructure health, with no single place to ask questions
+about project state. This fragmentation forces constant context-switching and produces inconsistent data;
+organization-wide questions ("what is blocking this sprint?", "how long will this task take?") become
+effectively unanswerable without manual digging.
+
+The platform's purpose is therefore to consolidate these workflows into one authenticated, localized (en/fr)
+web application (serving roughly 31 distinct role types over a single REST API of ~146 endpoints), and to
+add an intelligent layer on top: an AI copilot that answers questions grounded in the organization's own
+content and estimates task effort from past work. Two design tensions frame the whole project:
+
+1. Breadth vs. consistency: covering ten domains in one product risks a sprawling, inconsistent codebase.
+   The response is a strict, uniform engineering structure so every module reads the same way (addressed in
+   objective 4).
+2. Intelligence vs. trust: an AI assistant is only useful if its answers are grounded and citable rather
+   than hallucinated. The response is Retrieval-Augmented Generation over the platform's own data, with
+   citations and an offline evaluation harness (addressed in objective 3, detailed in Chapter 4).
+
+ 1.4 Étude de l'existant (state of existing solutions)
+
+
+
+The positioning argument the product itself supports (to be substantiated against the tools above) is that
+mainstream tools each cover a slice: Jira and Linear for agile backlogs, Asana and ClickUp for general task
+and project management. None of them bundle, for a single agency, agile and free-form projects, attendance,
+calendar, infrastructure monitoring, multi-channel notifications, and a data-grounded AI copilot in one
+localized, role-rich system. That integration, rather than any single feature, is the platform's thesis.
+
+ 1.5 Proposed solution & objectives
+
+The proposed solution is **Tawer Management**: a two-application, full-stack platform (a stateless NestJS
+REST API consumed by a Next.js web client) that consolidates the agency's operational workflows and layers
+a Retrieval-Augmented AI copilot on top. The high-level context is shown in Figure 1.1.
+
+```plantuml
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor 33475b
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor FBFCFE
+  BorderColor 33475b
+}
+left to right direction
+
+actor "Agency user\n(~31 roles)" as User
+
+rectangle "Tawer Management" as Platform {
+  component "Next.js 16 web client\n(en/fr, browser)" as FE
+  component "NestJS 11 REST API\n20 controllers · 146 endpoints" as API
+  database "PostgreSQL + pgvector\n55 models · RAG store" as DB
+}
+
+cloud "External services" as Ext {
+  component "Google Gemini\n(embeddings + generation)" as Gemini
+  component "Firebase / ntfy /\nTelegram / SMTP" as Channels
+}
+
+User --> FE
+FE --> API : "axios REST + JWT"
+API --> DB
+API --> Gemini
+API --> Channels
+@enduml
+```
+
+The solution pursues four objectives:
+
+1. A single unifying web client covering projects and membership, an agile backlog (epics → sprints →
+   tasks, milestones), personal to-dos, time and attendance (check-in/out), events and calendar, reminders,
+   multi-channel notifications, and infrastructure monitoring.
+2. A role-based access-control (RBAC) model expressive enough for roughly 31 role types across the two
+   business units.
+3. A production-grade RAG subsystem: outbox-based indexing, embedding generation, hybrid vector and lexical
+   retrieval, an LLM reranker, grounded answering with citations, and size-aware effort estimation,
+   validated by an offline evaluation harness.
+4. A uniform, maintainable engineering structure so any of the roughly 20 backend modules and 10 frontend
+   modules reads the same way.
+
+Objectives 1–2 establish breadth and access control; objective 4 keeps that breadth maintainable; objective
+3 is the differentiator and the technical climax of the report (Chapter 4).
+
+ 1.6 Expected outcomes
+
+Delivering on the four objectives above is expected to produce four matching outcomes.
+
+Objective 1 yields a consolidated single source of truth: one authenticated, bilingual (en/fr) application
+that replaces a patchwork of disconnected tools across the agency's ten operational domains.
+
+Objective 2 yields governed, fine-grained access: an RBAC model that lets roughly 31 role types share one
+API safely across the Tawer Dev and Tawer Creative business units.
+
+Objective 3 yields trustworthy AI assistance: a copilot whose answers are grounded in and cited to the
+organization's own project content, plus effort estimates derived from historical data. Quality claims here
+are backed by an offline evaluation harness rather than simply asserted (Chapter 4).
+
+Objective 4 yields a maintainable, extensible codebase: a strict four-layer, per-feature convention
+(controller → service → repository → DTO) that makes any of the roughly 20 backend and 10 frontend modules
+readable once the pattern is learned. This convention is what keeps onboarding cost, and the cost of adding
+an eleventh domain, low.
+
+These outcomes are measured against the verified system totals used throughout this report: 146 endpoints
+across 20 controllers, and 55 Prisma models and 25 enums across the schema, established by grepping the
+source rather than estimated.
+
+---

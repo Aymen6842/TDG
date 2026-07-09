@@ -1,0 +1,52 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+skinparam actorStyle awesome
+skinparam sequence {
+  LifeLineBorderColor #33475b
+  ParticipantBorderColor #33475b
+  ParticipantBackgroundColor #FBFCFE
+  ActorBorderColor #33475b
+}
+
+actor "User" as U
+participant "useCopilot\n(SSE)" as FE
+participant "CopilotService" as CO
+participant "RetrievalService" as RE
+participant "AiAccessService" as AA
+participant "EmbeddingRepository" as ER
+participant "RerankerService" as RR
+participant "Gemini\n(flash)" as GE
+database "CopilotQueryLog" as LOG
+
+U -> FE : ask(question, projectId?)
+FE -> CO : GET /ai/copilot/stream
+activate CO
+CO -> RE : retrieve(userId, roles, question, projectId?)
+activate RE
+RE -> AA : allowedProjectIds()
+note right of AA : 403 if explicit projectId out of scope
+RE -> ER : searchVector (cosine ANN)
+RE -> ER : searchLexical (ts_rank_cd)
+RE -> RE : fuseRrf(vector, lexical)  ' k = 60
+opt rerank flag on
+  RE -> RR : rerank(question, fused pool)
+end
+RE --> CO : {candidates, topScore, sufficient}
+deactivate RE
+alt topScore < 0.5 (insufficient)
+  CO --> FE : refusal token + final(insufficientContext = true)
+else sufficient
+  CO -> GE : generateGroundedStream(system, numbered sources)
+  GE --> CO : token deltas
+  CO --> FE : token events
+  CO -> CO : parse [n] markers -> resolveCitations
+  CO --> FE : final(citations)
+end
+CO -> LOG : write receipt (question, answer, topScore, latency)
+deactivate CO
+@enduml

@@ -1,0 +1,63 @@
+% !TEX program = xelatex
+% Master file for the Tawer Management PFE report.
+% Compile with XeLaTeX or LuaLaTeX (required for unicode arrows/checkmarks and
+% French accents via fontspec). See README.md.
+%
+% REQUIRES: ulem   (for \sout strikethrough in the Outstanding Author Items table)
+
+\documentclass[11pt,a4paper]{report}
+
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+
+\usepackage[dvipsnames]{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{float}
+\usepackage[most]{tcolorbox}
+\usepackage[normalem]{ulem} % strikethrough (\sout) for resolved register rows
+
+\usepackage[backend=biber,style=ieee,sorting=nyt]{biblatex}
+\addbibresource{references.bib}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=RoyalBlue,
+  citecolor=ForestGreen,
+  urlcolor=RoyalBlue,
+  filecolor=RoyalBlue
+}
+
+% --- Auto-resolving figure macro -------------------------------------------
+% Path is passed WITHOUT extension; tries .pdf, .png, .jpg, else a loud pending box.
+\newcommand{\reportfigure}[3]{%
+  \begin{figure}[H]\centering
+  \IfFileExists{#1.pdf}{\includegraphics[width=0.85\textwidth]{#1.pdf}}{%
+  \IfFileExists{#1.png}{\includegraphics[width=0.85\textwidth]{#1.png}}{%
+  \IfFileExists{#1.jpg}{\includegraphics[width=0.85\textwidth]{#1.jpg}}{%
+  \fbox{\begin{minipage}{0.8\textwidth}\centering\vspace{10pt}{\color{RoyalPurple}\bfseries\Large FIGURE PENDING}\\[6pt]Expected file: \texttt{#1.pdf}, \texttt{.png} or \texttt{.jpg}\\[4pt]{\small #2}\vspace{10pt}\end{minipage}}}}}
+  \caption{#2}\label{fig:#3}\end{figure}}
+
+% --- Inline highlight for outstanding author items -------------------------
+\newcommand{\authoraction}[1]{{\color{RoyalPurple}\bfseries[#1]}}
+
+\begin{document}
+
+\input{frontmatter}
+\input{ch1}
+\input{ch2}
+\input{ch3-part1}
+\input{ch3-part2}
+\input{ch4}
+\input{conclusion}
+\input{annex}
+
+\clearpage
+\printbibliography[heading=bibintoc,title={Bibliographie}]
+
+\end{document}

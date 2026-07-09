@@ -1,0 +1,57 @@
+@startgantt
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam defaultFontName "Helvetica"
+skinparam defaultFontSize 11
+
+<style>
+ganttDiagram {
+  task {
+    FontColor Black
+    FontStyle bold
+    LineColor Black
+    LineThickness 1
+  }
+  arrow {
+    LineColor Gray
+    LineThickness 1
+  }
+  timeline {
+    FontStyle bold
+  }
+}
+caption {
+  Margin 20
+  Padding 10
+}
+</style>
+
+projectscale weekly
+
+Project starts 2026-02-20
+
+[S1] lasts 21 days
+[S2] lasts 14 days
+[S3] lasts 35 days
+[S4] lasts 28 days
+[S5] lasts 21 days
+[S6] lasts 28 days
+
+[S2] starts at [S1]'s end
+[S3] starts at [S2]'s end
+[S4] starts at [S3]'s end
+[S5] starts at [S4]'s end
+[S6] starts at [S5]'s end
+
+caption
+|= Code |= Sprint |= Story Points |
+| S1 | Foundations & Auth | 41 SP |
+| S2 | Projects & Membership | 26 SP |
+| S3 | Agile Backlog & Tasks | 64 SP |
+| S4 | Productivity Suite | 44 SP |
+| S5 | Communication & Ops | 35 SP |
+| S6 | AI Copilot & Estimation | 42 SP |
+end caption
+
+@endgantt

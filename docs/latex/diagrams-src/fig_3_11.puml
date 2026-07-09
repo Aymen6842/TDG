@@ -1,0 +1,92 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+enum BusinessUnit <<enum>> #LightYellow {
+  TawerDev
+  TawerCreative
+}
+enum ProjectStatus <<enum>> #LightYellow {
+  Pending
+  Running
+  Stopped
+  Completed
+}
+enum ProjectType <<enum>> #LightYellow {
+  AGILE
+  FREESTYLE
+}
+enum InvitationStatus <<enum>> #LightYellow {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}
+
+class User {
+  +id : UUID
+  +email : String
+}
+
+class Project #LightYellow {
+  +id : UUID
+  +businessUnit : BusinessUnit
+  +status : ProjectStatus
+  +projectType : ProjectType
+  +paid : Boolean
+  +isArchived : Boolean
+  +archivedAt : DateTime
+  +displayOrder : Integer
+  +kanbanSettings : Json
+  -createdById : UUID
+}
+
+class ProjectContent #LightYellow {
+  +id : UUID
+  -projectId : UUID
+  +name : String
+  +unaccentedName : String
+  +description : String
+  +language : Language
+}
+
+class ProjectMember #LightYellow {
+  +id : UUID
+  -projectId : UUID
+  -userId : UUID
+  +isManager : Boolean
+  +hourlyRate : Decimal
+}
+
+class ProjectInvitation #LightYellow {
+  +id : UUID
+  -projectId : UUID
+  +email : String
+  +token : String <<unique>>
+  +status : InvitationStatus
+  +isManager : Boolean
+  +expiresAt : DateTime
+  +acceptedAt : DateTime
+}
+
+User "1" --> "0..*" Project : creates
+Project "1" --> "1..*" ProjectContent : "has (i18n)"
+Project "1" --> "1..*" ProjectMember : "has team"
+Project "1" --> "0..*" ProjectInvitation : "has invites"
+User "1" --> "0..*" ProjectMember : "member of"
+User "1" --> "0..*" ProjectInvitation : "invited by"
+Project ..> BusinessUnit
+Project ..> ProjectStatus
+Project ..> ProjectType
+ProjectInvitation ..> InvitationStatus
+@enduml

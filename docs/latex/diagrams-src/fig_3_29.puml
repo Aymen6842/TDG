@@ -1,0 +1,61 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+class User {
+  +id : UUID
+  +email : String
+}
+
+enum EventType <<enum>> #LightYellow {
+  Meeting
+  Event
+  PersonalEvent
+}
+enum EventColor <<enum>> #LightYellow {
+  Sky
+  Amber
+  Violet
+  Rose
+  Emerald
+  Orange
+}
+
+class Event #LightYellow {
+  +id : UUID
+  +type : EventType
+  +color : EventColor
+  +startTime : DateTime
+  +endTime : DateTime
+  +nextNotificationTime : DateTime
+  +isNotified : Boolean
+  +location : String
+  +toAllUsers : Boolean
+  -createdById : UUID
+}
+class EventContent #LightYellow {
+  +id : UUID
+  +title : String
+  +description : String
+  +language : Language
+}
+class EventParticipant #LightYellow {
+  +eventId : UUID <<PK>>
+  +userId : UUID <<PK>>
+}
+
+User "1" --> "0..*" Event : "creates (cascade)"
+Event "1" --> "1..*" EventContent : "content (i18n)"
+Event "1" --> "0..*" EventParticipant : participants
+User "1" --> "0..*" EventParticipant : invited
+@enduml

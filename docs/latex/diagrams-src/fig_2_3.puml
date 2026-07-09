@@ -1,0 +1,40 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+skinparam componentStyle rectangle
+
+package "Browser" {
+  [Next.js 16 App Router\nReact 19 · TanStack Query · Zustand\n(en/fr via next-intl)] as UI
+}
+node "tawer-management-frontend\n(Next.js, :3000)" as FEnode {
+  [Next server\n(SSR + next-intl middleware)] as NEXT
+}
+node "tdg-management-api-backend\n(NestJS 11, :3001)" as BEnode {
+  [REST API\n20 controllers · 146 endpoints\nValidationPipe · Guards · Filter\nScheduleModule (cron) · Swagger /api] as API
+}
+node "Local infra (docker-compose)" as Infra {
+  database "PostgreSQL + pgvector\n:5432 · 55 models" as PG
+  database "Redis\n:6379 (provisioned; not yet wired)" as REDIS
+  database "Mailpit\n:1025 SMTP / :8025 UI" as MAIL
+}
+cloud "External services" as Ext {
+  [Google Gemini] as GEMINI
+  [Firebase Cloud Messaging] as FCM
+  [ntfy] as NTFY
+  [Telegram Bot API] as TG
+}
+
+UI --> NEXT : HTML / JS
+UI --> API : axios REST + JWT Bearer
+API --> PG
+API ..> REDIS : (reserved)
+API --> MAIL : SMTP
+API --> GEMINI
+API --> FCM
+API --> NTFY
+API --> TG
+@enduml

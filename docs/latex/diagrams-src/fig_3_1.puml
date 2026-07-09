@@ -1,0 +1,44 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+left to right direction
+
+actor "Visitor\n(unauthenticated)" as Visitor
+actor "User\n(employee)" as User
+actor "Admin / HR" as Admin
+
+rectangle "Tawer Management — Sprint 1" {
+  usecase "Self-register\n(→ PendingApproval)" as UC_Reg
+  usecase "Log in\n(email/phone + password)" as UC_Login
+  usecase "Refresh session" as UC_Refresh
+  usecase "Reset forgotten password\n(emailed code)" as UC_Reset
+  usecase "Manage own profile\n& change password" as UC_Self
+  usecase "Provision user accounts\n& assign roles" as UC_Provision
+  usecase "List / search / filter users" as UC_List
+  usecase "Edit / deactivate user" as UC_Edit
+  usecase "Manage teams\n(members & manager)" as UC_Teams
+}
+
+Visitor --> UC_Reg
+Visitor --> UC_Login
+Visitor --> UC_Reset
+User --> UC_Self
+User --> UC_Refresh
+Admin --> UC_Provision
+Admin --> UC_List
+Admin --> UC_Edit
+Admin --> UC_Teams
+
+UC_Login ..> UC_Refresh : <<extend>>
+User <|-- Admin
+@enduml

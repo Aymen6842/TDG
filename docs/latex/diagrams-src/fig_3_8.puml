@@ -1,0 +1,45 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+left to right direction
+
+actor "Executive\n(CEO / CTO / CMO)" as Exec
+actor "Project Manager" as PM
+actor "Member" as Member
+actor "Invitee" as Invitee
+
+rectangle "Tawer Management — Sprint 2" {
+  usecase "Create project\n(business unit + type)" as UC_Create
+  usecase "Edit / archive / delete\nproject" as UC_Life
+  usecase "Add existing user\nas member" as UC_AddMember
+  usecase "Invite by email\n(single-use token)" as UC_Invite
+  usecase "Accept invitation" as UC_Accept
+  usecase "Set kanban WIP limits" as UC_Kanban
+  usecase "View my projects\n(scoped)" as UC_View
+}
+
+Exec --> UC_Create
+Exec --> UC_Life
+Exec --> UC_AddMember
+Exec --> UC_View
+PM --> UC_Life
+PM --> UC_AddMember
+PM --> UC_Invite
+PM --> UC_Kanban
+PM --> UC_View
+Member --> UC_View
+Invitee --> UC_Accept
+
+UC_AddMember ..> UC_Invite : <<extend>>
+Member <|-- PM
+@enduml

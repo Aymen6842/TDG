@@ -1,0 +1,351 @@
+\chapter{Project Context and Problem Definition}
+
+This chapter explains why the project exists and what problem it aims to solve. It introduces
+the host organization, frames the business context and the problem the platform addresses,
+studies existing alternatives, and presents the proposed solution along with its expected
+outcomes.
+
+\section{Introduction}
+
+Organizations that span multiple business activities --- software development, creative design,
+marketing --- must coordinate their work across a growing number of tools and processes. As a
+team grows, so does the friction: scattered project boards, manual attendance tracking,
+disconnected calendars, ad-hoc notification channels, and no unified view of what is happening
+across the organization. This chapter frames that challenge in the specific context of Tawer
+Digital Group, studies the available solutions, and introduces the platform built during this
+internship to address it.
+
+\section{Host Organization}
+
+\subsection{Company presentation}
+
+\textbf{Tawer Digital Group (TDG)} is a hybrid digital agency based in Sfax, Tunisia. The
+company offers both creative and technical digital services, positioning itself at the
+intersection of branding, marketing, and software engineering. TDG operates from its office at
+Imm Lafrane Centre, Nassreya, Sfax.
+
+\begin{figure}[H]\centering
+\includegraphics[width=0.3\textwidth]{figures/tdg_logo.jpg}
+\caption{Logo of Tawer Digital Group.}\label{fig:1-1}
+\end{figure}
+
+\subsection{Business domain}
+
+TDG provides a comprehensive range of digital services organized around two complementary
+business units:
+
+\begin{itemize}
+  \item \textbf{Tawer Dev}: web development, mobile development, UI/UX design, software
+    consulting, SEO, and AI-powered SEO (AISO).
+  \item \textbf{Tawer Creative}: branding, social media management, digital marketing consulting,
+    email and WhatsApp campaigns, packaging and merchandise design.
+\end{itemize}
+
+This dual structure allows TDG to serve clients end-to-end, from brand identity and marketing
+strategy through to the software products that support them.
+
+\subsection{Organizational structure}
+
+TDG is a compact team of approximately seven members, led by three co-founders:
+
+\begin{itemize}
+  \item \textbf{Ahmed Awedi} --- Chief Executive Officer (CEO).
+  \item \textbf{Mohamed Awedi} --- Chief Technology Officer (CTO).
+  \item \textbf{Omar Graia} --- Chief Marketing Officer (CMO).
+\end{itemize}
+
+The team includes developers, designers, and interns working across both business units.
+
+\subsection{Internship context}
+
+This project was carried out as an end-of-studies internship (\emph{Projet de Fin d'Études}) at
+TDG, from \textbf{February 20 to July 20, 2026}. The author, \textbf{Aymen BenHsan}, served as
+the intern and main developer of the platform, responsible for the full-stack design,
+implementation, and delivery of the system described in this report.
+
+The internship was supervised by:
+
+\begin{itemize}
+  \item \textbf{Ahmed Awedi} (CEO) --- Product Owner and frontend supervisor.
+  \item \textbf{Mohamed Awedi} (CTO) --- backend supervisor.
+\end{itemize}
+
+\section{Business Context}
+
+\subsection{Stakeholders}
+
+The platform is an \textbf{internal tool} built exclusively for TDG employees. It is not
+client-facing and is not exposed to external users. The primary stakeholders are:
+
+\begin{itemize}
+  \item \textbf{Executives} (CEO, CTO, CMO) --- organizational oversight, cross-unit visibility,
+    and strategic decision-making.
+  \item \textbf{Project managers and Scrum Masters} --- project lifecycle management, sprint
+    governance, team coordination, and progress tracking.
+  \item \textbf{Developers and designers} --- day-to-day task execution, time logging, and
+    collaboration.
+  \item \textbf{HR and administrative staff} --- employee onboarding, attendance monitoring, and
+    team management.
+  \item \textbf{DevOps engineers} --- infrastructure registration and uptime monitoring.
+\end{itemize}
+
+\subsection{Users}
+
+All TDG employees are users of the platform. The system defines approximately 31 role types to
+model the different levels of responsibility across the two business units, from executive
+oversight down to individual contributor access. Each user may hold one or more roles, and the
+platform enforces what each role can see and do.
+
+\subsection{Business needs}
+
+TDG's operations span several workflows that, taken together, define the platform's scope:
+
+\begin{itemize}
+  \item \textbf{Project management}: creating and tracking projects under either business unit,
+    with team membership and email-based invitations.
+  \item \textbf{Agile and flexible workflows}: supporting both structured agile delivery (epics,
+    sprints, milestones, burndown and velocity analytics) and lighter free-form project
+    management. The workflow type is chosen per project at creation time, regardless of
+    business unit.
+  \item \textbf{Task tracking}: a Kanban board with custom columns, WIP limits, dependencies,
+    time logging, comments, and labels.
+  \item \textbf{Attendance}: daily check-in and check-out (remote or on-site), with worked-hours
+    computation and per-team statistics.
+  \item \textbf{Calendar and events}: shared meetings and personal events with multi-channel
+    reminders.
+  \item \textbf{Notifications}: alerts delivered through in-app inbox, email, push notifications,
+    Telegram, and ntfy.
+  \item \textbf{Infrastructure monitoring}: registering company servers and services, with
+    automated health checks and outage alerts.
+  \item \textbf{AI-assisted insights}: a copilot that answers questions grounded in the
+    organization's own project data, and an estimator that predicts task effort from historical
+    outcomes.
+\end{itemize}
+
+\subsection{Constraints}
+
+\begin{itemize}
+  \item The platform must be \textbf{self-hosted and internal}, with no dependency on external
+    project-management services for storing or exposing project data.
+  \item It must support \textbf{bilingual use} (English and French) to accommodate the team's
+    working languages.
+  \item \textbf{Fine-grained access control} must govern every endpoint, since users from
+    different roles and business units share the same system.
+  \item The system must be \textbf{maintainable by a small team}, with a uniform codebase
+    structure that makes any module readable once the pattern is learned.
+\end{itemize}
+
+\section{Problem Statement}
+
+\textbf{What currently happens.} Before this project, TDG managed its work primarily through
+\textbf{GitHub Projects} --- a lightweight project board integrated into the GitHub ecosystem.
+Day-to-day coordination relied on informal channels: direct messages for reminders, manual
+processes for attendance, and no centralized calendar, notification system, or infrastructure
+monitoring.
+
+\textbf{Why it is inefficient.} This setup suffers from several limitations:
+
+\begin{itemize}
+  \item \textbf{Fragmentation.} Project tracking, attendance, calendar, notifications, and
+    infrastructure monitoring live in separate, disconnected tools --- or do not exist at all.
+    There is no single place where a manager can see the state of a project, who is present
+    today, and whether the company's servers are healthy.
+  \item \textbf{Limited project modeling.} GitHub Projects provides flat task boards with no
+    support for agile artifacts (epics, sprints, milestones, burndown charts), no distinction
+    between agile and free-form workflows, and no per-project role-based access control
+    matching TDG's organizational structure.
+  \item \textbf{No attendance tracking.} Check-in and check-out, worked-hours computation, and
+    presence statistics are handled outside any integrated tool, making compliance monitoring
+    manual and error-prone.
+  \item \textbf{No organizational intelligence.} Answering cross-cutting questions about project
+    state --- ``what is blocking this sprint?'', ``how long did similar tasks take?'' --- requires
+    manual digging across multiple sources, with no way to query the organization's own data
+    in natural language.
+  \item \textbf{Data exposure.} Hosting project data on a third-party platform means internal
+    task descriptions, discussions, and workflow details are stored outside the organization's
+    direct control.
+\end{itemize}
+
+\textbf{Why improvement is necessary.} As TDG grows, these inefficiencies compound. Each new
+team member adds context-switching overhead, each new project deepens the fragmentation, and
+the absence of historical data analysis means planning remains intuition-based rather than
+evidence-driven. A unified, self-hosted platform that consolidates these workflows and adds an
+intelligent layer on top of the organization's own data is the natural next step.
+
+\section{Existing Solutions Study}
+
+Several established platforms address parts of the problem space described above. This section
+examines three representative tools and compares them against the specific needs of TDG.
+
+\textbf{GitHub Projects.} GitHub Projects is a lightweight project-management feature built into
+the GitHub ecosystem. It provides customizable board and table views linked to repository issues
+and pull requests. Its strength is tight integration with the development workflow: issues,
+branches, and pull requests connect directly to board cards at no additional cost. However, it
+offers no native agile artifacts (epics, sprints with lifecycle governance, milestone analytics),
+no attendance or time tracking, no calendar or event management, no multi-channel notification
+system, no infrastructure monitoring, and no AI-powered insights. Project data is hosted on
+GitHub's infrastructure.
+
+\textbf{Jira.} Jira~\cite{jira} is one of the most widely used project-management platforms,
+known for its deep agile support including Scrum and Kanban boards, epics, sprints, and
+extensive reporting. Its ecosystem of plugins extends it into time tracking, test management,
+and CI/CD integration. However, Jira provides no built-in attendance tracking, no integrated
+calendar or company-wide event management, and no infrastructure monitoring. Its AI features
+(Atlassian Intelligence) are cloud-only and operate on generic models rather than being grounded
+in the organization's own project content. The licensing cost is significant for small teams,
+and the on-premise option (Data Center) requires an enterprise license.
+
+\textbf{ClickUp.} ClickUp is an all-in-one productivity platform that combines project
+management, documents, goals, and time tracking in a single application. It covers tasks,
+multiple views (list, board, Gantt, calendar), and built-in time tracking at competitive
+pricing. However, it offers no attendance or check-in/check-out system, no infrastructure
+monitoring, and no self-hosted deployment option. Its AI features are generic and not grounded
+in the organization's project data. Notification channels are limited to in-app and email, and
+its role-based access model is not fine-grained enough for a multi-unit organization with over
+thirty role types.
+
+Table~\ref{tab:comparison} compares the three existing solutions:
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{@{}Xlllc@{}}
+\toprule
+Criterion & GitHub Projects & Jira & ClickUp & Proposed \\
+\midrule
+Project management                        & Yes & Yes & Yes & Yes \\
+Agile backlog (epics, sprints, analytics) & No  & Yes & Partial & Yes \\
+Data-driven Kanban with WIP limits        & No  & Yes & Yes & Yes \\
+Time \& attendance tracking               & No  & No  & Partial & Yes \\
+Calendar \& event management              & No  & No  & Partial & Yes \\
+Multi-channel notifications               & No  & No  & No  & Yes \\
+Infrastructure monitoring                 & No  & No  & No  & Yes \\
+AI copilot grounded in project data       & No  & No  & No  & Yes \\
+Data-driven task effort estimation        & No  & No  & No  & Yes \\
+Fine-grained RBAC (\textasciitilde31 roles) & No  & Yes & Partial & Yes \\
+Self-hosted / data sovereignty            & No  & Partial & No  & Yes \\
+Bilingual (en/fr)                         & No  & Yes & No  & Yes \\
+\bottomrule
+\end{tabularx}
+\caption{Existing solutions comparison.}\label{tab:comparison}
+\end{table}
+
+No single existing tool covers the full scope of TDG's needs. Mainstream platforms each address
+a slice --- Jira excels at agile project management, ClickUp broadens the scope to time tracking
+and basic calendaring --- but none of them bundles project management, attendance, calendar,
+infrastructure monitoring, multi-channel notifications, and a data-grounded AI copilot in a
+single, self-hosted, bilingual application governed by fine-grained role-based access control.
+That integration, rather than any single feature, is what motivates the proposed solution.
+
+\section{Proposed Solution}
+
+The proposed solution is \textbf{Tawer Management}: a full-stack web platform that consolidates
+TDG's operational workflows into a single, self-hosted application and layers an AI assistant
+on top of the organization's own data.
+
+\subsection{Main objectives}
+
+The platform pursues four objectives:
+
+\begin{enumerate}
+  \item \textbf{Unify operational workflows.} Provide a single web application covering project
+    management, agile backlog, task tracking, personal to-dos, attendance, calendar, reminders,
+    multi-channel notifications, and infrastructure monitoring.
+  \item \textbf{Govern access across the organization.} Implement a role-based access-control
+    model expressive enough for approximately 31 role types across the two business units,
+    ensuring that each user sees and manages only what their role permits.
+  \item \textbf{Add an intelligent layer grounded in real data.} Build a Retrieval-Augmented
+    Generation (RAG) copilot~\cite{lewis2020rag} that answers questions strictly from the
+    organization's own project content, with citations, and that estimates task effort from
+    historical outcomes rather than guesswork.
+  \item \textbf{Maintain a uniform, extensible codebase.} Enforce a strict, per-feature layered
+    architecture so that every module reads the same way, keeping the system maintainable as
+    new domains are added.
+\end{enumerate}
+
+\subsection{General workflow}
+
+The platform is a \textbf{two-application system}: a stateless NestJS~\cite{nestjs} REST API
+consumed by a separate Next.js~\cite{nextjs} web client, communicating over HTTP/JSON with
+JWT-based~\cite{jwt} authentication. An authenticated user logs in, selects a project (or
+accesses personal features such as to-dos, attendance, or calendar), and works within the
+project's scope --- managing tasks on a Kanban board, tracking sprints, reviewing analytics, or
+querying the AI copilot for answers grounded in the project's own content. Notifications flow
+automatically through the user's configured channels. Infrastructure monitoring runs in the
+background, alerting responsible managers when an outage is detected.
+Figure~\ref{fig:1-2} shows the high-level system context.
+
+\reportfigure{figures/fig_1_1}{System context diagram of the platform.}{1-2}
+
+\subsection{Main features}
+
+The platform covers ten operational domains, each built as an independent module following the
+same layered architecture:
+
+\begin{enumerate}
+  \item \textbf{Authentication and access control} --- JWT-based login, token refresh, password
+    reset, and a centralized RBAC catalogue applied uniformly across the API.
+  \item \textbf{User and team administration} --- account provisioning, directory management, and
+    team grouping.
+  \item \textbf{Projects and membership} --- project lifecycle, business-unit scoping, team
+    membership, and email-based invitations.
+  \item \textbf{Agile backlog} --- epics, sprints with a governed lifecycle, milestones, and
+    server-side burndown, velocity, and Gantt analytics.
+  \item \textbf{Tasks and Kanban} --- a data-driven board with custom columns, WIP limits,
+    dependencies, time logging, comments, and labels.
+  \item \textbf{Personal to-dos} --- a private checklist with sub-tasks, priorities, and
+    reminder-driven notifications.
+  \item \textbf{Attendance} --- daily check-in and check-out (remote or on-site), worked-hours
+    computation, and per-team statistics.
+  \item \textbf{Calendar and events} --- shared meetings, personal events, and escalating
+    multi-channel reminders.
+  \item \textbf{Notifications and infrastructure monitoring} --- an in-app inbox, FCM push, email,
+    Telegram, and ntfy delivery; automated ICMP and HTTP health checks with outage alerts.
+  \item \textbf{AI copilot and estimation} --- permission-scoped RAG-based question answering with
+    citations, and reference-class task-effort estimation from historical data.
+\end{enumerate}
+
+\subsection{Expected improvements}
+
+Compared to the current GitHub Projects-based workflow, the platform is expected to eliminate
+tool fragmentation, automate manual processes (attendance, notifications, monitoring), provide
+organization-wide visibility through a single role-governed application, and add an intelligent
+layer that turns the team's accumulated project data into actionable answers and estimates.
+
+\section{Expected Results}
+
+Delivering the platform is expected to produce the following outcomes:
+
+\begin{itemize}
+  \item \textbf{A consolidated single source of truth.} One authenticated, bilingual application
+    replacing the patchwork of disconnected tools across the agency's operational workflows.
+  \item \textbf{Faster and more efficient workflows.} Eliminating context-switching between
+    tools, automating attendance recording, and providing real-time analytics reduce the manual
+    overhead of daily operations.
+  \item \textbf{Improved user experience.} A unified interface tailored to TDG's structure ---
+    two business units, agile and free-form project types, fine-grained roles --- provides each
+    user with exactly the features and data relevant to their role.
+  \item \textbf{AI-assisted decision support.} A copilot that answers questions grounded in the
+    organization's own content, with citations, replaces manual cross-project searches; an
+    estimator that predicts effort from historical data supports evidence-based planning.
+  \item \textbf{Automated monitoring and alerting.} Infrastructure health checks and multi-channel
+    outage notifications reduce the time to detect and respond to incidents.
+  \item \textbf{Governed, fine-grained access.} A centralized RBAC model lets approximately 31
+    role types share one API safely, ensuring data isolation between business units and between
+    projects.
+  \item \textbf{A maintainable, extensible codebase.} A strict four-layer, per-feature
+    architecture makes every module readable once the pattern is learned, lowering the cost of
+    onboarding and of adding new domains.
+\end{itemize}
+
+\section{Chapter Conclusion}
+
+This chapter framed the project in its organizational and business context. Tawer Digital Group,
+a hybrid digital agency, needed to replace a fragmented set of tools --- centered on GitHub
+Projects --- with a unified, self-hosted platform tailored to its specific operational needs. The
+study of existing solutions confirmed that no single tool on the market covers the full scope
+required: project management, agile backlog, attendance, calendar, notifications,
+infrastructure monitoring, and data-grounded AI assistance in one bilingual, role-governed
+application. The proposed solution, Tawer Management, addresses this gap. The following
+chapters detail how it was built: Chapter~2 presents the methodology, architecture, and
+technology stack; Chapter~3 narrates the five development sprints; and Chapter~4 covers the AI
+sprint that constitutes the project's main technical contribution.

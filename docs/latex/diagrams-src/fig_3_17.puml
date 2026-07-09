@@ -1,0 +1,84 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+enum SprintStatus <<enum>> #LightYellow {
+  Pending
+  Running
+  Stopped
+  Completed
+}
+
+class Project {
+  +id : UUID
+}
+
+class Epic #LightYellow {
+  +id : UUID
+  -projectId : UUID
+  +name : String
+  +color : String
+  +startDate : DateTime
+  +endDate : DateTime
+}
+
+class Sprint #LightYellow {
+  +id : UUID
+  -projectId : UUID
+  -createdById : UUID
+  +status : SprintStatus
+  +capacity : Integer
+  +startDate : DateTime
+  +endDate : DateTime
+  +estimatedStartDate : DateTime
+  +estimatedEndDate : DateTime
+}
+
+class SprintContent #LightYellow {
+  +id : UUID
+  -sprintId : UUID
+  +name : String
+  +unaccentedName : String
+  +language : Language
+}
+
+class SprintAttachment #LightYellow {
+  +id : UUID
+  -sprintId : UUID
+  +attachment : String
+}
+
+class Milestone #LightYellow {
+  +id : UUID
+  -projectId : UUID
+  +name : String
+  +dueDate : DateTime
+  +completedAt : DateTime
+}
+
+class Task {
+  +id : UUID
+  +storyPoints : Integer
+  +status : String
+}
+
+Project "1" --> "0..*" Epic : has
+Project "1" --> "0..*" Sprint : has
+Project "1" --> "0..*" Milestone : has
+Sprint "1" --> "1..*" SprintContent : "has (i18n)"
+Sprint "1" --> "0..*" SprintAttachment : files
+Epic "1" --> "0..*" Task : "epicId?"
+Sprint "1" --> "0..*" Task : "sprintId?"
+Milestone "1" --> "0..*" Task : "milestoneId?"
+Sprint ..> SprintStatus
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+left to right direction
+
+actor "User\n(TASK_READ_MANY)" as U
+actor "Task author\n(TASK_CREATE)" as A
+actor "Admin / Executive\n(PROJECT_CREATE)" as ADM
+actor "Scheduler\n(system)" as S
+
+rectangle "Tawer Management — Sprint 6 (AI)" {
+  usecase "Ask copilot\n(natural language)" as UC_Ask
+  usecase "Stream grounded\nanswer" as UC_Stream
+  usecase "View citations\n(deep-link to source)" as UC_Cite
+  usecase "Honest refusal\n(insufficient context)" as UC_Refuse
+  usecase "Estimate draft-task\neffort (k-NN)" as UC_Est
+  usecase "Retrieve permission-\nscoped content" as UC_Retrieve
+  usecase "Reindex all\nembeddings" as UC_Reindex
+  usecase "View copilot\ntelemetry" as UC_Telem
+  usecase "Index content\n(outbox sweep)" as UC_Index
+}
+
+U --> UC_Ask
+A --> UC_Est
+ADM --> UC_Reindex
+ADM --> UC_Telem
+S --> UC_Index
+
+UC_Ask ..> UC_Retrieve : <<include>>
+UC_Ask ..> UC_Stream : <<include>>
+UC_Est ..> UC_Retrieve : <<include>>
+UC_Stream ..> UC_Cite : <<extend>>
+UC_Stream ..> UC_Refuse : <<extend>>
+UC_Retrieve ..> UC_Index : "reads the index"
+@enduml

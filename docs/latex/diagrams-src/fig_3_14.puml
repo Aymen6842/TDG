@@ -1,0 +1,31 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "Frontend\n(sprint form)" as FE
+participant "SprintsController" as API
+participant "HasPermission +\nAgileOnly Guards" as G
+participant "SprintsService" as S
+participant "CreateSprintRepository" as R
+participant "AutoReminderService" as AR
+participant "IndexOutboxService" as OB
+
+FE -> API : POST /projects/:id/sprints {content, dates, capacity}
+API -> G : canActivate (RBAC + AGILE type)
+G --> API : ok
+API -> S : createSprintForProject
+activate S
+S -> S : canManageProject + require ≥1 content
+S -> S : validate date windows ⊆ project window
+S -> R : create (status=Pending, nested content + attachments)
+R --> S : sprint
+S -> AR : createDefaultRemindersForSprint (start-1d, end-2d)
+S -> OB : enqueueUpsert(SPRINT)
+S --> API : sprint
+deactivate S
+API --> FE : 201 CreatedSprintDto
+@enduml

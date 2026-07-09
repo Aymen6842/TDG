@@ -1,0 +1,44 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+skinparam actorStyle awesome
+skinparam sequence {
+  LifeLineBorderColor #33475b
+  ParticipantBorderColor #33475b
+  ParticipantBackgroundColor #FBFCFE
+  ActorBorderColor #33475b
+}
+
+actor "User" as U
+participant "TasksService" as TS
+participant "IndexOutbox\n(table)" as OB
+participant "IndexSweeperJob\n(cron · 1 min)" as SW
+participant "IndexingService" as IX
+participant "Gemini\n(embed)" as GE
+database "DocumentEmbedding\n(pgvector)" as DE
+
+U -> TS : create / update task
+activate TS
+TS -> TS : persist task\n(+ notifications, reminders)
+TS -> OB : enqueueUpsert(projectId, TASK, id)
+note right of OB : idempotent upsert;\nenqueue errors swallowed
+TS --> U : request returns\n(no Gemini on hot path)
+deactivate TS
+
+== every minute, under distributed lock ==
+SW -> OB : claimDue(25)
+activate SW
+SW -> IX : syncEntity(TASK, id)
+activate IX
+IX -> IX : re-read live row,\nbuild chunks, sha256 hash
+IX -> GE : embedBatch(changed chunks)\n[skip unchanged by hash]
+GE --> IX : 1536-dim vectors\n(L2-normalized)
+IX -> DE : upsertChunk(...) ON CONFLICT
+deactivate IX
+SW -> OB : markDone / markRetry(backoff) / markFailed
+deactivate SW
+@enduml

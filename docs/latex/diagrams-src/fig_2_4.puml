@@ -1,0 +1,40 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+skinparam componentStyle rectangle
+
+[Request DTO\nclass-validator] as DTOreq
+package "HTTP layer" {
+  [Controller\nrouting + guards + swagger + serialization] as C
+}
+package "Domain layer" {
+  [Service\nbusiness rules + orchestration + error mapping] as S
+  [Repository\nPrisma queries only] as R
+}
+package "Common / infrastructure" {
+  [PrismaService] as P
+  [Winston loggers] as L
+  [LockManagementService] as LK
+  [ConfigService] as CFG
+}
+[AllExceptionsFilter\n(APP_FILTER)] as F
+[Response DTO] as DTOres
+database "PostgreSQL / pgvector" as DB
+
+DTOreq --> C
+C --> S
+S --> R
+R --> P
+P --> DB
+S ..> F : throws typed HttpException
+R --> DB
+S --> LK
+LK --> DB
+F --> L
+F --> DB
+C ..> DTOres : ClassSerializerInterceptor
+@enduml

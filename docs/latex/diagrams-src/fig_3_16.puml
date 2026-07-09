@@ -1,0 +1,32 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+skinparam state {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+
+[*] --> Pending : create (always Pending)
+Pending --> Running : start
+Pending --> Stopped
+Pending --> Completed
+Running --> Stopped
+Running --> Completed
+Stopped --> Running : restart
+Completed --> Running : restart
+
+note right of Running
+  Only ONE Running sprint
+  per project
+  (findRunningSprint)
+end note
+note right of Completed
+  Stop / Complete cancels
+  PENDING sprint reminders
+  + notifies members
+end note
+@enduml

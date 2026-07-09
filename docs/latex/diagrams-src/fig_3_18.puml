@@ -1,0 +1,34 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "Frontend\n(task-upload)" as FE
+participant "HasPermissionGuard" as G
+participant "TasksService\n.createTask" as S
+participant "CreateTaskRepository" as R
+participant "AutoReminderService" as AR
+participant "NotificationsService" as N
+participant "IndexOutboxService" as OB
+
+FE -> G : POST /tasks (multipart + Bearer)
+G -> S : task.create OK
+activate S
+S -> S : canCreateTaskForProject (member+role / exec BU)
+S -> S : validateWorkflowSpecificFields(projectType)
+S -> S : ensure sprint / epic / milestone in project
+S -> R : createTask (key = TASK-count+1)
+R --> S : task
+opt dueDate set
+  S -> AR : createDefaultRemindersForTask
+end
+opt assignee != author
+  S ->> N : createNotificationFromSystem (fire-and-forget)
+end
+S -> OB : await enqueueUpsert(TASK, id)
+S --> FE : 201 CreatedTaskDto
+deactivate S
+@enduml

@@ -1,0 +1,137 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+package "Identity & Access (Sprint 1)" {
+  class User {
+    +id : UUID
+    +email : String <<unique>>
+  }
+  class Team {
+    +name : String <<unique>>
+  }
+}
+
+package "Projects & Membership (Sprint 2)" {
+  class Project {
+    +id : UUID
+    +businessUnit : BusinessUnit
+  }
+  class ProjectMember {
+    +isManager : Boolean
+  }
+}
+
+package "Agile Planning (Sprint 3)" {
+  class Epic {
+    +id : UUID
+  }
+  class Sprint {
+    +status : SprintStatus
+  }
+  class Milestone {
+    +dueDate : DateTime
+  }
+}
+
+package "Tasks & Kanban (Sprint 3)" {
+  class Task {
+    +key : String
+    +status : String
+  }
+  class TaskComment {
+    +body : String
+  }
+}
+
+package "Productivity Suite (Sprint 4)" {
+  class UserTask {
+    +status : UserTaskStatus
+  }
+  class Event {
+    +type : EventType
+  }
+  class Reminder {
+    +status : ReminderStatus
+  }
+}
+
+package "Communication & Operations (Sprint 5)" {
+  class Notification {
+    +id : UUID
+  }
+  class UserNotificationSettings {
+    +emailNotificationsEnabled : Boolean
+  }
+  class Server {
+    +ip : String
+  }
+}
+
+package "AI / RAG (Sprint 6)" {
+  class DocumentEmbedding #LightYellow {
+    +id : UUID
+    +projectId : UUID «scope»
+    +entityType : EmbeddingEntityType
+    +entityId : UUID «soft ref»
+    +embedding : vector(1536) «HNSW»
+    +contentTsv : tsvector «GIN»
+    +contentHash : String «sha256»
+  }
+  class IndexOutbox #LightYellow {
+    +op : IndexOp
+    +status : OutboxStatus
+    +attempts : Int
+    +nextAttemptAt : DateTime
+  }
+  class CopilotQueryLog #LightYellow {
+    +question : String
+    +answer : String
+    +topScore : Float
+    +latencyMs : Int
+    -faithfulnessScore : Float?
+  }
+}
+
+' Prior-sprint relations (compacted)
+User "1" --> "0..*" Team : "member of"
+User "1" --> "0..*" Project : creates
+Project "1" --> "0..*" ProjectMember : team
+Project "1" --> "0..*" Epic : has
+Project "1" --> "0..*" Sprint : has
+Project "1" --> "0..*" Milestone : has
+Project "1" --> "0..*" Task : owns
+Task "1" --> "0..*" TaskComment : has
+User "1" --> "0..*" UserTask : owns
+User "1" --> "0..*" Event : creates
+User "1" --> "0..*" Reminder : "recipient / author"
+User "1" --> "0..*" Notification : "sends / receives"
+User "1" --> "1" UserNotificationSettings : has
+Project "1" --> "0..*" Server : "(via management)"
+
+' Sprint 6 — AI package attachment
+Project "1" --> "0..*" DocumentEmbedding : "projectId (scope)"
+Project "1" --> "0..*" IndexOutbox : projectId
+User "1" --> "0..*" CopilotQueryLog : userId
+
+' Write-path seam: domain services enqueue index jobs (fire-and-forget)
+Task ..> IndexOutbox : "enqueue on write"
+TaskComment ..> IndexOutbox : "enqueue on create"
+Epic ..> IndexOutbox : "enqueue on write"
+Sprint ..> IndexOutbox : "enqueue on write"
+Milestone ..> IndexOutbox : "enqueue on write"
+
+' Soft (FK-less) polymorphic reference from embeddings to content
+DocumentEmbedding ..> Task : "soft ref (entityId)"
+DocumentEmbedding ..> TaskComment : "soft ref (entityId)"
+@enduml

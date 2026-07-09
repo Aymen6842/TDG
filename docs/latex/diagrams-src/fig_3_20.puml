@@ -1,0 +1,40 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+skinparam state {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+
+state "FREESTYLE board (3 columns)" as Free {
+  [*] --> TODO_f
+  TODO_f --> IN_PROGRESS_f
+  IN_PROGRESS_f --> TODO_f
+  IN_PROGRESS_f --> DONE_f
+  DONE_f --> IN_PROGRESS_f
+}
+
+state "AGILE board (6 columns)" as Agile {
+  [*] --> BACKLOG
+  BACKLOG --> TODO
+  TODO --> BACKLOG
+  TODO --> IN_PROGRESS
+  IN_PROGRESS --> TODO
+  IN_PROGRESS --> IN_REVIEW
+  IN_REVIEW --> IN_PROGRESS
+  IN_REVIEW --> TESTING
+  TESTING --> IN_REVIEW
+  TESTING --> DONE
+  DONE --> TESTING
+}
+
+note bottom of Agile
+  Seeded system defaults.
+  A move into a CUSTOM status
+  is allowed from any column.
+end note
+@enduml

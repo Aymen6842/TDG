@@ -1,0 +1,84 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+package "Identity & Access (Sprint 1)" {
+
+  enum UserType  {
+    CEO
+    CTO
+    CMO
+    .. 31 roles ..
+    PendingApproval
+  }
+
+  class User {
+    +id : UUID
+    +email : String <<unique>>
+    +phone : String <<unique>>
+    +name : String
+    +unaccentedName : String
+    -password : String <<bcrypt>>
+    +image : String
+    +isActive : Boolean
+    +createdAt : DateTime
+    +updatedAt : DateTime
+  }
+
+  class Role  {
+    +id : UUID
+    +type : UserType
+    -userId : UUID
+  }
+
+  class RefreshToken  {
+    +token : String <<PK = JWT>>
+    -userId : UUID
+    +createdAt : DateTime
+  }
+
+  class ResetPasswordCode  {
+    +id : UUID
+    +code : String
+    -userId : UUID <<unique>>
+    +expiredAt : DateTime
+  }
+
+  class Team  {
+    +id : UUID
+    +name : String <<unique>>
+    +unaccentedName : String
+  }
+
+  class UserTeam {
+    +id : UUID
+    -userId : UUID
+    -teamId : UUID
+    +isManager : Boolean
+  }
+
+  class UserManager  {
+    +id : UUID
+    -userId : UUID
+    -managerId : UUID
+  }
+}
+
+User "1" --> "0..*" Role : has
+User "1" --> "0..*" RefreshToken : issues
+User "1" --> "0..1" ResetPasswordCode : has
+User "1" --> "0..*" UserTeam : "member of"
+Team "1" --> "0..*" UserTeam : "has members"
+User "1" ..> "0..*" UserManager : "manages (unused)"
+Role ..> UserType : type
+@enduml

@@ -1,0 +1,31 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "Frontend\n(kanban drag-drop)" as FE
+participant "TasksService\n.moveTaskInKanban" as S
+participant "FetchTaskRepository" as F
+participant "UpdateTaskRepository" as U
+
+FE -> S : PATCH /kanban/move {taskId, status, displayOrder}
+activate S
+S -> F : findByIdInProject (P2025 → 404)
+S -> S : canAdvanceTaskWorkflow (assignee OR manager/PO/SM/exec)
+S -> S : isValidStatusTransitionDynamic(current, new)
+S -> F : findBlockingDependencies (any not DONE?)
+alt blocked
+  S --> FE : 400 TASK_BLOCKED
+end
+S -> F : countTasksByStatus vs kanbanSettings[status]
+alt WIP exceeded
+  S --> FE : 400 WIP_LIMIT_REACHED
+end
+S -> U : updateTaskStatus (completedAt if DONE)
+U --> S : {id, status, displayOrder, completedAt}
+S --> FE : 200
+deactivate S
+@enduml

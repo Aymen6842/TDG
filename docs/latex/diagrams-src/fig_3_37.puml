@@ -1,0 +1,40 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "Nest Scheduler\n@Cron EVERY_MINUTE" as Sch
+participant "ServersService" as Svc
+participant "LockManagement\n(Postgres)" as Lock
+participant "Prisma / Postgres" as DB
+participant "Target server\n(ICMP)" as Net
+participant "sendNotificationsForServers" as Snd
+participant "Manager channels" as Mgr
+
+Sch -> Svc : checkServersStatus()
+Svc -> Lock : lock(checkServersStatusLock, 55s)
+alt not acquired
+  Lock --> Svc : false → return (another node)
+else acquired
+  Svc -> DB : getRunningServersIps()\n(status=Running, no unsent notif)
+  DB --> Svc : [{id, name, ip}]
+  loop each server
+    Svc -> Net : ping.probe(ip, timeout 10)
+    Net --> Svc : {alive}
+    alt not alive
+      Svc -> DB : createServerNotification(id, "…is down")\n(isSent=false)
+    end
+  end
+end
+== independent cron, same minute ==
+Sch -> Snd : sendNotificationsForServers()
+Snd -> DB : getNotificationsMessagesForServers()\n(isSent=false)
+DB --> Snd : notif + server.managers + settings
+loop each manager
+  Snd -> Mgr : telegram / ntfy / email / push\n(per notificationSettings)
+end
+Snd -> DB : updateServerNotificationStatus(id) → isSent=true
+@enduml

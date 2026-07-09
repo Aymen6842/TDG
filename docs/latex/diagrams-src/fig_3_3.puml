@@ -1,0 +1,33 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "Frontend" as UI
+participant "HasPermissionGuard" as G
+participant "TokensService" as T
+participant "Controller" as Ctl
+participant "Service" as Svc
+
+UI -> G : request + Authorization: Bearer <access>
+activate G
+G -> G : read @Permissions metadata
+alt no auth header & perms required
+  G --> UI : 401 UNAUTHORIZED
+else
+  G -> T : verifyAuthenticationTokenAndReturnPayload(token)
+  T --> G : payload {id, roles, teamsIds}
+  G -> G : any(perm in PERMISSIONS_FOR_ROLE[role]) ?
+  alt no matching permission
+    G --> UI : 403 FORBIDDEN
+  else authorized
+    G -> Ctl : next() (req.user set)
+    deactivate G
+    Ctl -> Svc : handler (ownership checks here)
+    Svc --> UI : 2xx
+  end
+end
+@enduml

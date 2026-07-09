@@ -1,0 +1,52 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+skinparam componentStyle rectangle
+left to right direction
+
+package "Consumer modules (crons / actions)" #FBFCFE {
+  component "personal-tasks" as PT
+  component "reminders" as RM
+  component "work-days" as WD
+  component "events" as EV
+  component "servers" as SV
+  component "sprints / tasks" as SP
+}
+
+component "Channel selection\n(read settings + telegramBot + ntfyIntegration)\n— duplicated per consumer" as DECIDE #LightYellow
+
+PT --> DECIDE
+RM --> DECIDE
+WD --> DECIDE
+EV --> DECIDE
+SV --> DECIDE
+SP --> DECIDE
+
+component "createNotificationFromSystem\n(in-app + push)" as CNFS
+component "MailService" as MAIL
+component "TelegramService" as TG
+component "NtfyService" as NT
+
+DECIDE --> CNFS : pushEnabled
+DECIDE --> MAIL : emailEnabled
+DECIDE --> TG : telegramEnabled && chatId
+DECIDE --> NT : ntfyEnabled && topic
+
+component "FirebaseService\n(FCM multicast)" as FCM
+database "Notification + Content\n+ UserNotification" as DB
+CNFS --> FCM
+CNFS --> DB
+FCM --> [service worker /\nbrowser push]
+DB --> [web bell / list]
+
+queue "SMTP / Mailpit" as SMTP
+queue "Telegram Bot API" as TAPI
+queue "ntfy server" as NTFY
+MAIL --> SMTP
+TG --> TAPI
+NT --> NTFY
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "Frontend" as UI
+participant "AuthsController" as C
+participant "LoginService" as S
+participant "LoginRepository" as R
+participant "TokensService" as T
+database "Postgres" as DB
+
+UI -> C : POST /auths/login {email|phone, password}
+C -> S : loginUser(dto)
+activate S
+S -> R : retrieveDataForLogin (isActive:true)
+R -> DB : SELECT user + roles + teams
+DB --> S : user (or null)
+alt user missing
+  S --> UI : 404 USER_NOT_FOUND
+else user found
+  S -> S : bcrypt.compare(pwd, hash)
+  alt wrong password
+    S --> UI : 401 UNAUTHORIZED
+  else password ok
+    S -> T : generateAccessAndRefresh(id, roles, teamIds)
+    T --> S : {access, refresh}
+    S -> R : saveRefreshToken(userId, refresh)
+    R -> DB : INSERT RefreshToken
+    S --> UI : 200 {access, refresh}
+  end
+end
+deactivate S
+@enduml

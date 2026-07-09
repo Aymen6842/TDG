@@ -1,0 +1,34 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam actorStyle awesome
+skinparam usecase {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+}
+left to right direction
+
+actor "Agency user\n(~31 roles)" as User
+
+rectangle "Tawer Management" as Platform {
+  component "Next.js 16 web client\n(en/fr, browser)" as FE
+  component "NestJS 11 REST API\n20 controllers · 146 endpoints" as API
+  database "PostgreSQL + pgvector\n55 models · RAG store" as DB
+}
+
+cloud "External services" as Ext {
+  component "Google Gemini\n(embeddings + generation)" as Gemini
+  component "Firebase / ntfy /\nTelegram / SMTP" as Channels
+}
+
+User --> FE
+FE --> API : "axios REST + JWT"
+API --> DB
+API --> Gemini
+API --> Channels
+@enduml

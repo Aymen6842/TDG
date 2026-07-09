@@ -1,0 +1,25 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam ArrowColor #33475b
+
+participant "BurndownChart (FE)" as FE
+participant "SprintsController" as API
+participant "SprintsService" as S
+participant "FetchSprintRepository" as R
+
+FE -> API : GET /sprints/:id/burndown
+API -> S : getSprintBurndown
+activate S
+S -> R : findById (project scope)
+S -> S : canAccessProject
+S -> R : findSprintWithTasksForBurndown\n(storyPoints / status / completedAt)
+R --> S : sprint + tasks
+S -> S : per-day ideal vs actual remaining
+S --> API : SprintBurndownDto (chartData[])
+deactivate S
+API --> FE : 200 → FE keeps actualRemaining
+@enduml

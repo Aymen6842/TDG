@@ -1,0 +1,226 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam packageStyle rectangle
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+package "Identity & Access" as P1 {
+  class User {
+    id : UUID
+    name : String
+    email : String
+    isActive : Boolean
+  }
+  class Role {
+    type : UserType
+    userId : UUID
+  }
+  class Team {
+    id : UUID
+    name : String
+  }
+  class UserTeam {
+    isManager : Boolean
+  }
+  class RefreshToken {
+    token : String
+    userId : UUID
+  }
+}
+
+package "Projects & Membership" as P2 {
+  class Project {
+    id : UUID
+    businessUnit : BusinessUnit
+    projectType : ProjectType
+  }
+  class ProjectContent {
+    language : Language
+    name : String
+  }
+  class ProjectMember {
+    isManager : Boolean
+  }
+  class ProjectInvitation {
+    email : String
+    token : UUID
+    status : InvitationStatus
+  }
+}
+
+package "Agile Planning" as P3 {
+  class Epic {
+    id : UUID
+    name : String
+  }
+  class Sprint {
+    id : UUID
+    status : SprintStatus
+    capacity : Int
+  }
+  class Milestone {
+    id : UUID
+    dueDate : DateTime
+  }
+}
+
+package "Tasks & Kanban" as P4 {
+  class Task {
+    id : UUID
+    key : String
+    status : String
+    storyPoints : Int
+    actualHours : Float
+  }
+  class ProjectTaskStatus {
+    name : String
+    order : Int
+    allowedTransitions : String[]
+  }
+  class TaskComment {
+    id : UUID
+    content : String
+  }
+  class TaskDependency {
+    blockingTaskId : UUID
+    blockedTaskId : UUID
+  }
+  class TaskTimeEntry {
+    hours : Float
+  }
+}
+
+package "Productivity Suite" as P5 {
+  class UserTask {
+    id : UUID
+    status : UserTaskStatus
+    priority : UserTaskPriority
+  }
+  class WorkDay {
+    id : UUID
+    userId : UUID
+  }
+  class WorkSession {
+    type : WorkSessionType
+    workedMinutes : Int
+  }
+  class Event {
+    id : UUID
+    type : EventType
+  }
+  class Reminder {
+    id : UUID
+    status : ReminderStatus
+    entityType : String
+    entityId : UUID
+  }
+}
+
+package "Notifications & Channels" as P6 {
+  class Notification {
+    id : UUID
+  }
+  class UserNotification {
+    userId : UUID
+    isSeen : Boolean
+  }
+  class UserNotificationSettings {
+    emailEnabled : Boolean
+    pushEnabled : Boolean
+    telegramEnabled : Boolean
+  }
+}
+
+package "Infrastructure Monitoring" as P7 {
+  class Server {
+    id : UUID
+    ip : String
+    status : ServerStatus
+  }
+  class Service {
+    id : UUID
+    domain : String
+  }
+  class UserServerManagement {
+    userId : UUID
+    serverId : UUID
+  }
+}
+
+package "AI / RAG" as P8 {
+  class DocumentEmbedding {
+    id : UUID
+    embedding : vector(1536)
+    contentHash : String
+  }
+  class IndexOutbox {
+    entityType : String
+    entityId : UUID
+    status : OutboxStatus
+  }
+  class CopilotQueryLog {
+    question : String
+    answer : String
+  }
+}
+
+' ── Identity ──
+User "1" --> "0..*" Role
+User "1" --> "0..*" UserTeam
+Team "1" --> "0..*" UserTeam
+User "1" --> "0..*" RefreshToken
+
+' ── Projects ──
+Project "1" --> "1..*" ProjectContent
+Project "1" --> "0..*" ProjectMember
+User "1" --> "0..*" ProjectMember
+Project "1" --> "0..*" ProjectInvitation
+
+' ── Agile ──
+Project "1" --> "0..*" Epic
+Project "1" --> "0..*" Sprint
+Project "1" --> "0..*" Milestone
+
+' ── Tasks ──
+Project "1" --> "0..*" Task
+Project "1" --> "0..*" ProjectTaskStatus
+Task "0..*" --> "0..1" Sprint
+Task "0..*" --> "0..1" Epic
+Task "0..*" --> "0..1" Milestone
+Task "1" --> "0..*" TaskComment
+Task "1" --> "0..*" TaskDependency
+Task "1" --> "0..*" TaskTimeEntry
+User "1" --> "0..*" Task : assignee
+
+' ── Productivity ──
+User "1" --> "0..*" UserTask
+User "1" --> "0..*" WorkDay
+WorkDay "1" --> "0..*" WorkSession
+WorkSession "1" --> "0..*" TaskTimeEntry
+User "1" --> "0..*" Event : creator
+User "1" --> "0..*" Reminder : recipient
+
+' ── Notifications ──
+Notification "1" --> "0..*" UserNotification
+User "1" --> "0..1" UserNotificationSettings
+
+' ── Infrastructure ──
+Server "1" --> "0..*" Service
+User "1" --> "0..*" UserServerManagement
+Server "1" --> "0..*" UserServerManagement
+
+' ── AI ──
+Project "1" --> "0..*" DocumentEmbedding
+Project "1" --> "0..*" IndexOutbox
+User "1" --> "0..*" CopilotQueryLog
+
+@enduml

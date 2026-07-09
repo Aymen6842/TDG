@@ -1,0 +1,86 @@
+@startuml
+!theme plain
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam defaultFontName "Helvetica"
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #33475b
+skinparam class {
+  BackgroundColor #FBFCFE
+  BorderColor #33475b
+  ArrowColor #33475b
+}
+
+enum EmbeddingEntityType {
+  TASK
+  TASK_COMMENT
+  EPIC
+  MILESTONE
+  SPRINT
+}
+enum IndexOp {
+  UPSERT
+  DELETE
+}
+enum OutboxStatus {
+  PENDING
+  DONE
+  FAILED
+}
+
+class DocumentEmbedding #LightYellow {
+  +id : UUID
+  +projectId : UUID «scope key»
+  +entityType : EmbeddingEntityType
+  +entityId : UUID «soft ref»
+  +chunkIndex : Int
+  +content : String
+  +embedding : vector(1536) «HNSW · cosine»
+  +contentTsv : tsvector «generated · GIN»
+  +contentHash : String «sha256»
+  --
+  @@unique(entityType, entityId, chunkIndex)
+}
+class IndexOutbox #LightYellow {
+  +id : UUID
+  +projectId : UUID
+  +entityType : EmbeddingEntityType
+  +entityId : UUID «soft ref»
+  +op : IndexOp
+  +status : OutboxStatus
+  +attempts : Int
+  +nextAttemptAt : DateTime
+  -lastError : String?
+  --
+  @@unique(entityType, entityId)
+}
+class CopilotQueryLog #LightYellow {
+  +id : UUID
+  +userId : UUID
+  +projectId : UUID?
+  +question : String
+  +answer : String
+  +retrievedIds : UUID[]
+  +topScore : Float
+  +citationsCount : Int
+  +promptTokens : Int
+  +latencyMs : Int
+  -faithfulnessScore : Float? «deferred»
+}
+
+class Project {
+  +id : UUID
+}
+class User {
+  +id : UUID
+}
+
+Project "1" --> "0..*" DocumentEmbedding : "projectId (scope)"
+Project "1" --> "0..*" IndexOutbox : projectId
+User "1" --> "0..*" CopilotQueryLog : userId
+DocumentEmbedding ..> EmbeddingEntityType
+IndexOutbox ..> EmbeddingEntityType
+IndexOutbox ..> IndexOp
+IndexOutbox ..> OutboxStatus
+@enduml
