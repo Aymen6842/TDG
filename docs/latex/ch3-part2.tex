@@ -4,7 +4,9 @@
 
 \section{Sprint 4: Productivity Suite}
 
-\textbf{Sprint goal.} The first three sprints built the shared backbone: identity, projects, and the agile/task
+\subsection{Sprint goal}
+
+The first three sprints built the shared backbone: identity, projects, and the agile/task
 engine that most of the organization works \emph{inside}. Sprint 4 turns to the surface each person touches \emph{every
 day, on their own}: a private to-do list, the check-in/out attendance ritual, the shared calendar, and the
 reminders that tie it all together. Four modules land in one sprint because they share one thing that makes
@@ -17,30 +19,37 @@ the individual \textbf{User}, and a \textbf{Manager} who additionally reviews th
 At \textbf{44 story points} it is a broad rather than deep sprint: four self-contained aggregates, each modest on
 its own, unified by the reminder engine.
 
-\textbf{Sprint 4 backlog.} The stories drawn from the product backlog (§2.2) for this sprint:
+\subsection{Sprint backlog}
 
-\begin{longtable}{@{}p{1.6cm}p{9.5cm}p{1.4cm}p{1.6cm}@{}}
-\toprule
-US-ID & Story & Story pts & Priority \\
+The stories drawn from the product backlog (§2.2) for this sprint:
+
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
+\caption{Sprint 4 backlog.}\label{tab:s4-backlog-detail} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
-\toprule
-US-ID & Story & Story pts & Priority \\
+\caption[]{Sprint 4 backlog (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
-US-S4-01 & As a user, I want a private to-do list with sub-tasks, priorities, and statuses, so that I track my own work separately from project tasks. & 5 & Should \\
-US-S4-02 & As a user, I want due/reminder dates on my to-dos that notify me across my channels, so that nothing slips. & 5 & Should \\
-US-S4-03 & As an employee, I want to check in and out (remote/onsite) to open and close work sessions, so that attendance is recorded. & 8 & Must \\
-US-S4-04 & As an employee, I want my worked time computed per business day, so that I can see my hours. & 3 & Should \\
-US-S4-05 & As a manager, I want per-user and per-team attendance statistics, so that I can review presence. & 5 & Should \\
-US-S4-06 & As a user, I want to create calendar events and meetings with participants, so that schedules are shared. & 8 & Should \\
-US-S4-07 & As a user, I want multi-channel reminders before each event, so that I attend on time. & 3 & Should \\
-US-S4-08 & As a user, I want to schedule project and personal reminders delivered on my channels, so that I am nudged at the right moment. & 5 & Should \\
-US-S4-09 & As a user, I want to see and dismiss my pending reminders, so that I can manage them. & 2 & Could \\
-\midrule
- & \textbf{Sprint 4 subtotal} & \textbf{44} &  \\
 \bottomrule
+\endfoot
+US-S4-01 & As a user, I want a private to-do list with sub-tasks, priorities, and statuses, so that I track my own work separately from project tasks. & 5 & 2.5d & Should \\
+US-S4-02 & As a user, I want due/reminder dates on my to-dos that notify me across my channels, so that nothing slips. & 5 & 2d & Should \\
+US-S4-03 & As an employee, I want to check in and out (remote/onsite) to open and close work sessions, so that attendance is recorded. & 8 & 4d & Must \\
+US-S4-04 & As an employee, I want my worked time computed per business day, so that I can see my hours. & 3 & 1.5d & Should \\
+US-S4-05 & As a manager, I want per-user and per-team attendance statistics, so that I can review presence. & 5 & 2.5d & Should \\
+US-S4-06 & As a user, I want to create calendar events and meetings with participants, so that schedules are shared. & 8 & 3.5d & Should \\
+US-S4-07 & As a user, I want multi-channel reminders before each event, so that I attend on time. & 3 & 1.5d & Should \\
+US-S4-08 & As a user, I want to schedule project and personal reminders delivered on my channels, so that I am nudged at the right moment. & 5 & 2.5d & Should \\
+US-S4-09 & As a user, I want to see and dismiss my pending reminders, so that I can manage them. & 2 & 1d & Could \\
+\midrule
+ & \textbf{Sprint 4 subtotal} & \textbf{44} & \textbf{4w} & \\
 \end{longtable}
+
+\subsection{Requirements analysis}
 
 The sprint use-case diagram (Figure~\ref{fig:3-23}) collects the two actors and the four feature clusters. The shared
 ``notify across channels'' use case is drawn explicitly because it is the seam that binds the sprint: three of
@@ -50,7 +59,7 @@ is duplicated four times across the module services --- a maintainability point 
 % Figure 3.23 — render diagrams-src/fig_3_23.puml -> figures/fig_3_23.(png|pdf)
 \reportfigure{figures/fig_3_23}{Sprint 4 use-case diagram.}{3-23}
 
-\subsection{Module A — Personal To-Dos}
+\subsubsection{Module A — Personal To-Dos}
 
 \textbf{What the module does.} This is a private per-user checklist, kept deliberately separate from the project
 \texttt{Task} engine of Sprint 3 --- its own tables, and even its own status and priority enums (\texttt{Pending}/\texttt{InProgress}/
@@ -88,7 +97,7 @@ child \emph{rows} but leaves their attachment \emph{files} on disk, a storage le
 contract gaps: the list UI's search box sends \texttt{?search=} to a DTO that has no such field, so search silently
 does nothing, and a reorder issues one PATCH per moved card with no revert on failure.
 
-\subsection{Module B — Time \& Attendance}
+\subsubsection{Module B — Time \& Attendance}
 
 \textbf{What the module does.} Attendance is enforced as a daily ritual. On entering any authenticated dashboard
 route the user hits a full-screen gate that blocks the app until they either check in --- choosing Remote or
@@ -133,7 +142,7 @@ statistics read (\texttt{\$queryRawUnsafe} with string-interpolated dates and id
 query; it is not currently exploitable because the DTO validators constrain the inputs, but it represents a standing
 risk given there is no global validation whitelist.
 
-\subsection{Module C — Events \& Calendar}
+\subsubsection{Module C — Events \& Calendar}
 
 \textbf{What the module does.} This is the shared company calendar. Three kinds of entry are distinguished by an
 \texttt{EventType} enum --- \texttt{Meeting} and \texttt{Event} (organizational, targetable at named participants or the whole company
@@ -165,7 +174,7 @@ no rate limit. Two edit-path bugs compound it: an update rewrites \texttt{create
 editor, silently transferring ownership, and an executive deleting a non-owned event hits a \texttt{deleteMany} scoped
 to their own id, matching zero rows and returning a misleading \textbf{204} while nothing is deleted. There is no recurrence model --- events are one-shot.
 
-\subsection{Module D — Reminders}
+\subsubsection{Module D — Reminders}
 
 \textbf{What the module does.} Reminders is the sprint's connective tissue: a time-triggered, multi-channel
 reminder table that other modules also write into. It serves two workflows. \textbf{Manual} reminders let a project
@@ -204,7 +213,7 @@ cross-channel reminders for anyone. And there is a whole controller with no UI: 
 the dismiss action are implemented and ownership-enforced on the backend but have no frontend client, so
 US-S4-09 is only half-delivered.
 
-\subsection{Realization}
+\subsection{Implementation}
 
 Across the four modules this sprint delivers a wide client surface, but almost all of it is composed rather
 than routed: the to-do list lives under a two-tab ``To-do list'' page (Personal / Project), attendance is not a
@@ -216,15 +225,15 @@ module ships no client for the personal-reminder list or the dismiss action even
 
 The screens are supplied by the author:
 
-\reportfigure{figures/screenshot_P23}{Personal to-do list with filters and task-detail sheet.}{P23}
+\reportscreenshot{figures/screenshot_P23}{Personal to-do list with filters and task-detail sheet.}{P23}
 
-\reportfigure{figures/screenshot_P24}{Check-in gate and header check-out button.}{P24}
+\reportscreenshot{figures/screenshot_P24}{Check-in gate and header check-out button.}{P24}
 
-\reportfigure{figures/screenshot_P25}{Calendar month view with event dialog.}{P25}
+\reportscreenshot{figures/screenshot_P25}{Calendar month view with event dialog.}{P25}
 
-\reportfigure{figures/screenshot_P26}{Project-detail reminders list with channel badges.}{P26}
+\reportscreenshot{figures/screenshot_P26}{Project-detail reminders list with channel badges.}{P26}
 
-\subsection{Tests de validation}
+\subsection{Validation and testing}
 
 The acceptance scenarios record the Given/When/Then behind each story. The automated evidence this sprint is again on the frontend: two property-based suites
 (\texttt{fast-check} + \texttt{vitest}) pin the reminder Zod schema invariants and the caster round-trip. We scope
@@ -236,24 +245,26 @@ logic --- the business-day window, the escalating event thresholds, the recurren
 fan-out, or the access-control gaps --- is covered by an automated test, so the table below is verified by code
 reading, and we mark each qualification where the delivered behaviour diverges from the story's intent.
 
-\begin{longtable}{@{}p{1.6cm}p{7.2cm}p{5.3cm}@{}}
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
+\caption{Sprint 4 acceptance scenarios.}\label{tab:s4-acceptance} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endfirsthead
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\caption[]{Sprint 4 acceptance scenarios (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
-US-S4-01 & Given a user, When they create a to-do with sub-tasks/priority/status, Then it is stored under their \texttt{userId}, isolated from other users and from project tasks, with sub-tasks cascade-linked. & ✅ Verified by reading --- no backend test; ⚠ comment-create has no task-ownership check (write IDOR) \\
-US-S4-02 & Given a to-do with a \texttt{reminderDate}, When the time passes, Then a locked per-minute cron notifies the owner across enabled channels and marks it notified once. & ✅ Verified by reading --- no test \\
-US-S4-03 & Given an employee, When they check in (remote/onsite) and later check out, Then a \texttt{WorkSession} opens and closes with worked minutes computed; only one session is open at a time. & ⚠ Verified by reading --- the 00:00--02:59 UTC window bug loops the gate and blocks check-out in that band; the open-session rule is a code check, not a DB constraint \\
-US-S4-04 & Given a closed session, When the day is viewed, Then worked time is computed per business day. & ✅ Verified by reading --- computed once at close, not re-derived from start/end \\
-US-S4-05 & Given a manager, When they open attendance statistics for their users/teams, Then aggregates and per-day hours are returned for the managed users. & ⚠ Verified by reading --- overview-manager is correct, but details-manager returns the caller's own hours, and the manager list can return all users' work days \\
-US-S4-06 & Given a user, When they create an event/meeting with participants, Then it is stored with content and participants and appears on the shared calendar with correct read visibility. & ✅ Verified by reading --- ⚠ any role can create \texttt{toAllUsers} broadcasts; Zod does not require participants for a non-broadcast meeting \\
-US-S4-07 & Given an upcoming event, When each threshold is reached, Then a reminder fans out over enabled channels at 24h/2.5h/30min/15min. & ✅ Verified by reading --- no test; reminder copy hard-codes \texttt{Africa/Tunis} time \\
-US-S4-08 & Given a manager, When they schedule a project or personal reminder for a user with channels and a future time, Then it is stored \texttt{PENDING} and delivered by the scheduler. & ✅ Verified by reading --- ⚠ recipient is not checked as a project member; auto-created reminders target the creator, not the assignee \\
-US-S4-09 & Given a user with pending reminders, When they open their list and dismiss one, Then it is marked dismissed (ownership-enforced). & ⚠ Partial --- backend \texttt{/reminders/me} + dismiss exist and are ownership-scoped, but no frontend client calls them, so the feature is unreachable from the UI \\
+US-S4-01 & Given a user, When they create a to-do with sub-tasks/priority/status, Then it is stored under their \texttt{userId}, isolated from other users and from project tasks, with sub-tasks cascade-linked. & \pass{} Verified by reading --- no backend test; \warn{} comment-create has no task-ownership check (write IDOR) \\
+US-S4-02 & Given a to-do with a \texttt{reminderDate}, When the time passes, Then a locked per-minute cron notifies the owner across enabled channels and marks it notified once. & \pass{} Verified by reading --- no test \\
+US-S4-03 & Given an employee, When they check in (remote/onsite) and later check out, Then a \texttt{WorkSession} opens and closes with worked minutes computed; only one session is open at a time. & \warn{} Verified by reading --- the 00:00--02:59 UTC window bug loops the gate and blocks check-out in that band; the open-session rule is a code check, not a DB constraint \\
+US-S4-04 & Given a closed session, When the day is viewed, Then worked time is computed per business day. & \pass{} Verified by reading --- computed once at close, not re-derived from start/end \\
+US-S4-05 & Given a manager, When they open attendance statistics for their users/teams, Then aggregates and per-day hours are returned for the managed users. & \warn{} Verified by reading --- overview-manager is correct, but details-manager returns the caller's own hours, and the manager list can return all users' work days \\
+US-S4-06 & Given a user, When they create an event/meeting with participants, Then it is stored with content and participants and appears on the shared calendar with correct read visibility. & \pass{} Verified by reading --- \warn{} any role can create \texttt{toAllUsers} broadcasts; Zod does not require participants for a non-broadcast meeting \\
+US-S4-07 & Given an upcoming event, When each threshold is reached, Then a reminder fans out over enabled channels at 24h/2.5h/30min/15min. & \pass{} Verified by reading --- no test; reminder copy hard-codes \texttt{Africa/Tunis} time \\
+US-S4-08 & Given a manager, When they schedule a project or personal reminder for a user with channels and a future time, Then it is stored \texttt{PENDING} and delivered by the scheduler. & \pass{} Verified by reading --- \warn{} recipient is not checked as a project member; auto-created reminders target the creator, not the assignee \\
+US-S4-09 & Given a user with pending reminders, When they open their list and dismiss one, Then it is marked dismissed (ownership-enforced). & \warn{} Partial --- backend \texttt{/reminders/me} + dismiss exist and are ownership-scoped, but no frontend client calls them, so the feature is unreachable from the UI \\
 \bottomrule
 \end{longtable}
 
@@ -295,7 +306,9 @@ fuller attributes. The seams are what make the picture cohere: every new aggrega
 
 \section{Sprint 5: Communication \& Operations}
 
-\textbf{Sprint goal.} Sprint 4 left every module writing to the same four delivery channels through copy-pasted
+\subsection{Sprint goal}
+
+Sprint 4 left every module writing to the same four delivery channels through copy-pasted
 fan-out code. Sprint 5 makes that backbone a first-class subject in its own right and adds the one consumer
 that exists only to feed it. Two modules land together because they are the two halves of one concern:
 \emph{reaching people}. The \textbf{notifications} module owns the delivery substrate: the in-app inbox, FCM push, the
@@ -308,29 +321,36 @@ message, reusing the exact settings the notifications module defines. At \textbf
 sprint: one module that is broad but shallow (many channels, thin logic each) and one that is operationally
 deep (six crons, an outbox, escalating expiry bands).
 
-\textbf{Sprint 5 backlog.} The stories drawn from the product backlog (§2.2) for this sprint:
+\subsection{Sprint backlog}
 
-\begin{longtable}{@{}p{1.6cm}p{9.5cm}p{1.4cm}p{1.6cm}@{}}
-\toprule
-US-ID & Story & Story pts & Priority \\
+The stories drawn from the product backlog (§2.2) for this sprint:
+
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
+\caption{Sprint 5 backlog.}\label{tab:s5-backlog-detail} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
-\toprule
-US-ID & Story & Story pts & Priority \\
+\caption[]{Sprint 5 backlog (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
-US-S5-01 & As a user, I want an in-app notification inbox (bell + list), so that I see system events in one place. & 5 & Must \\
-US-S5-02 & As a user, I want push notifications (FCM) on my devices, so that I am alerted while away from the page. & 5 & Should \\
-US-S5-03 & As a user, I want to configure my delivery channels (email, push, Telegram, ntfy), so that I control how I am reached. & 3 & Should \\
-US-S5-04 & As a user, I want to link my Telegram account, so that I can receive alerts there. & 3 & Could \\
-US-S5-05 & As a DevOps engineer, I want to register servers and services, so that infrastructure is inventoried. & 5 & Should \\
-US-S5-06 & As the platform, I want to health-check servers (ICMP) and services (HTTP) every minute, so that outages are detected automatically. & 8 & Must \\
-US-S5-07 & As a manager, I want multi-channel alerts when a server or service goes down, so that I can react quickly. & 5 & Must \\
-US-S5-08 & As an operator, I want a public \texttt{/health} endpoint, so that the API's liveness is externally checkable. & 1 & Could \\
-\midrule
- & \textbf{Sprint 5 subtotal} & \textbf{35} &  \\
 \bottomrule
+\endfoot
+US-S5-01 & As a user, I want an in-app notification inbox (bell + list), so that I see system events in one place. & 5 & 2.5d & Must \\
+US-S5-02 & As a user, I want push notifications (FCM) on my devices, so that I am alerted while away from the page. & 5 & 2d & Should \\
+US-S5-03 & As a user, I want to configure my delivery channels (email, push, Telegram, ntfy), so that I control how I am reached. & 3 & 1.5d & Should \\
+US-S5-04 & As a user, I want to link my Telegram account, so that I can receive alerts there. & 3 & 1.5d & Could \\
+US-S5-05 & As a DevOps engineer, I want to register servers and services, so that infrastructure is inventoried. & 5 & 2.5d & Should \\
+US-S5-06 & As the platform, I want to health-check servers (ICMP) and services (HTTP) every minute, so that outages are detected automatically. & 8 & 3.5d & Must \\
+US-S5-07 & As a manager, I want multi-channel alerts when a server or service goes down, so that I can react quickly. & 5 & 2d & Must \\
+US-S5-08 & As an operator, I want a public \texttt{/health} endpoint, so that the API's liveness is externally checkable. & 1 & 0.5d & Could \\
+\midrule
+ & \textbf{Sprint 5 subtotal} & \textbf{35} & \textbf{3w} & \\
 \end{longtable}
+
+\subsection{Requirements analysis}
 
 The sprint use-case diagram (Figure~\ref{fig:3-33}) shows the actor split. A plain \textbf{User} manages their own inbox and
 channel preferences; a \textbf{DevOps engineer} and the \textbf{CTO} register and manage the infrastructure, with the CTO
@@ -342,7 +362,7 @@ the two modules.
 % Figure 3.33 — render diagrams-src/fig_3_33.puml -> figures/fig_3_33.(png|pdf)
 \reportfigure{figures/fig_3_33}{Sprint 5 use-case diagram.}{3-33}
 
-\subsection{Module A — Notifications}
+\subsubsection{Module A — Notifications}
 
 \textbf{What the module does.} This is the delivery substrate the whole platform sits on, and its most important
 design fact is a negative one: there is \textbf{no central dispatcher}. The \texttt{NotificationsModule} owns only two of
@@ -396,7 +416,7 @@ failure while Firebase, Telegram and ntfy swallow, so a consumer that fans out t
 rejection only from mail. Testing is skeletal: the two notification specs are \texttt{toBeDefined()}
 stubs and the service spec cannot even resolve its DI graph; only \texttt{mail.service.spec.ts} is a real test.
 
-\subsection{Module B — Infrastructure Monitoring}
+\subsubsection{Module B — Infrastructure Monitoring}
 
 \textbf{What the module does.} This is the platform monitoring the company's own infrastructure --- an internal CMDB
 plus an uptime/expiry watcher. It registers each \textbf{server} (a VPS or bare-metal host, with free-text capacity
@@ -451,7 +471,7 @@ carry \textasciitilde120 lines of copy-pasted band and fan-out logic that have a
 final expiry band), and the specs are stubs --- one controller spec even imports a non-existent \texttt{UsersController}. There is also a frontend/backend RBAC divergence: the frontend grants CEO and customer-support
 infra controls the API rejects, so those users see phantom buttons.
 
-\subsection{Realization}
+\subsection{Implementation}
 
 The two modules present very differently in the UI. Notifications is woven through the whole shell rather than
 sitting on a page: a bell dropdown in the header shows the unseen count and marks everything seen on open, a
@@ -466,15 +486,15 @@ the page).
 
 The screens are supplied by the author:
 
-\reportfigure{figures/screenshot_P27}{Notification bell dropdown and inbox list.}{P27}
+\reportscreenshot{figures/screenshot_P27}{Notification bell dropdown and inbox list.}{P27}
 
-\reportfigure{figures/screenshot_P28}{Notification channel settings page.}{P28}
+\reportscreenshot{figures/screenshot_P28}{Notification channel settings page.}{P28}
 
-\reportfigure{figures/screenshot_P29}{Infrastructure servers dashboard with add/edit dialog.}{P29}
+\reportscreenshot{figures/screenshot_P29}{Infrastructure servers dashboard with add/edit dialog.}{P29}
 
-\reportfigure{figures/screenshot_P30}{Services list with status badges and edit dialog.}{P30}
+\reportscreenshot{figures/screenshot_P30}{Services list with status badges and edit dialog.}{P30}
 
-\subsection{Tests de validation}
+\subsection{Validation and testing}
 
 The acceptance scenarios record the Given/When/Then behind each story. The genuine automated evidence in scope is \texttt{mail.service.spec.ts}, a unit test that exercises
 the email channel. We scope the rest honestly --- coverage is otherwise near-zero on the backend: both
@@ -485,23 +505,25 @@ verified by code reading, and we mark each qualification where the delivered beh
 story's intent --- two of the qualifications (ntfy dead, service checks false-positive) are the sprint's headline
 bugs.
 
-\begin{longtable}{@{}p{1.6cm}p{7.2cm}p{5.3cm}@{}}
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
+\caption{Sprint 5 acceptance scenarios.}\label{tab:s5-acceptance} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endfirsthead
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\caption[]{Sprint 5 acceptance scenarios (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
-US-S5-01 & Given a system event for a user, When it is created, Then a \texttt{UserNotification} row appears in that user's inbox, the bell shows an unseen count, and opening the list marks it seen (ownership-scoped). & ⚠ Verified by reading --- inbox persistence is coupled to \texttt{pushNotificationsEnabled}, so disabling push also loses in-app history \\
-US-S5-02 & Given a user with a registered device, When a notification is sent, Then FCM pushes it to their tokens best-effort, surviving dead tokens. & ✅ Verified by reading --- FCM multicast never throws; no test \\
-US-S5-03 & Given a user, When they toggle email/push/Telegram/ntfy, Then subsequent system notifications respect those channel flags. & ⚠ Verified by reading --- email/push/Telegram honoured; \textbf{ntfy silently delivers nothing} because the topic is never written \\
-US-S5-04 & Given a user, When they enter their Telegram \texttt{chatId}, Then alerts route to that chat via the shared bot token. & ✅ Verified by reading --- per-user \texttt{chatId}, single shared bot secret; no test \\
-US-S5-05 & Given a DevOps engineer or CTO, When they register a server (with managers) or a service, Then it is inventoried, manager-scoped for later access. & ⚠ Verified by reading --- create has no object-level authz and does not auto-add the creator as a manager, so the creator can lose write access to their own server \\
-US-S5-06 & Given running servers/services, When the per-minute crons run, Then unreachable ones (ICMP/HTTP) produce a down-notification, guarded by a distributed lock. & ⚠ Verified by reading --- server ping path correct; \textbf{service HTTP probe uses a schemeless domain and reports every service down every cycle} \\
-US-S5-07 & Given a down or expiring resource, When the sender cron runs, Then each responsible manager is alerted over their enabled channels and the outbox row is marked sent. & ⚠ Verified by reading --- delivery works, but the \texttt{isSent} flip is fire-and-forget (marked sent even on channel failure) and there is no cooldown/acknowledgement, so alerts can spam \\
-US-S5-08 & Given the API is running, When \texttt{GET /health} is called without auth, Then it returns \texttt{\{status:'ok', timestamp\}}. & ✅ Verified by reading --- single public liveness route, no guard \\
+US-S5-01 & Given a system event for a user, When it is created, Then a \texttt{UserNotification} row appears in that user's inbox, the bell shows an unseen count, and opening the list marks it seen (ownership-scoped). & \warn{} Verified by reading --- inbox persistence is coupled to \texttt{pushNotificationsEnabled}, so disabling push also loses in-app history \\
+US-S5-02 & Given a user with a registered device, When a notification is sent, Then FCM pushes it to their tokens best-effort, surviving dead tokens. & \pass{} Verified by reading --- FCM multicast never throws; no test \\
+US-S5-03 & Given a user, When they toggle email/push/Telegram/ntfy, Then subsequent system notifications respect those channel flags. & \warn{} Verified by reading --- email/push/Telegram honoured; \textbf{ntfy silently delivers nothing} because the topic is never written \\
+US-S5-04 & Given a user, When they enter their Telegram \texttt{chatId}, Then alerts route to that chat via the shared bot token. & \pass{} Verified by reading --- per-user \texttt{chatId}, single shared bot secret; no test \\
+US-S5-05 & Given a DevOps engineer or CTO, When they register a server (with managers) or a service, Then it is inventoried, manager-scoped for later access. & \warn{} Verified by reading --- create has no object-level authz and does not auto-add the creator as a manager, so the creator can lose write access to their own server \\
+US-S5-06 & Given running servers/services, When the per-minute crons run, Then unreachable ones (ICMP/HTTP) produce a down-notification, guarded by a distributed lock. & \warn{} Verified by reading --- server ping path correct; \textbf{service HTTP probe uses a schemeless domain and reports every service down every cycle} \\
+US-S5-07 & Given a down or expiring resource, When the sender cron runs, Then each responsible manager is alerted over their enabled channels and the outbox row is marked sent. & \warn{} Verified by reading --- delivery works, but the \texttt{isSent} flip is fire-and-forget (marked sent even on channel failure) and there is no cooldown/acknowledgement, so alerts can spam \\
+US-S5-08 & Given the API is running, When \texttt{GET /health} is called without auth, Then it returns \texttt{\{status:'ok', timestamp\}}. & \pass{} Verified by reading --- single public liveness route, no guard \\
 \bottomrule
 \end{longtable}
 

@@ -5,9 +5,13 @@ LaTeX source for the *Design and Implementation of Tawer Management* PFE report.
 ## Compiling
 
 **Compile with XeLaTeX or LuaLaTeX — not pdfLaTeX.** The document uses
-`fontspec` and keeps unicode characters as-is (arrows `→`, checkmarks `☑ ☐`,
-the multiplication sign `×`, em dashes `—`, and French accents `é à ç`). Only
-XeLaTeX/LuaLaTeX render these correctly; pdfLaTeX will error on them.
+`fontspec` and keeps unicode characters as-is (arrows `→`, the multiplication
+sign `×`, em dashes `—`, and French accents `é à ç`). Only XeLaTeX/LuaLaTeX
+render these correctly; pdfLaTeX will error on them.
+
+**No emoji in the sources.** Latin Modern has no glyphs for ✅/⚠ — XeLaTeX
+silently drops them. Use the `\pass` (green checkmark) and `\warn` (amber `!`)
+macros from `main.tex` in acceptance/result cells instead.
 
 ```bash
 # from this folder

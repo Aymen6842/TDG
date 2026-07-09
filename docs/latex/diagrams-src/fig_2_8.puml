@@ -7,170 +7,78 @@ skinparam defaultFontName "Helvetica"
 skinparam classAttributeIconSize 0
 skinparam ArrowColor #33475b
 skinparam packageStyle rectangle
+skinparam dpi 150
+skinparam nodesep 30
+skinparam ranksep 40
 skinparam class {
   BackgroundColor #FBFCFE
   BorderColor #33475b
   ArrowColor #33475b
+  FontSize 11
+}
+skinparam package {
+  FontSize 12
+  FontStyle bold
 }
 
+' High-level ERD — entities only, no attributes.
+' Detailed class diagrams appear per-sprint in Chapter 3.
+' Layout: packages are pinned into a ~3-row grid with hidden edges so the
+' render stays near the A4 page aspect instead of one wide strip.
+
 package "Identity & Access" as P1 {
-  class User {
-    id : UUID
-    name : String
-    email : String
-    isActive : Boolean
-  }
-  class Role {
-    type : UserType
-    userId : UUID
-  }
-  class Team {
-    id : UUID
-    name : String
-  }
-  class UserTeam {
-    isManager : Boolean
-  }
-  class RefreshToken {
-    token : String
-    userId : UUID
-  }
+  class User << (E,#5B9BD5) >>
+  class Role << (E,#5B9BD5) >>
+  class Team << (E,#5B9BD5) >>
+  class UserTeam << (J,#A9D18E) >>
+  class RefreshToken << (E,#5B9BD5) >>
 }
 
 package "Projects & Membership" as P2 {
-  class Project {
-    id : UUID
-    businessUnit : BusinessUnit
-    projectType : ProjectType
-  }
-  class ProjectContent {
-    language : Language
-    name : String
-  }
-  class ProjectMember {
-    isManager : Boolean
-  }
-  class ProjectInvitation {
-    email : String
-    token : UUID
-    status : InvitationStatus
-  }
+  class Project << (E,#5B9BD5) >>
+  class ProjectContent << (E,#5B9BD5) >>
+  class ProjectMember << (J,#A9D18E) >>
+  class ProjectInvitation << (E,#5B9BD5) >>
 }
 
 package "Agile Planning" as P3 {
-  class Epic {
-    id : UUID
-    name : String
-  }
-  class Sprint {
-    id : UUID
-    status : SprintStatus
-    capacity : Int
-  }
-  class Milestone {
-    id : UUID
-    dueDate : DateTime
-  }
+  class Epic << (E,#5B9BD5) >>
+  class Sprint << (E,#5B9BD5) >>
+  class Milestone << (E,#5B9BD5) >>
 }
 
 package "Tasks & Kanban" as P4 {
-  class Task {
-    id : UUID
-    key : String
-    status : String
-    storyPoints : Int
-    actualHours : Float
-  }
-  class ProjectTaskStatus {
-    name : String
-    order : Int
-    allowedTransitions : String[]
-  }
-  class TaskComment {
-    id : UUID
-    content : String
-  }
-  class TaskDependency {
-    blockingTaskId : UUID
-    blockedTaskId : UUID
-  }
-  class TaskTimeEntry {
-    hours : Float
-  }
+  class Task << (E,#5B9BD5) >>
+  class ProjectTaskStatus << (E,#5B9BD5) >>
+  class TaskComment << (E,#5B9BD5) >>
+  class TaskDependency << (J,#A9D18E) >>
+  class TaskTimeEntry << (E,#5B9BD5) >>
 }
 
 package "Productivity Suite" as P5 {
-  class UserTask {
-    id : UUID
-    status : UserTaskStatus
-    priority : UserTaskPriority
-  }
-  class WorkDay {
-    id : UUID
-    userId : UUID
-  }
-  class WorkSession {
-    type : WorkSessionType
-    workedMinutes : Int
-  }
-  class Event {
-    id : UUID
-    type : EventType
-  }
-  class Reminder {
-    id : UUID
-    status : ReminderStatus
-    entityType : String
-    entityId : UUID
-  }
+  class UserTask << (E,#5B9BD5) >>
+  class WorkDay << (E,#5B9BD5) >>
+  class WorkSession << (E,#5B9BD5) >>
+  class Event << (E,#5B9BD5) >>
+  class Reminder << (E,#5B9BD5) >>
 }
 
 package "Notifications & Channels" as P6 {
-  class Notification {
-    id : UUID
-  }
-  class UserNotification {
-    userId : UUID
-    isSeen : Boolean
-  }
-  class UserNotificationSettings {
-    emailEnabled : Boolean
-    pushEnabled : Boolean
-    telegramEnabled : Boolean
-  }
+  class Notification << (E,#5B9BD5) >>
+  class UserNotification << (J,#A9D18E) >>
+  class UserNotificationSettings << (E,#5B9BD5) >>
 }
 
 package "Infrastructure Monitoring" as P7 {
-  class Server {
-    id : UUID
-    ip : String
-    status : ServerStatus
-  }
-  class Service {
-    id : UUID
-    domain : String
-  }
-  class UserServerManagement {
-    userId : UUID
-    serverId : UUID
-  }
+  class Server << (E,#5B9BD5) >>
+  class Service << (E,#5B9BD5) >>
+  class UserServerManagement << (J,#A9D18E) >>
 }
 
 package "AI / RAG" as P8 {
-  class DocumentEmbedding {
-    id : UUID
-    embedding : vector(1536)
-    contentHash : String
-  }
-  class IndexOutbox {
-    entityType : String
-    entityId : UUID
-    status : OutboxStatus
-  }
-  class CopilotQueryLog {
-    question : String
-    answer : String
-  }
+  class DocumentEmbedding << (E,#5B9BD5) >>
+  class IndexOutbox << (E,#5B9BD5) >>
+  class CopilotQueryLog << (E,#5B9BD5) >>
 }
 
 ' ── Identity ──
@@ -222,5 +130,18 @@ Server "1" --> "0..*" UserServerManagement
 Project "1" --> "0..*" DocumentEmbedding
 Project "1" --> "0..*" IndexOutbox
 User "1" --> "0..*" CopilotQueryLog
+
+' ── Hidden grid constraints (layout only, render nothing) ──
+' Row 1: Identity | Notifications | Infrastructure
+' Row 2: Productivity | Projects | AI
+' Row 3: Tasks | Agile
+P1 -[hidden]right- P6
+P6 -[hidden]right- P7
+P1 -[hidden]down-- P5
+P6 -[hidden]down-- P2
+P7 -[hidden]down-- P8
+P5 -[hidden]down-- P4
+P2 -[hidden]down-- P3
+P4 -[hidden]right- P3
 
 @enduml

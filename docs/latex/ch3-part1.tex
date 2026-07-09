@@ -29,27 +29,32 @@ why this work comes first.
 The user stories for this sprint, repeated from the product backlog in Section~2.2 so the
 sprint reads self-contained:
 
-\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}llll@{}}
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 1 backlog.}\label{tab:s1-backlog-detail} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
 \caption[]{Sprint 1 backlog (continued).} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S1-01 & As a developer, I want a layered NestJS backend with a Prisma multi-file schema and migrations, so that every module shares one structure. & 8 & 4d & Must \\
 US-S1-02 & As a user, I want to log in with email + password and receive a JWT, so that I can access the platform. & 3 & 1.5d & Must \\
+\rowcolor{rowalt}
 US-S1-03 & As a user, I want my session refreshed automatically on expiry, so that I stay logged in without re-authenticating. & 3 & 1d & Must \\
 US-S1-04 & As a user, I want to reset a forgotten password via an emailed code, so that I can regain access. & 3 & 2d & Should \\
+\rowcolor{rowalt}
 US-S1-05 & As the platform, I want every protected endpoint gated by a role-permission guard, so that a user only reaches what their role allows. & 8 & 3.5d & Must \\
 US-S1-06 & As an admin/HR, I want to provision user accounts with one or more roles, so that staff are onboarded (there is no public self-registration). & 5 & 2.5d & Must \\
+\rowcolor{rowalt}
 US-S1-07 & As an admin, I want to list, search (accent-insensitive), and filter users, so that I can manage the directory. & 3 & 1.5d & Should \\
 US-S1-08 & As an admin, I want to edit and soft-delete (deactivate) a user, so that I manage the account lifecycle. & 3 & 1.5d & Must \\
+\rowcolor{rowalt}
 US-S1-09 & As a user, I want to update my own profile and change my password, so that I manage my account. & 2 & 1d & Should \\
 US-S1-10 & As an admin, I want to create teams and assign members and a manager, so that staff are grouped. & 3 & 1.5d & Should \\
 \midrule
@@ -61,7 +66,7 @@ US-S1-10 & As an admin, I want to create teams and assign members and a manager,
 The sprint delivers two modules. The features, actors, and use cases are collected in
 Figure~\ref{fig:3-1}.
 
-\reportfigure{figures/fig_3_1}{Sprint 1 use-case diagram.}{3-1}
+\reportfigure[0.70\textwidth]{figures/fig_3_1}{Sprint 1 use-case diagram.}{3-1}
 
 Three actor archetypes appear. A \textbf{Visitor} (unauthenticated) can self-register (landing in a
 \texttt{PendingApproval} state until promoted by an admin) or reset a password. A \textbf{User} (any
@@ -119,7 +124,7 @@ credentials and the active flag; \texttt{Role} attaches one or more \texttt{User
 user; \texttt{RefreshToken} records live sessions; and \texttt{ResetPasswordCode} holds the single
 outstanding reset code.
 
-\reportfigure{figures/fig_3_4}{Auth \& RBAC class diagram.}{3-4}
+\reportfigure[0.90\textwidth]{figures/fig_3_4}{Auth \& RBAC class diagram.}{3-4}
 
 \subsubsection{Module B --- Users \& Teams}
 
@@ -159,7 +164,7 @@ service verifies that the caller may grant the requested roles, creates the acco
 search fields and adds the team graph. \texttt{Team} groups users through \texttt{UserTeam},
 whose \texttt{isManager} flag carries management semantics.
 
-\reportfigure{figures/fig_3_6}{Users \& Teams class diagram.}{3-6}
+\reportfigure[0.90\textwidth]{figures/fig_3_6}{Users \& Teams class diagram.}{3-6}
 
 \subsection{Implementation}
 
@@ -181,15 +186,15 @@ reset-password screens. The authenticated \texttt{users} section carries the dir
 (with search by name, email, or phone, role filtering, sorting, and pagination), the
 create/edit user dialog, and the teams view.
 
-\reportfigure{figures/screenshot_P07}{Login page.}{P07}
+\reportscreenshot{figures/screenshot_P07}{Login page.}{P07}
 
-\reportfigure{figures/screenshot_P08}{Registration page.}{P08}
+\reportscreenshot{figures/screenshot_P08}{Registration page.}{P08}
 
-\reportfigure{figures/screenshot_P09}{Users list with search and filters.}{P09}
+\reportscreenshot{figures/screenshot_P09}{Users list with search and filters.}{P09}
 
-\reportfigure{figures/screenshot_P10}{Create/edit user dialog.}{P10}
+\reportscreenshot{figures/screenshot_P10}{Create/edit user dialog.}{P10}
 
-\reportfigure{figures/screenshot_P11}{Teams view.}{P11}
+\reportscreenshot{figures/screenshot_P11}{Teams view.}{P11}
 
 \subsection{Validation and testing}
 
@@ -206,27 +211,32 @@ satisfy:
 
 \begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
 \caption{Sprint 1 acceptance scenarios.}\label{tab:s1-acceptance} \\
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endfirsthead
 \caption[]{Sprint 1 acceptance scenarios (continued).} \\
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-US-S1-01 & Given the backend, When any module is inspected, Then it follows the controller → service → repository → DTO layering over a Prisma multi-file schema with applied migrations. & ✅ Verified \\
-US-S1-02 & Given a valid, active account, When it posts correct email/phone + password, Then a JWT access/refresh pair is returned; wrong password → 401, unknown user → 404. & ✅ Verified \\
-US-S1-03 & Given a stored refresh token, When \texttt{/tokens/refresh} is called with it, Then a new access token is minted; a never-issued/revoked token is rejected. & ✅ Verified \\
-US-S1-04 & Given a registered email, When the 3-step reset is followed with the emailed 5-digit code inside 15 min, Then the password is changed. & ✅ Verified \\
-US-S1-05 & Given a protected route with \texttt{@Permissions}, When a caller lacking a matching permission calls it, Then the guard returns 403; a matching role passes. & ✅ Verified (e2e suite) \\
-US-S1-06 & Given an admin holding \texttt{user.create.by.admin}, When they create a user with roles they may grant, Then the account is created active; granting an unmanageable role → 403. & ✅ Verified \\
-US-S1-07 & Given users exist, When an admin lists with a name/role filter, Then results are accent-insensitively matched and paginated. & ✅ Verified \\
-US-S1-08 & Given a target user, When an admin edits or deletes it, Then edits persist and delete flips \texttt{isActive: false} (soft delete). & ✅ Verified \\
-US-S1-09 & Given a logged-in user, When they update their profile or change their password (old password re-verified), Then the changes persist. & ✅ Verified \\
-US-S1-10 & Given an admin, When they create a team with members and mark a manager, Then the team and its \texttt{UserTeam} rows (with \texttt{isManager}) are created. & ✅ Verified \\
+\rowcolor{rowalt}
+US-S1-01 & Given the backend, When any module is inspected, Then it follows the controller → service → repository → DTO layering over a Prisma multi-file schema with applied migrations. & \pass{} Verified \\
+US-S1-02 & Given a valid, active account, When it posts correct email/phone + password, Then a JWT access/refresh pair is returned; wrong password → 401, unknown user → 404. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S1-03 & Given a stored refresh token, When \texttt{/tokens/refresh} is called with it, Then a new access token is minted; a never-issued/revoked token is rejected. & \pass{} Verified \\
+US-S1-04 & Given a registered email, When the 3-step reset is followed with the emailed 5-digit code inside 15 min, Then the password is changed. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S1-05 & Given a protected route with \texttt{@Permissions}, When a caller lacking a matching permission calls it, Then the guard returns 403; a matching role passes. & \pass{} Verified (e2e suite) \\
+US-S1-06 & Given an admin holding \texttt{user.create.by.admin}, When they create a user with roles they may grant, Then the account is created active; granting an unmanageable role → 403. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S1-07 & Given users exist, When an admin lists with a name/role filter, Then results are accent-insensitively matched and paginated. & \pass{} Verified \\
+US-S1-08 & Given a target user, When an admin edits or deletes it, Then edits persist and delete flips \texttt{isActive: false} (soft delete). & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S1-09 & Given a logged-in user, When they update their profile or change their password (old password re-verified), Then the changes persist. & \pass{} Verified \\
+US-S1-10 & Given an admin, When they create a team with members and mark a manager, Then the team and its \texttt{UserTeam} rows (with \texttt{isManager}) are created. & \pass{} Verified \\
 \end{longtable}
 
 \subsection{Sprint review}
@@ -270,7 +280,7 @@ Figure~\ref{fig:3-7} is the first cumulative view of the domain model. After Spr
 contains exactly this sprint's identity core, so every class is new. Later sprints extend this
 same diagram, highlighting only their additions, so the reader can watch the model grow.
 
-\reportfigure{figures/fig_3_7}{Cumulative class diagram after Sprint 1.}{3-7}
+\reportfigure[\textwidth]{figures/fig_3_7}{Cumulative class diagram after Sprint 1.}{3-7}
 
 \subsection{Sprint conclusion}
 
@@ -281,7 +291,9 @@ the hub that the entire domain model and every subsequent sprint build upon.
 
 \section{Sprint 2: Projects \& Membership}
 
-\textbf{Sprint goal.} With identity and access in place, Sprint 2 introduces the unit of work everything else in
+\subsection{Sprint goal}
+
+With identity and access in place, Sprint 2 introduces the unit of work everything else in
 the platform hangs off: the \textbf{project}. The goal was the full project lifecycle (create, read, update,
 archive, hard-delete), per-project team membership with a single project manager, and an email/token
 invitation flow for bringing people who are not yet members onto a project. This is the largest
@@ -289,28 +301,35 @@ domain module and the aggregate root of the whole agile domain: epics, sprints, 
 labels and reminders all foreign-key back to a \texttt{Project}, so it had to land before any of the planning or
 execution work in the sprints that follow.
 
-\textbf{Sprint 2 backlog.} The stories pulled from the product backlog (§2.2) for this sprint:
+\subsection{Sprint backlog}
 
-\begin{longtable}{@{}p{1.8cm}p{8.2cm}p{1.6cm}p{1.5cm}@{}}
-\toprule
-US-ID & Story & Story pts & Priority \\
+The stories pulled from the product backlog (§2.2) for this sprint:
+
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
+\caption{Sprint 2 backlog.}\label{tab:s2-backlog-detail} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
-\toprule
-US-ID & Story & Story pts & Priority \\
+\caption[]{Sprint 2 backlog (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
-US-S2-01 & As a manager/executive, I want to create a project under a business unit with a type (AGILE/FREESTYLE), so that work is organized by unit and workflow. & 5 & Must \\
-US-S2-02 & As a manager, I want to edit, archive, and delete a project, so that I manage its lifecycle. & 3 & Must \\
-US-S2-03 & As a manager, I want to add existing users as project members and mark a manager, so that the team is defined. & 3 & Must \\
-US-S2-04 & As a manager, I want to invite people by email with a single-use token, so that non-members can be brought in. & 5 & Should \\
-US-S2-05 & As an invitee, I want to accept an emailed invitation, so that I become a member. & 3 & Should \\
-US-S2-06 & As a manager, I want to configure the project's kanban settings (WIP limits), so that the board fits our process. & 2 & Could \\
-US-S2-07 & As a member, I want to see only the projects I belong to (executives scoped to their business unit), so that access is isolated. & 5 & Must \\
-\midrule
- & \textbf{Sprint 2 subtotal} & \textbf{26} & \\
 \bottomrule
+\endfoot
+US-S2-01 & As a manager/executive, I want to create a project under a business unit with a type (AGILE/FREESTYLE), so that work is organized by unit and workflow. & 5 & 2.5d & Must \\
+US-S2-02 & As a manager, I want to edit, archive, and delete a project, so that I manage its lifecycle. & 3 & 1.5d & Must \\
+US-S2-03 & As a manager, I want to add existing users as project members and mark a manager, so that the team is defined. & 3 & 1.5d & Must \\
+US-S2-04 & As a manager, I want to invite people by email with a single-use token, so that non-members can be brought in. & 5 & 3d & Should \\
+US-S2-05 & As an invitee, I want to accept an emailed invitation, so that I become a member. & 3 & 1.5d & Should \\
+US-S2-06 & As a manager, I want to configure the project's kanban settings (WIP limits), so that the board fits our process. & 2 & 1d & Could \\
+US-S2-07 & As a member, I want to see only the projects I belong to (executives scoped to their business unit), so that access is isolated. & 5 & 2d & Must \\
+\midrule
+ & \textbf{Sprint 2 subtotal} & \textbf{26} & \textbf{2w} & \\
 \end{longtable}
+
+\subsection{Requirements analysis}
 
 The actors and features are collected in the sprint use-case diagram (Figure~\ref{fig:3-8}). The \textbf{Executive} archetype
 covers the three C-level roles, which differ only in reach: a \texttt{CEO} sees and manages every project, whereas a
@@ -321,9 +340,9 @@ covers the three C-level roles, which differ only in reach: a \texttt{CEO} sees 
 scoped to the projects they already run.
 
 % Figure 3.8 — render diagrams-src/fig_3_8.puml -> figures/fig_3_8.(png|pdf)
-\reportfigure{figures/fig_3_8}{Sprint 2 use-case diagram.}{3-8}
+\reportfigure[0.70\textwidth]{figures/fig_3_8}{Sprint 2 use-case diagram.}{3-8}
 
-\subsection{Conception --- Projects, Membership \& Invitations}
+\subsubsection{Module A --- Projects, Membership \& Invitations}
 
 \textbf{What the module does.} A project is created by an executive, belongs to exactly one \textbf{business unit} ---
 \texttt{TawerDev} (software) or \texttt{TawerCreative} (creative) --- and carries a \texttt{projectType} of \texttt{AGILE} or \texttt{FREESTYLE}
@@ -378,9 +397,9 @@ email-bound token lifecycle. \texttt{User} is shown again --- not new --- becaus
 project family: creator, member, and inviter.
 
 % Figure 3.11 — render diagrams-src/fig_3_11.puml -> figures/fig_3_11.(png|pdf)
-\reportfigure{figures/fig_3_11}{Projects \& Membership class slice.}{3-11}
+\reportfigure[0.90\textwidth]{figures/fig_3_11}{Projects \& Membership class slice.}{3-11}
 
-\subsection{Realization}
+\subsection{Implementation}
 
 The module ships seventeen endpoints on \texttt{ProjectsController} covering the lifecycle (register, list, get, get
 capacity, update, delete, archive, restore), membership (smart add-member, update-member, remove-member), the
@@ -396,12 +415,12 @@ member-replacement paths exist but are not exercised by the UI.
 The screens are supplied by the author:
 
 % [SCREENSHOT] P-12 … P-15 (per Placeholder Register, §3.2.2)
-\reportfigure{figures/screenshot_P12}{Projects list view.}{P12}
-\reportfigure{figures/screenshot_P13}{Create-project sheet.}{P13}
-\reportfigure{figures/screenshot_P14}{Members tab.}{P14}
-\reportfigure{figures/screenshot_P15}{Invite-by-email dialog.}{P15}
+\reportscreenshot{figures/screenshot_P12}{Projects list view.}{P12}
+\reportscreenshot{figures/screenshot_P13}{Create-project sheet.}{P13}
+\reportscreenshot{figures/screenshot_P14}{Members tab.}{P14}
+\reportscreenshot{figures/screenshot_P15}{Invite-by-email dialog.}{P15}
 
-\subsection{Tests de validation}
+\subsection{Validation and testing}
 
 The acceptance scenarios below record the Given/When/Then each story had to satisfy. Unlike Sprint 1, this sprint has \textbf{genuine automated coverage to point to}:
 \texttt{projects.service.spec.ts} is an 854-line behavioural unit-test suite (with mocked repositories) that exercises
@@ -414,21 +433,27 @@ the single-manager validators, or for kanban-settings validation, and no e2e tes
 though verified by reading --- is not automatically guarded.
 
 \begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\caption{Sprint 2 acceptance scenarios.}\label{tab:s2-acceptance} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endfirsthead
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\caption[]{Sprint 2 acceptance scenarios (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
-US-S2-01 & Given an executive, When they POST a project with a business unit and type, Then a Project with nested contents and one manager member is created; a non-executive or wrong-unit caller → 403; a duplicate name → 409. & ✅ Verified \\
-US-S2-02 & Given a manager/executive, When they PATCH, archive, or DELETE a project, Then fields update in a transaction, archive flips \texttt{isArchived}, and delete cascades the whole project. & ✅ Verified --- ⚠ archive is not server-filtered on list (see Annex A) \\
-US-S2-03 & Given an executive, When they add an existing user by \texttt{userId}, Then a \texttt{ProjectMember} is created unless the user is already a member (409). & ✅ Verified \\
-US-S2-04 & Given an executive or the project manager, When they invite an email, Then a single-use tokenized invitation (7-day expiry) is upserted, emailed, and notified if the invitee has an account. & ✅ Verified --- ⚠ no automated tests for the invite methods \\
-US-S2-05 & Given a valid, unexpired invitation, When the authenticated invitee (email matching) accepts, Then a membership is created and the invite marked ACCEPTED; a mismatched email or expired token is rejected. & ⚠ Partial --- backend is complete and correct, but there is \textbf{no acceptance UI}; the emailed \texttt{/projects/join} route does not exist (verified gap) \\
-US-S2-06 & Given a manager, When they PATCH kanban settings, Then WIP-limit keys are validated against the project's status names and stored as JSON. & ✅ Verified \\
-US-S2-07 & Given a non-executive, When they list projects, Then only projects they are a member of are returned; a CTO/CMO sees only their business unit; a CEO sees all. & ✅ Verified \\
+\rowcolor{rowalt}
+US-S2-01 & Given an executive, When they POST a project with a business unit and type, Then a Project with nested contents and one manager member is created; a non-executive or wrong-unit caller → 403; a duplicate name → 409. & \pass{} Verified \\
+US-S2-02 & Given a manager/executive, When they PATCH, archive, or DELETE a project, Then fields update in a transaction, archive flips \texttt{isArchived}, and delete cascades the whole project. & \pass{} Verified --- \warn{} archive is not server-filtered on list (see Annex A) \\
+\rowcolor{rowalt}
+US-S2-03 & Given an executive, When they add an existing user by \texttt{userId}, Then a \texttt{ProjectMember} is created unless the user is already a member (409). & \pass{} Verified \\
+US-S2-04 & Given an executive or the project manager, When they invite an email, Then a single-use tokenized invitation (7-day expiry) is upserted, emailed, and notified if the invitee has an account. & \pass{} Verified --- \warn{} no automated tests for the invite methods \\
+\rowcolor{rowalt}
+US-S2-05 & Given a valid, unexpired invitation, When the authenticated invitee (email matching) accepts, Then a membership is created and the invite marked ACCEPTED; a mismatched email or expired token is rejected. & \warn{} Partial --- backend is complete and correct, but there is \textbf{no acceptance UI}; the emailed \texttt{/projects/join} route does not exist (verified gap) \\
+US-S2-06 & Given a manager, When they PATCH kanban settings, Then WIP-limit keys are validated against the project's status names and stored as JSON. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S2-07 & Given a non-executive, When they list projects, Then only projects they are a member of are returned; a CTO/CMO sees only their business unit; a CEO sees all. & \pass{} Verified \\
 \bottomrule
 \end{longtable}
 
@@ -457,11 +482,13 @@ enums --- are highlighted. The link back to \texttt{User} (creator, member, invi
 project aggregate to the identity core established previously.
 
 % Figure 3.12 — render diagrams-src/fig_3_12.puml -> figures/fig_3_12.(png|pdf)
-\reportfigure{figures/fig_3_12}{Cumulative class diagram after Sprint 2.}{3-12}
+\reportfigure[\textwidth]{figures/fig_3_12}{Cumulative class diagram after Sprint 2.}{3-12}
 
 \section{Sprint 3: Agile Backlog \& Tasks}
 
-\textbf{Sprint goal.} Sprints 1 and 2 gave us people, access, and projects; they did not yet give a project any
+\subsection{Sprint goal}
+
+Sprints 1 and 2 gave us people, access, and projects; they did not yet give a project any
 \emph{work}. Sprint 3 delivers the agile planning layer
 (epics, sprints, milestones and their burndown/velocity/Gantt analytics) and, on top of it, the task engine:
 a per-project data-driven Kanban with custom columns, WIP limits, dependency-blocking, story points, time
@@ -471,33 +498,40 @@ burndown chart reads directly from each task's \texttt{storyPoints} and \texttt{
 in the plan at \textbf{64 story points}, and the richest domain code in the codebase: \texttt{tasks.service.ts} alone is
 2\,735 lines.
 
-\textbf{Sprint 3 backlog.} The stories pulled from the product backlog (§2.2) for this sprint:
+\subsection{Sprint backlog}
 
-\begin{longtable}{@{}p{1.8cm}p{8.2cm}p{1.6cm}p{1.5cm}@{}}
-\toprule
-US-ID & Story & Story pts & Priority \\
+The stories pulled from the product backlog (§2.2) for this sprint:
+
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
+\caption{Sprint 3 backlog.}\label{tab:s3-backlog-detail} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
-\toprule
-US-ID & Story & Story pts & Priority \\
+\caption[]{Sprint 3 backlog (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
-US-S3-01 & As a PM/PO, I want to create epics to group large features, so that the backlog is structured. & 3 & Should \\
-US-S3-02 & As a Scrum Master, I want to create sprints with dates and a capacity, so that work is time-boxed. & 5 & Must \\
-US-S3-03 & As a Scrum Master, I want to run the sprint lifecycle (start/stop/complete, one running at a time), so that iterations are governed. & 8 & Must \\
-US-S3-04 & As a PM, I want milestones with target dates (also for FREESTYLE projects), so that deadlines are tracked. & 3 & Should \\
-US-S3-05 & As a PM, I want burndown, velocity, and Gantt analytics, so that I can monitor progress. & 8 & Should \\
-US-S3-06 & As a member, I want to create tasks with type, priority, assignee, and estimates, so that work is captured. & 5 & Must \\
-US-S3-07 & As a manager, I want a per-project, data-driven kanban with custom columns and WIP limits, so that the board mirrors our workflow. & 8 & Must \\
-US-S3-08 & As an assignee, I want to move a task across columns with transition, dependency, and WIP validation, so that status stays valid. & 8 & Must \\
-US-S3-09 & As a member, I want to declare task dependencies (blocking / blocked-by), so that ordering is explicit. & 5 & Should \\
-US-S3-10 & As a member, I want to log time against a task, so that effort is recorded. & 3 & Should \\
-US-S3-11 & As a member, I want threaded comments with @mentions and likes on a task, so that we collaborate in context. & 5 & Should \\
-US-S3-12 & As a member, I want labels and to assign a task to a sprint/epic/milestone, so that work is categorized. & 3 & Should \\
-\midrule
- & \textbf{Sprint 3 subtotal} & \textbf{64} & \\
 \bottomrule
+\endfoot
+US-S3-01 & As a PM/PO, I want to create epics to group large features, so that the backlog is structured. & 3 & 1.5d & Should \\
+US-S3-02 & As a Scrum Master, I want to create sprints with dates and a capacity, so that work is time-boxed. & 5 & 3d & Must \\
+US-S3-03 & As a Scrum Master, I want to run the sprint lifecycle (start/stop/complete, one running at a time), so that iterations are governed. & 8 & 4d & Must \\
+US-S3-04 & As a PM, I want milestones with target dates (also for FREESTYLE projects), so that deadlines are tracked. & 3 & 1.5d & Should \\
+US-S3-05 & As a PM, I want burndown, velocity, and Gantt analytics, so that I can monitor progress. & 8 & 3.5d & Should \\
+US-S3-06 & As a member, I want to create tasks with type, priority, assignee, and estimates, so that work is captured. & 5 & 2.5d & Must \\
+US-S3-07 & As a manager, I want a per-project, data-driven kanban with custom columns and WIP limits, so that the board mirrors our workflow. & 8 & 4d & Must \\
+US-S3-08 & As an assignee, I want to move a task across columns with transition, dependency, and WIP validation, so that status stays valid. & 8 & 3.5d & Must \\
+US-S3-09 & As a member, I want to declare task dependencies (blocking / blocked-by), so that ordering is explicit. & 5 & 2d & Should \\
+US-S3-10 & As a member, I want to log time against a task, so that effort is recorded. & 3 & 1.5d & Should \\
+US-S3-11 & As a member, I want threaded comments with @mentions and likes on a task, so that we collaborate in context. & 5 & 2.5d & Should \\
+US-S3-12 & As a member, I want labels and to assign a task to a sprint/epic/milestone, so that work is categorized. & 3 & 1.5d & Should \\
+\midrule
+ & \textbf{Sprint 3 subtotal} & \textbf{64} & \textbf{5w} & \\
 \end{longtable}
+
+\subsection{Requirements analysis}
 
 The sprint use-case diagram (Figure~\ref{fig:3-13}) collects the actors and features. Four Scrum-shaped roles appear,
 and the platform's authorization is literal about who does what: the \textbf{Project Manager} and
@@ -512,9 +546,9 @@ to the Product Owner, an inconsistency in the agile module's write-role fallback
 rather than designed.
 
 % Figure 3.13 — render diagrams-src/fig_3_13.puml -> figures/fig_3_13.(png|pdf)
-\reportfigure{figures/fig_3_13}{Sprint 3 use-case diagram.}{3-13}
+\reportfigure[0.70\textwidth]{figures/fig_3_13}{Sprint 3 use-case diagram.}{3-13}
 
-\subsection{Module A --- Agile Backlog (Epics, Sprints \& Milestones)}
+\subsubsection{Module A --- Agile Backlog (Epics, Sprints \& Milestones)}
 
 \textbf{What the module does.} The agile layer adds three planning artefacts, each scoped to a project. An \textbf{epic}
 is a large feature that groups tasks under a named, colour-coded, optionally date-bounded umbrella so progress
@@ -569,7 +603,7 @@ validator and the frontend sprint card's action buttons (Start / Stop / Complete
 exactly, which is the strongest evidence in the module that invalid transitions cannot be reached from the UI.
 
 % Figure 3.16 — render diagrams-src/fig_3_16.puml -> figures/fig_3_16.(png|pdf)
-\reportfigure{figures/fig_3_16}{Sprint lifecycle state machine.}{3-16}
+\reportfigure[0.65\textwidth]{figures/fig_3_16}{Sprint lifecycle state machine.}{3-16}
 
 The agile class slice (Figure~\ref{fig:3-17}) introduces the five planning entities and the \texttt{SprintStatus} enum. \texttt{Sprint}
 splits its translatable name and description into a child \texttt{SprintContent} (the same i18n content-table pattern
@@ -579,9 +613,9 @@ point back through --- \texttt{epicId}, \texttt{sprintId}, \texttt{milestoneId} 
 even though the class itself belongs to the next block.
 
 % Figure 3.17 — render diagrams-src/fig_3_17.puml -> figures/fig_3_17.(png|pdf)
-\reportfigure{figures/fig_3_17}{Agile Backlog class slice.}{3-17}
+\reportfigure[0.90\textwidth]{figures/fig_3_17}{Agile Backlog class slice.}{3-17}
 
-\subsection{Module B --- Tasks \& Data-Driven Kanban}
+\subsubsection{Module B --- Tasks \& Data-Driven Kanban}
 
 \textbf{What the module does.} The task engine is the core unit of work and the richest domain module in the codebase. A task carries the expected fields --- type, priority, assignee, reporter, story points, estimated and
 actual hours, due date --- plus the machinery for a real board: a free-string \texttt{status}, a \texttt{displayOrder} for manual
@@ -632,7 +666,7 @@ and a move into a custom status is permitted from anywhere, which keeps the boar
 moves between the known system columns.
 
 % Figure 3.20 — render diagrams-src/fig_3_20.puml -> figures/fig_3_20.(png|pdf)
-\reportfigure{figures/fig_3_20}{Task status transitions for FREESTYLE and AGILE boards.}{3-20}
+\reportfigure[0.65\textwidth]{figures/fig_3_20}{Task status transitions for FREESTYLE and AGILE boards.}{3-20}
 
 The tasks class slice (Figure~\ref{fig:3-21}) is the largest single-module slice in the report. \texttt{Task} is the hub;
 \texttt{ProjectTaskStatus} holds the board columns and their \texttt{allowedTransitions}; \texttt{TaskComment} carries \texttt{TaskCommentLike}
@@ -645,9 +679,9 @@ split table the task code never reads or writes) and the unused \texttt{statusTy
 in the schema and a reader will meet them.
 
 % Figure 3.21 — render diagrams-src/fig_3_21.puml -> figures/fig_3_21.(png|pdf)
-\reportfigure{figures/fig_3_21}{Tasks \& Kanban class slice.}{3-21}
+\reportfigure[\textwidth]{figures/fig_3_21}{Tasks \& Kanban class slice.}{3-21}
 
-\subsection{Realization}
+\subsection{Implementation}
 
 Between the two modules the sprint delivers a large API surface --- nineteen agile endpoints across the epics,
 sprints and milestones controllers (including the burndown, velocity and Gantt analytics routes), and roughly
@@ -663,15 +697,15 @@ is no working frontend path for uploading sprint attachments even though the bac
 The screens are supplied by the author:
 
 % [SCREENSHOT] P-16 … P-22 (per Placeholder Register, §3.3.3)
-\reportfigure{figures/screenshot_P16}{Backlog view.}{P16}
-\reportfigure{figures/screenshot_P17}{Kanban board.}{P17}
-\reportfigure{figures/screenshot_P18}{Task detail sheet.}{P18}
-\reportfigure{figures/screenshot_P19}{Sprint board.}{P19}
-\reportfigure{figures/screenshot_P20}{Burndown chart.}{P20}
-\reportfigure{figures/screenshot_P21}{Velocity chart.}{P21}
-\reportfigure{figures/screenshot_P22}{Gantt chart.}{P22}
+\reportscreenshot{figures/screenshot_P16}{Backlog view.}{P16}
+\reportscreenshot{figures/screenshot_P17}{Kanban board.}{P17}
+\reportscreenshot{figures/screenshot_P18}{Task detail sheet.}{P18}
+\reportscreenshot{figures/screenshot_P19}{Sprint board.}{P19}
+\reportscreenshot{figures/screenshot_P20}{Burndown chart.}{P20}
+\reportscreenshot{figures/screenshot_P21}{Velocity chart.}{P21}
+\reportscreenshot{figures/screenshot_P22}{Gantt chart.}{P22}
 
-\subsection{Tests de validation}
+\subsection{Validation and testing}
 
 The acceptance scenarios record the Given/When/Then each story had to satisfy. The automated evidence this sprint is concentrated on the \textbf{frontend}, where 11
 property-based test suites (\texttt{fast-check} + \texttt{vitest}) pin client-side invariants --- Kanban no-task-loss and
@@ -687,26 +721,34 @@ matches the controller. The property suites validate frontend transforms, not ba
 behaviour, and we mark the table accordingly.
 
 \begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\caption{Sprint 3 acceptance scenarios.}\label{tab:s3-acceptance} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endfirsthead
-\toprule
-US-ID & Acceptance scenario (Given / When / Then) & Result \\
+\caption[]{Sprint 3 acceptance scenarios (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
-US-S3-01 & Given a PM/PO on an AGILE project, When they create an epic, Then it is stored under the project (unique name per project) and its progress rolls up from DONE task counts; a linked-task epic cannot be deleted. & ✅ Verified by reading --- no automated test \\
-US-S3-02 & Given a Scrum Master, When they create a sprint with all four dates and a capacity, Then a \texttt{Pending} sprint is stored only if every window sits inside the project window; default reminders are created. & ✅ Verified by reading --- no automated test \\
-US-S3-03 & Given a \texttt{Pending}/\texttt{Running} sprint, When the SM starts/stops/completes it, Then only legal transitions apply, at most one sprint runs per project, members are notified, and pending reminders cancel on stop/complete. & ✅ Verified by reading; FE card mirrors the FSM --- no backend test \\
-US-S3-04 & Given a project (AGILE or FREESTYLE), When a PM creates a milestone with a due date, Then it is stored and can be completed by stamping \texttt{completedAt}. & ⚠ Verified by reading --- milestone create skips the project-window date check that epics enforce, and complete is not idempotent \\
-US-S3-05 & Given a sprint/project with task points, When a PM opens analytics, Then burndown shows ideal-vs-actual, velocity sums completed-sprint points, and the Gantt fans in milestones/epics/sprints/tasks. & ⚠ Verified by reading --- Gantt sprint rows return no name, so sprints are unlabelled in that view \\
-US-S3-06 & Given a member with create rights, When they POST a task with type/priority/assignee/estimate, Then it is created with a generated key after project-type field and FK validation; assignee is notified; the task is indexed. & ✅ Verified by reading --- no backend test; ⚠ \texttt{TASK-<count+1>} key is collision-prone \\
-US-S3-07 & Given a manager, When they define board columns and WIP limits, Then \texttt{ProjectTaskStatus} rows drive the board and WIP keys are validated against status names. & ✅ Verified by reading --- FE property test covers no-task-loss/swimlanes only \\
-US-S3-08 & Given an assignee, When they drag a card to a new column, Then the move is rejected unless the transition is legal, no blocking dependency is unfinished, and the column is under its WIP limit; \texttt{completedAt} stamps on DONE. & ✅ Verified by reading --- FE \texttt{project-kanban} property test guards no-task-loss; ⚠ \texttt{bulk-status} uses weaker auth and skips WIP/blocked checks \\
-US-S3-09 & Given a member, When they add a dependency, Then a circular-dependency DFS guard rejects cycles; a task cannot leave its column while blocked. & ✅ Verified by reading --- FE dependency property test covers casting only \\
-US-S3-10 & Given a member, When they log time on a task, Then a \texttt{TaskTimeEntry} is created and \texttt{actualHours} is re-aggregated from the sum. & ✅ Verified by reading --- FE time-entry property test covers transforms only \\
-US-S3-11 & Given a member, When they comment with @mentions, Then the comment and its mentions are created in a transaction, mentioned users and the assignee are notified, and the comment is indexed; likes toggle one-per-user. & ✅ Verified by reading --- FE comment property test covers casting only \\
-US-S3-12 & Given a member, When they create/assign labels or move a task to a sprint/epic/milestone, Then project-scoped labels attach via the junction and the FK is set. & ⚠ Verified by reading --- \texttt{moveToSprint} unconditionally resets \texttt{status} to \texttt{TODO}, bypassing transition validation \\
+\rowcolor{rowalt}
+US-S3-01 & Given a PM/PO on an AGILE project, When they create an epic, Then it is stored under the project (unique name per project) and its progress rolls up from DONE task counts; a linked-task epic cannot be deleted. & \pass{} Verified by reading --- no automated test \\
+US-S3-02 & Given a Scrum Master, When they create a sprint with all four dates and a capacity, Then a \texttt{Pending} sprint is stored only if every window sits inside the project window; default reminders are created. & \pass{} Verified by reading --- no automated test \\
+\rowcolor{rowalt}
+US-S3-03 & Given a \texttt{Pending}/\texttt{Running} sprint, When the SM starts/stops/completes it, Then only legal transitions apply, at most one sprint runs per project, members are notified, and pending reminders cancel on stop/complete. & \pass{} Verified by reading; FE card mirrors the FSM --- no backend test \\
+US-S3-04 & Given a project (AGILE or FREESTYLE), When a PM creates a milestone with a due date, Then it is stored and can be completed by stamping \texttt{completedAt}. & \warn{} Verified by reading --- milestone create skips the project-window date check that epics enforce, and complete is not idempotent \\
+\rowcolor{rowalt}
+US-S3-05 & Given a sprint/project with task points, When a PM opens analytics, Then burndown shows ideal-vs-actual, velocity sums completed-sprint points, and the Gantt fans in milestones/epics/sprints/tasks. & \warn{} Verified by reading --- Gantt sprint rows return no name, so sprints are unlabelled in that view \\
+US-S3-06 & Given a member with create rights, When they POST a task with type/priority/assignee/estimate, Then it is created with a generated key after project-type field and FK validation; assignee is notified; the task is indexed. & \pass{} Verified by reading --- no backend test; \warn{} \texttt{TASK-<count+1>} key is collision-prone \\
+\rowcolor{rowalt}
+US-S3-07 & Given a manager, When they define board columns and WIP limits, Then \texttt{ProjectTaskStatus} rows drive the board and WIP keys are validated against status names. & \pass{} Verified by reading --- FE property test covers no-task-loss/swimlanes only \\
+US-S3-08 & Given an assignee, When they drag a card to a new column, Then the move is rejected unless the transition is legal, no blocking dependency is unfinished, and the column is under its WIP limit; \texttt{completedAt} stamps on DONE. & \pass{} Verified by reading --- FE \texttt{project-kanban} property test guards no-task-loss; \warn{} \texttt{bulk-status} uses weaker auth and skips WIP/blocked checks \\
+\rowcolor{rowalt}
+US-S3-09 & Given a member, When they add a dependency, Then a circular-dependency DFS guard rejects cycles; a task cannot leave its column while blocked. & \pass{} Verified by reading --- FE dependency property test covers casting only \\
+US-S3-10 & Given a member, When they log time on a task, Then a \texttt{TaskTimeEntry} is created and \texttt{actualHours} is re-aggregated from the sum. & \pass{} Verified by reading --- FE time-entry property test covers transforms only \\
+\rowcolor{rowalt}
+US-S3-11 & Given a member, When they comment with @mentions, Then the comment and its mentions are created in a transaction, mentioned users and the assignee are notified, and the comment is indexed; likes toggle one-per-user. & \pass{} Verified by reading --- FE comment property test covers casting only \\
+US-S3-12 & Given a member, When they create/assign labels or move a task to a sprint/epic/milestone, Then project-scoped labels attach via the junction and the FK is set. & \warn{} Verified by reading --- \texttt{moveToSprint} unconditionally resets \texttt{status} to \texttt{TODO}, bypassing transition validation \\
 \bottomrule
 \end{longtable}
 
@@ -739,4 +781,4 @@ reporter --- so the whole sprint plugs into the aggregate root established in Sp
 carried-over classes.
 
 % Figure 3.22 — render diagrams-src/fig_3_22.puml -> figures/fig_3_22.(png|pdf)
-\reportfigure{figures/fig_3_22}{Cumulative class diagram after Sprint 3.}{3-22}
+\reportfigure[\textwidth]{figures/fig_3_22}{Cumulative class diagram after Sprint 3.}{3-22}

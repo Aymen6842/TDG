@@ -1,0 +1,53 @@
+% ===========================================================================
+% BACK COVER — mirrors the final page of the official IIT template:
+% department, title, author, Résumé + mots clés, Abstract + keywords.
+% Input as the very last page of main.tex.
+% ===========================================================================
+
+\clearpage
+\thispagestyle{empty}
+% Full-page decorative background from the official template (this page only)
+\AddToShipoutPictureBG*{\AtPageLowerLeft{\includegraphics[width=\paperwidth,height=\paperheight]{figures/guard_bg_back.png}}}
+
+% --- institutional header (same as the guard page) --------------------------
+\noindent
+\begin{minipage}[c]{0.30\textwidth}
+  \centering
+  \includegraphics[height=1.8cm]{figures/guard_coat_of_arms.png}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.22\textwidth}
+  \centering
+  \includegraphics[height=1.1cm]{figures/guard_flag.jpg}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.34\textwidth}
+  \centering
+  \includegraphics[height=1.3cm]{figures/guard_iit_logo.png}
+\end{minipage}
+
+\vspace{0.8cm}
+\begin{center}
+{\bfseries\color{chapterblue}\authoraction{TO PROVIDE: department} DEPARTMENT}\\[4mm]
+{\bfseries Tawer Management: A Full-Stack Team-Management Platform\\
+ with a Retrieval-Augmented AI Copilot}\\[2mm]
+Aymen BenHsan
+\end{center}
+
+\vspace{0.5cm}
+\noindent{\bfseries\color{chapterblue} RÉSUMÉ :}\\[-1.2em]
+{\color{headerrule}\rule{\textwidth}{0.6pt}}
+
+{\footnotesize\resumebody}
+
+\smallskip
+\noindent{\footnotesize\textbf{MOTS CLÉS :} \motscles.}\\[-1.2em]
+{\color{headerrule}\rule{\textwidth}{0.6pt}}
+
+\vspace{0.4cm}
+\noindent{\bfseries\color{chapterblue} ABSTRACT:}\\[-1.2em]
+{\color{headerrule}\rule{\textwidth}{0.6pt}}
+
+{\footnotesize\abstractbody}
+
+\smallskip
+\noindent{\footnotesize\textbf{KEYWORDS:} \keywordsen.}\\[-1.2em]
+{\color{headerrule}\rule{\textwidth}{0.6pt}}

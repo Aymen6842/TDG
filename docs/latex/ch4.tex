@@ -46,25 +46,28 @@ The stories drawn from the product backlog (Section~2.2) for this sprint. At \te
 sprint despite touching only one module, because that module is deep: an asynchronous indexing pipeline, a
 hybrid retrieval engine, a grounded-generation orchestrator, an estimator, and an evaluation harness.
 
-\begin{longtable}{@{}p{1.6cm}p{8.5cm}p{1.4cm}p{1.4cm}@{}}
-\toprule
-US-ID & Story & Story pts & Priority \\
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
+\caption{Sprint 6 backlog.}\label{tab:s6-backlog-detail} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
-\toprule
-US-ID & Story & Story pts & Priority \\
+\caption[]{Sprint 6 backlog (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
-US-S6-01 & As a user, I want to ask the copilot a natural-language question about project content, so that I get answers without manual digging. & 5 & Must \\
-US-S6-02 & As a user, I want the answer streamed with clickable citations to the source items, so that I can trust and verify it. & 8 & Must \\
-US-S6-03 & As a user, I want the copilot to refuse honestly when the corpus cannot support an answer, so that I am never misled by a hallucination. & 5 & Must \\
-US-S6-04 & As a member, I want the system to estimate a draft task's effort from similar completed tasks, so that planning is data-driven. & 8 & Should \\
-US-S6-05 & As the platform, I want project content indexed automatically via a write-path outbox, so that the copilot stays current without slowing saves. & 8 & Must \\
-US-S6-06 & As an admin, I want to trigger a reindex and view copilot telemetry, so that I can operate the AI subsystem. & 3 & Should \\
-US-S6-07 & As the platform, I want retrieval scoped by permissions in SQL, so that no user can surface content from a project they cannot access. & 5 & Must \\
-\midrule
- & \textbf{Sprint 6 subtotal} & \textbf{42} & \\
 \bottomrule
+\endfoot
+US-S6-01 & As a user, I want to ask the copilot a natural-language question about project content, so that I get answers without manual digging. & 5 & 2.5d & Must \\
+US-S6-02 & As a user, I want the answer streamed with clickable citations to the source items, so that I can trust and verify it. & 8 & 4d & Must \\
+US-S6-03 & As a user, I want the copilot to refuse honestly when the corpus cannot support an answer, so that I am never misled by a hallucination. & 5 & 2d & Must \\
+US-S6-04 & As a member, I want the system to estimate a draft task's effort from similar completed tasks, so that planning is data-driven. & 8 & 3.5d & Should \\
+US-S6-05 & As the platform, I want project content indexed automatically via a write-path outbox, so that the copilot stays current without slowing saves. & 8 & 4d & Must \\
+US-S6-06 & As an admin, I want to trigger a reindex and view copilot telemetry, so that I can operate the AI subsystem. & 3 & 1.5d & Should \\
+US-S6-07 & As the platform, I want retrieval scoped by permissions in SQL, so that no user can surface content from a project they cannot access. & 5 & 2.5d & Must \\
+\midrule
+ & \textbf{Sprint 6 subtotal} & \textbf{42} & \textbf{4w} & \\
 \end{longtable}
 
 \section{Use-case diagram}
@@ -210,7 +213,7 @@ module's own project-scoped authorization today, but if finer-grained task visib
 retrieval would over-share until it was taught the same rule. This and the telemetry-privacy point
 are carried into the sprint review (Section~4.10).
 
-\section{Realization}
+\section{Implementation}
 
 On the frontend the copilot is a project-detail tab: a textarea and an ask button, the answer rendered
 token-by-token behind a blinking caret as the SSE stream arrives, and then a row of citation chips --- or an
@@ -229,13 +232,13 @@ N pts --- based on TASK-a\ldots'' --- with a one-click apply, debounced and gate
 characters, with appropriate empty and error states.
 
 % Screenshot P-31
-\reportfigure{figures/screenshot_P31}{Copilot panel mid-stream with citation chips.}{P31}
+\reportscreenshot{figures/screenshot_P31}{Copilot panel mid-stream with citation chips.}{P31}
 
 % Screenshot P-32
-\reportfigure{figures/screenshot_P32}{Citation chip deep-link opening a referenced task.}{P32}
+\reportscreenshot{figures/screenshot_P32}{Citation chip deep-link opening a referenced task.}{P32}
 
 % Screenshot P-33
-\reportfigure{figures/screenshot_P33}{Task estimate suggestion in the create-task form.}{P33}
+\reportscreenshot{figures/screenshot_P33}{Task estimate suggestion in the create-task form.}{P33}
 
 \section{Evaluation \& metrics}
 
@@ -257,12 +260,14 @@ ticket-key lookups like \texttt{NDF-24}, the worst case for a dense embedder bec
 no semantic signal --- adding the lexical arm transforms the numbers:
 
 \begin{longtable}{@{}lcccccc@{}}
-\toprule
-Config & MRR & R@1 & nDCG@1 & R@3 & nDCG@3 & R@5 \\
+\caption{Keyword/identifier gold-set retrieval metrics.}\label{tab:eval-keyword} \\
+\tableheaderrow
+\thcell{Config} & \thcell{MRR} & \thcell{R@1} & \thcell{nDCG@1} & \thcell{R@3} & \thcell{nDCG@3} & \thcell{R@5} \\
 \midrule
 \endfirsthead
-\toprule
-Config & MRR & R@1 & nDCG@1 & R@3 & nDCG@3 & R@5 \\
+\caption[]{Keyword/identifier gold-set retrieval metrics (continued).} \\
+\tableheaderrow
+\thcell{Config} & \thcell{MRR} & \thcell{R@1} & \thcell{nDCG@1} & \thcell{R@3} & \thcell{nDCG@3} & \thcell{R@5} \\
 \midrule
 \endhead
 baseline (vector-only) & 0.570 & 0.300 & 0.300 & 0.900 & 0.639 & 1.000 \\
@@ -282,12 +287,14 @@ rerank never regresses the semantic set and sometimes improves it. Hybrid earns 
 dominating the keyword regime and matching the semantic one.
 
 \begin{longtable}{@{}p{2.6cm}p{2.4cm}p{5.2cm}p{4.2cm}@{}}
-\toprule
-Gold set & Metric & Result & Reading \\
+\caption{Retrieval evaluation summary.}\label{tab:eval-summary} \\
+\tableheaderrow
+\thcell{Gold set} & \thcell{Metric} & \thcell{Result} & \thcell{Reading} \\
 \midrule
 \endfirsthead
-\toprule
-Gold set & Metric & Result & Reading \\
+\caption[]{Retrieval evaluation summary (continued).} \\
+\tableheaderrow
+\thcell{Gold set} & \thcell{Metric} & \thcell{Result} & \thcell{Reading} \\
 \midrule
 \endhead
 Keyword (10 Q) & MRR / R@1 & 0.57 \textrightarrow{} \textbf{1.00} / 0.30 \textrightarrow{} \textbf{1.00} (hybrid vs vector) & hybrid closes the keyword gap \\
@@ -315,12 +322,14 @@ refusal perfectly: all three unanswerable questions were correctly refused (corr
 zero false-refusal rate (actor CEO, 6 projects in scope).
 
 \begin{longtable}{@{}p{9cm}p{3cm}@{}}
-\toprule
-Metric & Result \\
+\caption{Answer-quality metrics.}\label{tab:eval-answers} \\
+\tableheaderrow
+\thcell{Metric} & \thcell{Result} \\
 \midrule
 \endfirsthead
-\toprule
-Metric & Result \\
+\caption[]{Answer-quality metrics (continued).} \\
+\tableheaderrow
+\thcell{Metric} & \thcell{Result} \\
 \midrule
 \endhead
 Mean faithfulness (grounded answers) & 1.000 \\

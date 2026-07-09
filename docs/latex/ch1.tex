@@ -25,7 +25,7 @@ intersection of branding, marketing, and software engineering. TDG operates from
 Imm Lafrane Centre, Nassreya, Sfax.
 
 \begin{figure}[H]\centering
-\includegraphics[width=0.3\textwidth]{figures/tdg_logo.jpg}
+\includegraphics[width=0.18\textwidth]{figures/tdg_logo.jpg}
 \caption{Logo of Tawer Digital Group.}\label{fig:1-1}
 \end{figure}
 
@@ -208,25 +208,32 @@ Table~\ref{tab:comparison} compares the three existing solutions:
 
 \begin{table}[H]
 \centering
-\begin{tabularx}{\textwidth}{@{}Xlllc@{}}
-\toprule
-Criterion & GitHub Projects & Jira & ClickUp & Proposed \\
+\caption{Existing solutions comparison.}\label{tab:comparison}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{@{}Xcccc@{}}
+\tableheaderrow
+\thcell{Criterion} & \thcell{GitHub Projects} & \thcell{Jira} & \thcell{ClickUp} & \thcell{Proposed} \\
 \midrule
-Project management                        & Yes & Yes & Yes & Yes \\
-Agile backlog (epics, sprints, analytics) & No  & Yes & Partial & Yes \\
-Data-driven Kanban with WIP limits        & No  & Yes & Yes & Yes \\
-Time \& attendance tracking               & No  & No  & Partial & Yes \\
-Calendar \& event management              & No  & No  & Partial & Yes \\
-Multi-channel notifications               & No  & No  & No  & Yes \\
-Infrastructure monitoring                 & No  & No  & No  & Yes \\
-AI copilot grounded in project data       & No  & No  & No  & Yes \\
-Data-driven task effort estimation        & No  & No  & No  & Yes \\
-Fine-grained RBAC (\textasciitilde31 roles) & No  & Yes & Partial & Yes \\
-Self-hosted / data sovereignty            & No  & Partial & No  & Yes \\
-Bilingual (en/fr)                         & No  & Yes & No  & Yes \\
+\rowcolor{rowalt}
+Project management                        & Yes & Yes & Yes & \textbf{Yes} \\
+Agile backlog (epics, sprints, analytics) & No  & Yes & Partial & \textbf{Yes} \\
+\rowcolor{rowalt}
+Data-driven Kanban with WIP limits        & No  & Yes & Yes & \textbf{Yes} \\
+Time \& attendance tracking               & No  & No  & Partial & \textbf{Yes} \\
+\rowcolor{rowalt}
+Calendar \& event management              & No  & No  & Partial & \textbf{Yes} \\
+Multi-channel notifications               & No  & No  & No  & \textbf{Yes} \\
+\rowcolor{rowalt}
+Infrastructure monitoring                 & No  & No  & No  & \textbf{Yes} \\
+AI copilot grounded in project data       & No  & No  & No  & \textbf{Yes} \\
+\rowcolor{rowalt}
+Data-driven task effort estimation        & No  & No  & No  & \textbf{Yes} \\
+Fine-grained RBAC (\textasciitilde31 roles) & No  & Yes & Partial & \textbf{Yes} \\
+\rowcolor{rowalt}
+Self-hosted / data sovereignty            & No  & Partial & No  & \textbf{Yes} \\
+Bilingual (en/fr)                         & No  & Yes & No  & \textbf{Yes} \\
 \bottomrule
 \end{tabularx}
-\caption{Existing solutions comparison.}\label{tab:comparison}
 \end{table}
 
 No single existing tool covers the full scope of TDG's needs. Mainstream platforms each address
@@ -274,7 +281,7 @@ automatically through the user's configured channels. Infrastructure monitoring 
 background, alerting responsible managers when an outage is detected.
 Figure~\ref{fig:1-2} shows the high-level system context.
 
-\reportfigure{figures/fig_1_1}{System context diagram of the platform.}{1-2}
+\reportfigure[0.75\textwidth]{figures/fig_1_1}{System context diagram of the platform.}{1-2}
 
 \subsection{Main features}
 

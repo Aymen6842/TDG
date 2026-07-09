@@ -4,49 +4,129 @@
 % ===========================================================================
 
 % --------------------------------------------------------------------------
-% TITLE PAGE
+% GUARD PAGE (official IIT graduation-project cover template)
 % --------------------------------------------------------------------------
 \begin{titlepage}
+\thispagestyle{empty}
+% Full-page decorative background from the official template (this page only)
+\AddToShipoutPictureBG*{\AtPageLowerLeft{\includegraphics[width=\paperwidth,height=\paperheight]{figures/guard_bg_front.png}}}
 \centering
-\vspace*{\fill}
 
-{\Huge\bfseries Design and Implementation of \textit{Tawer Management}\par}
-\vspace{1.2em}
-{\Large\itshape A Full-Stack Team-Management Platform with a Retrieval-Augmented AI Copilot\par}
-\vspace{2em}
+% --- institutional header: coat of arms | flag | IIT logo + Arabic ---------
+\noindent
+\begin{minipage}[c]{0.34\textwidth}
+  \centering
+  \includegraphics[height=2.2cm]{figures/guard_coat_of_arms.png}\\[2mm]
+  {\footnotesize\bfseries\color{chapterblue}%
+   \mbox{Republic of Tunisia}\\
+   \mbox{Ministry of Higher Education}\\
+   \mbox{and Scientific Research}}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.18\textwidth}
+  \centering
+  \includegraphics[height=1.3cm]{figures/guard_flag.jpg}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.36\textwidth}
+  \centering
+  \includegraphics[width=0.92\linewidth]{figures/guard_iit_logo.png}\\[1.5mm]
+  \includegraphics[width=0.95\linewidth]{figures/guard_arabic_ministry.png}
+\end{minipage}
 
-{\large Projet de Fin d'Études (PFE)\par}
-\vspace{3em}
+\vspace{1.4cm}
+{\fontsize{26}{31}\selectfont\bfseries\color{chapterblue} GRADUATION PROJECT}
 
-\begin{tabular}{rl}
-\textit{Author:} & Aymen BenHsan \\[4pt]
-\textit{Institution:} & International Institute of Technology of Sfax (IIT) \\[4pt]
-\textit{Academic supervisor:} & Ahmed Ben Arab \\[4pt]
-\textit{Company supervisors:} & Ahmed Awedi (Co-Founder \& CEO, TDG) $\cdot$ \\
- & Mohamed Awedi (Co-Founder \& CTO, TDG) \\[4pt]
-\textit{Host organization:} & Tawer Digital Group (TDG) \\[4pt]
-\textit{Academic year:} & 2025--2026 \\
+\vspace{0.9cm}
+{\bfseries Performed at:}\\[4mm]
+\includegraphics[width=0.15\textwidth]{figures/tdg_logo.jpg}
+
+\vspace{0.8cm}
+{\bfseries Elaborated by:}\\[2.5mm]
+{\LARGE Aymen BenHsan}
+
+\vspace{0.8cm}
+In view of obtaining the National Diploma in\\[1.5mm]
+{\bfseries Computer Science Engineering}
+
+\vspace{0.7cm}
+Entitled:
+
+\vspace{3mm}
+{\setlength{\fboxsep}{12pt}\setlength{\fboxrule}{1pt}\color{headerrule}%
+\fbox{\color{black}\parbox{0.86\textwidth}{\centering
+  {\fontsize{16}{21}\selectfont\bfseries Tawer Management: A Full-Stack Team-Management Platform with a Retrieval-Augmented AI Copilot}}}}
+
+\vspace{0.7cm}
+Defended on: \authoraction{D/M/2026}\\[3mm]
+{\bfseries Committee:}\\[3mm]
+\begin{tabular}{r@{\quad---\quad}l}
+\authoraction{TO PROVIDE: full name} & Chairman \\
+\authoraction{TO PROVIDE: full name} & Examiner \\
+Mr.\ Ahmed Ben Arab & Academic supervisor \\
+Mr.\ Ahmed Awedi \& Mr.\ Mohamed Awedi & Industrial supervisors \\
 \end{tabular}
 
 \vspace*{\fill}
+{\bfseries\color{chapterblue} ACADEMIC YEAR: 2025--2026}
 \end{titlepage}
 
 \clearpage
+\pagenumbering{roman}
 
 % --------------------------------------------------------------------------
-% REMERCIEMENTS
+% ACKNOWLEDGEMENTS
 % --------------------------------------------------------------------------
-\chapter*{Remerciements (Acknowledgements)}
-\addcontentsline{toc}{chapter}{Remerciements (Acknowledgements)}
+% Set in a calligraphic (chancery) face when available; falls back to italic.
+% Loaded by filename (ships with MiKTeX and TeX Live/Overleaf), not by system
+% font name, so no OS font installation is needed.
+\IfFontExistsTF{texgyrechorus-mediumitalic.otf}
+  {\newfontfamily\ackscript{texgyrechorus-mediumitalic.otf}}
+  {\newcommand{\ackscript}{\itshape}}
 
-\authoraction{TO PROVIDE: acknowledgements --- the people and institutions the author wishes to thank (academic and company supervisors, the host team, family).}
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+
+\begin{center}
+\ackscript\fontsize{14.5}{24}\selectfont
+
+\vspace*{0.5cm}
+Before all else, my gratitude goes to my dear \textbf{parents}.\\
+No words can measure what I owe them: their unconditional love,\\
+their patience, and the moral and financial support they offered\\
+without ever counting the cost. Every step of this journey rests\\
+on their sacrifices; this work is theirs before it is mine.
+
+\vspace{0.9cm}
+To my \textbf{brothers} and my \textbf{sister},\\
+who stood beside me whenever I needed anything,\\
+thank you for your unfailing encouragement,\\
+and for believing in me even when I doubted myself.
+
+\vspace{0.9cm}
+I warmly thank my academic supervisor, \textbf{Mr.\ Ahmed Ben Arab},\\
+for his guidance, his availability, and his valuable advice\\
+throughout this project.
+
+\vspace{0.9cm}
+My sincere thanks go to my industrial supervisors,\\
+\textbf{Mr.\ Ahmed Awedi} and \textbf{Mr.\ Mohamed Awedi},\\
+for welcoming me at Tawer Digital Group, for the trust they placed\\
+in me, and for so generously sharing their experience.
+
+\vspace{0.9cm}
+I am equally grateful to all my \textbf{professors} at the\\
+International Institute of Technology of Sfax,\\
+for the quality of the education they gave me throughout my studies.
+
+\vspace{0.9cm}
+Finally, I thank the \textbf{members of the jury}\\
+for the honour they do me in accepting to evaluate this work.
+
+\end{center}
 
 % --------------------------------------------------------------------------
-% RÉSUMÉ
+% RÉSUMÉ / ABSTRACT — bodies defined as macros so the back cover reuses them
 % --------------------------------------------------------------------------
-\chapter*{Résumé}
-\addcontentsline{toc}{chapter}{Résumé}
-
+\newcommand{\resumebody}{%
 Tawer Management est une plateforme interne d'exploitation pour une agence digitale, conçue pour
 consolider en une seule application web authentifiée et bilingue (en/fr) des flux de travail aujourd'hui
 dispersés sur de multiples outils : gestion de projets et de leurs membres, backlog agile (epics →
@@ -62,18 +142,12 @@ estimation d'effort par k plus proches voisins. Le tout est validé par un harna
 la récupération hybride porte le MRR de 0,57 à 1,00 et le Recall@1 de 0,30 à 1,00 sur le jeu de tests par
 identifiant, avec une fuite inter-rôles nulle à la récupération. Le développement est mené en six sprints
 selon une méthodologie Scrum, livrant une plateforme fonctionnelle dont la large couverture s'appuie sur une
-architecture uniforme et sur une IA validée par la mesure.
+architecture uniforme et sur une IA validée par la mesure.}
 
-\vspace{1em}
-\noindent\textbf{Mots-clés :} gestion d'équipe, Scrum, NestJS, Next.js, Prisma, PostgreSQL, pgvector, RBAC, RAG,
-récupération hybride, embeddings, estimation d'effort.
+\newcommand{\motscles}{gestion d'équipe, Scrum, NestJS, Next.js, Prisma, PostgreSQL, pgvector, RBAC, RAG,
+récupération hybride, embeddings, estimation d'effort}
 
-% --------------------------------------------------------------------------
-% ABSTRACT
-% --------------------------------------------------------------------------
-\chapter*{Abstract}
-\addcontentsline{toc}{chapter}{Abstract}
-
+\newcommand{\abstractbody}{%
 Tawer Management is an internal operations platform for a digital agency, built to consolidate, in one
 authenticated, bilingual (en/fr) web application, workflows that today are scattered across many separate
 tools: project and membership management, an agile backlog (epics → sprints → tasks, milestones), tasks on
@@ -87,11 +161,29 @@ hybrid vector + lexical retrieval fused with RRF, an LLM reranker, cited grounde
 estimation. All of it is validated by an offline evaluation harness (hybrid retrieval lifts MRR from 0.57 to
 1.00 and Recall@1 from 0.30 to 1.00 on the identifier gold set, with zero cross-role retrieval leakage). The
 build is delivered across six sprints under a Scrum methodology, yielding a functional platform whose broad
-feature coverage rests on a uniform architecture and on AI validated by measurement.
+feature coverage rests on a uniform architecture and on AI validated by measurement.}
+
+\newcommand{\keywordsen}{team management, Scrum, NestJS, Next.js, Prisma, PostgreSQL, pgvector, RBAC, RAG, hybrid
+retrieval, embeddings, effort estimation}
+
+\chapter*{Résumé}
+\addcontentsline{toc}{chapter}{Résumé}
+
+\resumebody
 
 \vspace{1em}
-\noindent\textbf{Keywords:} team management, Scrum, NestJS, Next.js, Prisma, PostgreSQL, pgvector, RBAC, RAG, hybrid
-retrieval, embeddings, effort estimation.
+\noindent\textbf{Mots-clés :} \motscles.
+
+% --------------------------------------------------------------------------
+% ABSTRACT
+% --------------------------------------------------------------------------
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+\abstractbody
+
+\vspace{1em}
+\noindent\textbf{Keywords:} \keywordsen.
 
 % --------------------------------------------------------------------------
 % CONTENTS / LISTS (auto-generated)
@@ -105,7 +197,8 @@ retrieval, embeddings, effort estimation.
 \clearpage
 
 % --------------------------------------------------------------------------
-% GLOSSARY & ACRONYMS
+% GLOSSARY & ACRONYMS (front matter — keeps roman numbering so Chapter 1
+% starts at arabic page 1)
 % --------------------------------------------------------------------------
 \chapter*{Glossary \& Acronyms}
 \addcontentsline{toc}{chapter}{Glossary \& Acronyms}
@@ -168,3 +261,6 @@ retrieval, embeddings, effort estimation.
 \textbf{WIP} & Work In Progress (kanban column limit) \\
 \end{longtable}
 \endgroup
+
+\clearpage
+\pagenumbering{arabic}

@@ -78,27 +78,32 @@ estimate. Estimated durations are derived from the sprint timeline and story-poi
 
 \subsection{Sprint 1 --- Foundations \& Authentication}
 
-\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}llll@{}}
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 1 backlog.}\label{tab:sprint1-backlog} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
 \caption[]{Sprint 1 backlog (continued).} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S1-01 & As a developer, I want a layered NestJS backend with a Prisma multi-file schema and migrations, so that every module shares one structure. & 8 & 4d & Must \\
 US-S1-02 & As a user, I want to log in with email + password and receive a JWT, so that I can access the platform. & 3 & 1.5d & Must \\
+\rowcolor{rowalt}
 US-S1-03 & As a user, I want my session refreshed automatically on expiry, so that I stay logged in without re-authenticating. & 3 & 1d & Must \\
 US-S1-04 & As a user, I want to reset a forgotten password via an emailed code, so that I can regain access. & 3 & 2d & Should \\
+\rowcolor{rowalt}
 US-S1-05 & As the platform, I want every protected endpoint gated by a role-permission guard, so that a user only reaches what their role allows. & 8 & 3.5d & Must \\
 US-S1-06 & As an admin/HR, I want to provision user accounts with one or more roles, so that staff are onboarded (there is no public self-registration). & 5 & 2.5d & Must \\
+\rowcolor{rowalt}
 US-S1-07 & As an admin, I want to list, search (accent-insensitive), and filter users, so that I can manage the directory. & 3 & 1.5d & Should \\
 US-S1-08 & As an admin, I want to edit and soft-delete (deactivate) a user, so that I manage the account lifecycle. & 3 & 1.5d & Must \\
+\rowcolor{rowalt}
 US-S1-09 & As a user, I want to update my own profile and change my password, so that I manage my account. & 2 & 1d & Should \\
 US-S1-10 & As an admin, I want to create teams and assign members and a manager, so that staff are grouped. & 3 & 1.5d & Should \\
 \midrule
@@ -107,25 +112,29 @@ US-S1-10 & As an admin, I want to create teams and assign members and a manager,
 
 \subsection{Sprint 2 --- Projects \& Membership}
 
-\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}llll@{}}
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 2 backlog.}\label{tab:sprint2-backlog} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
 \caption[]{Sprint 2 backlog (continued).} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S2-01 & As a manager/executive, I want to create a project under a business unit with a type (AGILE/FREESTYLE), so that work is organized by unit and workflow. & 5 & 2.5d & Must \\
 US-S2-02 & As a manager, I want to edit, archive, and delete a project, so that I manage its lifecycle. & 3 & 1.5d & Must \\
+\rowcolor{rowalt}
 US-S2-03 & As a manager, I want to add existing users as project members and mark a manager, so that the team is defined. & 3 & 1.5d & Must \\
 US-S2-04 & As a manager, I want to invite people by email with a single-use token, so that non-members can be brought in. & 5 & 3d & Should \\
+\rowcolor{rowalt}
 US-S2-05 & As an invitee, I want to accept an emailed invitation, so that I become a member. & 3 & 1.5d & Should \\
 US-S2-06 & As a manager, I want to configure the project's kanban settings (WIP limits), so that the board fits our process. & 2 & 1d & Could \\
+\rowcolor{rowalt}
 US-S2-07 & As a member, I want to see only the projects I belong to (executives scoped to their business unit), so that access is isolated. & 5 & 2d & Must \\
 \midrule
 & \textbf{Sprint 2 subtotal} & \textbf{26} & \textbf{2w} & \\
@@ -133,29 +142,35 @@ US-S2-07 & As a member, I want to see only the projects I belong to (executives 
 
 \subsection{Sprint 3 --- Agile Backlog \& Tasks}
 
-\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}llll@{}}
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 3 backlog.}\label{tab:sprint3-backlog} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
 \caption[]{Sprint 3 backlog (continued).} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S3-01 & As a PM/PO, I want to create epics to group large features, so that the backlog is structured. & 3 & 1.5d & Should \\
 US-S3-02 & As a Scrum Master, I want to create sprints with dates and a capacity, so that work is time-boxed. & 5 & 3d & Must \\
+\rowcolor{rowalt}
 US-S3-03 & As a Scrum Master, I want to run the sprint lifecycle (start/stop/complete, one running at a time), so that iterations are governed. & 8 & 4d & Must \\
 US-S3-04 & As a PM, I want milestones with target dates (also for FREESTYLE projects), so that deadlines are tracked. & 3 & 1.5d & Should \\
+\rowcolor{rowalt}
 US-S3-05 & As a PM, I want burndown, velocity, and Gantt analytics, so that I can monitor progress. & 8 & 3.5d & Should \\
 US-S3-06 & As a member, I want to create tasks with type, priority, assignee, and estimates, so that work is captured. & 5 & 2.5d & Must \\
+\rowcolor{rowalt}
 US-S3-07 & As a manager, I want a per-project, data-driven kanban with custom columns and WIP limits, so that the board mirrors our workflow. & 8 & 4d & Must \\
 US-S3-08 & As an assignee, I want to move a task across columns with transition, dependency, and WIP validation, so that status stays valid. & 8 & 3.5d & Must \\
+\rowcolor{rowalt}
 US-S3-09 & As a member, I want to declare task dependencies (blocking / blocked-by), so that ordering is explicit. & 5 & 2d & Should \\
 US-S3-10 & As a member, I want to log time against a task, so that effort is recorded. & 3 & 1.5d & Should \\
+\rowcolor{rowalt}
 US-S3-11 & As a member, I want threaded comments with @mentions and likes on a task, so that we collaborate in context. & 5 & 2.5d & Should \\
 US-S3-12 & As a member, I want labels and to assign a task to a sprint/epic/milestone, so that work is categorized. & 3 & 1.5d & Should \\
 \midrule
@@ -164,27 +179,32 @@ US-S3-12 & As a member, I want labels and to assign a task to a sprint/epic/mile
 
 \subsection{Sprint 4 --- Productivity Suite}
 
-\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}llll@{}}
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 4 backlog.}\label{tab:sprint4-backlog} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
 \caption[]{Sprint 4 backlog (continued).} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S4-01 & As a user, I want a private to-do list with sub-tasks, priorities, and statuses, so that I track my own work separately from project tasks. & 5 & 2.5d & Should \\
 US-S4-02 & As a user, I want due/reminder dates on my to-dos that notify me across my channels, so that nothing slips. & 5 & 2d & Should \\
+\rowcolor{rowalt}
 US-S4-03 & As an employee, I want to check in and out (remote/onsite) to open and close work sessions, so that attendance is recorded. & 8 & 4d & Must \\
 US-S4-04 & As an employee, I want my worked time computed per business day, so that I can see my hours. & 3 & 1.5d & Should \\
+\rowcolor{rowalt}
 US-S4-05 & As a manager, I want per-user and per-team attendance statistics, so that I can review presence. & 5 & 2.5d & Should \\
 US-S4-06 & As a user, I want to create calendar events and meetings with participants, so that schedules are shared. & 8 & 3.5d & Should \\
+\rowcolor{rowalt}
 US-S4-07 & As a user, I want multi-channel reminders before each event, so that I attend on time. & 3 & 1.5d & Should \\
 US-S4-08 & As a user, I want to schedule project and personal reminders delivered on my channels, so that I am nudged at the right moment. & 5 & 2.5d & Should \\
+\rowcolor{rowalt}
 US-S4-09 & As a user, I want to see and dismiss my pending reminders, so that I can manage them. & 2 & 1d & Could \\
 \midrule
 & \textbf{Sprint 4 subtotal} & \textbf{44} & \textbf{4w} & \\
@@ -192,25 +212,29 @@ US-S4-09 & As a user, I want to see and dismiss my pending reminders, so that I 
 
 \subsection{Sprint 5 --- Communication \& Operations}
 
-\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}llll@{}}
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 5 backlog.}\label{tab:sprint5-backlog} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
 \caption[]{Sprint 5 backlog (continued).} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S5-01 & As a user, I want an in-app notification inbox (bell + list), so that I see system events in one place. & 5 & 2.5d & Must \\
 US-S5-02 & As a user, I want push notifications (FCM) on my devices, so that I am alerted while away from the page. & 5 & 2d & Should \\
+\rowcolor{rowalt}
 US-S5-03 & As a user, I want to configure my delivery channels (email, push, Telegram, ntfy), so that I control how I am reached. & 3 & 1.5d & Should \\
 US-S5-04 & As a user, I want to link my Telegram account, so that I can receive alerts there. & 3 & 1.5d & Could \\
+\rowcolor{rowalt}
 US-S5-05 & As a DevOps engineer, I want to register servers and services, so that infrastructure is inventoried. & 5 & 2.5d & Should \\
 US-S5-06 & As the platform, I want to health-check servers (ICMP) and services (HTTP) every minute, so that outages are detected automatically. & 8 & 3.5d & Must \\
+\rowcolor{rowalt}
 US-S5-07 & As a manager, I want multi-channel alerts when a server or service goes down, so that I can react quickly. & 5 & 2d & Must \\
 US-S5-08 & As an operator, I want a public \texttt{/health} endpoint, so that the API's liveness is externally checkable. & 1 & 0.5d & Could \\
 \midrule
@@ -219,25 +243,29 @@ US-S5-08 & As an operator, I want a public \texttt{/health} endpoint, so that th
 
 \subsection{Sprint 6 --- AI Copilot \& Estimation (RAG)}
 
-\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}llll@{}}
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 6 backlog.}\label{tab:sprint6-backlog} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
 \caption[]{Sprint 6 backlog (continued).} \\
-\toprule
-US-ID & Story & SP & Est. & Priority \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S6-01 & As a user, I want to ask the copilot a natural-language question about project content, so that I get answers without manual digging. & 5 & 2.5d & Must \\
 US-S6-02 & As a user, I want the answer streamed with clickable citations to the source items, so that I can trust and verify it. & 8 & 4d & Must \\
+\rowcolor{rowalt}
 US-S6-03 & As a user, I want the copilot to refuse honestly when the corpus cannot support an answer, so that I am never misled by a hallucination. & 5 & 2d & Must \\
 US-S6-04 & As a member, I want the system to estimate a draft task's effort from similar completed tasks, so that planning is data-driven. & 8 & 3.5d & Should \\
+\rowcolor{rowalt}
 US-S6-05 & As the platform, I want project content indexed automatically via a write-path outbox, so that the copilot stays current without slowing saves. & 8 & 4d & Must \\
 US-S6-06 & As an admin, I want to trigger a reindex and view copilot telemetry, so that I can operate the AI subsystem. & 3 & 1.5d & Should \\
+\rowcolor{rowalt}
 US-S6-07 & As the platform, I want retrieval scoped by permissions in SQL, so that no user can surface content from a project they cannot access. & 5 & 2.5d & Must \\
 \midrule
 & \textbf{Sprint 6 subtotal} & \textbf{42} & \textbf{4w} & \\
@@ -250,20 +278,24 @@ shows the planned remaining work after each sprint.
 
 \begin{table}[H]
 \centering
+\caption{Planned project burndown.}\label{tab:burndown}
 \begin{tabular}{@{}lll@{}}
-\toprule
-After sprint & Points retired & Remaining (of 252) \\
+\tableheaderrow
+\thcell{After sprint} & \thcell{Points retired} & \thcell{Remaining (of 252)} \\
 \midrule
+\rowcolor{rowalt}
 --- (start) & --- & 252 \\
 Sprint 1 & 41 & 211 \\
+\rowcolor{rowalt}
 Sprint 2 & 26 & 185 \\
 Sprint 3 & 64 & 121 \\
+\rowcolor{rowalt}
 Sprint 4 & 44 & 77 \\
 Sprint 5 & 35 & 42 \\
+\rowcolor{rowalt}
 Sprint 6 & 42 & 0 \\
 \bottomrule
 \end{tabular}
-\caption{Planned project burndown.}\label{tab:burndown}
 \end{table}
 
 \section{Sprint Planning}
@@ -275,21 +307,24 @@ the earlier sprints produce.
 
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}l>{\raggedright\arraybackslash}p{0.32\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}ll@{}}
 \caption{Sprint plan overview.}\label{tab:sprint-plan} \\
-\toprule
-Sprint & Ch. & Goal & Modules & SP & Duration \\
+\tableheaderrow
+\thcell{Sprint} & \thcell{Ch.} & \thcell{Goal} & \thcell{Modules} & \thcell{SP} & \thcell{Duration} \\
 \midrule
 \endfirsthead
 \caption[]{Sprint plan overview (continued).} \\
-\toprule
-Sprint & Ch. & Goal & Modules & SP & Duration \\
+\tableheaderrow
+\thcell{Sprint} & \thcell{Ch.} & \thcell{Goal} & \thcell{Modules} & \thcell{SP} & \thcell{Duration} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 S1 --- Foundations \& Auth & 3 & Stand up the layered backend, the DB foundation, and the authentication + RBAC core. & auth/JWT/RBAC, users, teams & 41 & 3w \\
 S2 --- Projects \& Membership & 3 & The project container: lifecycle, business-unit scoping, membership, email invitations. & projects, members, invitations & 26 & 2w \\
+\rowcolor{rowalt}
 S3 --- Agile Backlog \& Tasks & 3 & The agile core: epics, sprints, milestones, and a data-driven kanban with dependencies. & epics/sprints/milestones, tasks/kanban & 64 & 5w \\
 S4 --- Productivity Suite & 3 & Individual productivity: personal to-dos, time \& attendance, calendar, reminders. & personal tasks, attendance, events, reminders & 44 & 4w \\
+\rowcolor{rowalt}
 S5 --- Communication \& Ops & 3 & The delivery backbone: multi-channel notifications and infrastructure monitoring. & notifications, infra monitoring & 35 & 3w \\
 S6 --- AI Copilot \& Estimation & 4 & The differentiator: a permission-scoped RAG copilot with grounded answers and task-effort estimation. & AI copilot + estimation & 42 & 4w \\
 \end{longtable}
@@ -299,9 +334,9 @@ Section~1.3) into the six actor archetypes that recur across the sprints and map
 headline capabilities. Figure~\ref{fig:2-2} is the release roadmap: the six sprints as a
 sequence of timeboxes carrying their planned story-point load.
 
-\reportfigure{figures/fig_2_1}{Global use-case diagram: actor archetypes vs.\ platform capabilities.}{2-1}
+\reportfigure[0.75\textwidth]{figures/fig_2_1}{Global use-case diagram: actor archetypes vs.\ platform capabilities.}{2-1}
 
-\reportfigure{figures/fig_2_2}{Project roadmap: six sprints with planned story-point loads.}{2-2}
+\reportfigure[0.90\textwidth]{figures/fig_2_2}{Project roadmap: six sprints with planned story-point loads.}{2-2}
 
 \section{Software Architecture}
 
@@ -314,7 +349,7 @@ unchanged. The verified system totals framing the architecture --- 146~route han
 20~controllers, 55~Prisma models and 25~enums across 13~schema files --- were produced by
 grepping the source. Figure~\ref{fig:2-3} presents the system component view.
 
-\reportfigure{figures/fig_2_3}{System component and deployment view.}{2-3}
+\reportfigure[0.90\textwidth]{figures/fig_2_3}{System component and deployment view.}{2-3}
 
 \textbf{Layered backend.} Every domain module follows the same \textbf{four-layer, per-feature}
 split: a \textbf{controller} handles HTTP routing, guards, and Swagger~\cite{swagger}
@@ -324,7 +359,7 @@ carries request and response shapes with validation decorators. This strict conv
 lets any of the approximately 20 backend modules be read the same way. Figure~\ref{fig:2-4}
 shows the layering.
 
-\reportfigure{figures/fig_2_4}{Backend layered architecture: controller \textrightarrow{} service \textrightarrow{} repository \textrightarrow{} Prisma.}{2-4}
+\reportfigure[0.75\textwidth]{figures/fig_2_4}{Backend layered architecture: controller \textrightarrow{} service \textrightarrow{} repository \textrightarrow{} Prisma.}{2-4}
 
 \textbf{Frontend architecture.} The Next.js~16 App Router wraps everything in a single dynamic
 \texttt{[locale]} segment with two route groups: \texttt{(guest)} for login, registration, and
@@ -401,19 +436,37 @@ tasks, and document embeddings all foreign-key back to it. The AI module's
 comments, epics, sprints, milestones) through a polymorphic \texttt{entityType + entityId} pair
 rather than typed foreign keys, because the same table indexes five different entity types.
 
-Figure~\ref{fig:2-8} presents a simplified global entity-relationship diagram showing the main
-entities grouped by domain and their key relationships.
+Figure~\ref{fig:2-8} presents a high-level entity-relationship diagram showing the main
+entities grouped by domain and their key relationships. Attributes are omitted at this stage;
+each sprint's class diagrams in Chapter~3 progressively reveal the full detail.
 
-\reportfigure{figures/fig_2_8}{Global entity-relationship diagram.}{2-8}
+\reportsideways{figures/fig_2_8}{High-level entity-relationship diagram: main entities of the eight domains.}{2-8}
+
+% Flush the sideways ERD page here so Section 2.6 starts after the figure.
+\clearpage
 
 \section{Technologies and Development Tools}
 
 This section presents the technologies chosen for the platform and the reasoning behind each
 choice.
 
-\subsection{Backend}
+\begin{figure}[H]
+\centering
+\begin{tabular}{@{}c@{\hspace{1.2cm}}c@{\hspace{1.2cm}}c@{\hspace{1.2cm}}c@{}}
+\includegraphics[height=1.6cm]{figures/logo_nestjs.png} &
+\includegraphics[height=1.6cm]{figures/logo_prisma.png} &
+\includegraphics[height=1.6cm]{figures/logo_gemini.png} &
+\includegraphics[height=1.6cm]{figures/logo_nextjs.png} \\[0.8cm]
+\includegraphics[height=1.6cm]{figures/logo_react.png} &
+\includegraphics[height=1.6cm]{figures/logo_tailwind.png} &
+\includegraphics[height=1.6cm]{figures/logo_postgresql.png} &
+\includegraphics[height=1.6cm]{figures/logo_redis.png} \\[0.8cm]
+\multicolumn{4}{c}{\includegraphics[height=1.6cm]{figures/logo_docker.png}}
+\end{tabular}
+\caption{Technology stack overview.}\label{fig:tech-logos}
+\end{figure}
 
-\reportfigure{figures/logo_nestjs}{NestJS logo.}{logo-nestjs}
+\subsection{Backend}
 
 \textbf{NestJS}~\cite{nestjs} (version~11) is the backend framework. It was chosen for its
 opinionated, modular architecture that enforces structure at the framework level --- exactly what
@@ -421,14 +474,10 @@ a ten-domain monolith needs to stay maintainable. Its decorator-based approach t
 dependency injection, guards, and Swagger documentation maps naturally onto the four-layer
 convention adopted across the project.
 
-\reportfigure{figures/logo_prisma}{Prisma logo.}{logo-prisma}
-
 \textbf{Prisma}~\cite{prisma} (version~7) serves as the ORM and database access layer. Its
 typed client, generated from a declarative schema, provides compile-time safety on every query.
 The multi-file schema support (13 files) keeps the 55-model schema organized by domain, and
 \texttt{prisma migrate deploy} provides idempotent, production-safe migrations.
-
-\reportfigure{figures/logo_gemini}{Google Gemini logo.}{logo-gemini}
 
 \textbf{Google Gemini}~\cite{gemini} provides both the embedding model and the generation model
 for the AI copilot. Using a managed API avoided standing up and operating an inference stack
@@ -437,19 +486,13 @@ fast reranking model on its own quota bucket.
 
 \subsection{Frontend}
 
-\reportfigure{figures/logo_nextjs}{Next.js logo.}{logo-nextjs}
-
 \textbf{Next.js}~\cite{nextjs} (version~16, App Router) is the frontend framework. Its
 file-based routing, built-in internationalization support through next-intl, and React Server
 Components provide the foundation for a bilingual, authenticated single-page application.
 
-\reportfigure{figures/logo_react}{React logo.}{logo-react}
-
 \textbf{React}~\cite{react} (version~19) is the UI runtime. Combined with TanStack
 Query~\cite{tanstackquery} for server-state caching and Zustand~\cite{zustand} for lightweight
 client state, it provides a clean separation between data fetching, UI state, and rendering.
-
-\reportfigure{figures/logo_tailwind}{Tailwind CSS logo.}{logo-tailwind}
 
 \textbf{Tailwind CSS}~\cite{tailwindcss} (version~4) with Radix UI primitives (shadcn pattern)
 handles styling. Utility-first CSS keeps styles co-located with components, and Radix provides
@@ -457,22 +500,16 @@ accessible, unstyled UI primitives that are customized to the platform's design.
 
 \subsection{Database and infrastructure}
 
-\reportfigure{figures/logo_postgresql}{PostgreSQL logo.}{logo-postgresql}
-
 \textbf{PostgreSQL}~\cite{postgresql} (version~15) with the \textbf{pgvector}~\cite{pgvector}
 extension is the single datastore backing both the transactional domain and the RAG vector
 store. This is a deliberate fewer-moving-parts decision: keeping embeddings in the same database
 as the domain data means retrieval can be permission-scoped in plain SQL, with no separate
 vector database to operate, synchronize, or secure.
 
-\reportfigure{figures/logo_redis}{Redis logo.}{logo-redis}
-
 \textbf{Redis}~\cite{redis} is provisioned in the compose stack but not yet wired to its
 intended cache and lock path --- a hook reserved for when caching earns the operational cost of a
 second datastore. Currently, distributed locking is handled through a Postgres-based
 \texttt{SELECT ... FOR UPDATE SKIP LOCKED} pattern.
-
-\reportfigure{figures/logo_docker}{Docker logo.}{logo-docker}
 
 \textbf{Docker}~\cite{docker} provisions the local infrastructure via \texttt{docker-compose}:
 PostgreSQL (with pgvector), Redis, and Mailpit (development SMTP). Each application ships its
