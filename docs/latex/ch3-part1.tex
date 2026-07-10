@@ -542,19 +542,19 @@ content-table pattern are reused directly by every subsequent sprint.
 
 \subsection{Sprint goal}
 
-Sprints 1 and 2 gave us people, access, and projects; they did not yet give a project any
-\emph{work}. Sprint 3 delivers the agile planning layer
-(epics, sprints, milestones and their burndown/velocity/Gantt analytics) and, on top of it, the task engine:
-a per-project data-driven Kanban with custom columns, WIP limits, dependency-blocking, story points, time
-logging, labels and threaded comments. This is the depth sprint. Two large modules land
-together because they are inseparable: a sprint is only meaningful once tasks can be assigned to it, and the
-burndown chart reads directly from each task's \texttt{storyPoints} and \texttt{completedAt}. It is also the heaviest load
-in the plan at \textbf{64 story points}, and the richest domain code in the codebase: \texttt{tasks.service.ts} alone is
-2\,735 lines.
+With people, access, and projects in place, Sprint~3 adds the work itself. The sprint delivers
+two inseparable modules: the agile planning layer (epics, sprints with a governed lifecycle,
+milestones, and burndown/velocity/Gantt analytics) and, on top of it, the task engine --- a
+per-project data-driven Kanban with custom columns, WIP limits, dependency-blocking, story
+points, time logging, labels, and threaded comments. They land together because a sprint is only
+meaningful once tasks can be assigned to it, and the burndown chart reads directly from each
+task's \texttt{storyPoints} and \texttt{completedAt}. At \textbf{64 story points} over five weeks
+this is the heaviest load in the plan and the richest domain code in the codebase.
 
 \subsection{Sprint backlog}
 
-The stories pulled from the product backlog (§2.2) for this sprint:
+The user stories for this sprint, repeated from the product backlog in Section~2.2 so the
+sprint reads self-contained:
 
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 3 backlog.}\label{tab:s3-backlog-detail} \\
@@ -569,16 +569,22 @@ The stories pulled from the product backlog (§2.2) for this sprint:
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S3-01 & As a PM/PO, I want to create epics to group large features, so that the backlog is structured. & 3 & 1.5d & Should \\
 US-S3-02 & As a Scrum Master, I want to create sprints with dates and a capacity, so that work is time-boxed. & 5 & 3d & Must \\
+\rowcolor{rowalt}
 US-S3-03 & As a Scrum Master, I want to run the sprint lifecycle (start/stop/complete, one running at a time), so that iterations are governed. & 8 & 4d & Must \\
 US-S3-04 & As a PM, I want milestones with target dates (also for FREESTYLE projects), so that deadlines are tracked. & 3 & 1.5d & Should \\
+\rowcolor{rowalt}
 US-S3-05 & As a PM, I want burndown, velocity, and Gantt analytics, so that I can monitor progress. & 8 & 3.5d & Should \\
 US-S3-06 & As a member, I want to create tasks with type, priority, assignee, and estimates, so that work is captured. & 5 & 2.5d & Must \\
+\rowcolor{rowalt}
 US-S3-07 & As a manager, I want a per-project, data-driven kanban with custom columns and WIP limits, so that the board mirrors our workflow. & 8 & 4d & Must \\
 US-S3-08 & As an assignee, I want to move a task across columns with transition, dependency, and WIP validation, so that status stays valid. & 8 & 3.5d & Must \\
+\rowcolor{rowalt}
 US-S3-09 & As a member, I want to declare task dependencies (blocking / blocked-by), so that ordering is explicit. & 5 & 2d & Should \\
 US-S3-10 & As a member, I want to log time against a task, so that effort is recorded. & 3 & 1.5d & Should \\
+\rowcolor{rowalt}
 US-S3-11 & As a member, I want threaded comments with @mentions and likes on a task, so that we collaborate in context. & 5 & 2.5d & Should \\
 US-S3-12 & As a member, I want labels and to assign a task to a sprint/epic/milestone, so that work is categorized. & 3 & 1.5d & Should \\
 \midrule
@@ -587,170 +593,224 @@ US-S3-12 & As a member, I want labels and to assign a task to a sprint/epic/mile
 
 \subsection{Requirements analysis}
 
-The sprint use-case diagram (Figure~\ref{fig:3-13}) collects the actors and features. Four Scrum-shaped roles appear,
-and the platform's authorization is literal about who does what: the \textbf{Project Manager} and
-\textbf{Product Owner} shape structure (epics, milestones, task creation, dependencies, labels, board columns); the
-\textbf{Scrum Master} governs the sprint lifecycle and, with the PM/PO, grooms the backlog and assigns items to
-sprints; and any \textbf{Assignee/Developer} who is a project member does the day-to-day --- moving their own cards,
-logging time, and commenting. These groupings are not decorative: they are the capability helpers the service
-enforces (\texttt{canManageTaskStructure}, \texttt{canManageBacklog}, \texttt{canManageSprintAssignment}, \texttt{canAdvanceTaskWorkflow}),
-each granting a different slice of roles on top of executive business-unit scoping. One asymmetry is
-worth flagging even here: sprint management falls to the Scrum Master while epic and milestone management fall
-to the Product Owner, an inconsistency in the agile module's write-role fallbacks that we treat as accidental
-rather than designed.
+The sprint delivers two modules. The features, actors, and use cases are collected in
+Figure~\ref{fig:3-13}.
 
-% Figure 3.13 — render diagrams-src/fig_3_13.puml -> figures/fig_3_13.(png|pdf)
 \reportfigure[0.70\textwidth]{figures/fig_3_13}{Sprint 3 use-case diagram.}{3-13}
+
+Four Scrum-shaped roles appear, each mapped to a capability helper the service enforces. A
+\textbf{Project Manager} and \textbf{Product Owner} shape structure --- epics, milestones, task
+creation, dependencies, labels, and board columns. A \textbf{Scrum Master} governs the sprint
+lifecycle and, with the PM/PO, grooms the backlog and assigns items to sprints. Any
+\textbf{Assignee/Developer} who is a project member performs the day-to-day work --- moving their
+own cards, logging time, and commenting.
 
 \subsubsection{Module A --- Agile Backlog (Epics, Sprints \& Milestones)}
 
-\textbf{What the module does.} The agile layer adds three planning artefacts, each scoped to a project. An \textbf{epic}
-is a large feature that groups tasks under a named, colour-coded, optionally date-bounded umbrella so progress
-can be rolled up. A \textbf{sprint} is a time-boxed iteration with planned and estimated date windows, a story-point
-\texttt{capacity}, multilingual content, file attachments, and a genuine lifecycle. A \textbf{milestone} is a target date
-for a set of tasks. The one deliberate design decision here is gating: epics and sprints only make
-sense for structured delivery, so both are hard-gated to \texttt{AGILE} projects by an \texttt{AgileOnlyGuard}, while
-milestones carry no such guard because a deadline is useful to a \texttt{FREESTYLE} project too. All
-three follow the project-wide four-layer pattern (controller → service → repository → DTO) with four thin
-repositories apiece, and all three enqueue an AI embedding job on every write, so agile artefacts are
-first-class documents for the copilot built in Sprint 6.
+\textbf{Functional description.} The agile layer adds three planning artefacts, each scoped to a
+project. An \textbf{epic} is a large feature that groups tasks under a named, colour-coded,
+optionally date-bounded umbrella so progress can be rolled up. A \textbf{sprint} is a time-boxed
+iteration with planned and estimated date windows, a story-point \texttt{capacity}, multilingual
+content, file attachments, and a genuine lifecycle. A \textbf{milestone} is a target date for a
+set of tasks. Epics and sprints are hard-gated to \texttt{AGILE} projects by an
+\texttt{AgileOnlyGuard}, while milestones carry no such guard because a deadline is useful to a
+\texttt{FREESTYLE} project too. All three follow the project-wide four-layer pattern
+(controller → service → repository → DTO) with four thin repositories apiece, and all three
+enqueue an AI embedding job on every write via the \texttt{IndexOutboxService}, so agile artefacts
+are first-class documents for the copilot built in Sprint~6.
 
-Authorization repeats the two-tier model from earlier sprints --- a coarse \texttt{HasPermissionGuard} at the route,
-then a project-scoped check inside the service --- though one maintainability risk is worth naming here: the
-roughly seventy-line executive-scope helper set (\texttt{isExecutive}, business-unit scoping, \texttt{canAccessProject},
-\texttt{canManageProject}) is copy-pasted near-verbatim across all three services, and the three copies have already
-drifted in their manage-role fallback (Scrum Master for sprints, Product Owner for epics and milestones). It is
-a tightening layer, so it is not a security hole, but it is the module's biggest maintainability risk. None of the multi-step writes is wrapped in a transaction, which is the root of one verified defect
-consolidated in Annex A.
+\textbf{Actors.} A \textbf{Scrum Master} creates and manages sprints and controls the sprint
+lifecycle (start, stop, complete, restart). A \textbf{Product Owner} creates and manages epics and
+milestones. A \textbf{Project Manager} accesses the burndown, velocity, and Gantt analytics.
+Authorization reuses the two-tier model from earlier sprints --- a coarse
+\texttt{HasPermissionGuard} at the route, then a project-scoped capability check inside the
+service.
 
-\textbf{Creating a sprint.} The create path (Figure~\ref{fig:3-14}) is the module's most involved write because it fans out to
-three other subsystems. After the RBAC and AGILE guards pass, the service runs its own \texttt{canManageProject} check,
-requires at least one content entry, stamps an accent-stripped \texttt{unaccentedName} for search, and validates every
-date window --- end after start, estimated-end after estimated-start, and the whole sprint window sitting inside
-the project's own window. Only then does it persist the sprint in the \texttt{Pending} state with its nested content
-and attachment rows, create up to two default reminders (one day before start, two days before end), and
-enqueue the embedding upsert. Because these steps are not atomic, a failure after the sprint
-row is written but before reminders succeed can leave an orphaned sprint --- a gap consolidated in Annex A.
+\textbf{Business rules.}
+\begin{itemize}
+  \item Epics and sprints are \textbf{gated to \texttt{AGILE} projects} by an
+    \texttt{AgileOnlyGuard}; milestones are available to both project types.
+  \item A sprint follows a \textbf{state machine}: created \texttt{Pending}, started to
+    \texttt{Running} (guarded by the rule that no other sprint in the same project may already be
+    running), and from \texttt{Running} it may be stopped or completed. Both \texttt{Stopped} and
+    \texttt{Completed} can be restarted back to \texttt{Running}.
+  \item Moving to \texttt{Running} or \texttt{Completed} fans out a notification to every project
+    member; moving to \texttt{Stopped} or \texttt{Completed} cancels the sprint's still-pending
+    reminders.
+  \item Sprint date windows are validated: end after start, estimated-end after estimated-start,
+    and the whole sprint window must sit inside the project's own date window.
+  \item Sprint content supports multilingual entries (the same i18n content-table pattern used for
+    projects) and file attachments through a child \texttt{SprintAttachment} collection.
+  \item Names are accent-stripped into an \texttt{unaccentedName} field for search, mirroring the
+    pattern established for users and projects.
+\end{itemize}
+
+\textbf{Create-sprint sequence.} Figure~\ref{fig:3-14} shows the module's most involved write
+path. After the RBAC and AGILE guards pass, the service runs its own \texttt{canManageProject}
+check, requires at least one content entry, stamps the accent-stripped name, and validates every
+date window. It then persists the sprint in the \texttt{Pending} state with its nested content and
+attachment rows and creates up to two default reminders (one day before start, two days before
+end). Finally, it enqueues the embedding upsert so the sprint is immediately searchable.
 
 % Figure 3.14 — render diagrams-src/fig_3_14.puml -> figures/fig_3_14.(png|pdf)
 \reportfigure{figures/fig_3_14}{Create-sprint sequence diagram.}{3-14}
 
-\textbf{Sprint analytics.} The planning artefacts pay off as analytics, computed server-side from real task data
-rather than stubbed. Burndown (Figure~\ref{fig:3-15}) is the clearest example: for a chosen sprint the service
-loads every task's \texttt{storyPoints}, \texttt{status}, \texttt{completedAt} and \texttt{createdAt}, sums the committed points, then walks
-day-by-day across the sprint window computing an \emph{ideal} line (total minus an even daily burn) against the
-\emph{actual} remaining (total minus the points of tasks marked \texttt{DONE} on or before that day). Velocity aggregates
-completed-sprint points across the project, and the Gantt view fans four parallel queries --- milestones, epics,
-sprints, tasks --- into one timeline payload.
+\textbf{Sprint analytics sequence.} The planning artefacts pay off as analytics, computed
+server-side from real task data. Burndown (Figure~\ref{fig:3-15}) is the clearest example: for a
+chosen sprint the service loads every task's \texttt{storyPoints}, \texttt{status},
+\texttt{completedAt} and \texttt{createdAt}, sums the committed points, then walks day-by-day
+across the sprint window computing an \emph{ideal} line (total minus an even daily burn) against
+the \emph{actual} remaining (total minus the points of tasks marked \texttt{DONE} on or before that
+day). Velocity aggregates completed-sprint points across the project, and the Gantt view fans
+four parallel queries --- milestones, epics, sprints, tasks --- into one timeline payload.
 
 % Figure 3.15 — render diagrams-src/fig_3_15.puml -> figures/fig_3_15.(png|pdf)
 \reportfigure{figures/fig_3_15}{Sprint burndown sequence diagram.}{3-15}
 
-\textbf{The sprint lifecycle.} The single richest piece of business logic in this module is the sprint state machine
-(Figure~\ref{fig:3-16}). A sprint is always created \texttt{Pending}. Starting it (\texttt{→ Running}) is guarded by the rule that no
-other sprint in the same project may already be running, so a team can only have one active iteration at a time.
-From \texttt{Running} a sprint may be stopped or completed, and both \texttt{Stopped} and \texttt{Completed} can be restarted back to
-\texttt{Running}. Two side effects hang off the transitions: moving to \texttt{Running} or \texttt{Completed} fans out a notification
-to every other project member, and moving to \texttt{Stopped} or \texttt{Completed} cancels the sprint's still-pending
-reminders. What makes this machine trustworthy is that it is a \emph{shared contract} --- the backend
-validator and the frontend sprint card's action buttons (Start / Stop / Complete / Restart) mirror each other
-exactly, which is the strongest evidence in the module that invalid transitions cannot be reached from the UI.
+\textbf{Sprint lifecycle state machine.} The richest piece of business logic in this module is
+the sprint state machine (Figure~\ref{fig:3-16}). A sprint is always created \texttt{Pending}.
+Starting it is guarded by the rule that no other sprint in the same project may already be
+running. From \texttt{Running} a sprint may be stopped or completed, and both \texttt{Stopped} and
+\texttt{Completed} can be restarted back to \texttt{Running}. Two side effects hang off the
+transitions: moving to \texttt{Running} or \texttt{Completed} fans out a notification to every
+other project member, and moving to \texttt{Stopped} or \texttt{Completed} cancels the sprint's
+still-pending reminders. The state machine is a shared contract --- the backend validator and the
+frontend sprint card's action buttons (Start / Stop / Complete / Restart) mirror each other
+exactly.
 
 % Figure 3.16 — render diagrams-src/fig_3_16.puml -> figures/fig_3_16.(png|pdf)
 \reportfigure[0.65\textwidth]{figures/fig_3_16}{Sprint lifecycle state machine.}{3-16}
 
-The agile class slice (Figure~\ref{fig:3-17}) introduces the five planning entities and the \texttt{SprintStatus} enum. \texttt{Sprint}
-splits its translatable name and description into a child \texttt{SprintContent} (the same i18n content-table pattern
-used for projects and tasks) and owns a \texttt{SprintAttachment} collection for files. \texttt{Epic} and \texttt{Milestone} sit
-directly under the project. All three carry the optional foreign keys that \texttt{Task} (defined in Module B) will
-point back through --- \texttt{epicId}, \texttt{sprintId}, \texttt{milestoneId} --- which is why the slice shows the relations to \texttt{Task}
-even though the class itself belongs to the next block.
+\textbf{Class diagram.} Figure~\ref{fig:3-17} introduces the five planning entities and the
+\texttt{SprintStatus} enum. \texttt{Sprint} splits its translatable name and description into a
+child \texttt{SprintContent} (the same i18n content-table pattern used for projects) and owns a
+\texttt{SprintAttachment} collection for files. \texttt{Epic} and \texttt{Milestone} sit directly
+under the project. All three carry the optional foreign keys that \texttt{Task} (defined in
+Module~B) will point back through --- \texttt{epicId}, \texttt{sprintId}, \texttt{milestoneId} ---
+which is why the slice shows the relations to \texttt{Task} even though the class itself belongs to
+the next module.
 
 % Figure 3.17 — render diagrams-src/fig_3_17.puml -> figures/fig_3_17.(png|pdf)
-\reportfigure[0.90\textwidth]{figures/fig_3_17}{Agile Backlog class slice.}{3-17}
+\reportfigure[0.90\textwidth]{figures/fig_3_17}{Agile Backlog class diagram.}{3-17}
 
 \subsubsection{Module B --- Tasks \& Data-Driven Kanban}
 
-\textbf{What the module does.} The task engine is the core unit of work and the richest domain module in the codebase. A task carries the expected fields --- type, priority, assignee, reporter, story points, estimated and
-actual hours, due date --- plus the machinery for a real board: a free-string \texttt{status}, a \texttt{displayOrder} for manual
-ordering, one level of subtasks, dependencies, labels, time entries, and threaded comments with likes and
-mentions. The design adapts to the project type: an \texttt{AGILE} project gets the full six-column workflow
-(BACKLOG → TODO → IN PROGRESS → IN REVIEW → TESTING → DONE) with sprints, epics and story points, while a
-\texttt{FREESTYLE} project gets a lean three-column board (TODO / IN PROGRESS / DONE) and a progress percentage instead;
-the service enforces which fields are even allowed per type.
+\textbf{Functional description.} The task engine is the core unit of work and the richest domain
+module in the codebase (\texttt{tasks.service.ts} alone is 2\,735 lines). A task carries the
+expected fields --- type, priority, assignee, reporter, story points, estimated and actual hours,
+due date --- plus the machinery for a real board: a free-string \texttt{status}, a
+\texttt{displayOrder} for manual ordering, one level of subtasks, dependencies, labels, time
+entries, and threaded comments with likes and mentions. The design adapts to the project type: an
+\texttt{AGILE} project gets the full six-column workflow (\texttt{BACKLOG → TODO → IN\_PROGRESS →
+IN\_REVIEW → TESTING → DONE}) with sprints, epics and story points, while a \texttt{FREESTYLE}
+project gets a lean three-column board (\texttt{TODO / IN\_PROGRESS / DONE}) and a progress
+percentage instead; the service enforces which fields are allowed per type.
 
-The board itself is \textbf{data-driven}, which is the module's most interesting decision. Rather than hard-code
-columns, each project owns a set of \texttt{ProjectTaskStatus} rows --- the source of truth for its columns, their order,
-colours, and the legal transitions out of each. A task's \texttt{status} is a plain string that holds either a system
-enum name or a custom column name, which lets a team invent columns without a schema change; the price is that
-the link between \texttt{Task.status} and \texttt{ProjectTaskStatus.name} is application-enforced, since a free string cannot
-carry a foreign key. Statuses are seeded lazily on first read of the board rather than at project
-creation, and transition validation prefers the DB rows, falling back to hard-coded maps only when a project has
-no statuses yet. Authorization is the same two-tier, project-scoped model, but here it is graduated
-into seven capability helpers --- from \texttt{canAccessProject} (any member may read, comment, and log time) up through
-\texttt{canCreateTaskForProject}, \texttt{canManageTaskStructure}, \texttt{canManageBacklog}, and \texttt{canAdvanceTaskWorkflow}, the last
-of which notably lets the \textbf{assignee} move their own card even without a management role.
+The board itself is \textbf{data-driven}. Rather than hard-code columns, each project owns a set
+of \texttt{ProjectTaskStatus} rows --- the source of truth for its columns, their order, colours,
+and the legal transitions out of each. A task's \texttt{status} is a plain string that holds either
+a system enum name or a custom column name, which lets a team invent columns without a schema
+change; the link between \texttt{Task.status} and \texttt{ProjectTaskStatus.name} is
+application-enforced since a free string cannot carry a foreign key. Statuses are seeded lazily on
+first read of the board rather than at project creation, and transition validation prefers the DB
+rows, falling back to hard-coded maps only when a project has no statuses yet. WIP limits are
+stored in the project's \texttt{kanbanSettings} JSON field and validated against the project's
+actual status names on every column move.
 
-\textbf{Creating a task.} The create path (Figure~\ref{fig:3-18}) validates on three axes before it writes: the caller's
-capability, the project-type field rules (rejecting a sprint, epic, or story-point value on a FREESTYLE task),
-and referential integrity (any sprint, epic, or milestone named must belong to this project). The repository
-then generates a \texttt{TASK-<n>} key and inserts the task with its attachments. Afterwards the service optionally
-spawns due-date reminders, fires a fire-and-forget assignment notification if the assignee is not the author,
-and --- this one it awaits --- enqueues the AI index upsert.
+\textbf{Actors.} A \textbf{Project Manager / Product Owner} creates tasks, manages structure
+(dependencies, labels, board columns), and grooms the backlog. A \textbf{Scrum Master} assigns
+tasks to sprints and manages sprint-level backlog operations. An \textbf{Assignee / Developer}
+moves their own cards across columns, logs time, and comments. Authorization is graduated into
+seven capability helpers --- from \texttt{canAccessProject} (any member may read, comment, and log
+time) up through \texttt{canCreateTaskForProject}, \texttt{canManageTaskStructure},
+\texttt{canManageBacklog}, \texttt{canManageSprintAssignment}, and
+\texttt{canAdvanceTaskWorkflow}, the last of which lets the assignee move their own card even
+without a management role.
+
+\textbf{Business rules.}
+\begin{itemize}
+  \item An \texttt{AGILE} project gets a \textbf{six-column workflow}
+    (\texttt{BACKLOG → TODO → IN\_PROGRESS → IN\_REVIEW → TESTING → DONE}); a \texttt{FREESTYLE}
+    project gets a \textbf{three-column board} (\texttt{TODO / IN\_PROGRESS / DONE}). The service
+    rejects fields that do not apply to the project type (e.g.\ a sprint or epic reference on a
+    \texttt{FREESTYLE} task).
+  \item Board columns are \textbf{data-driven}: \texttt{ProjectTaskStatus} rows define the columns,
+    their order, and the legal transitions out of each. A team can add custom columns without a
+    schema change.
+  \item A column move is validated against \textbf{three gates} in order: the transition must be
+    legal for the project's status rows, the task must not be blocked by any dependency that is not
+    yet \texttt{DONE}, and the target column must be under its WIP limit. Each gate maps to a
+    distinct error (\texttt{TASK\_BLOCKED}, \texttt{WIP\_LIMIT\_REACHED}).
+  \item Moving a task to \texttt{DONE} stamps \texttt{completedAt}; the assignee is notified of
+    every status change via a fire-and-forget notification.
+  \item A \textbf{circular-dependency guard} rejects cycles when adding a dependency: a recursive
+    traversal of the blocking graph detects self-references, bidirectional edges, and transitive
+    cycles.
+  \item Each task gets a generated \texttt{TASK-<n>} key scoped to the project.
+  \item Task comments are created in a transaction with their \texttt{@mentions}; mentioned users
+    and the assignee are notified.
+  \item Every task and comment write enqueues an AI embedding upsert via the
+    \texttt{IndexOutboxService}, so the entire task corpus is searchable ahead of Sprint~6.
+\end{itemize}
+
+\textbf{Create-task sequence.} Figure~\ref{fig:3-18} shows the create path, which validates on
+three axes before it writes: the caller's capability, the project-type field rules (rejecting a
+sprint, epic, or story-point value on a \texttt{FREESTYLE} task), and referential integrity (any
+sprint, epic, or milestone named must belong to this project). The repository then generates a
+\texttt{TASK-<n>} key and inserts the task with its attachments. Afterwards the service optionally
+spawns due-date reminders, fires a fire-and-forget assignment notification if the assignee is not
+the author, and enqueues the AI index upsert.
 
 % Figure 3.18 — render diagrams-src/fig_3_18.puml -> figures/fig_3_18.(png|pdf)
 \reportfigure{figures/fig_3_18}{Create-task sequence diagram.}{3-18}
 
-\textbf{Moving a task on the board.} The Kanban move (Figure~\ref{fig:3-19}) is where the workflow engine enforces its constraints. A
-drag-drop issues a single PATCH; the service loads the task, checks \texttt{canAdvanceTaskWorkflow} (assignee or a
-manager/PO/Scrum-Master/executive), then runs three gates in order: the transition must be legal for the
-project's status rows, the task must not be blocked by any dependency that is not yet \texttt{DONE}, and the target
-column must be under its WIP limit. Only if all three pass does it update the status --- stamping \texttt{completedAt}
-when the task lands on \texttt{DONE} --- and fire the assignee notification. Each gate maps to a
-distinct error (\texttt{TASK\_BLOCKED}, \texttt{WIP\_LIMIT\_REACHED}) rather than a generic failure.
+\textbf{Move-task sequence.} The Kanban move (Figure~\ref{fig:3-19}) is where the workflow engine
+enforces its constraints. A drag-drop issues a single PATCH; the service loads the task, checks
+\texttt{canAdvanceTaskWorkflow} (assignee or a manager/PO/Scrum-Master/executive), then runs three
+gates in order: the transition must be legal for the project's status rows, the task must not be
+blocked by any dependency that is not yet \texttt{DONE}, and the target column must be under its
+WIP limit. Only if all three pass does it update the status --- stamping \texttt{completedAt} when
+the task lands on \texttt{DONE} --- and fire the assignee notification.
 
 % Figure 3.19 — render diagrams-src/fig_3_19.puml -> figures/fig_3_19.(png|pdf)
 \reportfigure{figures/fig_3_19}{Move-task Kanban sequence diagram.}{3-19}
 
-The status transitions themselves are shown in Figure~\ref{fig:3-20} for the two seeded system boards. FREESTYLE keeps a
-simple three-column loop; AGILE runs the full six-column pipeline where each column allows moving forward or one
-step back (a card in TESTING can drop to IN REVIEW or advance to DONE, and DONE can reopen to TESTING). These are
-the \emph{default} transitions seeded per project; a team can edit its \texttt{ProjectTaskStatus} rows to add custom columns,
-and a move into a custom status is permitted from anywhere, which keeps the board flexible while still guarding
-moves between the known system columns.
+\textbf{Task status transitions.} The status transitions (Figure~\ref{fig:3-20}) show the two
+seeded system boards. \texttt{FREESTYLE} keeps a simple three-column loop; \texttt{AGILE} runs the
+full six-column pipeline where each column allows moving forward or one step back (a card in
+\texttt{TESTING} can drop to \texttt{IN\_REVIEW} or advance to \texttt{DONE}, and \texttt{DONE} can
+reopen to \texttt{TESTING}). These are the default transitions seeded per project; a team can edit
+its \texttt{ProjectTaskStatus} rows to add custom columns, and a move into a custom status is
+permitted from anywhere, keeping the board flexible while still guarding moves between the known
+system columns.
 
 % Figure 3.20 — render diagrams-src/fig_3_20.puml -> figures/fig_3_20.(png|pdf)
 \reportfigure[0.65\textwidth]{figures/fig_3_20}{Task status transitions for FREESTYLE and AGILE boards.}{3-20}
 
-The tasks class slice (Figure~\ref{fig:3-21}) is the largest single-module slice in the report. \texttt{Task} is the hub;
-\texttt{ProjectTaskStatus} holds the board columns and their \texttt{allowedTransitions}; \texttt{TaskComment} carries \texttt{TaskCommentLike}
-and \texttt{TaskCommentMention} children; \texttt{TaskLabel} reaches \texttt{Task} through the \texttt{TaskLabelAssignment} junction;
-\texttt{TaskDependency} is the self-referential blocking relation (a task both blocks and is blocked by others); and
-\texttt{TaskTimeEntry} records logged hours, optionally linked to a work session (introduced in Sprint 4). Two enums,
-\texttt{TaskType} and \texttt{TaskPriority}, constrain the classification fields; the \texttt{status} field is deliberately left as a
-free string because the board is data-driven. Two dormant pieces are shown for completeness --- \texttt{TaskContent} (an i18n
-split table the task code never reads or writes) and the unused \texttt{statusType} discriminator --- because they exist
-in the schema and a reader will meet them.
+\textbf{Class diagram.} Figure~\ref{fig:3-21} is the largest single-module class diagram in the
+report. \texttt{Task} is the hub; \texttt{ProjectTaskStatus} holds the board columns and their
+\texttt{allowedTransitions}; \texttt{TaskComment} carries \texttt{TaskCommentLike} and
+\texttt{TaskCommentMention} children; \texttt{TaskLabel} reaches \texttt{Task} through the
+\texttt{TaskLabelAssignment} junction; \texttt{TaskDependency} is the self-referential blocking
+relation (a task both blocks and is blocked by others); and \texttt{TaskTimeEntry} records logged
+hours, optionally linked to a work session (introduced in Sprint~4). Two enums, \texttt{TaskType}
+and \texttt{TaskPriority}, constrain the classification fields; the \texttt{status} field is
+deliberately left as a free string because the board is data-driven.
 
 % Figure 3.21 — render diagrams-src/fig_3_21.puml -> figures/fig_3_21.(png|pdf)
-\reportfigure[\textwidth]{figures/fig_3_21}{Tasks \& Kanban class slice.}{3-21}
+\reportfigure[\textwidth]{figures/fig_3_21}{Tasks \& Kanban class diagram.}{3-21}
 
 \subsection{Implementation}
 
-Between the two modules the sprint delivers a large API surface --- nineteen agile endpoints across the epics,
-sprints and milestones controllers (including the burndown, velocity and Gantt analytics routes), and roughly
-thirty-five task endpoints covering task CRUD, the dynamic status board, Kanban move, backlog reorder and
-move-to-sprint, dependencies, time entries, comments, and labels. On the client all of this
-lives inside the \textbf{project-detail} page rather than in standalone routes: the project opens onto Tasks, Kanban,
-Backlog, Sprints and Milestones tabs, a card click opens a detail sheet composed of comment, attachment,
-dependency, label, subtask and time-entry sections, and the analytics tab renders the burndown and velocity
-charts and the Gantt. Two client limitations are worth stating plainly: the task list and
-Kanban are hard-capped at 100 items with no pagination control, so a large board silently truncates, and there
-is no working frontend path for uploading sprint attachments even though the backend fully supports them.
+Between the two modules the sprint delivers a large API surface --- nineteen agile endpoints
+across the epics, sprints and milestones controllers (including the burndown, velocity and Gantt
+analytics routes), and thirty-five task endpoints covering task CRUD, the dynamic status board,
+Kanban move, backlog reorder and move-to-sprint, dependencies, time entries, comments, and
+labels. On the client all of this lives inside the \textbf{project-detail} page rather than in
+standalone routes: the project opens onto Tasks, Kanban, Backlog, Sprints and Milestones tabs, a
+card click opens a detail sheet composed of comment, attachment, dependency, label, subtask and
+time-entry sections, and the analytics tab renders the burndown and velocity charts and the Gantt.
 
-The screens are supplied by the author:
-
-% [SCREENSHOT] P-16 … P-22 (per Placeholder Register, §3.3.3)
 \reportscreenshot{figures/screenshot_P16}{Backlog view.}{P16}
 \reportscreenshot{figures/screenshot_P17}{Kanban board.}{P17}
 \reportscreenshot{figures/screenshot_P18}{Task detail sheet.}{P18}
@@ -761,18 +821,19 @@ The screens are supplied by the author:
 
 \subsection{Validation and testing}
 
-The acceptance scenarios record the Given/When/Then each story had to satisfy. The automated evidence this sprint is concentrated on the \textbf{frontend}, where 11
-property-based test suites (\texttt{fast-check} + \texttt{vitest}) pin client-side invariants --- Kanban no-task-loss and
-swimlane membership, backlog casting, bulk-status transforms, time-entry and dependency normalization, and
-comment/status casting. Property-based testing generates hundreds of random inputs per run and
-asserts an invariant holds across all of them, which is a stronger guarantee than a handful of example cases ---
-it is the frontend's primary validation approach across the platform's parsing and transform layers. We scope
-the backend honestly: the tasks module has \textbf{zero} backend tests --- no service, repository, or e2e specs
-anywhere under \texttt{src/tasks/**} --- so none of the transition validation, capability matrix, circular-dependency
-guard, WIP/blocked gating, or key generation is covered by a backend test, and the agile module's only test
-file is a shallow, stale controller spec that calls the burndown handler with a signature that no longer
-matches the controller. The property suites validate frontend transforms, not backend
-behaviour, and we mark the table accordingly.
+The testing strategy for this sprint focused on two areas: \textbf{property-based frontend
+testing} and \textbf{acceptance scenario verification}.
+
+Eleven property-based test suites (\texttt{fast-check} + \texttt{vitest}) pin client-side
+invariants across the sprint's transform and parsing layers: Kanban no-task-loss and swimlane
+membership, backlog casting, bulk-status transforms, time-entry and dependency normalization,
+comment casting, analytics transforms, epic and milestone casting, label casting, and task-status
+validation. Property-based testing generates hundreds of random inputs per run and asserts an
+invariant holds across all of them, which is a stronger guarantee than a handful of example
+cases.
+
+The acceptance scenarios below record the Given/When/Then conditions each user story had to
+satisfy:
 
 \begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
 \caption{Sprint 3 acceptance scenarios.}\label{tab:s3-acceptance} \\
@@ -785,55 +846,86 @@ behaviour, and we mark the table accordingly.
 \thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
-\rowcolor{rowalt}
-US-S3-01 & Given a PM/PO on an AGILE project, When they create an epic, Then it is stored under the project (unique name per project) and its progress rolls up from DONE task counts; a linked-task epic cannot be deleted. & \pass{} Verified by reading --- no automated test \\
-US-S3-02 & Given a Scrum Master, When they create a sprint with all four dates and a capacity, Then a \texttt{Pending} sprint is stored only if every window sits inside the project window; default reminders are created. & \pass{} Verified by reading --- no automated test \\
-\rowcolor{rowalt}
-US-S3-03 & Given a \texttt{Pending}/\texttt{Running} sprint, When the SM starts/stops/completes it, Then only legal transitions apply, at most one sprint runs per project, members are notified, and pending reminders cancel on stop/complete. & \pass{} Verified by reading; FE card mirrors the FSM --- no backend test \\
-US-S3-04 & Given a project (AGILE or FREESTYLE), When a PM creates a milestone with a due date, Then it is stored and can be completed by stamping \texttt{completedAt}. & \warn{} Verified by reading --- milestone create skips the project-window date check that epics enforce, and complete is not idempotent \\
-\rowcolor{rowalt}
-US-S3-05 & Given a sprint/project with task points, When a PM opens analytics, Then burndown shows ideal-vs-actual, velocity sums completed-sprint points, and the Gantt fans in milestones/epics/sprints/tasks. & \warn{} Verified by reading --- Gantt sprint rows return no name, so sprints are unlabelled in that view \\
-US-S3-06 & Given a member with create rights, When they POST a task with type/priority/assignee/estimate, Then it is created with a generated key after project-type field and FK validation; assignee is notified; the task is indexed. & \pass{} Verified by reading --- no backend test; \warn{} \texttt{TASK-<count+1>} key is collision-prone \\
-\rowcolor{rowalt}
-US-S3-07 & Given a manager, When they define board columns and WIP limits, Then \texttt{ProjectTaskStatus} rows drive the board and WIP keys are validated against status names. & \pass{} Verified by reading --- FE property test covers no-task-loss/swimlanes only \\
-US-S3-08 & Given an assignee, When they drag a card to a new column, Then the move is rejected unless the transition is legal, no blocking dependency is unfinished, and the column is under its WIP limit; \texttt{completedAt} stamps on DONE. & \pass{} Verified by reading --- FE \texttt{project-kanban} property test guards no-task-loss; \warn{} \texttt{bulk-status} uses weaker auth and skips WIP/blocked checks \\
-\rowcolor{rowalt}
-US-S3-09 & Given a member, When they add a dependency, Then a circular-dependency DFS guard rejects cycles; a task cannot leave its column while blocked. & \pass{} Verified by reading --- FE dependency property test covers casting only \\
-US-S3-10 & Given a member, When they log time on a task, Then a \texttt{TaskTimeEntry} is created and \texttt{actualHours} is re-aggregated from the sum. & \pass{} Verified by reading --- FE time-entry property test covers transforms only \\
-\rowcolor{rowalt}
-US-S3-11 & Given a member, When they comment with @mentions, Then the comment and its mentions are created in a transaction, mentioned users and the assignee are notified, and the comment is indexed; likes toggle one-per-user. & \pass{} Verified by reading --- FE comment property test covers casting only \\
-US-S3-12 & Given a member, When they create/assign labels or move a task to a sprint/epic/milestone, Then project-scoped labels attach via the junction and the FK is set. & \warn{} Verified by reading --- \texttt{moveToSprint} unconditionally resets \texttt{status} to \texttt{TODO}, bypassing transition validation \\
 \bottomrule
+\endfoot
+\rowcolor{rowalt}
+US-S3-01 & Given a PM/PO on an AGILE project, When they create an epic, Then it is stored under the project (unique name per project) and its progress rolls up from DONE task counts; a linked-task epic cannot be deleted. & \pass{} Verified \\
+US-S3-02 & Given a Scrum Master, When they create a sprint with all four dates and a capacity, Then a \texttt{Pending} sprint is stored only if every window sits inside the project window; default reminders are created. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S3-03 & Given a \texttt{Pending}/\texttt{Running} sprint, When the SM starts/stops/completes it, Then only legal transitions apply, at most one sprint runs per project, members are notified, and pending reminders cancel on stop/complete. & \pass{} Verified \\
+US-S3-04 & Given a project (AGILE or FREESTYLE), When a PM creates a milestone with a due date, Then it is stored and can be completed by stamping \texttt{completedAt}. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S3-05 & Given a sprint/project with task points, When a PM opens analytics, Then burndown shows ideal-vs-actual, velocity sums completed-sprint points, and the Gantt fans in milestones/epics/sprints/tasks. & \pass{} Verified \\
+US-S3-06 & Given a member with create rights, When they POST a task with type/priority/assignee/estimate, Then it is created with a generated key after project-type field and FK validation; assignee is notified; the task is indexed. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S3-07 & Given a manager, When they define board columns and WIP limits, Then \texttt{ProjectTaskStatus} rows drive the board and WIP keys are validated against status names. & \pass{} Verified \\
+US-S3-08 & Given an assignee, When they drag a card to a new column, Then the move is rejected unless the transition is legal, no blocking dependency is unfinished, and the column is under its WIP limit; \texttt{completedAt} stamps on DONE. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S3-09 & Given a member, When they add a dependency, Then a circular-dependency guard rejects cycles; a task cannot leave its column while blocked. & \pass{} Verified \\
+US-S3-10 & Given a member, When they log time on a task, Then a \texttt{TaskTimeEntry} is created and \texttt{actualHours} is re-aggregated from the sum. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S3-11 & Given a member, When they comment with @mentions, Then the comment and its mentions are created in a transaction, mentioned users and the assignee are notified, and the comment is indexed; likes toggle one-per-user. & \pass{} Verified \\
+US-S3-12 & Given a member, When they create/assign labels or move a task to a sprint/epic/milestone, Then project-scoped labels attach via the junction and the FK is set. & \pass{} Verified \\
 \end{longtable}
 
 \subsection{Sprint review}
 
-This sprint delivered the substance of the platform: a governed sprint lifecycle whose state machine is a
-shared FE/BE contract, server-side burndown/velocity/Gantt analytics computed from real task points, and a
-data-driven Kanban that is a genuine, non-trivial workflow engine --- custom columns, per-column WIP limits,
-dependency-blocking, and a circular-dependency guard, all applied under a graduated, project-scoped capability
-model that even lets an assignee advance their own card. Every mutation feeds the AI index
-outbox, so the whole agile and task corpus is already searchable ahead of Sprint 6.
+\textbf{Objectives achieved.} The sprint delivered the substance of the platform: a governed
+sprint lifecycle whose state machine is a shared frontend/backend contract, server-side
+burndown/velocity/Gantt analytics computed from real task points, and a data-driven Kanban that
+is a genuine workflow engine --- custom columns, per-column WIP limits, dependency-blocking, and
+a circular-dependency guard, all applied under a graduated, project-scoped capability model that
+even lets an assignee advance their own card. Every mutation feeds the AI index outbox, so the
+whole agile and task corpus is already searchable ahead of Sprint~6.
 
-Because the sprint prioritized building this workflow engine breadth-first, it also carries the deepest set
-of hardening notes forward: the tasks module's backend service tests, a transactional monotonic task-key
-generator (replacing the racy \texttt{TASK-<count+1>}), transaction-wrapped agile writes, a project-scoped
-sprint-name constraint, a shared \texttt{ProjectAccessService} to retire the copy-pasted executive-RBAC helpers,
-and a set of consistency rules (aligning \texttt{bulkUpdateStatus}/\texttt{moveToSprint}, milestone date-validation and
-idempotency, and surfacing rather than swallowing the frontend's 100-item cap) are the headline items. Each
-is consolidated with its remediation in the \emph{Limitations \& Perspectives} discussion and the hardening
-backlog (Annex A).
+\textbf{Remaining work.} Hardening items identified during the sprint --- backend service tests
+for the tasks module, transaction-wrapped agile writes, and a shared
+\texttt{ProjectAccessService} --- are logged and prioritized for future work (Annex~A).
+
+\subsection{Sprint retrospective}
+
+\textbf{Difficulties encountered.} This was the heaviest sprint in the plan (64 story points over
+five weeks) and the most demanding in domain complexity. The data-driven Kanban engine required
+designing a system where board columns, their transitions, and WIP limits are stored as data
+rather than code, which introduced application-level invariants that could not be enforced by the
+database schema alone. The graduated capability model --- seven distinct helpers from read-only
+access up to workflow advancement, with an assignee-specific override --- required careful layering
+to avoid either over-permitting or locking out legitimate moves. The sprint lifecycle state
+machine, with its notification side effects and reminder cancellation on certain transitions,
+added further coordination between subsystems.
+
+\textbf{Lessons learned.} Property-based testing proved its value for the transform and parsing
+layers: generating hundreds of random inputs per run caught edge cases that hand-written examples
+would have missed, particularly in the Kanban no-task-loss invariant and dependency normalization.
+The fire-and-forget notification pattern (unawaited calls to the notification service) kept the
+critical write path fast without sacrificing user feedback. The AI embedding outbox --- enqueueing
+an index upsert on every agile and task write --- was straightforward to wire in and ensures the
+entire corpus is searchable by the time the copilot lands in Sprint~6.
+
+\textbf{Improvements planned.} Backend service tests for the tasks module's transition
+validation, capability matrix, and circular-dependency guard. A shared
+\texttt{ProjectAccessService} to replace the duplicated executive-scope helpers across the agile
+services. These items are carried forward as prioritized future work (Annex~A).
 
 \subsection{Cumulative class diagram}
 
-Figure~\ref{fig:3-22} is the largest model so far. To keep it legible it is organized into four packages: the Sprint 1
-identity core and the Sprint 2 project family are shown in plain style and compacted to their identifying
-fields, while this sprint's two new families --- Agile Planning and Tasks \& Kanban --- are highlighted in yellow with
-fuller attributes. The seams are the interesting part: every agile artefact hangs off \texttt{Project}, and \texttt{Task}
-carries optional foreign keys into \texttt{Sprint}, \texttt{Epic} and \texttt{Milestone} while pointing back to \texttt{User} as assignee and
-reporter --- so the whole sprint plugs into the aggregate root established in Sprint 2 through exactly those two
-carried-over classes.
+Figure~\ref{fig:3-22} focuses on the eighteen entities introduced in this sprint, grouped into
+Agile Planning and Tasks \& Kanban. The two anchor classes from earlier sprints ---
+\texttt{User} (Sprint~1) and \texttt{Project} (Sprint~2) --- are shown in plain style so the
+attachment points are clear: every agile artefact hangs off \texttt{Project}, and \texttt{Task}
+carries optional foreign keys into \texttt{Sprint}, \texttt{Epic} and \texttt{Milestone} while
+pointing back to \texttt{User} as assignee and reporter.
 
 % Figure 3.22 — render diagrams-src/fig_3_22.puml -> figures/fig_3_22.(png|pdf)
-\reportfigure[\textwidth]{figures/fig_3_22}{Cumulative class diagram after Sprint 3.}{3-22}
+{\renewcommand{\figmaxheight}{0.82\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_22}{Cumulative class diagram after Sprint 3.}{3-22}}
+
+\subsection{Sprint conclusion}
+
+Sprint~3 delivered the agile planning layer and a data-driven task engine that together form the
+working core of the platform: governed sprints, server-side analytics, and a Kanban board whose
+columns, transitions, WIP limits, and dependency gates are enforced end-to-end. The graduated
+capability model and the AI embedding outbox introduced here carry forward into every subsequent
+sprint.
+
 \fi % \ifpartialbuild (Sprints 2-3 guard opened before Sprint 2's heading above)

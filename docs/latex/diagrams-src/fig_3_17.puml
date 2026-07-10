@@ -12,7 +12,7 @@ skinparam class {
   ArrowColor #33475b
 }
 
-enum SprintStatus <<enum>> #LightYellow {
+enum SprintStatus  {
   Pending
   Running
   Stopped
@@ -23,7 +23,7 @@ class Project {
   +id : UUID
 }
 
-class Epic #LightYellow {
+class Epic  {
   +id : UUID
   -projectId : UUID
   +name : String
@@ -32,7 +32,7 @@ class Epic #LightYellow {
   +endDate : DateTime
 }
 
-class Sprint #LightYellow {
+class Sprint  {
   +id : UUID
   -projectId : UUID
   -createdById : UUID
@@ -44,7 +44,7 @@ class Sprint #LightYellow {
   +estimatedEndDate : DateTime
 }
 
-class SprintContent #LightYellow {
+class SprintContent  {
   +id : UUID
   -sprintId : UUID
   +name : String
@@ -52,13 +52,13 @@ class SprintContent #LightYellow {
   +language : Language
 }
 
-class SprintAttachment #LightYellow {
+class SprintAttachment  {
   +id : UUID
   -sprintId : UUID
   +attachment : String
 }
 
-class Milestone #LightYellow {
+class Milestone  {
   +id : UUID
   -projectId : UUID
   +name : String

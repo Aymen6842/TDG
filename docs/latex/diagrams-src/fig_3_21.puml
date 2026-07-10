@@ -12,20 +12,20 @@ skinparam class {
   ArrowColor #33475b
 }
 
-enum TaskType <<enum>> #LightYellow {
+enum TaskType    {
   TASK
   BUG
   STORY
   ..
 }
-enum TaskPriority <<enum>> #LightYellow {
+enum TaskPriority     {
   LOW
   MEDIUM
   HIGH
   URGENT
 }
 
-class Task #LightYellow {
+class Task   {
   +id : UUID
   -projectId : UUID
   +key : String <<unique per project>>
@@ -47,7 +47,7 @@ class Task #LightYellow {
   +completedAt : DateTime
 }
 
-class ProjectTaskStatus #LightYellow {
+class ProjectTaskStatus   {
   +id : UUID
   -projectId : UUID
   +name : String
@@ -58,52 +58,52 @@ class ProjectTaskStatus #LightYellow {
   +allowedTransitions : String[]
 }
 
-class TaskComment #LightYellow {
+class TaskComment   {
   +id : UUID
   -taskId : UUID
   -authorId : UUID
   +content : String
 }
-class TaskCommentLike #LightYellow {
+class TaskCommentLike   {
   +id : UUID
   -commentId : UUID
   -userId : UUID
 }
-class TaskCommentMention #LightYellow {
+class TaskCommentMention   {
   +id : UUID
   -commentId : UUID
   -userId : UUID
 }
-class TaskLabel #LightYellow {
+class TaskLabel   {
   +id : UUID
   -projectId : UUID
   +name : String
   +color : String
 }
-class TaskLabelAssignment #LightYellow {
+class TaskLabelAssignment   {
   +id : UUID
   -taskId : UUID
   -labelId : UUID
 }
-class TaskDependency #LightYellow {
+class TaskDependency   {
   +id : UUID
   -blockingTaskId : UUID
   -blockedTaskId : UUID
   +dependencyType : String
 }
-class TaskTimeEntry #LightYellow {
+class TaskTimeEntry   {
   +id : UUID
   -taskId : UUID
   -userId : UUID
   -workSessionId : UUID
   +hours : Float
 }
-class TaskAttachment #LightYellow {
+class TaskAttachment   {
   +id : UUID
   -taskId : UUID
   +file : String
 }
-class TaskContent <<dormant>> #LightYellow {
+class TaskContent   {
   +id : UUID
   -taskId : UUID
   +title : String
