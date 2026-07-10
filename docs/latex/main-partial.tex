@@ -1,0 +1,26 @@
+% !TEX program = xelatex
+% Partial-excerpt build of the Tawer Management PFE report: front matter,
+% Chapter 1, Chapter 2, and Chapter 3 with ONLY Sprint 1 (Sprints 2-5 and
+% Chapter 4 are omitted). Shares preamble.tex with main.tex so both builds
+% stay in sync; only the \input list below and the \ifpartialbuild toggle
+% (set in preamble.tex, flipped true here) differ.
+%
+% Compile with XeLaTeX or LuaLaTeX: xelatex main-partial.tex (run twice).
+
+\documentclass[11pt,a4paper,openany]{report}
+\input{preamble}
+\partialbuildtrue
+
+\begin{document}
+
+\input{frontmatter}
+\input{ch1}
+\input{ch2}
+\input{ch3-part1}
+\input{conclusion}
+\input{annex}
+
+\clearpage
+\printbibliography[heading=bibintoc,title={Bibliographie}]
+
+\end{document}

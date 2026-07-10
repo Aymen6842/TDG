@@ -1,0 +1,186 @@
+% !TEX root = main.tex
+% ===========================================================================
+% Shared preamble for the Tawer Management PFE report.
+% \input by both main.tex (full report) and main-partial.tex (excerpt build).
+% Compile with XeLaTeX or LuaLaTeX (required for unicode arrows/checkmarks and
+% French accents via fontspec). See README.md.
+%
+% REQUIRES: ulem   (for \sout strikethrough in the Outstanding Author Items table)
+% ===========================================================================
+
+\usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm,headheight=22pt]{geometry}
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+
+\usepackage[dvipsnames,table]{xcolor}
+\usepackage{graphicx}
+\usepackage{rotating} % sidewaysfigure for full-page landscape diagrams
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{float}
+\usepackage[most]{tcolorbox}
+\usepackage{eso-pic} % full-page background images on the guard/back-cover pages
+\usepackage[normalem]{ulem} % strikethrough (\sout) for resolved register rows
+\usepackage{etoolbox}
+\usepackage{pifont} % \ding{51} checkmark for the acceptance-result macros
+
+% --- Partial-build toggle -----------------------------------------------------
+% False in main.tex (full report). main-partial.tex sets this true before
+% \begin{document} to skip Sprints 2-5 (see the \ifpartialbuild guard inside
+% ch3-part1.tex). Chapter 4 and ch3-part2 (Sprints 4-5) are simply not \input
+% by main-partial.tex, so no guard is needed for those.
+\newif\ifpartialbuild
+\partialbuildfalse
+
+% --- Colors -----------------------------------------------------------------
+\definecolor{chapterblue}{HTML}{1a3c5e}
+\definecolor{headerrule}{HTML}{2c5f8a}
+% Tables are plain booktabs: rowalt is kept only so legacy \rowcolor{rowalt}
+% calls in the chapters remain valid no-ops (white = no visible striping).
+\definecolor{rowalt}{HTML}{ffffff}
+\definecolor{tablehead}{HTML}{1a3c5e}
+\definecolor{tableheadtext}{HTML}{ffffff}
+\definecolor{checkgreen}{HTML}{15803d}
+\definecolor{warnamber}{HTML}{b45309}
+\definecolor{screenshotframe}{HTML}{9aa5b1}
+
+% --- Headers and footers (fancyhdr) -----------------------------------------
+\usepackage{fancyhdr}
+
+\fancypagestyle{mainpages}{%
+  \fancyhf{}%
+  \fancyhead[L]{\small\itshape\nouppercase{\leftmark}}%
+  \fancyhead[R]{\small\textsc{IIT Sfax}}%
+  \fancyfoot[L]{\small Aymen BenHsan}%
+  \fancyfoot[R]{\small\thepage}%
+  \renewcommand{\headrulewidth}{0.6pt}%
+  \renewcommand{\footrulewidth}{0.4pt}%
+  \renewcommand{\headrule}{\hbox to\headwidth{\color{headerrule}\leaders\hrule height \headrulewidth\hfill}}%
+  \renewcommand{\footrule}{\hbox to\headwidth{\color{headerrule}\leaders\hrule height \footrulewidth\hfill}\vskip 4pt}%
+}
+
+\fancypagestyle{plain}{%
+  \fancyhf{}%
+  \fancyfoot[R]{\small\thepage}%
+  \fancyfoot[L]{\small Aymen BenHsan}%
+  \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0.4pt}%
+  \renewcommand{\footrule}{\hbox to\headwidth{\color{headerrule}\leaders\hrule height \footrulewidth\hfill}\vskip 4pt}%
+}
+
+\pagestyle{mainpages}
+
+% --- Page-break quality ------------------------------------------------------
+% Never orphan a lone first/last line of a paragraph across pages, and don't
+% stretch vertical space to force flush bottoms (prevents big inter-heading gaps).
+\widowpenalty=10000
+\clubpenalty=10000
+\raggedbottom
+
+% --- Chapter title pages (titlesec) -----------------------------------------
+% nobottomtitles* pushes any section/subsection heading that would land within
+% \bottomtitlespace of the page bottom onto the next page, so a page never ends
+% with a dangling heading.
+\usepackage[nobottomtitles*]{titlesec}
+\renewcommand{\bottomtitlespace}{0.16\textheight}
+
+\newcommand{\chapterpagecontent}[1]{%
+  \thispagestyle{empty}%
+  \vspace*{\fill}%
+  \begin{center}%
+    {\fontsize{120}{120}\selectfont\color{chapterblue!20}\thechapter}\\[1.5cm]%
+    {\fontsize{10}{12}\selectfont\MakeUppercase{Chapter \thechapter}}\\[0.6cm]%
+    \rule{4cm}{1pt}\\[0.6cm]%
+    {\fontsize{24}{28}\selectfont\color{chapterblue}#1}%
+  \end{center}%
+  \vspace*{\fill}%
+  \clearpage%
+  % Repeat the chapter title at the top of the first content page, so the
+  % reader never lands on unheaded body text after the chapter page.
+  \noindent{\fontsize{10}{12}\selectfont\scshape Chapter \thechapter}\\[0.3em]%
+  \noindent{\fontsize{17}{21}\selectfont\bfseries\color{chapterblue}#1}\\[0.45em]%
+  \noindent{\color{headerrule}\rule{\textwidth}{0.8pt}}%
+}
+
+\titleformat{\chapter}[block]
+  {\normalfont\bfseries}
+  {}
+  {0pt}
+  {\chapterpagecontent}
+
+\titleformat{name=\chapter,numberless}[block]
+  {\normalfont\bfseries\centering\fontsize{20}{24}\selectfont}
+  {}
+  {0pt}
+  {}
+
+\titlespacing*{\chapter}{0pt}{0pt}{20pt}
+
+% --- Bibliography -----------------------------------------------------------
+\usepackage[backend=biber,style=ieee,sorting=nyt]{biblatex}
+\addbibresource{references.bib}
+
+% --- Hyperref ---------------------------------------------------------------
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=RoyalBlue,
+  citecolor=ForestGreen,
+  urlcolor=RoyalBlue,
+  filecolor=RoyalBlue
+}
+
+% --- Auto-resolving figure macro -------------------------------------------
+% \reportfigure{path}{caption}{label}           — default 0.85\textwidth
+% \reportfigure[0.5\textwidth]{path}{caption}{label} — custom width
+% Both width AND height are capped (keepaspectratio), so tall diagrams no
+% longer explode and wide ones no longer dictate their own scale.
+\newcommand{\figmaxheight}{0.42\textheight}
+\newcommand{\reportfigure}[4][0.85\textwidth]{%
+  \begin{figure}[H]\centering
+  \IfFileExists{#2.pdf}{\includegraphics[width=#1,height=\figmaxheight,keepaspectratio]{#2.pdf}}{%
+  \IfFileExists{#2.png}{\includegraphics[width=#1,height=\figmaxheight,keepaspectratio]{#2.png}}{%
+  \IfFileExists{#2.jpg}{\includegraphics[width=#1,height=\figmaxheight,keepaspectratio]{#2.jpg}}{%
+  \fbox{\begin{minipage}{0.8\textwidth}\centering\vspace{10pt}{\color{RoyalPurple}\bfseries\Large FIGURE PENDING}\\[6pt]{\small #3}\vspace{10pt}\end{minipage}}}}}
+  \caption{#3}\label{fig:#4}\end{figure}}
+
+% --- Full-page sideways figure macro -----------------------------------------
+% For diagrams too wide to read in portrait: a dedicated landscape page.
+% \reportsideways{path}{caption}{label}
+\newcommand{\reportsideways}[3]{%
+  \begin{sidewaysfigure}\centering
+  \IfFileExists{#1.pdf}{\includegraphics[width=0.96\textheight,height=0.92\textwidth,keepaspectratio]{#1.pdf}}{%
+  \IfFileExists{#1.png}{\includegraphics[width=0.96\textheight,height=0.92\textwidth,keepaspectratio]{#1.png}}{%
+  \fbox{\begin{minipage}{0.8\textwidth}\centering\vspace{10pt}{\color{RoyalPurple}\bfseries\Large FIGURE PENDING}\\[6pt]{\small #2}\vspace{10pt}\end{minipage}}}}
+  \caption{#2}\label{fig:#3}\end{sidewaysfigure}}
+
+% --- Screenshot macro -------------------------------------------------------
+% Same auto-resolve behaviour as \reportfigure, plus a thin gray frame so
+% white UI captures do not bleed into the page.
+\newcommand{\reportscreenshot}[4][0.9\textwidth]{%
+  \begin{figure}[H]\centering
+  {\setlength{\fboxsep}{0pt}\setlength{\fboxrule}{0.4pt}\color{screenshotframe}%
+  \IfFileExists{#2.png}{\fbox{\includegraphics[width=#1,height=\figmaxheight,keepaspectratio]{#2.png}}}{%
+  \IfFileExists{#2.jpg}{\fbox{\includegraphics[width=#1,height=\figmaxheight,keepaspectratio]{#2.jpg}}}{%
+  \color{black}\fbox{\begin{minipage}{0.8\textwidth}\centering\vspace{10pt}{\color{RoyalPurple}\bfseries\Large SCREENSHOT PENDING}\\[6pt]{\small #3}\vspace{10pt}\end{minipage}}}}}
+  \caption{#3}\label{fig:#4}\end{figure}}
+
+% --- Styled table helpers ---------------------------------------------------
+% Plain booktabs style: the header row carries no fill; header cells are
+% simply bold. The macro names are kept so the chapter files need no edits.
+\newcommand{\tableheaderrow}{}
+\newcommand{\thcell}[1]{\textbf{#1}}
+
+% Slightly open up table rows for readability
+\renewcommand{\arraystretch}{1.15}
+
+% Acceptance-result markers (font-safe replacements for the checkmark/warning
+% emoji, which Latin Modern has no glyphs for)
+\newcommand{\pass}{{\color{checkgreen}\ding{51}}}
+\newcommand{\warn}{{\color{warnamber}\textbf{!}}}
+
+% --- Inline highlight for outstanding author items -------------------------
+\newcommand{\authoraction}[1]{{\color{RoyalPurple}\bfseries[#1]}}

@@ -14,6 +14,7 @@ domain model grew. The AI sprint, being the technical climax, is told separately
 %% SPRINT 1
 %% ====================================================================
 
+\clearpage
 \section{Sprint 1: Foundations \& Authentication}
 
 \subsection{Sprint goal}
@@ -50,7 +51,7 @@ US-S1-03 & As a user, I want my session refreshed automatically on expiry, so th
 US-S1-04 & As a user, I want to reset a forgotten password via an emailed code, so that I can regain access. & 3 & 2d & Should \\
 \rowcolor{rowalt}
 US-S1-05 & As the platform, I want every protected endpoint gated by a role-permission guard, so that a user only reaches what their role allows. & 8 & 3.5d & Must \\
-US-S1-06 & As an admin/HR, I want to provision user accounts with one or more roles, so that staff are onboarded (there is no public self-registration). & 5 & 2.5d & Must \\
+US-S1-06 & As an admin/HR, I want to provision user accounts directly with one or more roles, so that staff can be onboarded immediately without going through self-registration's pending-approval step. & 5 & 2.5d & Must \\
 \rowcolor{rowalt}
 US-S1-07 & As an admin, I want to list, search (accent-insensitive), and filter users, so that I can manage the directory. & 3 & 1.5d & Should \\
 US-S1-08 & As an admin, I want to edit and soft-delete (deactivate) a user, so that I manage the account lifecycle. & 3 & 1.5d & Must \\
@@ -289,6 +290,9 @@ architecture, a stateless JWT authentication system, a centralized RBAC model, a
 administration. The identity classes and the two-tier authorization pattern introduced here are
 the hub that the entire domain model and every subsequent sprint build upon.
 
+% Sprints 2-3 are omitted from the partial (Sprint-1-only) excerpt build.
+\ifpartialbuild\else
+\clearpage
 \section{Sprint 2: Projects \& Membership}
 
 \subsection{Sprint goal}
@@ -484,6 +488,7 @@ project aggregate to the identity core established previously.
 % Figure 3.12 — render diagrams-src/fig_3_12.puml -> figures/fig_3_12.(png|pdf)
 \reportfigure[\textwidth]{figures/fig_3_12}{Cumulative class diagram after Sprint 2.}{3-12}
 
+\clearpage
 \section{Sprint 3: Agile Backlog \& Tasks}
 
 \subsection{Sprint goal}
@@ -782,3 +787,4 @@ carried-over classes.
 
 % Figure 3.22 — render diagrams-src/fig_3_22.puml -> figures/fig_3_22.(png|pdf)
 \reportfigure[\textwidth]{figures/fig_3_22}{Cumulative class diagram after Sprint 3.}{3-22}
+\fi % \ifpartialbuild (Sprints 2-3 guard opened before Sprint 2's heading above)

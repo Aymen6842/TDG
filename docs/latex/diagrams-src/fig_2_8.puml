@@ -4,144 +4,43 @@ skinparam backgroundColor transparent
 skinparam shadowing false
 skinparam roundcorner 8
 skinparam defaultFontName "Helvetica"
-skinparam classAttributeIconSize 0
-skinparam ArrowColor #33475b
-skinparam packageStyle rectangle
 skinparam dpi 150
-skinparam nodesep 30
-skinparam ranksep 40
-skinparam class {
+skinparam ArrowColor #33475b
+skinparam ArrowFontSize 11
+skinparam ArrowFontColor #33475b
+skinparam packageStyle folder
+skinparam nodesep 45
+skinparam ranksep 55
+skinparam package {
   BackgroundColor #FBFCFE
   BorderColor #33475b
-  ArrowColor #33475b
-  FontSize 11
-}
-skinparam package {
-  FontSize 12
+  FontColor #1a3c5e
   FontStyle bold
+  FontSize 13
 }
 
-' High-level ERD — entities only, no attributes.
-' Detailed class diagrams appear per-sprint in Chapter 3.
-' Layout: packages are pinned into a ~3-row grid with hidden edges so the
-' render stays near the A4 page aspect instead of one wide strip.
+' High-level domain-relationship diagram — packages only, no attributes.
+' Each sprint's class diagram in Chapter 3 progressively reveals the entities
+' inside a given package; Table 2.5 lists them all at a glance.
 
-package "Identity & Access" as P1 {
-  class User << (E,#5B9BD5) >>
-  class Role << (E,#5B9BD5) >>
-  class Team << (E,#5B9BD5) >>
-  class UserTeam << (J,#A9D18E) >>
-  class RefreshToken << (E,#5B9BD5) >>
-}
+package "Identity & Access" as P1
+package "Projects & Membership" as P2
+package "Agile Planning" as P3
+package "Tasks & Kanban" as P4
+package "Productivity Suite" as P5
+package "Notifications & Channels" as P6
+package "Infrastructure Monitoring" as P7
+package "AI / RAG" as P8
 
-package "Projects & Membership" as P2 {
-  class Project << (E,#5B9BD5) >>
-  class ProjectContent << (E,#5B9BD5) >>
-  class ProjectMember << (J,#A9D18E) >>
-  class ProjectInvitation << (E,#5B9BD5) >>
-}
-
-package "Agile Planning" as P3 {
-  class Epic << (E,#5B9BD5) >>
-  class Sprint << (E,#5B9BD5) >>
-  class Milestone << (E,#5B9BD5) >>
-}
-
-package "Tasks & Kanban" as P4 {
-  class Task << (E,#5B9BD5) >>
-  class ProjectTaskStatus << (E,#5B9BD5) >>
-  class TaskComment << (E,#5B9BD5) >>
-  class TaskDependency << (J,#A9D18E) >>
-  class TaskTimeEntry << (E,#5B9BD5) >>
-}
-
-package "Productivity Suite" as P5 {
-  class UserTask << (E,#5B9BD5) >>
-  class WorkDay << (E,#5B9BD5) >>
-  class WorkSession << (E,#5B9BD5) >>
-  class Event << (E,#5B9BD5) >>
-  class Reminder << (E,#5B9BD5) >>
-}
-
-package "Notifications & Channels" as P6 {
-  class Notification << (E,#5B9BD5) >>
-  class UserNotification << (J,#A9D18E) >>
-  class UserNotificationSettings << (E,#5B9BD5) >>
-}
-
-package "Infrastructure Monitoring" as P7 {
-  class Server << (E,#5B9BD5) >>
-  class Service << (E,#5B9BD5) >>
-  class UserServerManagement << (J,#A9D18E) >>
-}
-
-package "AI / RAG" as P8 {
-  class DocumentEmbedding << (E,#5B9BD5) >>
-  class IndexOutbox << (E,#5B9BD5) >>
-  class CopilotQueryLog << (E,#5B9BD5) >>
-}
-
-' ── Identity ──
-User "1" --> "0..*" Role
-User "1" --> "0..*" UserTeam
-Team "1" --> "0..*" UserTeam
-User "1" --> "0..*" RefreshToken
-
-' ── Projects ──
-Project "1" --> "1..*" ProjectContent
-Project "1" --> "0..*" ProjectMember
-User "1" --> "0..*" ProjectMember
-Project "1" --> "0..*" ProjectInvitation
-
-' ── Agile ──
-Project "1" --> "0..*" Epic
-Project "1" --> "0..*" Sprint
-Project "1" --> "0..*" Milestone
-
-' ── Tasks ──
-Project "1" --> "0..*" Task
-Project "1" --> "0..*" ProjectTaskStatus
-Task "0..*" --> "0..1" Sprint
-Task "0..*" --> "0..1" Epic
-Task "0..*" --> "0..1" Milestone
-Task "1" --> "0..*" TaskComment
-Task "1" --> "0..*" TaskDependency
-Task "1" --> "0..*" TaskTimeEntry
-User "1" --> "0..*" Task : assignee
-
-' ── Productivity ──
-User "1" --> "0..*" UserTask
-User "1" --> "0..*" WorkDay
-WorkDay "1" --> "0..*" WorkSession
-WorkSession "1" --> "0..*" TaskTimeEntry
-User "1" --> "0..*" Event : creator
-User "1" --> "0..*" Reminder : recipient
-
-' ── Notifications ──
-Notification "1" --> "0..*" UserNotification
-User "1" --> "0..1" UserNotificationSettings
-
-' ── Infrastructure ──
-Server "1" --> "0..*" Service
-User "1" --> "0..*" UserServerManagement
-Server "1" --> "0..*" UserServerManagement
-
-' ── AI ──
-Project "1" --> "0..*" DocumentEmbedding
-Project "1" --> "0..*" IndexOutbox
-User "1" --> "0..*" CopilotQueryLog
-
-' ── Hidden grid constraints (layout only, render nothing) ──
-' Row 1: Identity | Notifications | Infrastructure
-' Row 2: Productivity | Projects | AI
-' Row 3: Tasks | Agile
-P1 -[hidden]right- P6
-P6 -[hidden]right- P7
-P1 -[hidden]down-- P5
-P6 -[hidden]down-- P2
-P7 -[hidden]down-- P8
-P5 -[hidden]down-- P4
-P2 -[hidden]down-- P3
-P4 -[hidden]right- P3
+P1 --> P2 : membership
+P1 --> P4 : assignee
+P1 --> P5 : personal data
+P1 --> P6 : preferences
+P1 --> P7 : manages
+P1 --> P8 : queries
+P2 --> P3 : plans
+P2 --> P4 : tracks
+P2 --> P8 : indexes
+P5 --> P4 : time entries
 
 @enduml

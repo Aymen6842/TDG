@@ -99,7 +99,7 @@ US-S1-03 & As a user, I want my session refreshed automatically on expiry, so th
 US-S1-04 & As a user, I want to reset a forgotten password via an emailed code, so that I can regain access. & 3 & 2d & Should \\
 \rowcolor{rowalt}
 US-S1-05 & As the platform, I want every protected endpoint gated by a role-permission guard, so that a user only reaches what their role allows. & 8 & 3.5d & Must \\
-US-S1-06 & As an admin/HR, I want to provision user accounts with one or more roles, so that staff are onboarded (there is no public self-registration). & 5 & 2.5d & Must \\
+US-S1-06 & As an admin/HR, I want to provision user accounts directly with one or more roles, so that staff can be onboarded immediately without going through self-registration's pending-approval step. & 5 & 2.5d & Must \\
 \rowcolor{rowalt}
 US-S1-07 & As an admin, I want to list, search (accent-insensitive), and filter users, so that I can manage the directory. & 3 & 1.5d & Should \\
 US-S1-08 & As an admin, I want to edit and soft-delete (deactivate) a user, so that I manage the account lifecycle. & 3 & 1.5d & Must \\
@@ -436,14 +436,35 @@ tasks, and document embeddings all foreign-key back to it. The AI module's
 comments, epics, sprints, milestones) through a polymorphic \texttt{entityType + entityId} pair
 rather than typed foreign keys, because the same table indexes five different entity types.
 
-Figure~\ref{fig:2-8} presents a high-level entity-relationship diagram showing the main
-entities grouped by domain and their key relationships. Attributes are omitted at this stage;
-each sprint's class diagrams in Chapter~3 progressively reveal the full detail.
+Figure~\ref{fig:2-8} presents a high-level domain-relationship diagram: the eight packages
+from Table~\ref{tab:domain-entities} and the key cross-domain relationships between them.
+Entities and attributes are omitted from the diagram itself --- Table~\ref{tab:domain-entities}
+lists what each package contains, and each sprint's class diagrams in Chapter~3 progressively
+reveal the full per-entity detail.
 
-\reportsideways{figures/fig_2_8}{High-level entity-relationship diagram: main entities of the eight domains.}{2-8}
+\reportfigure[0.92\textwidth]{figures/fig_2_8}{High-level domain-relationship diagram: the eight packages and their key cross-domain relationships.}{2-8}
 
-% Flush the sideways ERD page here so Section 2.6 starts after the figure.
-\clearpage
+Table~\ref{tab:domain-entities} maps each package to the entities it owns, so the diagram above
+and the class diagrams in Chapter~3 can both be read against one reference.
+
+\begin{table}[H]
+\centering
+\caption{Entities within each domain package.}\label{tab:domain-entities}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.32\textwidth}>{\raggedright\arraybackslash}p{0.58\textwidth}@{}}
+\tableheaderrow
+\thcell{Package} & \thcell{Entities} \\
+\midrule
+P1 --- Identity \& Access & \texttt{User}, \texttt{Role}, \texttt{Team}, \texttt{UserTeam}, \texttt{RefreshToken} \\
+P2 --- Projects \& Membership & \texttt{Project}, \texttt{ProjectContent}, \texttt{ProjectMember}, \texttt{ProjectInvitation} \\
+P3 --- Agile Planning & \texttt{Epic}, \texttt{Sprint}, \texttt{Milestone} \\
+P4 --- Tasks \& Kanban & \texttt{Task}, \texttt{ProjectTaskStatus}, \texttt{TaskComment}, \texttt{TaskDependency}, \texttt{TaskTimeEntry} \\
+P5 --- Productivity Suite & \texttt{UserTask}, \texttt{WorkDay}, \texttt{WorkSession}, \texttt{Event}, \texttt{Reminder} \\
+P6 --- Notifications \& Channels & \texttt{Notification}, \texttt{UserNotification}, \texttt{UserNotificationSettings} \\
+P7 --- Infrastructure Monitoring & \texttt{Server}, \texttt{Service}, \texttt{UserServerManagement} \\
+P8 --- AI / RAG & \texttt{DocumentEmbedding}, \texttt{IndexOutbox}, \texttt{CopilotQueryLog} \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Technologies and Development Tools}
 
