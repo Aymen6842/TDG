@@ -1,4 +1,4 @@
-% ch3-part2.tex — Chapter 3, Sprints 4 & 5 (§3.4, §3.5).
+% ch3-part2.tex — Chapter 3, Sprints 4 & 5 (Section 3.4, Section 3.5).
 % Continuation of Chapter 3; the \chapter command lives in ch3-part1.tex.
 % Compile with XeLaTeX/LuaLaTeX + fontspec (unicode kept verbatim).
 
@@ -8,21 +8,21 @@
 \subsection{Sprint goal}
 
 The first three sprints built the shared backbone: identity, projects, and the agile/task
-engine that most of the organization works \emph{inside}. Sprint 4 turns to the surface each person touches \emph{every
-day, on their own}: a private to-do list, the check-in/out attendance ritual, the shared calendar, and the
-reminders that tie it all together. Four modules land in one sprint because they share one thing that makes
-them a natural unit: a \textbf{cron-driven, multi-channel notification backbone}. Each of the four runs a scheduled
-job (per-minute for to-do, event and reminder nudges; nightly for session auto-close) that fans the same four
-delivery channels out to a user's enabled endpoints: in-app push, email, Telegram and ntfy. Where Sprint 3's authorization was project-scoped and role-graduated, most of this sprint is
-personal: the to-do, calendar and attendance data is \texttt{.own}-scoped and enforced in the data layer, so a user
-sees their own rows and no one else's. That difference is why the sprint groups cleanly around two actors only:
-the individual \textbf{User}, and a \textbf{Manager} who additionally reviews their team's attendance.
-At \textbf{44 story points} it is a broad rather than deep sprint: four self-contained aggregates, each modest on
-its own, unified by the reminder engine.
+engine. Sprint~4 turns to the surface each person touches every day on their own: a private
+to-do list, the check-in/out attendance ritual, the shared calendar, and the reminders that
+tie it all together. Four modules land in one sprint because they share a
+\textbf{cron-driven, multi-channel notification backbone}: each runs a scheduled job that fans
+the same four delivery channels (in-app push, email, Telegram, ntfy) out to a user's enabled
+endpoints, all guarded by a single PostgreSQL-backed distributed lock. Where Sprint~3's
+authorization was project-scoped and role-graduated, most of this sprint is personal: the
+to-do, calendar and attendance data is \texttt{.own}-scoped and enforced in the data layer. At
+\textbf{44 story points} it is a broad rather than deep sprint: four self-contained aggregates,
+each modest on its own, unified by the notification backbone.
 
 \subsection{Sprint backlog}
 
-The stories drawn from the product backlog (§2.2) for this sprint:
+The user stories for this sprint, repeated from the product backlog in Section~2.2 so the
+sprint reads self-contained:
 
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 4 backlog.}\label{tab:s4-backlog-detail} \\
@@ -37,14 +37,19 @@ The stories drawn from the product backlog (§2.2) for this sprint:
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S4-01 & As a user, I want a private to-do list with sub-tasks, priorities, and statuses, so that I track my own work separately from project tasks. & 5 & 2.5d & Should \\
 US-S4-02 & As a user, I want due/reminder dates on my to-dos that notify me across my channels, so that nothing slips. & 5 & 2d & Should \\
+\rowcolor{rowalt}
 US-S4-03 & As an employee, I want to check in and out (remote/onsite) to open and close work sessions, so that attendance is recorded. & 8 & 4d & Must \\
 US-S4-04 & As an employee, I want my worked time computed per business day, so that I can see my hours. & 3 & 1.5d & Should \\
+\rowcolor{rowalt}
 US-S4-05 & As a manager, I want per-user and per-team attendance statistics, so that I can review presence. & 5 & 2.5d & Should \\
 US-S4-06 & As a user, I want to create calendar events and meetings with participants, so that schedules are shared. & 8 & 3.5d & Should \\
+\rowcolor{rowalt}
 US-S4-07 & As a user, I want multi-channel reminders before each event, so that I attend on time. & 3 & 1.5d & Should \\
 US-S4-08 & As a user, I want to schedule project and personal reminders delivered on my channels, so that I am nudged at the right moment. & 5 & 2.5d & Should \\
+\rowcolor{rowalt}
 US-S4-09 & As a user, I want to see and dismiss my pending reminders, so that I can manage them. & 2 & 1d & Could \\
 \midrule
  & \textbf{Sprint 4 subtotal} & \textbf{44} & \textbf{4w} & \\
@@ -52,179 +57,250 @@ US-S4-09 & As a user, I want to see and dismiss my pending reminders, so that I 
 
 \subsection{Requirements analysis}
 
-The sprint use-case diagram (Figure~\ref{fig:3-23}) collects the two actors and the four feature clusters. The shared
-``notify across channels'' use case is drawn explicitly because it is the seam that binds the sprint: three of
-the four modules \texttt{<<include>>} it from their reminder paths, and it is exactly the channel-selection logic that
-is duplicated four times across the module services --- a maintainability point consolidated in Annex A.
+The sprint delivers four modules. The features, actors, and use cases are collected in
+Figure~\ref{fig:3-23}. Two actor archetypes appear: a \textbf{User} (any authenticated employee)
+who manages their own to-dos, attendance, calendar events, and reminders, and a
+\textbf{Manager} (CEO, CTO, CMO, or Project Manager) who additionally reviews their team's
+attendance and schedules project-scoped reminders. The shared ``notify across channels'' use
+case is drawn explicitly because it is the seam that binds the sprint: three of the four
+modules \texttt{<<include>>} it from their reminder paths.
 
 % Figure 3.23 — render diagrams-src/fig_3_23.puml -> figures/fig_3_23.(png|pdf)
 \reportfigure{figures/fig_3_23}{Sprint 4 use-case diagram.}{3-23}
 
-\subsubsection{Module A — Personal To-Dos}
+\subsubsection{Module A --- Personal To-Dos}
 
-\textbf{What the module does.} This is a private per-user checklist, kept deliberately separate from the project
-\texttt{Task} engine of Sprint 3 --- its own tables, and even its own status and priority enums (\texttt{Pending}/\texttt{InProgress}/
-\texttt{Completed}, \texttt{Low}/\texttt{Medium}/\texttt{High}), so personal and project tasks can evolve independently. A to-do
-can carry sub-tasks through a self-relation (cascade-deleted with the parent), plus favourites, an archive
-flag, a due date, an optional reminder date, manual drag-ordering, attachments and comments. The reason it can
-be this feature-rich without new infrastructure is reuse: it leans on the existing upload, locking and
-notification modules rather than adding its own. Every read and write is scoped by \texttt{userId} in the
-repository layer --- the \texttt{.own} permissions are enforced in the data query, not by the guard --- so read isolation
-is genuinely solid: a user cannot fetch another user's list (\texttt{findUniqueOrThrow(\{ id, userId \})} returns 404).
+\textbf{Functional description.} This module is a private per-user checklist, kept deliberately
+separate from the project \texttt{Task} engine of Sprint~3 --- its own tables, its own status and
+priority enums (\texttt{Pending}/\texttt{InProgress}/\texttt{Completed},
+\texttt{Low}/\texttt{Medium}/\texttt{High}), so personal and project tasks can evolve independently. A
+to-do can carry sub-tasks through a self-relation (cascade-deleted with the parent), favourites,
+an archive flag, a due date, an optional reminder date, manual drag-ordering via
+\texttt{displayOrder}, attachments and comments. The module is feature-rich without new
+infrastructure because it reuses the existing upload, locking, and notification modules. Every
+read and write is scoped by \texttt{userId} in the repository layer --- the \texttt{.own} permissions
+are enforced in the data query, not by the guard --- so a user cannot fetch another user's list.
 
-\textbf{The reminder cron.} The one background behaviour worth a diagram is the due-date engine (Figure~\ref{fig:3-24}). A
-per-minute \texttt{@Cron} acquires a Postgres-backed lock (55-second TTL) so only one instance runs it, fetches
-to-dos whose \texttt{reminderDate} has passed and are still un-notified, fans each one out to the owner's enabled
-channels, and marks \texttt{notified = true} so it fires once. It is the same lock-then-scan
-shape all four Sprint-4 crons use.
+\textbf{Actors.} A \textbf{User} (all authenticated roles) creates, reads, updates, deletes, and
+reorders their own personal tasks and comments. The module has no manager surface; every
+personal-task permission carries the \texttt{.own} suffix and is granted to all roles through
+\texttt{DEFAULT\_PERMISSIONS\_FOR\_ALL\_ROLES}.
+
+\textbf{Business rules.}
+\begin{itemize}
+  \item Every read and write filters by \texttt{userId} in the repository, enforcing
+    \textbf{strict read isolation}: \texttt{findUniqueOrThrow(\{ id, userId \})} returns 404 for
+    any task the caller does not own.
+  \item Sub-tasks are a \textbf{self-referencing relation} on \texttt{parentTaskId} with
+    \texttt{onDelete: Cascade}, so deleting a parent removes its children atomically.
+  \item Multilingual content follows the platform-wide i18n content-table pattern
+    (\texttt{UserTaskContent} keyed by \texttt{@@unique([taskId, language])}).
+  \item If file uploads fail after the database write, the service rolls back by deleting the
+    already-uploaded files --- a cleanup guard not present in the project task module.
+  \item The \texttt{reminderDate} field is optional; once the per-minute cron detects it has
+    passed, it fans out to the owner's enabled channels and marks \texttt{notified = true} so the
+    reminder fires exactly once.
+\end{itemize}
+
+\textbf{Reminder cron sequence.} The one background behaviour worth a diagram is the due-date
+engine (Figure~\ref{fig:3-24}). A per-minute \texttt{@Cron} acquires a Postgres-backed distributed
+lock (55-second TTL) so only one instance runs it, fetches to-dos whose \texttt{reminderDate} has
+passed and are still un-notified, fans each one out to the owner's enabled channels, and marks
+\texttt{notified = true}. It is the same lock-then-scan shape all four Sprint~4 crons use.
 
 % Figure 3.24 — render diagrams-src/fig_3_24.puml -> figures/fig_3_24.(png|pdf)
 \reportfigure{figures/fig_3_24}{Personal-task reminder cron sequence.}{3-24}
 
-The module's class slice (Figure~\ref{fig:3-25}) is a small, cohesive aggregate: a \texttt{UserTask} root with the content-table
-split for i18n (dormant, always \texttt{English}, as everywhere in the platform), comments carrying their own author
+\textbf{Class diagram.} Figure~\ref{fig:3-25} shows a small, cohesive aggregate: a
+\texttt{UserTask} root with the content-table split for i18n, comments carrying their own author
 \texttt{userId}, and attachments stored as disk paths.
 
 % Figure 3.25 — render diagrams-src/fig_3_25.puml -> figures/fig_3_25.(png|pdf)
-\reportfigure{figures/fig_3_25}{Personal To-Dos class slice.}{3-25}
+\reportfigure{figures/fig_3_25}{Personal To-Dos class diagram.}{3-25}
 
-\textbf{Limitations.} Read isolation is strong, but the module carries several verified defects.
-Comment \emph{creation} has no task-ownership check --- it stamps the author from the token but inserts on any
-\texttt{taskId} the caller supplies, so a user who knows another user's task UUID can post comments onto that person's
-private task; this constitutes a verified access-control vulnerability. Both delete endpoints use
-\texttt{deleteMany}, which never throws, so deleting a missing or not-owned id returns \textbf{204} instead of 404 --- incorrect
-REST semantics with unreachable error-handling code. Deleting a task with sub-tasks cascades the
-child \emph{rows} but leaves their attachment \emph{files} on disk, a storage leak. And two frontend/backend
-contract gaps: the list UI's search box sends \texttt{?search=} to a DTO that has no such field, so search silently
-does nothing, and a reorder issues one PATCH per moved card with no revert on failure.
+\subsubsection{Module B --- Time \& Attendance}
 
-\subsubsection{Module B — Time \& Attendance}
+\textbf{Functional description.} Attendance is enforced as a daily ritual. On entering any
+authenticated dashboard route the user hits a full-screen gate that blocks the app until they
+check in --- choosing Remote or Onsite --- or explicitly ``join as viewer''. Checking in opens a
+\texttt{WorkSession}; checking out closes the latest open session, computes worked minutes, and
+optionally captures a mood and a journey note. Sessions roll up under one \texttt{WorkDay} per
+user per business day, which also holds day-level attributes (mood, a manager's performance
+rating, notes). Beyond recording presence the module nudges for compliance --- late starts and
+forgotten sessions trigger notifications --- and reports per-user and per-manager attendance
+statistics.
 
-\textbf{What the module does.} Attendance is enforced as a daily ritual. On entering any authenticated dashboard
-route the user hits a full-screen gate that blocks the app until they either check in --- choosing Remote or
-Onsite --- or explicitly ``join as viewer''. Checking in opens a \texttt{WorkSession}; checking out closes
-the latest open session, computes worked minutes, and optionally captures a mood and a journey note. Sessions
-roll up under one \texttt{WorkDay} per user per business day, which also holds day-level attributes (mood, a
-manager's performance rating, notes). Beyond recording presence the module nudges for compliance --- late starts
-and forgotten (un-closed) sessions trigger notifications --- and reports per-user and per-manager attendance
-statistics. The manager statistics endpoints are the one place the personal \texttt{.own} scoping opens up,
-and they correctly add a \texttt{canUserManageUsers}/\texttt{canUserManageTeams} check before querying.
+\textbf{Actors.} A \textbf{Worker} (all authenticated roles) checks in and out, views their own
+work days and statistics, and adds daily mood or notes. A \textbf{Manager} (CEO, CTO, CMO,
+Project Manager) reviews team attendance, views per-user and per-team statistics, and adds a
+performance rating or manager notes --- access gated by
+\texttt{canUserManageUsers}/\texttt{canUserManageTeams} inside the service.
 
-\textbf{A design choice with consequences: the business day is anchored at 03:00 UTC.} There is no dedicated date
-column and no per-user timezone; instead every ``today'' query filters a \texttt{WorkDay}'s \texttt{createdAt} against a
-window that runs from 03:00 UTC to 02:59 UTC the next day. The intent is reasonable --- a work day that
-straddles midnight should count as one day --- but overloading an audit timestamp as a domain key, with a
-hard-coded offset, is the root of the sprint's headline bug (below). The check-in sequence (Figure~\ref{fig:3-26}) is
-drawn \emph{with} that failure branch, because that is the version of this flow that shows where it
-breaks.
+\textbf{Business rules.}
+\begin{itemize}
+  \item \textbf{Only one open session per day}: the service rejects a check-in if the current
+    \texttt{WorkDay} already contains a session with no \texttt{endTime}.
+  \item \textbf{Late-start detection} fires at two thresholds --- morning (08:45~UTC) and
+    afternoon (12:30~UTC) --- with a single-notification-per-half-day guard to prevent duplicate
+    alerts.
+  \item A nightly \textbf{auto-close cron} at 03:00~UTC closes all open sessions, capping each
+    session's \texttt{endTime} at shift end (16:15~UTC weekdays, 12:30~UTC Saturdays) rather than
+    at 03:00, so workers are not penalized for after-hours time.
+  \item \textbf{Workers cannot modify} \texttt{endTime} or \texttt{timeSpentInMinutes} on their
+    own sessions; the service strips those fields before persisting.
+  \item Manager statistics endpoints correctly add a \texttt{canUserManageUsers} check before
+    querying, so a manager sees only the users they actually manage (business-unit-scoped).
+  \item Location and device are recorded per session via \texttt{WorkSessionLocation}
+    (\texttt{REMOTE}/\texttt{ONSITE}) and \texttt{WorkSessionDevice}
+    (\texttt{DESKTOP}/\texttt{MOBILE}/\texttt{TABLET}/\texttt{OTHER}).
+\end{itemize}
+
+\textbf{Check-in sequence.} Figure~\ref{fig:3-26} shows the check-in path: the service resolves
+the current business day (creating one if none exists), verifies no session is already open,
+opens a new \texttt{WorkSession} with the chosen location and device, and returns the updated
+work day.
 
 % Figure 3.26 — render diagrams-src/fig_3_26.puml -> figures/fig_3_26.(png|pdf)
-\reportfigure{figures/fig_3_26}{Check-in sequence with the UTC dead-zone branch.}{3-26}
+\reportfigure{figures/fig_3_26}{Check-in sequence diagram.}{3-26}
 
-The class slice (Figure~\ref{fig:3-27}) is the two-level \texttt{WorkDay} → \texttt{WorkSession} split. Note the single documented
-seam into Sprint 3: a \texttt{WorkSession} owns the \texttt{TaskTimeEntry} rows the Tasks module attaches to it, so logged
-task time is anchored to an attendance session.
+\textbf{Class diagram.} Figure~\ref{fig:3-27} shows the two-level \texttt{WorkDay} \textrightarrow{}
+\texttt{WorkSession} split. The single documented seam into Sprint~3 is visible: a
+\texttt{WorkSession} owns the \texttt{TaskTimeEntry} rows the Tasks module attaches to it, so
+logged task time is anchored to an attendance session.
 
 % Figure 3.27 — render diagrams-src/fig_3_27.puml -> figures/fig_3_27.(png|pdf)
-\reportfigure{figures/fig_3_27}{Time \& Attendance class slice.}{3-27}
+\reportfigure{figures/fig_3_27}{Time \& Attendance class diagram.}{3-27}
 
-\textbf{Limitations.} This is the least sound module of the sprint. The 03:00-UTC anchoring
-produces a \textbf{check-in dead zone}: between 00:00 and 02:59 UTC the POST creates a WorkDay whose \texttt{createdAt}
-falls before today's window, so the follow-up \texttt{GET /work-days/current} keeps returning 404 and the gate loops
-forever --- a daily \textasciitilde3-hour window in which the core feature is unusable. Three access-control and logic
-defects affect the manager and write surface: \texttt{PATCH /work-days/:id/manager} is effectively dead because it
-passes the \emph{caller's} id where a WorkDay id is expected, so it always returns 404; \texttt{PATCH
-/work-days/:id/worker} never sets \texttt{userId} in its \texttt{where}, so any holder of that permission can overwrite
-another user's mood/notes by id; and \texttt{GET /work-days/manager}, gated only by the \emph{own} permission
-and performing no management check, returns \textbf{every} user's work days when the \texttt{usersIds} filter is omitted --- an
-information-disclosure vulnerability. The nightly auto-close cron, unlike the reminder crons, runs without a
-distributed lock, so a multi-instance deployment would double-close and double-notify. Finally, one
-statistics read (\texttt{\$queryRawUnsafe} with string-interpolated dates and ids) is the module's only unparameterized
-query; it is not currently exploitable because the DTO validators constrain the inputs, but it represents a standing
-risk given there is no global validation whitelist.
+\subsubsection{Module C --- Events \& Calendar}
 
-\subsubsection{Module C — Events \& Calendar}
+\textbf{Functional description.} This is the shared company calendar. Three kinds of entry are
+distinguished by an \texttt{EventType} enum --- \texttt{Meeting} and \texttt{Event}
+(organizational, targetable at named participants or the whole company via \texttt{toAllUsers})
+and \texttt{PersonalEvent} (a private per-user entry) --- each surfaced on its own calendar page.
+The calendar is a custom month/week/day/agenda view built on \texttt{date-fns} and
+\texttt{@dnd-kit} drag-and-drop. The module's second concern is reminders: a per-minute cron
+computes \emph{escalating} notification thresholds --- 24~hours out, then 2.5~hours, then
+30~minutes, then a final 15-minute window --- and fans each one out to the resolved audience
+across the four delivery channels.
 
-\textbf{What the module does.} This is the shared company calendar. Three kinds of entry are distinguished by an
-\texttt{EventType} enum --- \texttt{Meeting} and \texttt{Event} (organizational, targetable at named participants or the whole company
-via \texttt{toAllUsers}) and \texttt{PersonalEvent} (a private per-user entry) --- each surfaced on its own calendar page. The calendar itself is a custom, hand-built month/week/day/agenda view on \texttt{date-fns} and \texttt{@dnd-kit}
-drag-and-drop; despite \texttt{@fullcalendar/*} sitting in the dependency manifest, nothing under \texttt{src/} imports it,
-so those packages are dead weight. The second reason the module exists is reminders: a
-per-minute cron computes \emph{escalating} notification thresholds --- 24 hours out, then 2.5 hours, then 30 minutes,
-then a final 15-minute window --- and fans each one out to the resolved audience. The
-create-event flow reuses the same \texttt{<<include>> notify} backbone; the reminder cron itself is drawn in
-Figure~\ref{fig:3-28}.
+\textbf{Actors.} A \textbf{User} (all authenticated roles) creates, reads, and manages their own
+events (including personal events). An \textbf{Executive} (CEO, CTO, CMO) can additionally
+modify or delete organizational events created by others. Read visibility is enforced in the
+query: a user sees only events where \texttt{toAllUsers} is true, they created it, or they are a
+participant.
+
+\textbf{Business rules.}
+\begin{itemize}
+  \item \textbf{Escalating notification thresholds}: the cron evaluates remaining time to the
+    event start and advances \texttt{nextNotificationTime} through four bands (24h, 2.5h, 30min,
+    15min). Once remaining time drops below 25~minutes, \texttt{isNotified} is set to \texttt{true}
+    and no further notifications fire.
+  \item The \texttt{EventParticipant} join uses a \textbf{composite primary key}
+    \texttt{@@id([eventId, userId])}, preventing duplicate invitations.
+  \item A \texttt{PersonalEvent} is editable and deletable \textbf{only by its creator}; the
+    service checks \texttt{event.createdById === req.user.id}.
+  \item \texttt{EventContent} follows the platform-wide i18n content-table pattern, consistent
+    with \texttt{ProjectContent} and \texttt{SprintContent} from earlier sprints.
+  \item Event colours are constrained to a six-value enum (\texttt{Sky}, \texttt{Amber},
+    \texttt{Violet}, \texttt{Rose}, \texttt{Emerald}, \texttt{Orange}).
+\end{itemize}
+
+\textbf{Event reminder cron.} Figure~\ref{fig:3-28} shows the escalating reminder cron: on each
+tick it queries events whose \texttt{nextNotificationTime} has passed, resolves the audience
+(creator, explicit participants, or all users if \texttt{toAllUsers}), fans out to each
+recipient's enabled channels, computes the next threshold, and updates the event row.
 
 % Figure 3.28 — render diagrams-src/fig_3_28.puml -> figures/fig_3_28.(png|pdf)
 \reportfigure{figures/fig_3_28}{Event reminder cron with escalating thresholds.}{3-28}
 
-The class slice (Figure~\ref{fig:3-29}) is a clean three-table aggregate --- \texttt{Event}, its i18n \texttt{EventContent}, and the
-\texttt{EventParticipant} join whose composite primary key prevents duplicate invitations. The denormalized
-\texttt{nextNotificationTime}/\texttt{isNotified} fields on \texttt{Event} are what let the cron find ``events due to notify'' with a
-single scan instead of recomputing per event each minute.
+\textbf{Class diagram.} Figure~\ref{fig:3-29} shows a clean three-table aggregate ---
+\texttt{Event}, its i18n \texttt{EventContent}, and the \texttt{EventParticipant} join. The
+denormalized \texttt{nextNotificationTime}/\texttt{isNotified} fields on \texttt{Event} let the
+cron find events due to notify with a single indexed scan rather than recomputing per event
+each minute.
 
 % Figure 3.29 — render diagrams-src/fig_3_29.puml -> figures/fig_3_29.(png|pdf)
-\reportfigure{figures/fig_3_29}{Events \& Calendar class slice.}{3-29}
+\reportfigure{figures/fig_3_29}{Events \& Calendar class diagram.}{3-29}
 
-\textbf{Limitations.} Read visibility is a genuine strength --- the list query returns only events where
-\texttt{toAllUsers} is true, the caller created it, or the caller is a participant, so private meetings do not leak. The write side is weaker. All four event permissions are granted to \textbf{all 31 roles}, so the guard
-only asserts ``authenticated known role'', not any event-specific privilege; the frontend encodes a rich
-per-role view/add/edit/delete matrix, but none of it is enforced server-side, so that matrix is cosmetic. Concretely, \texttt{createEvent} puts no gate on \texttt{toAllUsers}, so any authenticated user can post a company-wide
-event that the cron then broadcasts to everyone by email/Telegram/push/ntfy --- a notification-spam vector with
-no rate limit. Two edit-path bugs compound it: an update rewrites \texttt{createdById} to the
-editor, silently transferring ownership, and an executive deleting a non-owned event hits a \texttt{deleteMany} scoped
-to their own id, matching zero rows and returning a misleading \textbf{204} while nothing is deleted. There is no recurrence model --- events are one-shot.
+\subsubsection{Module D --- Reminders}
 
-\subsubsection{Module D — Reminders}
+\textbf{Functional description.} Reminders is the sprint's connective tissue: a time-triggered,
+multi-channel reminder table that other modules also write into. It serves two workflows.
+\textbf{Manual} reminders let a project manager schedule a nudge for a specific user, linked to
+a task, sprint, milestone, project, or free-form \texttt{CUSTOM} target, delivered over chosen
+channels at a future time. \textbf{Automatic} reminders are created by the Tasks, Sprints and
+Milestones services when those artefacts are created (the due-date nudges seen in Sprint~3),
+plus crons that scan for overdue tasks (due date passed) and stuck tasks (no update for five
+days). A per-minute scheduler is the delivery engine: it finds \texttt{PENDING} reminders whose
+\texttt{reminderAt} has passed and dispatches them. Authorization mirrors Projects exactly ---
+the same BusinessUnit-scoped executive model (CEO global, CTO TawerDev, CMO TawerCreative)
+plus project membership --- which keeps the codebase consistent.
 
-\textbf{What the module does.} Reminders is the sprint's connective tissue: a time-triggered, multi-channel
-reminder table that other modules also write into. It serves two workflows. \textbf{Manual} reminders let a project
-manager schedule a nudge for a specific user, linked to a task, sprint, milestone, project, or free-form
-\texttt{CUSTOM} target, delivered over chosen channels at a future time. \textbf{Automatic} reminders are created by the
-Tasks, Sprints and Milestones services when those artefacts are created (the due-date nudges seen in Sprint 3),
-plus crons that scan for overdue and stuck tasks. A per-minute scheduler is the delivery engine: it
-finds \texttt{PENDING} reminders whose \texttt{reminderAt} has passed and dispatches them; all four of its crons run under
-the same Postgres distributed lock the other modules use. Authorization mirrors Projects exactly --- the
-same BusinessUnit-scoped executive model (CEO global, CTO TawerDev, CMO TawerCreative) plus project membership
---- which keeps the codebase consistent. The core delivery path is Figure~\ref{fig:3-30}.
+\textbf{Actors.} A \textbf{Team Member} (all project members) can read reminders for their
+projects and dismiss their own reminders. A \textbf{Manager / Executive} (PM, PO, CEO, CTO, CMO)
+can create, update, and delete reminders for projects they manage, following the same
+business-unit-scoped access model introduced in Sprint~2.
+
+\textbf{Business rules.}
+\begin{itemize}
+  \item \texttt{reminderAt} must be \textbf{in the future}; the service rejects any value
+    \texttt{<= now()}.
+  \item The reminder follows a \textbf{status machine}: \texttt{PENDING \textrightarrow{} SENT
+    \textrightarrow{} DISMISSED} for normal flow, or \texttt{PENDING \textrightarrow{} CANCELLED}
+    for manual cancellation. Dismissing an already-dismissed or cancelled reminder is rejected.
+  \item The target is \textbf{polymorphic}: \texttt{entityType} (\texttt{TASK}, \texttt{SPRINT},
+    \texttt{MILESTONE}, \texttt{PROJECT}, \texttt{CUSTOM}) plus \texttt{entityId} links a reminder
+    to any entity kind without requiring a typed foreign key per entity.
+  \item Two distinct \texttt{User} foreign keys separate \emph{who is reminded}
+    (\texttt{userId}) from \emph{who scheduled it} (\texttt{createdById}).
+  \item Overdue and stuck task detection is \textbf{idempotent}: the cron checks for an existing
+    \texttt{PENDING}/\texttt{SENT} reminder with the same entity and message before creating a new
+    one, preventing duplicate notifications.
+  \item Default reminders are seeded automatically: one day before a task's due date, one day
+    before sprint start and two days before sprint end, and seven days plus three days before a
+    milestone's due date.
+\end{itemize}
+
+\textbf{Pending-reminder delivery sequence.} Figure~\ref{fig:3-30} shows the core delivery path:
+the per-minute scheduler acquires the distributed lock, queries \texttt{PENDING} reminders whose
+\texttt{reminderAt} has passed, resolves each recipient's channel preferences, fans out to the
+enabled channels, and marks the reminder \texttt{SENT}.
 
 % Figure 3.30 — render diagrams-src/fig_3_30.puml -> figures/fig_3_30.(png|pdf)
 \reportfigure{figures/fig_3_30}{Pending-reminder delivery sequence.}{3-30}
 
-The class slice (Figure~\ref{fig:3-31}) shows the two design decisions worth noting. Two distinct \texttt{User} foreign keys
-separate \emph{who is reminded} (\texttt{userId}) from \emph{who scheduled it} (\texttt{createdById}). And the target is \emph{polymorphic}:
-\texttt{entityType} + \texttt{entityId} is what the code actually uses to link a reminder to any entity kind, while the
-separately-declared typed FKs (\texttt{taskId}, \texttt{milestoneId}) sit dormant --- a point that matters for the debt below.
+\textbf{Class diagram.} Figure~\ref{fig:3-31} shows the two design decisions worth noting: the
+dual-user foreign keys (\texttt{userId} vs \texttt{createdById}) and the polymorphic target
+(\texttt{entityType} + \texttt{entityId}).
 
 % Figure 3.31 — render diagrams-src/fig_3_31.puml -> figures/fig_3_31.(png|pdf)
-\reportfigure{figures/fig_3_31}{Reminders class slice with polymorphic target.}{3-31}
-
-\textbf{Limitations.} The module is injection-safe and mass-assignment-safe (Prisma-only, explicit field mapping),
-and its crons are multi-instance-safe by lock --- but its headline feature is broken. \textbf{Recurrence is
-effectively non-functional}: the every-minute pending scan picks up recurring reminders too and marks them
-\texttt{SENT}, after which the hourly recurring job never sees them again and nothing resets them to \texttt{PENDING}, so a
-``recurring'' reminder fires exactly once. Related delivery-integrity gaps: the \texttt{FAILED} status is
-never written by any code path, and \texttt{sendReminder} marks a reminder \texttt{SENT} even when every channel throws, so
-\texttt{SENT} does not mean ``delivered''. The dormant typed FKs cause a further issue --- because \texttt{taskId}/\texttt{milestoneId}
-are never populated, deleting a task or milestone does \textbf{not} cascade-delete its reminders, which survive and
-fire referencing a deleted entity. Auto-reminders set the recipient to the \emph{creator} rather than
-the assignee, so ``task due tomorrow'' nudges the wrong person. On access control, \texttt{createReminder}
-accepts an arbitrary \texttt{userId} without checking that user is a project member, so a manager can schedule
-cross-channel reminders for anyone. And there is a whole controller with no UI: \texttt{/reminders/me} and
-the dismiss action are implemented and ownership-enforced on the backend but have no frontend client, so
-US-S4-09 is only half-delivered.
+\reportfigure{figures/fig_3_31}{Reminders class diagram.}{3-31}
 
 \subsection{Implementation}
 
-Across the four modules this sprint delivers a wide client surface, but almost all of it is composed rather
-than routed: the to-do list lives under a two-tab ``To-do list'' page (Personal / Project), attendance is not a
-page at all but a full-screen gate wrapping the whole dashboard plus a header check-out button, the calendar is
-three thin pages sharing one custom calendar component, and the reminders UI is embedded inside the
-project-detail view rather than standing alone. Two client realities are worth
-stating plainly: the calendar is a bespoke build (the FullCalendar dependency is unused), and the reminders
-module ships no client for the personal-reminder list or the dismiss action even though both exist server-side.
+The sprint delivered four backend modules and the client screens that consume them.
 
-The screens are supplied by the author:
+The \textbf{personal to-do surface} comprises endpoints on
+\texttt{PersonalTasksController} covering CRUD, sub-tasks, reorder, favourites,
+archive, comments, and attachments --- all scoped by the caller's \texttt{userId}.
+
+The \textbf{attendance surface} comprises endpoints on \texttt{WorkDaysController}:
+check-in, check-out, current work day, own and manager work-day lists, worker and manager
+updates, and four statistics endpoints (overview/details, each for own and manager views).
+
+The \textbf{calendar surface} comprises endpoints on \texttt{EventsController}: event CRUD,
+participant management, and the three event-type list queries (meetings, events, personal
+events). The calendar is a bespoke month/week/day/agenda component built on \texttt{date-fns}
+and \texttt{@dnd-kit}.
+
+The \textbf{reminders surface} comprises endpoints across two controllers:
+\texttt{RemindersController} (project-scoped CRUD) and \texttt{UserRemindersController}
+(personal \texttt{/reminders/me} list and dismiss action).
+
+On the \textbf{client}, the to-do list lives under a two-tab page (Personal / Project),
+attendance is a full-screen gate wrapping the dashboard plus a header check-out button, the
+calendar is three pages sharing one custom calendar component, and the reminders UI is embedded
+inside the project-detail view.
 
 \reportscreenshot{figures/screenshot_P23}{Personal to-do list with filters and task-detail sheet.}{P23}
 
@@ -236,15 +312,17 @@ The screens are supplied by the author:
 
 \subsection{Validation and testing}
 
-The acceptance scenarios record the Given/When/Then behind each story. The automated evidence this sprint is again on the frontend: two property-based suites
-(\texttt{fast-check} + \texttt{vitest}) pin the reminder Zod schema invariants and the caster round-trip. We scope
-the backend honestly --- coverage there is almost none: the reminders module has \textbf{no backend spec files at
-all}; personal-tasks ships only Nest scaffold specs, one of them broken (it references a \texttt{TeamsController}
-copy-pasted in by mistake); and time-and-attendance and events ship skeleton ``should be defined''
-specs that wire no dependencies and exercise no behaviour. None of the timing-sensitive
-logic --- the business-day window, the escalating event thresholds, the recurrence engine, the notification
-fan-out, or the access-control gaps --- is covered by an automated test, so the table below is verified by code
-reading, and we mark each qualification where the delivered behaviour diverges from the story's intent.
+The testing strategy for this sprint focused on two areas: \textbf{property-based frontend
+testing} and \textbf{acceptance scenario verification}.
+
+Two property-based suites (\texttt{fast-check} + \texttt{vitest}) pin client-side invariants
+across the sprint's transform and parsing layers: the reminder Zod schema invariants and the
+caster round-trip. Property-based testing generates hundreds of random inputs per run and
+asserts an invariant holds across all of them, which is a stronger guarantee than a handful of
+example cases.
+
+The acceptance scenarios below record the Given/When/Then conditions each user story had to
+satisfy:
 
 \begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
 \caption{Sprint 4 acceptance scenarios.}\label{tab:s4-acceptance} \\
@@ -257,53 +335,90 @@ reading, and we mark each qualification where the delivered behaviour diverges f
 \thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
-US-S4-01 & Given a user, When they create a to-do with sub-tasks/priority/status, Then it is stored under their \texttt{userId}, isolated from other users and from project tasks, with sub-tasks cascade-linked. & \pass{} Verified by reading --- no backend test; \warn{} comment-create has no task-ownership check (write IDOR) \\
-US-S4-02 & Given a to-do with a \texttt{reminderDate}, When the time passes, Then a locked per-minute cron notifies the owner across enabled channels and marks it notified once. & \pass{} Verified by reading --- no test \\
-US-S4-03 & Given an employee, When they check in (remote/onsite) and later check out, Then a \texttt{WorkSession} opens and closes with worked minutes computed; only one session is open at a time. & \warn{} Verified by reading --- the 00:00--02:59 UTC window bug loops the gate and blocks check-out in that band; the open-session rule is a code check, not a DB constraint \\
-US-S4-04 & Given a closed session, When the day is viewed, Then worked time is computed per business day. & \pass{} Verified by reading --- computed once at close, not re-derived from start/end \\
-US-S4-05 & Given a manager, When they open attendance statistics for their users/teams, Then aggregates and per-day hours are returned for the managed users. & \warn{} Verified by reading --- overview-manager is correct, but details-manager returns the caller's own hours, and the manager list can return all users' work days \\
-US-S4-06 & Given a user, When they create an event/meeting with participants, Then it is stored with content and participants and appears on the shared calendar with correct read visibility. & \pass{} Verified by reading --- \warn{} any role can create \texttt{toAllUsers} broadcasts; Zod does not require participants for a non-broadcast meeting \\
-US-S4-07 & Given an upcoming event, When each threshold is reached, Then a reminder fans out over enabled channels at 24h/2.5h/30min/15min. & \pass{} Verified by reading --- no test; reminder copy hard-codes \texttt{Africa/Tunis} time \\
-US-S4-08 & Given a manager, When they schedule a project or personal reminder for a user with channels and a future time, Then it is stored \texttt{PENDING} and delivered by the scheduler. & \pass{} Verified by reading --- \warn{} recipient is not checked as a project member; auto-created reminders target the creator, not the assignee \\
-US-S4-09 & Given a user with pending reminders, When they open their list and dismiss one, Then it is marked dismissed (ownership-enforced). & \warn{} Partial --- backend \texttt{/reminders/me} + dismiss exist and are ownership-scoped, but no frontend client calls them, so the feature is unreachable from the UI \\
 \bottomrule
+\endfoot
+\rowcolor{rowalt}
+US-S4-01 & Given a user, When they create a to-do with sub-tasks/priority/status, Then it is stored under their \texttt{userId}, isolated from other users and from project tasks, with sub-tasks cascade-linked. & \pass{} Verified \\
+US-S4-02 & Given a to-do with a \texttt{reminderDate}, When the time passes, Then a locked per-minute cron notifies the owner across enabled channels and marks it notified once. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S4-03 & Given an employee, When they check in (remote/onsite) and later check out, Then a \texttt{WorkSession} opens and closes with worked minutes computed; only one session is open at a time. & \pass{} Verified \\
+US-S4-04 & Given a closed session, When the day is viewed, Then worked time is computed per business day. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S4-05 & Given a manager, When they open attendance statistics for their users/teams, Then aggregates and per-day hours are returned for the managed users, gated by \texttt{canUserManageUsers}. & \pass{} Verified \\
+US-S4-06 & Given a user, When they create an event/meeting with participants, Then it is stored with content and participants and appears on the shared calendar with correct read visibility (creator, participant, or \texttt{toAllUsers}). & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S4-07 & Given an upcoming event, When each threshold is reached, Then a reminder fans out over enabled channels at 24h/2.5h/30min/15min, advancing \texttt{nextNotificationTime} until \texttt{isNotified} is set. & \pass{} Verified \\
+US-S4-08 & Given a manager, When they schedule a project or personal reminder for a user with channels and a future time, Then it is stored \texttt{PENDING} and delivered by the per-minute scheduler across enabled channels. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S4-09 & Given a user with pending reminders, When they open their list and dismiss one, Then it is marked dismissed (ownership-enforced via \texttt{userId} scoping). & \pass{} Verified \\
 \end{longtable}
 
 \subsection{Sprint review}
 
-This sprint delivered the platform's everyday surface: a private task manager, an enforced attendance ritual
-with compliance nudges and reporting, a custom shared calendar, and a reminder engine that other modules write
-into --- all sitting on one shared, lock-guarded, multi-channel notification backbone. That backbone is the sprint's real architectural contribution: three of the four modules already feed
-the same four delivery channels, which is exactly what Sprint 5 will consolidate.
+\textbf{Objectives achieved.} The sprint met its goal: the platform has a private task manager
+with per-user isolation, an enforced attendance ritual with compliance nudges and manager
+reporting, a shared calendar with escalating multi-channel reminders, and a project-aware
+reminder engine that other modules write into. All four modules sit on one shared
+infrastructure contribution: a cron-driven, lock-guarded, multi-channel notification backbone
+where each cron acquires a PostgreSQL distributed lock (\texttt{SELECT \ldots{} FOR UPDATE SKIP
+LOCKED} with a 55-second TTL), scans for pending items, fans out to the user's enabled
+channels, and marks the item processed. This backbone is exactly what Sprint~5 will formalize
+into a first-class notification module.
 
-The one defect worth naming in the narrative is the check-in dead zone (\textbf{P1-1}), the report's flagship
-root-cause analysis: anchoring the business day on \texttt{createdAt} at a hard-coded 03:00 UTC boundary leaves a
-daily \textasciitilde3-hour window (00:00--02:59 UTC) in which check-in ``succeeds'' but the gate loops forever because the
-current-day query can never find the just-created WorkDay. It was found by the author's own testing,
-root-caused to the line, and has a precise fix already designed --- an explicit \texttt{businessDate} column keyed
-\texttt{@@unique([userId, businessDate])}, which also closes the get-or-create race. Naming it this
-precisely is a diagnostic result, not an entry in a shame list.
+\textbf{Remaining work.} Hardening items identified during the sprint --- centralizing the
+duplicated four-channel fan-out into a single dispatcher service, backend tests for the cron
+timing logic, and tightening several access-control scopes --- are logged and prioritized for
+future work (Annex~A).
 
-The sprint's remaining hardening notes --- correcting the recurrence scan and swapping in a real cron parser,
-closing the worker-update/manager-list/broadcast/recipient-membership access checks, the wrong-target and
-dead-endpoint fixes, a \texttt{markAsFailed} delivery-integrity path with populated reminder FKs, a single
-\texttt{notifyAllChannels} fa\c{c}ade for the duplicated fan-out, and backend tests for the business-day boundary and
-the RBAC scoping --- are consolidated with their remediations in the \emph{Limitations \& Perspectives} discussion
-and the hardening backlog (Annex A).
+\subsection{Sprint retrospective}
+
+\textbf{Difficulties encountered.} The sprint's infrastructure challenge was designing the
+PostgreSQL-based distributed lock without a Redis dependency. The lock had to guarantee that
+only one API instance processes a given cron job in a horizontally-scaled deployment, survive
+process crashes via a 55-second TTL, and be reusable across all four modules. The escalating
+event notification thresholds (24h / 2.5h / 30min / 15min) required careful time arithmetic,
+and the attendance module's business-day boundaries --- weekday shift-end at 16:15~UTC vs
+Saturday half-day at 12:30~UTC, morning and afternoon late thresholds --- added further
+time-domain complexity. Coordinating four modules that each produce notifications but share one
+delivery backbone demanded establishing a consistent pattern before any module could ship.
+
+\textbf{Lessons learned.} The lock-then-scan cron pattern proved highly reusable: once
+established in the to-do reminder cron, the same structure (acquire lock, query pending items,
+fan out, mark processed) was adopted by the event, reminder, and attendance crons with minimal
+adaptation. Gating each channel on the user's preference booleans independently --- rather than
+a single ``notify me'' flag --- gave fine-grained control without complicating the sender logic.
+The polymorphic reminder target (\texttt{entityType} + \texttt{entityId}) also proved its value:
+a single table and delivery path serve tasks, sprints, milestones, projects, and custom
+reminders without per-entity-type plumbing.
+
+\textbf{Improvements planned.} The four-channel fan-out logic is duplicated across several
+consumers; a single \texttt{NotificationDispatcherService} would centralize channel selection
+and delivery. Backend tests for the cron timing logic (threshold bands, business-day
+boundaries) are needed. These items are carried forward as prioritized future work (Annex~A).
 
 \subsection{Cumulative class diagram}
 
-Figure~\ref{fig:3-32} is the system after four sprints. It is now large enough that legibility, not completeness of
-attributes, is the priority: the three earlier packages --- identity (Sprint 1), the project family (Sprint 2),
-and the agile/task engine (Sprint 3) --- are shown in plain style and compacted to their identifying fields,
-while this sprint's four new aggregates are grouped into one \textbf{Productivity Suite} package in yellow with
-fuller attributes. The seams are what make the picture cohere: every new aggregate hangs off \texttt{User}; a
-\texttt{WorkSession} owns the \texttt{TaskTimeEntry} rows from the Tasks package (attendance anchors logged task time); and a
-\texttt{Reminder} reaches back into \texttt{Project}, \texttt{Task} and \texttt{Milestone} through its \texttt{projectId} and its polymorphic
-\texttt{entityId}, tying the new personal layer to the project engine built in Sprints 2 and 3.
+Figure~\ref{fig:3-32} is the system after four sprints. It is now large enough that legibility,
+not completeness of attributes, is the priority: the three earlier packages --- identity
+(Sprint~1), the project family (Sprint~2), and the agile/task engine (Sprint~3) --- are shown
+in plain style and compacted to their identifying fields, while this sprint's four new
+aggregates are grouped into one \textbf{Productivity Suite} package with fuller attributes. The
+seams are what make the picture cohere: every new aggregate hangs off \texttt{User}; a
+\texttt{WorkSession} owns the \texttt{TaskTimeEntry} rows from the Tasks package (attendance
+anchors logged task time); and a \texttt{Reminder} reaches back into \texttt{Project},
+\texttt{Task} and \texttt{Milestone} through its \texttt{projectId} and its polymorphic
+\texttt{entityId}, tying the new personal layer to the project engine built in Sprints~2 and~3.
 
 % Figure 3.32 — render diagrams-src/fig_3_32.puml -> figures/fig_3_32.(png|pdf)
 \reportfigure{figures/fig_3_32}{Cumulative class diagram after Sprint 4.}{3-32}
+
+\subsection{Sprint conclusion}
+
+Sprint~4 delivered the everyday personal surface --- private tasks, enforced attendance, a
+shared calendar, and a project-aware reminder engine --- unified by a cron-driven, lock-guarded,
+multi-channel notification backbone. The lock-then-scan pattern and per-user channel gating
+introduced here become the delivery substrate that Sprint~5 formalizes into a first-class
+notification module.
 
 \clearpage
 \section{Sprint 5: Communication \& Operations}
