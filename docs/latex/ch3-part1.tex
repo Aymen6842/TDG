@@ -67,7 +67,8 @@ US-S1-10 & As an admin, I want to create teams and assign members and a manager,
 The sprint delivers two modules. The features, actors, and use cases are collected in
 Figure~\ref{fig:3-1}.
 
-\reportfigure[0.70\textwidth]{figures/fig_3_1}{Sprint 1 use-case diagram.}{3-1}
+{\renewcommand{\figmaxheight}{0.75\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_1}{Sprint 1 use-case diagram.}{3-1}}
 
 Three actor archetypes appear. A \textbf{Visitor} (unauthenticated) can self-register (landing in a
 \texttt{PendingApproval} state until promoted by an admin) or reset a password. A \textbf{User} (any
@@ -118,7 +119,7 @@ authorized: the guard reads the route's \texttt{@Permissions} metadata, verifies
 signature and expiry, and attaches the decoded payload to the request. If no required permission
 intersects the caller's effective set, the guard returns 403.
 
-\reportfigure{figures/fig_3_3}{Protected-request RBAC sequence.}{3-3}
+\reportsideways{figures/fig_3_3}{Protected-request RBAC sequence.}{3-3}
 
 \textbf{Class diagram.} Figure~\ref{fig:3-4} shows the identity core: \texttt{User} holds
 credentials and the active flag; \texttt{Role} attaches one or more \texttt{UserType} values to a
@@ -159,7 +160,7 @@ manages their own profile and password.
 service verifies that the caller may grant the requested roles, creates the account with
 \texttt{isActive: true}, and attaches the roles.
 
-\reportfigure{figures/fig_3_5}{Create-user-by-admin sequence.}{3-5}
+\reportsideways{figures/fig_3_5}{Create-user-by-admin sequence.}{3-5}
 
 \textbf{Class diagram.} Figure~\ref{fig:3-6} extends the identity core with administrative and
 search fields and adds the team graph. \texttt{Team} groups users through \texttt{UserTeam},
@@ -409,7 +410,7 @@ invitation, sends a branded email with a join link, and raises an in-app notific
 invitee already has an account.
 
 % Figure 3.10 — render diagrams-src/fig_3_10.puml -> figures/fig_3_10.(png|pdf)
-\reportfigure{figures/fig_3_10}{Add-member / invite sequence diagram.}{3-10}
+\reportsideways{figures/fig_3_10}{Add-member / invite sequence diagram.}{3-10}
 
 \textbf{Class diagram.} Figure~\ref{fig:3-11} adds the project family to the model. \texttt{Project}
 is the aggregate root; its translatable fields are split into \texttt{ProjectContent};
@@ -419,7 +420,8 @@ per-member \texttt{hourlyRate}; and \texttt{ProjectInvitation} holds the email-b
 family: creator, member, and inviter.
 
 % Figure 3.11 — render diagrams-src/fig_3_11.puml -> figures/fig_3_11.(png|pdf)
-\reportfigure[0.90\textwidth]{figures/fig_3_11}{Projects \& Membership class slice.}{3-11}
+{\renewcommand{\figmaxheight}{0.62\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_11}{Projects \& Membership class diagram.}{3-11}}
 
 \subsection{Implementation}
 
@@ -519,11 +521,11 @@ per project rather than enforced globally.
 
 \subsection{Cumulative class diagram}
 
-Figure~\ref{fig:3-12} extends the model with the project family. The Sprint~1 identity core is
-shown in plain style; only this sprint's additions --- \texttt{Project}, \texttt{ProjectContent},
-\texttt{ProjectMember}, \texttt{ProjectInvitation} and their enums --- are highlighted. The link back
-to \texttt{User} (creator, member, inviter) is the seam that ties the new project aggregate to the
-identity core established previously.
+Figure~\ref{fig:3-12} focuses on the entities introduced in this sprint. The \texttt{User} anchor
+from Sprint~1 is shown in plain style so the attachment point is clear; this sprint's additions ---
+\texttt{Project}, \texttt{ProjectContent}, \texttt{ProjectMember}, \texttt{ProjectInvitation} and
+their enums --- are highlighted. The link back to \texttt{User} (creator, member, inviter) is the
+seam that ties the new project aggregate to the identity core established previously.
 
 % Figure 3.12 — render diagrams-src/fig_3_12.puml -> figures/fig_3_12.(png|pdf)
 {\renewcommand{\figmaxheight}{0.82\textheight}%
@@ -596,7 +598,8 @@ US-S3-12 & As a member, I want labels and to assign a task to a sprint/epic/mile
 The sprint delivers two modules. The features, actors, and use cases are collected in
 Figure~\ref{fig:3-13}.
 
-\reportfigure[0.70\textwidth]{figures/fig_3_13}{Sprint 3 use-case diagram.}{3-13}
+{\renewcommand{\figmaxheight}{0.75\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_13}{Sprint 3 use-case diagram.}{3-13}}
 
 Four Scrum-shaped roles appear, each mapped to a capability helper the service enforces. A
 \textbf{Project Manager} and \textbf{Product Owner} shape structure --- epics, milestones, task
@@ -653,7 +656,7 @@ attachment rows and creates up to two default reminders (one day before start, t
 end). Finally, it enqueues the embedding upsert so the sprint is immediately searchable.
 
 % Figure 3.14 — render diagrams-src/fig_3_14.puml -> figures/fig_3_14.(png|pdf)
-\reportfigure{figures/fig_3_14}{Create-sprint sequence diagram.}{3-14}
+\reportsideways{figures/fig_3_14}{Create-sprint sequence diagram.}{3-14}
 
 \textbf{Sprint analytics sequence.} The planning artefacts pay off as analytics, computed
 server-side from real task data. Burndown (Figure~\ref{fig:3-15}) is the clearest example: for a
@@ -665,7 +668,7 @@ day). Velocity aggregates completed-sprint points across the project, and the Ga
 four parallel queries --- milestones, epics, sprints, tasks --- into one timeline payload.
 
 % Figure 3.15 — render diagrams-src/fig_3_15.puml -> figures/fig_3_15.(png|pdf)
-\reportfigure{figures/fig_3_15}{Sprint burndown sequence diagram.}{3-15}
+\reportsideways{figures/fig_3_15}{Sprint burndown sequence diagram.}{3-15}
 
 \textbf{Sprint lifecycle state machine.} The richest piece of business logic in this module is
 the sprint state machine (Figure~\ref{fig:3-16}). A sprint is always created \texttt{Pending}.
@@ -687,7 +690,7 @@ child \texttt{SprintContent} (the same i18n content-table pattern used for proje
 \texttt{SprintAttachment} collection for files. \texttt{Epic} and \texttt{Milestone} sit directly
 under the project. All three carry the optional foreign keys that \texttt{Task} (defined in
 Module~B) will point back through --- \texttt{epicId}, \texttt{sprintId}, \texttt{milestoneId} ---
-which is why the slice shows the relations to \texttt{Task} even though the class itself belongs to
+which is why the diagram shows the relations to \texttt{Task} even though the class itself belongs to
 the next module.
 
 % Figure 3.17 — render diagrams-src/fig_3_17.puml -> figures/fig_3_17.(png|pdf)
@@ -762,7 +765,7 @@ spawns due-date reminders, fires a fire-and-forget assignment notification if th
 the author, and enqueues the AI index upsert.
 
 % Figure 3.18 — render diagrams-src/fig_3_18.puml -> figures/fig_3_18.(png|pdf)
-\reportfigure{figures/fig_3_18}{Create-task sequence diagram.}{3-18}
+\reportsideways{figures/fig_3_18}{Create-task sequence diagram.}{3-18}
 
 \textbf{Move-task sequence.} The Kanban move (Figure~\ref{fig:3-19}) is where the workflow engine
 enforces its constraints. A drag-drop issues a single PATCH; the service loads the task, checks
@@ -773,7 +776,7 @@ WIP limit. Only if all three pass does it update the status --- stamping \texttt
 the task lands on \texttt{DONE} --- and fire the assignee notification.
 
 % Figure 3.19 — render diagrams-src/fig_3_19.puml -> figures/fig_3_19.(png|pdf)
-\reportfigure{figures/fig_3_19}{Move-task Kanban sequence diagram.}{3-19}
+\reportsideways{figures/fig_3_19}{Move-task Kanban sequence diagram.}{3-19}
 
 \textbf{Task status transitions.} The status transitions (Figure~\ref{fig:3-20}) show the two
 seeded system boards. \texttt{FREESTYLE} keeps a simple three-column loop; \texttt{AGILE} runs the
@@ -785,7 +788,8 @@ permitted from anywhere, keeping the board flexible while still guarding moves b
 system columns.
 
 % Figure 3.20 — render diagrams-src/fig_3_20.puml -> figures/fig_3_20.(png|pdf)
-\reportfigure[0.65\textwidth]{figures/fig_3_20}{Task status transitions for FREESTYLE and AGILE boards.}{3-20}
+{\renewcommand{\figmaxheight}{0.75\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_20}{Task status transitions for FREESTYLE and AGILE boards.}{3-20}}
 
 \textbf{Class diagram.} Figure~\ref{fig:3-21} is the largest single-module class diagram in the
 report. \texttt{Task} is the hub; \texttt{ProjectTaskStatus} holds the board columns and their
@@ -798,7 +802,7 @@ and \texttt{TaskPriority}, constrain the classification fields; the \texttt{stat
 deliberately left as a free string because the board is data-driven.
 
 % Figure 3.21 — render diagrams-src/fig_3_21.puml -> figures/fig_3_21.(png|pdf)
-\reportfigure[\textwidth]{figures/fig_3_21}{Tasks \& Kanban class diagram.}{3-21}
+\reportsideways{figures/fig_3_21}{Tasks \& Kanban class diagram.}{3-21}
 
 \subsection{Implementation}
 
@@ -917,8 +921,7 @@ carries optional foreign keys into \texttt{Sprint}, \texttt{Epic} and \texttt{Mi
 pointing back to \texttt{User} as assignee and reporter.
 
 % Figure 3.22 — render diagrams-src/fig_3_22.puml -> figures/fig_3_22.(png|pdf)
-{\renewcommand{\figmaxheight}{0.82\textheight}%
-\reportfigure[\textwidth]{figures/fig_3_22}{Cumulative class diagram after Sprint 3.}{3-22}}
+\reportsideways{figures/fig_3_22}{Cumulative class diagram after Sprint 3.}{3-22}
 
 \subsection{Sprint conclusion}
 

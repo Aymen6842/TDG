@@ -79,6 +79,6 @@ User "1" --> "0..*" RefreshToken : issues
 User "1" --> "0..1" ResetPasswordCode : has
 User "1" --> "0..*" UserTeam : "member of"
 Team "1" --> "0..*" UserTeam : "has members"
-User "1" ..> "0..*" UserManager : "manages (unused)"
+User "1" --> "0..*" UserManager : manages
 Role ..> UserType : type
 @enduml

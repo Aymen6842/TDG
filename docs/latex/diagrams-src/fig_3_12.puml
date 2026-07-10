@@ -12,56 +12,13 @@ skinparam class {
   ArrowColor #33475b
 }
 
-' Sprint 1 — compacted to identifying fields (full detail in fig 3.7)
-package "Identity & Access (Sprint 1)" {
-
-  together {
-    class Team {
-      +id : UUID
-      +name : String
-    }
-
-    class UserTeam {
-      +id : UUID
-      +isManager : Boolean
-    }
-  }
-
-  together {
-    class Role {
-      +id : UUID
-      +type : UserType
-    }
-
-    class RefreshToken {
-      +token : String <<PK>>
-    }
-
-    class ResetPasswordCode {
-      +id : UUID
-    }
-
-    class UserManager {
-      +id : UUID
-    }
-  }
-
-  enum UserType {
-    CEO
-    CTO
-    CMO
-    .. 31 roles ..
-    PendingApproval
-  }
-
-  class User {
-    +id : UUID
-    +email : String <<unique>>
-    +isActive : Boolean
-  }
+' ── Anchor from Sprint 1 (compacted) ──
+class User <<Sprint 1>> {
+  +id : UUID
+  +email : String <<unique>>
 }
 
-' Sprint 2 — fully detailed (new additions)
+' ── Sprint 2 — Projects & Membership ──
 package "Projects & Membership (Sprint 2)" {
 
   class Project #LightYellow {
@@ -79,7 +36,6 @@ package "Projects & Membership (Sprint 2)" {
   together {
     class ProjectContent #LightYellow {
       +id : UUID
-      -projectId : UUID
       +name : String
       +unaccentedName : String
       +language : Language
@@ -87,42 +43,35 @@ package "Projects & Membership (Sprint 2)" {
 
     class ProjectMember #LightYellow {
       +id : UUID
-      -projectId : UUID
-      -userId : UUID
       +isManager : Boolean
       +hourlyRate : Decimal
     }
 
     class ProjectInvitation #LightYellow {
       +id : UUID
-      -projectId : UUID
       +email : String
       +token : String <<unique>>
       +status : InvitationStatus
-      +isManager : Boolean
       +expiresAt : DateTime
     }
   }
 
   together {
-    enum BusinessUnit  #LightYellow {
+    enum BusinessUnit #LightYellow {
       TawerDev
       TawerCreative
     }
-
-    enum ProjectType  #LightYellow {
+    enum ProjectType #LightYellow {
       AGILE
       FREESTYLE
     }
-
-    enum ProjectStatus  #LightYellow {
+    enum ProjectStatus #LightYellow {
       Pending
       Running
       Stopped
       Completed
     }
-
-    enum InvitationStatus  #LightYellow {
+    enum InvitationStatus #LightYellow {
       PENDING
       ACCEPTED
       EXPIRED
@@ -131,26 +80,16 @@ package "Projects & Membership (Sprint 2)" {
   }
 }
 
-' Sprint 1 internal — User at bottom, others above
-User "1" -up-> "0..*" Role
-User "1" -up-> "0..*" RefreshToken
-User "1" -up-> "0..1" ResetPasswordCode
-User "1" -up-> "0..*" UserTeam
-User "1" -up-> "0..*" UserManager
-Team "1" -down-> "0..*" UserTeam
-Role ..> UserType
+' ── Relations from the anchor into Sprint 2 ──
+User "1" --> "0..*" Project : creates
+User "1" --> "0..*" ProjectMember : "member of"
+User "1" --> "0..*" ProjectInvitation : "invited by"
 
-' Cross-sprint seams — flow down from User into Sprint 2
-User "1" -down-> "0..*" Project : creates
-User "1" -down-> "0..*" ProjectMember : "member of"
-User "1" -down-> "0..*" ProjectInvitation : "invited by"
+' ── Sprint 2 internal relations ──
+Project "1" --> "1..*" ProjectContent : "has (i18n)"
+Project "1" --> "1..*" ProjectMember : "has team"
+Project "1" --> "0..*" ProjectInvitation : "has invites"
 
-' Sprint 2 internal
-Project "1" -down-> "1..*" ProjectContent : "has (i18n)"
-Project "1" -down-> "1..*" ProjectMember : "has team"
-Project "1" -down-> "0..*" ProjectInvitation : "has invites"
-
-' Enum dependencies
 Project ..> BusinessUnit
 Project ..> ProjectType
 Project ..> ProjectStatus

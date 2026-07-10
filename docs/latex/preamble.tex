@@ -14,7 +14,7 @@
 
 \usepackage[dvipsnames,table]{xcolor}
 \usepackage{graphicx}
-\usepackage{rotating} % sidewaysfigure for full-page landscape diagrams
+\usepackage{pdflscape} % \begin{landscape} for in-place landscape pages
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{longtable}
@@ -147,15 +147,19 @@
   \fbox{\begin{minipage}{0.8\textwidth}\centering\vspace{10pt}{\color{RoyalPurple}\bfseries\Large FIGURE PENDING}\\[6pt]{\small #3}\vspace{10pt}\end{minipage}}}}}
   \caption{#3}\label{fig:#4}\end{figure}}
 
-% --- Full-page sideways figure macro -----------------------------------------
-% For diagrams too wide to read in portrait: a dedicated landscape page.
+% --- In-place landscape figure macro -----------------------------------------
+% Uses pdflscape so the page appears exactly where it is in the source
+% (no floating). The PDF viewer rotates the page; print output is landscape.
 % \reportsideways{path}{caption}{label}
 \newcommand{\reportsideways}[3]{%
-  \begin{sidewaysfigure}\centering
-  \IfFileExists{#1.pdf}{\includegraphics[width=0.96\textheight,height=0.92\textwidth,keepaspectratio]{#1.pdf}}{%
-  \IfFileExists{#1.png}{\includegraphics[width=0.96\textheight,height=0.92\textwidth,keepaspectratio]{#1.png}}{%
-  \fbox{\begin{minipage}{0.8\textwidth}\centering\vspace{10pt}{\color{RoyalPurple}\bfseries\Large FIGURE PENDING}\\[6pt]{\small #2}\vspace{10pt}\end{minipage}}}}
-  \caption{#2}\label{fig:#3}\end{sidewaysfigure}}
+  \begin{landscape}
+  \begin{figure}[H]\centering
+  \IfFileExists{#1.pdf}{\includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{#1.pdf}}{%
+  \IfFileExists{#1.png}{\includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{#1.png}}{%
+  \fbox{\begin{minipage}{0.8\linewidth}\centering\vspace{10pt}{\color{RoyalPurple}\bfseries\Large FIGURE PENDING}\\[6pt]{\small #2}\vspace{10pt}\end{minipage}}}}
+  \caption{#2}\label{fig:#3}
+  \end{figure}
+  \end{landscape}}
 
 % --- Screenshot macro -------------------------------------------------------
 % Same auto-resolve behaviour as \reportfigure, plus a thin gray frame so
