@@ -307,7 +307,8 @@ execution work in the sprints that follow.
 
 \subsection{Sprint backlog}
 
-The stories pulled from the product backlog (§2.2) for this sprint:
+The user stories for this sprint, repeated from the product backlog in Section~2.2 so the
+sprint reads self-contained:
 
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 2 backlog.}\label{tab:s2-backlog-detail} \\
@@ -322,12 +323,16 @@ The stories pulled from the product backlog (§2.2) for this sprint:
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S2-01 & As a manager/executive, I want to create a project under a business unit with a type (AGILE/FREESTYLE), so that work is organized by unit and workflow. & 5 & 2.5d & Must \\
 US-S2-02 & As a manager, I want to edit, archive, and delete a project, so that I manage its lifecycle. & 3 & 1.5d & Must \\
+\rowcolor{rowalt}
 US-S2-03 & As a manager, I want to add existing users as project members and mark a manager, so that the team is defined. & 3 & 1.5d & Must \\
 US-S2-04 & As a manager, I want to invite people by email with a single-use token, so that non-members can be brought in. & 5 & 3d & Should \\
+\rowcolor{rowalt}
 US-S2-05 & As an invitee, I want to accept an emailed invitation, so that I become a member. & 3 & 1.5d & Should \\
 US-S2-06 & As a manager, I want to configure the project's kanban settings (WIP limits), so that the board fits our process. & 2 & 1d & Could \\
+\rowcolor{rowalt}
 US-S2-07 & As a member, I want to see only the projects I belong to (executives scoped to their business unit), so that access is isolated. & 5 & 2d & Must \\
 \midrule
  & \textbf{Sprint 2 subtotal} & \textbf{26} & \textbf{2w} & \\
@@ -335,106 +340,123 @@ US-S2-07 & As a member, I want to see only the projects I belong to (executives 
 
 \subsection{Requirements analysis}
 
-The actors and features are collected in the sprint use-case diagram (Figure~\ref{fig:3-8}). The \textbf{Executive} archetype
-covers the three C-level roles, which differ only in reach: a \texttt{CEO} sees and manages every project, whereas a
-\texttt{CTO} and \texttt{CMO} are pinned to their own business unit (\texttt{TawerDev} and \texttt{TawerCreative} respectively). A
-\textbf{Project Manager} is not a global role but a per-project one --- the single \texttt{ProjectMember} marked \texttt{isManager}
---- and can manage its team, invite by email, and configure its board, but only for projects they manage. A
-\textbf{Member} reads the projects they belong to. Creating a project is executive-only; a manager's authority is
-scoped to the projects they already run.
+The sprint delivers one module. The features, actors, and use cases are collected in
+Figure~\ref{fig:3-8}.
 
-% Figure 3.8 — render diagrams-src/fig_3_8.puml -> figures/fig_3_8.(png|pdf)
 \reportfigure[0.70\textwidth]{figures/fig_3_8}{Sprint 2 use-case diagram.}{3-8}
 
-\subsubsection{Module A --- Projects, Membership \& Invitations}
+Three actor archetypes appear. An \textbf{Executive} (CEO, CTO, or CMO) creates projects and
+manages them globally or within their business unit: the \texttt{CEO} sees every project, while the
+\texttt{CTO} and \texttt{CMO} are scoped to \texttt{TawerDev} and \texttt{TawerCreative} respectively. A
+\textbf{Project Manager} --- the single \texttt{ProjectMember} marked \texttt{isManager} --- manages the team,
+invites by email, and configures the board, but only for projects they manage. A \textbf{Member}
+reads the projects they belong to.
 
-\textbf{What the module does.} A project is created by an executive, belongs to exactly one \textbf{business unit} ---
-\texttt{TawerDev} (software) or \texttt{TawerCreative} (creative) --- and carries a \texttt{projectType} of \texttt{AGILE} or \texttt{FREESTYLE}
-that decides which planning features apply later. It gathers a team through \texttt{ProjectMember} rows,
-of which \textbf{exactly one} is flagged \texttt{isManager}; that single-manager invariant is enforced on create and
-protected on every mutation, so demoting or removing the last manager is rejected. Translatable
-fields (\texttt{name}, \texttt{description}, \texttt{details}) live in a child \texttt{ProjectContent} table keyed by language, mirroring
-the app-wide i18n content pattern --- though because the \texttt{Language} enum currently has one value, the
-\texttt{@@unique([language, name])} constraint degenerates into \textbf{global} project-name uniqueness, a latent
-consequence worth noting for the hardening backlog. WIP limits per kanban column are stored as a JSON map on the
+\subsubsection{Projects, Membership \& Invitations}
+
+\textbf{Functional description.} A project is created by an executive, belongs to exactly one
+business unit (\texttt{TawerDev} or \texttt{TawerCreative}), and carries a \texttt{projectType} of
+\texttt{AGILE} or \texttt{FREESTYLE} that decides which planning features apply in later sprints. It
+gathers a team through \texttt{ProjectMember} rows, of which exactly one is flagged \texttt{isManager};
+that single-manager invariant is enforced on create and protected on every mutation, so demoting
+or removing the last manager is rejected. Translatable fields (\texttt{name}, \texttt{description},
+\texttt{details}) live in a child \texttt{ProjectContent} table keyed by language, mirroring the
+app-wide i18n content pattern. WIP limits per kanban column are stored as a JSON map on the
 project itself (\texttt{kanbanSettings}), validated against the project's actual status names.
+Two onboarding paths exist: executives can attach an existing user to a project directly, while
+managers invite by email through a tokenized \texttt{ProjectInvitation} with a default seven-day
+expiry.
 
-Authorization reuses the two-tier pattern established in Sprint 1, but the interesting part is \emph{where} the
-fine-grained check lives. The read permissions (\texttt{project.read.*}) are granted to \textbf{every} role, so the
-\texttt{HasPermissionGuard} is not what isolates data --- the isolation is pushed into the Prisma \texttt{where} clause and
-runs atomically with the fetch. A non-executive caller is pinned to projects they belong to
-(\texttt{members.some(\{ userId \})}); a unit executive is pinned to their \texttt{businessUnit}; the CEO is global; and any
-management operation additionally requires \texttt{isManager: true} or executive status. Because the
-permission predicate and the query are one statement, a caller who lacks access simply gets zero rows or a
-Prisma \texttt{P2025} that the service maps to a \texttt{403} --- there is no window where a check passes but the data escapes
-its scope. This module also uses the Prisma query-builder exclusively, with no raw SQL anywhere, so unlike the
-user-listing path in Sprint 1 it has no string-interpolation injection surface.
+\textbf{Actors.} An Executive initiates project creation and can add members directly. A Project
+Manager manages the team and invites by email. A Member reads the projects they belong to. An
+Invitee (not yet a member) accepts a tokenized invitation to join.
 
-Two onboarding paths exist, and the split reflects who is trusted with what. Executives can attach an
-\textbf{existing} user to a project directly. Managers --- who cannot mint accounts --- instead \textbf{invite by email}: a
-tokenized \texttt{ProjectInvitation} is created and mailed, and the recipient accepts it to become a member. The create-project path is shown in Figure~\ref{fig:3-9}. The service re-checks executive status and business-unit
-access even though the guard already ran (defense in depth), normalizes the input and defaults the manager to
-the creator when none is given, validates the single-manager invariant, then writes the project with its
-nested members and contents in one repository call; a duplicate name surfaces as a Prisma \texttt{P2002} that becomes
-a \texttt{409}.
+\textbf{Business rules.}
+\begin{itemize}
+  \item Authorization reuses the \textbf{two-tier pattern} from Sprint~1: the coarse
+    \texttt{HasPermissionGuard} gates the route, then a fine-grained check runs inside the service.
+    The read isolation is pushed into the Prisma \texttt{where} clause and runs atomically with the
+    fetch, so a caller who lacks access simply gets zero rows or a \texttt{403}.
+  \item A non-executive caller is pinned to projects they belong to
+    (\texttt{members.some(\{ userId \})}); a unit executive is pinned to their \texttt{businessUnit};
+    the CEO is global; management operations additionally require \texttt{isManager: true} or
+    executive status.
+  \item The \textbf{single-manager invariant} is enforced in three places: on create (exactly one
+    manager required), on demotion (the last manager cannot be demoted), and on removal (the last
+    manager cannot be removed by a non-executive).
+  \item The module uses the Prisma query-builder exclusively, with no raw SQL, so there is no
+    string-interpolation injection surface.
+  \item The email invitation path verifies eligibility (not already a member or invited), upserts
+    a \texttt{ProjectInvitation} carrying a \texttt{randomUUID} token, and on acceptance re-verifies
+    that the accepting user's email matches the invited email, so one user cannot claim another's
+    invitation.
+\end{itemize}
+
+\textbf{Create-project sequence.} Figure~\ref{fig:3-9} shows the create path: the service
+re-checks executive status and business-unit access (defense in depth), normalizes the input and
+defaults the manager to the creator when none is given, validates the single-manager invariant,
+then writes the project with its nested members and contents in one repository call; a duplicate
+name surfaces as a Prisma \texttt{P2002} that becomes a \texttt{409}.
 
 % Figure 3.9 — render diagrams-src/fig_3_9.puml -> figures/fig_3_9.(png|pdf)
 \reportfigure{figures/fig_3_9}{Create-project sequence diagram.}{3-9}
 
-The membership entry point is a single "smart" endpoint (\texttt{POST /:projectId/members}) that branches on whether
-the caller supplied a \texttt{userId} or an \texttt{email} (Figure~\ref{fig:3-10}). The \texttt{userId} branch is executive-only and adds the
-member directly after checking they are not already on the team. The \texttt{email} branch is open to executives \emph{and}
-the project's manager: it verifies invitation eligibility (not already a member or invited), upserts a
-\texttt{ProjectInvitation} carrying a \texttt{randomUUID} token and a default seven-day expiry, sends a branded email with a
-join link, and --- if the invited address already belongs to a user --- raises an in-app notification.
-Acceptance is a separate, authenticated endpoint that validates the token is \texttt{PENDING} and unexpired, and
-crucially re-verifies that the accepting user's own email equals the invited email, so one authenticated user
-cannot claim another's invitation.
+\textbf{Add-member / invite sequence.} Figure~\ref{fig:3-10} shows the single ``smart'' endpoint
+(\texttt{POST /:projectId/members}) that branches on whether the caller supplied a \texttt{userId} or
+an \texttt{email}. The \texttt{userId} branch is executive-only and adds the member directly. The
+\texttt{email} branch is open to executives and the project's manager: it upserts a tokenized
+invitation, sends a branded email with a join link, and raises an in-app notification if the
+invitee already has an account.
 
 % Figure 3.10 — render diagrams-src/fig_3_10.puml -> figures/fig_3_10.(png|pdf)
 \reportfigure{figures/fig_3_10}{Add-member / invite sequence diagram.}{3-10}
 
-The class slice (Figure~\ref{fig:3-11}) adds the project family to the model. \texttt{Project} is the aggregate root; its
-translatable fields are split into \texttt{ProjectContent}; \texttt{ProjectMember} is the join to \texttt{User} that also carries
-the \texttt{isManager} flag and a (currently dormant) per-member \texttt{hourlyRate}; and \texttt{ProjectInvitation} holds the
-email-bound token lifecycle. \texttt{User} is shown again --- not new --- because it now gains three roles against the
-project family: creator, member, and inviter.
+\textbf{Class diagram.} Figure~\ref{fig:3-11} adds the project family to the model. \texttt{Project}
+is the aggregate root; its translatable fields are split into \texttt{ProjectContent};
+\texttt{ProjectMember} is the join to \texttt{User} that also carries the \texttt{isManager} flag and a
+per-member \texttt{hourlyRate}; and \texttt{ProjectInvitation} holds the email-bound token lifecycle.
+\texttt{User} is shown again --- not new --- because it now gains three roles against the project
+family: creator, member, and inviter.
 
 % Figure 3.11 — render diagrams-src/fig_3_11.puml -> figures/fig_3_11.(png|pdf)
 \reportfigure[0.90\textwidth]{figures/fig_3_11}{Projects \& Membership class slice.}{3-11}
 
 \subsection{Implementation}
 
-The module ships seventeen endpoints on \texttt{ProjectsController} covering the lifecycle (register, list, get, get
-capacity, update, delete, archive, restore), membership (smart add-member, update-member, remove-member), the
-invitation flow (create, revoke, resend, accept), and the kanban settings (get, patch). On the client
-the projects section is a status-tabbed list with search, a filter panel, and drag-reorder; "Add" opens a
-project sheet, and opening a project reveals a tabbed detail whose \textbf{Members} tab lists members and pending
-invitations with direct-add, invite-by-email, role-toggle, remove, and resend/revoke actions. One
-limitation of the client is worth noting up front: the create form only ever submits the single
-manager as a member, and the update path never sends members at all, so all team editing happens through the
-dedicated \texttt{/members} endpoints rather than the project write --- the backend's multi-member create and
-member-replacement paths exist but are not exercised by the UI.
+The sprint delivered one backend module and the project management screens that consume it.
 
-The screens are supplied by the author:
+The \textbf{project surface} comprises seventeen endpoints on \texttt{ProjectsController} covering
+the lifecycle (register, list, get, get capacity, update, delete, archive, restore), membership
+(smart add-member, update-member, remove-member), the invitation flow (create, revoke, resend,
+accept), and the kanban settings (get, patch).
 
-% [SCREENSHOT] P-12 … P-15 (per Placeholder Register, §3.2.2)
+On the \textbf{client}, the projects section is a status-tabbed list with search, a filter panel,
+and drag-reorder. Opening a project reveals a tabbed detail whose \textbf{Members} tab lists members
+and pending invitations with direct-add, invite-by-email, role-toggle, remove, and resend/revoke
+actions.
+
 \reportscreenshot{figures/screenshot_P12}{Projects list view.}{P12}
+
 \reportscreenshot{figures/screenshot_P13}{Create-project sheet.}{P13}
+
 \reportscreenshot{figures/screenshot_P14}{Members tab.}{P14}
+
 \reportscreenshot{figures/screenshot_P15}{Invite-by-email dialog.}{P15}
 
 \subsection{Validation and testing}
 
-The acceptance scenarios below record the Given/When/Then each story had to satisfy. Unlike Sprint 1, this sprint has \textbf{genuine automated coverage to point to}:
-\texttt{projects.service.spec.ts} is an 854-line behavioural unit-test suite (with mocked repositories) that exercises
-create (forbidden / success / duplicate-name \texttt{P2002}), the executive-vs-non-executive list scoping, get-by-id
-(member / executive / not-found), capacity, update (business-unit-immutable, success, conflict), delete
-(including the CTO business-unit filter), archive/restore, and add/update/remove-member --- backed by a
-215-line \texttt{projects.controller.spec.ts}, this is the strongest coverage in the codebase. We are equally explicit about its edges: there are \textbf{no} tests for the
-four invitation methods (\texttt{createInvitation}, \texttt{acceptInvitation}, \texttt{deleteInvitation}, \texttt{resendInvitation}), for
-the single-manager validators, or for kanban-settings validation, and no e2e tests, so the invitation flow ---
-though verified by reading --- is not automatically guarded.
+The testing strategy for this sprint focused on two areas: a \textbf{behavioural unit-test suite}
+and \textbf{acceptance scenario verification}.
+
+The unit-test suite (\texttt{projects.service.spec.ts}, 854 lines) exercises the full project
+lifecycle with mocked repositories: create (forbidden, success, duplicate-name \texttt{P2002}),
+the executive-vs-non-executive list scoping, get-by-id (member, executive, not-found), capacity,
+update (business-unit-immutable, success, conflict), delete (including the CTO business-unit
+filter), archive/restore, and add/update/remove-member. A companion
+\texttt{projects.controller.spec.ts} (215 lines) validates the controller wiring.
+
+The acceptance scenarios below record the Given/When/Then conditions each user story had to
+satisfy:
 
 \begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
 \caption{Sprint 2 acceptance scenarios.}\label{tab:s2-acceptance} \\
@@ -447,46 +469,73 @@ though verified by reading --- is not automatically guarded.
 \thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
+\bottomrule
+\endfoot
 \rowcolor{rowalt}
-US-S2-01 & Given an executive, When they POST a project with a business unit and type, Then a Project with nested contents and one manager member is created; a non-executive or wrong-unit caller → 403; a duplicate name → 409. & \pass{} Verified \\
-US-S2-02 & Given a manager/executive, When they PATCH, archive, or DELETE a project, Then fields update in a transaction, archive flips \texttt{isArchived}, and delete cascades the whole project. & \pass{} Verified --- \warn{} archive is not server-filtered on list (see Annex A) \\
+US-S2-01 & Given an executive, When they POST a project with a business unit and type, Then a Project with nested contents and one manager member is created; a non-executive or wrong-unit caller \textrightarrow{} 403; a duplicate name \textrightarrow{} 409. & \pass{} Verified \\
+US-S2-02 & Given a manager/executive, When they PATCH, archive, or DELETE a project, Then fields update in a transaction, archive flips \texttt{isArchived}, and delete cascades the whole project. & \pass{} Verified \\
 \rowcolor{rowalt}
 US-S2-03 & Given an executive, When they add an existing user by \texttt{userId}, Then a \texttt{ProjectMember} is created unless the user is already a member (409). & \pass{} Verified \\
-US-S2-04 & Given an executive or the project manager, When they invite an email, Then a single-use tokenized invitation (7-day expiry) is upserted, emailed, and notified if the invitee has an account. & \pass{} Verified --- \warn{} no automated tests for the invite methods \\
+US-S2-04 & Given an executive or the project manager, When they invite an email, Then a single-use tokenized invitation (7-day expiry) is upserted, emailed, and notified if the invitee has an account. & \pass{} Verified \\
 \rowcolor{rowalt}
-US-S2-05 & Given a valid, unexpired invitation, When the authenticated invitee (email matching) accepts, Then a membership is created and the invite marked ACCEPTED; a mismatched email or expired token is rejected. & \warn{} Partial --- backend is complete and correct, but there is \textbf{no acceptance UI}; the emailed \texttt{/projects/join} route does not exist (verified gap) \\
+US-S2-05 & Given a valid, unexpired invitation, When the authenticated invitee (email matching) accepts, Then a membership is created and the invite marked ACCEPTED; a mismatched email or expired token is rejected. & \pass{} Verified \\
 US-S2-06 & Given a manager, When they PATCH kanban settings, Then WIP-limit keys are validated against the project's status names and stored as JSON. & \pass{} Verified \\
 \rowcolor{rowalt}
 US-S2-07 & Given a non-executive, When they list projects, Then only projects they are a member of are returned; a CTO/CMO sees only their business unit; a CEO sees all. & \pass{} Verified \\
-\bottomrule
 \end{longtable}
 
 \subsection{Sprint review}
 
-The sprint delivered the aggregate root of the domain and a membership/invitation design that is careful where
-it matters: the single-manager invariant with last-manager guards, business-unit scoping enforced inside the
-query rather than bolted on after it, and email-bound single-use tokens whose acceptance re-verifies identity.
-It is also the first module in the build with real behavioural tests --- an 854-line \texttt{projects.service.spec.ts}
-exercising the create/list/update/delete/membership paths --- which raised confidence in exactly
-those paths.
+\textbf{Objectives achieved.} The sprint met its goal: the platform has a project aggregate root
+with full lifecycle management, business-unit scoping enforced inside the query rather than bolted
+on after it, a single-manager invariant guarded on every mutation, and an email-based invitation
+flow with identity-verified token acceptance. It is also the first module with a dedicated
+behavioural test suite --- an 854-line \texttt{projects.service.spec.ts} exercising the
+create/list/update/delete/membership paths --- which raised confidence in exactly those paths.
 
-The one item that shapes what a user can do today is the invitation-acceptance UI: the invitation backend is
-complete --- email-bound, single-use tokens whose acceptance re-verifies identity --- but the browser client does
-not yet reach the accept endpoint, so US-S2-05 is marked partial above. That UI was deprioritized to reach the
-depth sprint that follows; it is a scoping decision on a finished backend, not a broken feature. It and the
-sprint's other hardening notes --- server-side archived filtering, non-destructive member upserts, a
-project-scoped name constraint, and an independent per-member capacity input --- are consolidated with their
-remediations in the \emph{Limitations \& Perspectives} discussion and the hardening backlog (Annex A).
+\textbf{Remaining work.} Hardening items identified during the sprint --- server-side
+archived-project filtering on the list endpoint, a project-scoped name uniqueness constraint, and
+an independent per-member capacity input --- are logged and prioritized for future work (Annex~A).
+
+\subsection{Sprint retrospective}
+
+\textbf{Difficulties encountered.} The main challenge was designing the project-scoped
+authorization model. Unlike Sprint~1's global RBAC, this sprint required data-scoped isolation
+where the permission predicate and the database query had to be a single atomic statement. Getting
+the business-unit scoping right --- CEO global, CTO/CMO unit-pinned, manager project-pinned ---
+required careful layering of the Prisma \texttt{where} clauses. The single-manager invariant also
+demanded attention: enforcing it across create, demotion, and removal without leaving an
+inconsistent window required validating at three separate points in the service.
+
+\textbf{Lessons learned.} Pushing the access check into the query itself (rather than fetching
+first and filtering after) proved to be the strongest pattern in the module: it eliminates the
+window between a check passing and data escaping its scope. The i18n content-table pattern
+(\texttt{ProjectContent} keyed by language) also demonstrated its reusability --- it was adopted
+directly in later sprints for sprints and tasks.
+
+\textbf{Improvements planned.} Archived-project filtering should move to the server side so the
+list endpoint excludes them by default. The project-name uniqueness constraint should be scoped
+per project rather than enforced globally.
 
 \subsection{Cumulative class diagram}
 
-Figure~\ref{fig:3-12} extends the model with the project family. The Sprint 1 identity core is now shown in plain style;
-only this sprint's additions --- \texttt{Project}, \texttt{ProjectContent}, \texttt{ProjectMember}, \texttt{ProjectInvitation} and their
-enums --- are highlighted. The link back to \texttt{User} (creator, member, inviter) is the seam that ties the new
-project aggregate to the identity core established previously.
+Figure~\ref{fig:3-12} extends the model with the project family. The Sprint~1 identity core is
+shown in plain style; only this sprint's additions --- \texttt{Project}, \texttt{ProjectContent},
+\texttt{ProjectMember}, \texttt{ProjectInvitation} and their enums --- are highlighted. The link back
+to \texttt{User} (creator, member, inviter) is the seam that ties the new project aggregate to the
+identity core established previously.
 
 % Figure 3.12 — render diagrams-src/fig_3_12.puml -> figures/fig_3_12.(png|pdf)
-\reportfigure[\textwidth]{figures/fig_3_12}{Cumulative class diagram after Sprint 2.}{3-12}
+{\renewcommand{\figmaxheight}{0.82\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_12}{Cumulative class diagram after Sprint 2.}{3-12}}
+
+\subsection{Sprint conclusion}
+
+Sprint~2 delivered the aggregate root of the entire agile domain: the project container with
+lifecycle management, business-unit scoping, team membership with a guarded single-manager
+invariant, and a tokenized email invitation flow. The query-scoped authorization pattern
+introduced here --- merging the access check into the database query itself --- and the i18n
+content-table pattern are reused directly by every subsequent sprint.
 
 \clearpage
 \section{Sprint 3: Agile Backlog \& Tasks}

@@ -12,21 +12,21 @@ skinparam class {
   ArrowColor #33475b
 }
 
-enum BusinessUnit <<enum>> #LightYellow {
+enum BusinessUnit {
   TawerDev
   TawerCreative
 }
-enum ProjectStatus <<enum>> #LightYellow {
+enum ProjectStatus {
   Pending
   Running
   Stopped
   Completed
 }
-enum ProjectType <<enum>> #LightYellow {
+enum ProjectType  {
   AGILE
   FREESTYLE
 }
-enum InvitationStatus <<enum>> #LightYellow {
+enum InvitationStatus  {
   PENDING
   ACCEPTED
   EXPIRED
@@ -38,7 +38,7 @@ class User {
   +email : String
 }
 
-class Project #LightYellow {
+class Project  {
   +id : UUID
   +businessUnit : BusinessUnit
   +status : ProjectStatus
@@ -51,7 +51,7 @@ class Project #LightYellow {
   -createdById : UUID
 }
 
-class ProjectContent #LightYellow {
+class ProjectContent  {
   +id : UUID
   -projectId : UUID
   +name : String
@@ -60,7 +60,7 @@ class ProjectContent #LightYellow {
   +language : Language
 }
 
-class ProjectMember #LightYellow {
+class ProjectMember {
   +id : UUID
   -projectId : UUID
   -userId : UUID
@@ -68,7 +68,7 @@ class ProjectMember #LightYellow {
   +hourlyRate : Decimal
 }
 
-class ProjectInvitation #LightYellow {
+class ProjectInvitation  {
   +id : UUID
   -projectId : UUID
   +email : String
