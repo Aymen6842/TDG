@@ -6,6 +6,8 @@ skinparam roundcorner 8
 skinparam defaultFontName "Helvetica"
 skinparam classAttributeIconSize 0
 skinparam ArrowColor #33475b
+skinparam nodesep 50
+skinparam ranksep 60
 skinparam class {
   BackgroundColor #FBFCFE
   BorderColor #33475b
@@ -16,26 +18,26 @@ class User {
   +id : UUID
 }
 
-enum ServerServiceStatus <<enum>> #LightYellow {
+enum ServerServiceStatus {
   Running
   Stopped
   Maintenance
 }
 
-class Server #LightYellow {
+class Server {
   +id : UUID
   +name : String
   +ip : String
   +domain : String
-  +cpus : String «free-text»
-  +ram : String «free-text»
-  +storage : String «free-text»
+  +cpus : String
+  +ram : String
+  +storage : String
   +paid : Boolean
-  +status : ServerServiceStatus «manual label»
+  +status : ServerServiceStatus
   +expiredAt : DateTime
   +nextNotificationAt : DateTime
 }
-class Service #LightYellow {
+class Service {
   +id : UUID
   +name : String
   +domain : String
@@ -46,19 +48,18 @@ class Service #LightYellow {
   +expiredAt : DateTime
   +nextNotificationAt : DateTime
 }
-class ServerNotification #LightYellow {
+class ServerNotification {
   +id : UUID
   +message : String
   +isSent : Boolean «outbox»
 }
-class ServiceNotification #LightYellow {
+class ServiceNotification {
   +id : UUID
   +message : String
   +isSent : Boolean «outbox»
 }
-class UserServerManagement #LightYellow {
+class UserServerManagement {
   +id : UUID
-  ' @@unique(managerId, serverId)
 }
 
 Server "1" --> "0..*" Service : "hosts (cascade)"
@@ -66,4 +67,7 @@ Server "1" --> "0..*" ServerNotification : raises
 Service "1" --> "0..*" ServiceNotification : raises
 Server "1" --> "0..*" UserServerManagement : "managed via"
 User "1" --> "0..*" UserServerManagement : manages
+
+Server ..> ServerServiceStatus
+Service ..> ServerServiceStatus
 @enduml

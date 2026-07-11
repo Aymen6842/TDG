@@ -13,38 +13,37 @@ skinparam usecase {
 }
 left to right direction
 
-actor "User" as U
+actor "User\n(employee)" as U
 actor "DevOps\nEngineer" as D
 actor "CTO" as C
 actor "Scheduler\n(system)" as S
 
 rectangle "Tawer Management — Sprint 5" {
-  usecase "View notification\ninbox (bell / list)" as UC_Inbox
-  usecase "Register push\ndevice (FCM)" as UC_Token
-  usecase "Configure delivery\nchannels" as UC_Channels
-  usecase "Link Telegram /\nntfy account" as UC_Link
+  usecase "View notification inbox\n(bell / list)" as UC_Inbox
+  usecase "Configure delivery channels\n(email / push / Telegram / ntfy)" as UC_Channels
   usecase "Broadcast a\nnotification" as UC_Broadcast
-  usecase "Register servers\n& services" as UC_Register
-  usecase "Health-check servers\n(ICMP) & services (HTTP)" as UC_Health
+  usecase "Register & manage\nservers / services" as UC_Register
+  usecase "Check API liveness\n(public /health)" as UC_Live
+  usecase "Health-check servers (ICMP)\n& services (HTTP)" as UC_Health
   usecase "Watch subscription\nexpiry" as UC_Expiry
   usecase "Alert responsible\nmanagers" as UC_Alert
   usecase "Notify across channels\n(email / telegram / ntfy / push)" as UC_Notify
-  usecase "Public liveness\nprobe (/health)" as UC_Live
 }
 
 U --> UC_Inbox
-U --> UC_Token
 U --> UC_Channels
-U --> UC_Link
 U --> UC_Broadcast
+
 D --> UC_Register
+D --> UC_Live
 C --> UC_Register
+
 S --> UC_Health
 S --> UC_Expiry
 
-UC_Link ..> UC_Channels : <<extend>>
 UC_Health ..> UC_Alert : <<include>>
 UC_Expiry ..> UC_Alert : <<include>>
 UC_Alert ..> UC_Notify : <<include>>
 UC_Broadcast ..> UC_Notify : <<include>>
+UC_Broadcast -[hidden]-> UC_Alert
 @enduml

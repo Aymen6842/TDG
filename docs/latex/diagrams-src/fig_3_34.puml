@@ -17,7 +17,7 @@ package "Consumer modules (crons / actions)" #FBFCFE {
   component "sprints / tasks" as SP
 }
 
-component "Channel selection\n(read settings + telegramBot + ntfyIntegration)\n— duplicated per consumer" as DECIDE #LightYellow
+component "Channel selection\n(reads settings + telegramBot + ntfyIntegration)" as DECIDE
 
 PT --> DECIDE
 RM --> DECIDE

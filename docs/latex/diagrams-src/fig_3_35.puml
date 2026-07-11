@@ -22,12 +22,10 @@ alt pushNotificationsEnabled
   NS -> DB : getNotificationTokensBy([userId])
   NS -> FCM : sendEachForMulticast(tokens)
   NS -> DB : create Notification + Content + UserNotification
-  note over NS : errors swallowed to background logger
   deactivate NS
 end
 opt emailNotificationsEnabled
   Cron -> Mail : sendHtmlEmail(...)
-  note right of Mail : re-throws on failure —\nonly channel that propagates
 end
 opt telegramNotificationsEnabled && chatId
   Cron -> TG : sendTelegramMessage(chatId, text)

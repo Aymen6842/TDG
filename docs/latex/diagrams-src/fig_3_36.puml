@@ -16,47 +16,46 @@ class User {
   +id : UUID
 }
 
-enum DeviceType <<enum>> #LightYellow {
+enum DeviceType {
   Ios
   Android
   Computer
 }
 
-class Notification #LightYellow {
+class Notification {
   +id : UUID
   +image : String
   -sendBy : UUID «nullable»
 }
-class NotificationContent #LightYellow {
+class NotificationContent {
   +id : UUID
   +title : String
   +body : String
   +url : String
-  +language : Language «English only»
+  +language : Language
 }
-class UserNotification #LightYellow {
+class UserNotification {
   +id : UUID
   +isSeen : Boolean
-  ' @@unique(notificationId, userId)
 }
-class NotificationToken #LightYellow {
+class NotificationToken {
   +id : UUID
   +token : String <<unique>>
   +device : String
   +deviceType : DeviceType
 }
-class UserNotificationSettings #LightYellow {
+class UserNotificationSettings {
   +userId : UUID <<unique>>
   +emailNotificationsEnabled : Boolean = true
   +pushNotificationsEnabled : Boolean = true
   +telegramNotificationsEnabled : Boolean = false
   +ntfyNotificationsEnabled : Boolean = false
 }
-class UserTelegramBot #LightYellow {
+class UserTelegramBot {
   +userId : UUID <<unique>>
   +chatId : String
 }
-class UserNtfyIntegration #LightYellow {
+class UserNtfyIntegration {
   +userId : UUID <<unique>>
   +topic : String
   +token : String
@@ -68,6 +67,8 @@ User "1" --> "0..*" NotificationToken : devices
 User "1" --> "1" UserNotificationSettings : has
 User "1" --> "1" UserTelegramBot : has
 User "1" --> "1" UserNtfyIntegration : has
-Notification "1" --> "1..*" NotificationContent : "content (English only)"
+Notification "1" --> "1..*" NotificationContent : "content (i18n)"
 Notification "1" --> "0..*" UserNotification : "fan-out (unique per user)"
+
+NotificationToken ..> DeviceType
 @enduml

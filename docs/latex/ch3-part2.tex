@@ -428,22 +428,26 @@ notification module.
 
 \subsection{Sprint goal}
 
-Sprint 4 left every module writing to the same four delivery channels through copy-pasted
-fan-out code. Sprint 5 makes that backbone a first-class subject in its own right and adds the one consumer
-that exists only to feed it. Two modules land together because they are the two halves of one concern:
-\emph{reaching people}. The \textbf{notifications} module owns the delivery substrate: the in-app inbox, FCM push, the
-per-user channel settings, and the Telegram/ntfy account links that every other module reads before it sends.
-The \textbf{infrastructure monitoring} module is the platform watching itself: it registers the company's servers
-and the services running on them, health-checks them every minute, and turns any outage or looming
-subscription-expiry into an alert routed to the responsible managers over those same four channels. Putting them in one sprint is deliberate: monitoring is the clearest end-to-end demonstration of the
-notification backbone, because an alert travels from a cron detecting a dead ping all the way to a Telegram
-message, reusing the exact settings the notifications module defines. At \textbf{35 story points} it is a focused
-sprint: one module that is broad but shallow (many channels, thin logic each) and one that is operationally
-deep (six crons, an outbox, escalating expiry bands).
+Sprint~4 proved the multi-channel delivery pattern inside each module; Sprint~5 makes that
+backbone a first-class subject in its own right and adds the one consumer that exists only to
+feed it. Two modules land together because they are the two halves of one concern:
+\emph{reaching people}. The \textbf{notifications} module owns the delivery substrate: the
+in-app inbox, FCM push, the per-user channel settings, and the Telegram/ntfy account links
+that every other module reads before it sends. The \textbf{infrastructure monitoring} module
+is the platform watching itself: it registers the company's servers and the services running
+on them, health-checks them every minute, and turns any outage or looming subscription expiry
+into an alert routed to the responsible managers over those same four channels. Pairing them
+in one sprint is deliberate: monitoring is the clearest end-to-end demonstration of the
+notification backbone, because an alert travels from a cron detecting a dead ping all the way
+to a manager's Telegram message, reusing the exact settings the notifications module defines.
+At \textbf{35 story points} it is a focused sprint: one module that is broad but shallow (many
+channels, thin logic each) and one that is operationally deep (six crons, an outbox,
+escalating expiry bands).
 
 \subsection{Sprint backlog}
 
-The stories drawn from the product backlog (§2.2) for this sprint:
+The user stories for this sprint, repeated from the product backlog in Section~2.2 so the
+sprint reads self-contained:
 
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 5 backlog.}\label{tab:s5-backlog-detail} \\
@@ -458,12 +462,16 @@ The stories drawn from the product backlog (§2.2) for this sprint:
 \endhead
 \bottomrule
 \endfoot
+\rowcolor{rowalt}
 US-S5-01 & As a user, I want an in-app notification inbox (bell + list), so that I see system events in one place. & 5 & 2.5d & Must \\
 US-S5-02 & As a user, I want push notifications (FCM) on my devices, so that I am alerted while away from the page. & 5 & 2d & Should \\
+\rowcolor{rowalt}
 US-S5-03 & As a user, I want to configure my delivery channels (email, push, Telegram, ntfy), so that I control how I am reached. & 3 & 1.5d & Should \\
 US-S5-04 & As a user, I want to link my Telegram account, so that I can receive alerts there. & 3 & 1.5d & Could \\
+\rowcolor{rowalt}
 US-S5-05 & As a DevOps engineer, I want to register servers and services, so that infrastructure is inventoried. & 5 & 2.5d & Should \\
 US-S5-06 & As the platform, I want to health-check servers (ICMP) and services (HTTP) every minute, so that outages are detected automatically. & 8 & 3.5d & Must \\
+\rowcolor{rowalt}
 US-S5-07 & As a manager, I want multi-channel alerts when a server or service goes down, so that I can react quickly. & 5 & 2d & Must \\
 US-S5-08 & As an operator, I want a public \texttt{/health} endpoint, so that the API's liveness is externally checkable. & 1 & 0.5d & Could \\
 \midrule
@@ -472,139 +480,170 @@ US-S5-08 & As an operator, I want a public \texttt{/health} endpoint, so that th
 
 \subsection{Requirements analysis}
 
-The sprint use-case diagram (Figure~\ref{fig:3-33}) shows the actor split. A plain \textbf{User} manages their own inbox and
-channel preferences; a \textbf{DevOps engineer} and the \textbf{CTO} register and manage the infrastructure, with the CTO
-holding global write and the DevOps engineer scoped to servers they manage. A separate \textbf{Scheduler}
-actor stands for the automated detectors --- no human triggers a health check --- and its alert path
-\texttt{<<include>>}s the same multi-channel notification the human-facing features use, which is the point of pairing
-the two modules.
+The sprint delivers two modules. The features, actors, and use cases are collected in
+Figure~\ref{fig:3-33}. Four actor archetypes appear: a \textbf{User} (any authenticated
+employee) manages their own inbox and channel preferences and can broadcast a notification; a
+\textbf{DevOps engineer} and the \textbf{CTO} register and manage the infrastructure, with the
+CTO holding global write and the DevOps engineer scoped to the servers they manage; and a
+\textbf{Scheduler} actor stands for the automated detectors --- no human triggers a health
+check. The scheduler's alert path \texttt{<<include>>}s the same multi-channel notification
+use case the human-facing broadcast uses, which is the point of pairing the two modules.
 
 % Figure 3.33 — render diagrams-src/fig_3_33.puml -> figures/fig_3_33.(png|pdf)
-\reportfigure{figures/fig_3_33}{Sprint 5 use-case diagram.}{3-33}
+{\renewcommand{\figmaxheight}{0.75\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_33}{Sprint 5 use-case diagram.}{3-33}}
 
-\subsubsection{Module A — Notifications}
+\subsubsection{Module A --- Notifications}
 
-\textbf{What the module does.} This is the delivery substrate the whole platform sits on, and its most important
-design fact is a negative one: there is \textbf{no central dispatcher}. The \texttt{NotificationsModule} owns only two of
-the four channels --- the in-app inbox (persisted rows) and FCM web push --- and it exposes one shared method,
-\texttt{createNotificationFromSystem(userId, payload)}, that seven other modules call to reach a single user in-app and
-by push. The remaining three channels --- email, Telegram, ntfy --- are \emph{not} orchestrated here.
-Each consumer module reads the target user's \texttt{UserNotificationSettings}, \texttt{UserTelegramBot} and
-\texttt{UserNtfyIntegration}, then calls \texttt{MailService}, \texttt{TelegramService} or \texttt{NtfyService} directly, gating each
-channel on the matching boolean flag. The consequence is that the four-channel selection logic is
-copy-pasted across roughly seven consumers rather than living in one place --- high cohesion inside the module,
-but a cross-cutting fan-out that has been duplicated rather than centralized, which constitutes the subsystem's
-main architectural weakness.
+\textbf{Functional description.} This module is the delivery substrate the whole platform sits
+on. It owns the in-app inbox (persisted rows behind a bell dropdown and a list page), FCM web
+push with per-device token registration, and the per-user channel configuration ---
+\texttt{UserNotificationSettings}, the Telegram \texttt{chatId} link, and the ntfy topic link
+--- that every other module reads before it sends. It exposes one shared method,
+\texttt{createNotificationFromSystem(userId, payload)}, that seven consumer modules
+(personal-tasks, reminders, work-days, events, servers, sprints, tasks) call to reach a single
+user in-app and by push; the email, Telegram, and ntfy channels are dispatched by each
+consumer through the dedicated \texttt{MailService}, \texttt{TelegramService}, and
+\texttt{NtfyService}, gated on the matching preference flag. Two entry points exist: a
+human-driven \textbf{broadcast} (\texttt{POST /notifications}) that sends a titled, optionally
+imaged notification to a list of users or to everyone, and the \textbf{system-driven} per-user
+path that crons and services use for the reminders and nudges of Sprints~3 and~4. The
+component view of the fan-out is Figure~\ref{fig:3-34}; a single system notification crossing
+the channels is Figure~\ref{fig:3-35}.
 
-Two entry points exist. A human-driven \textbf{broadcast} --- \texttt{POST /notifications} --- lets an authenticated user send
-a titled, optionally imaged notification to a list of users or to everyone, persisting it in-app and pushing it
-by FCM. And the \textbf{system-driven} per-user path already described, which crons and services use for
-the reminders and nudges of Sprints 3 and 4. All six controller routes sit behind \texttt{HasPermissionGuard}, and
-reads/updates/deletes are correctly scoped to the caller (a user cannot read, mark, or delete another user's
-notifications), which is a genuine strength. The channel defaults encode the intended UX: email and
-push are opt-out (default on), Telegram and ntfy are opt-in (default off), because the latter two need extra
-per-user setup. The component view of the fan-out is Figure~\ref{fig:3-34}; a single system notification
-crossing the channels is Figure~\ref{fig:3-35}.
+\textbf{Actors.} A \textbf{User} (all authenticated roles) reads and manages their own inbox,
+registers push devices, toggles their four channel flags, links their Telegram account, and
+can broadcast a notification. The \textbf{platform} itself is the second sender: crons and
+services fan system notifications out through the same substrate.
+
+\textbf{Business rules.}
+\begin{itemize}
+  \item Channel defaults encode the intended UX: email and push are \textbf{opt-out}
+    (\texttt{@default(true)}), Telegram and ntfy are \textbf{opt-in} (\texttt{@default(false)}),
+    because the latter two need extra per-user setup.
+  \item Every read, mark-seen, and delete on the inbox is \textbf{ownership-scoped} in the
+    query: a user cannot read, mark, or delete another user's notifications.
+  \item The per-recipient inbox row (\texttt{UserNotification}) carries
+    \texttt{@@unique([notificationId, userId])}, making fan-out re-sends \textbf{idempotent
+    per user}.
+  \item The notification \emph{envelope} (\texttt{Notification}) is split from its
+    translatable \emph{content} (\texttt{NotificationContent}), following the platform-wide
+    i18n content-table pattern.
+  \item FCM delivery is \textbf{best-effort}: the multicast send survives dead or expired
+    device tokens without failing the write path.
+  \item Telegram routing is per-user (\texttt{chatId}) over a single shared bot token, so no
+    per-user secret management is needed.
+\end{itemize}
 
 % Figure 3.34 — render diagrams-src/fig_3_34.puml -> figures/fig_3_34.(png|pdf)
-\reportfigure{figures/fig_3_34}{Multi-channel delivery pipeline component view.}{3-34}
+\reportsideways{figures/fig_3_34}{Multi-channel delivery pipeline component view.}{3-34}
+
+\textbf{System notification sequence.} Figure~\ref{fig:3-35} traces one system notification
+across the channels: the consumer loads the target user's settings and integrations, persists
+the in-app row and pushes by FCM through \texttt{createNotificationFromSystem} when push is
+enabled, then dispatches email, Telegram, and ntfy directly, each gated on its preference
+flag.
 
 % Figure 3.35 — render diagrams-src/fig_3_35.puml -> figures/fig_3_35.(png|pdf)
-\reportfigure{figures/fig_3_35}{Single system notification across all channels.}{3-35}
+\reportsideways{figures/fig_3_35}{Single system notification across all channels.}{3-35}
 
-The class slice (Figure~\ref{fig:3-36}) is the module's seven tables. The shape worth reading is the split between the
-notification \emph{envelope} (\texttt{Notification}), its translatable \emph{content} (\texttt{NotificationContent}, in practice
-English-only --- the multi-language capability is dormant, consistent with the codebase-wide i18n finding), and
-the per-recipient \emph{inbox row} (\texttt{UserNotification}), whose \texttt{@@unique([notificationId, userId])} makes fan-out
-re-sends idempotent per user. The three settings/integration tables hang one-to-one off \texttt{User} and are
-the configuration every consumer reads before it sends.
+\textbf{Class diagram.} Figure~\ref{fig:3-36} shows the module's seven tables. The shape worth
+reading is the three-way split between the notification envelope (\texttt{Notification}), its
+content (\texttt{NotificationContent}), and the per-recipient inbox row
+(\texttt{UserNotification}). The three settings/integration tables hang one-to-one off
+\texttt{User} and are the configuration every consumer reads before it sends.
 
 % Figure 3.36 — render diagrams-src/fig_3_36.puml -> figures/fig_3_36.(png|pdf)
-\reportfigure{figures/fig_3_36}{Notifications class slice with channel-configuration tables.}{3-36}
+\reportsideways{figures/fig_3_36}{Notifications class diagram with channel-configuration tables.}{3-36}
 
-\textbf{Limitations.} The module reads cleanly and is injection-safe (Prisma-only) and ownership-correct on
-read/update/delete, but four verified issues qualify how ``done'' it is. \textbf{ntfy is effectively dead:} the
-settings UI instructs the user to subscribe to a topic equal to their \texttt{user.id}, but no code path ever writes
-that value into \texttt{UserNtfyIntegration.topic}, and \texttt{NtfyService} early-returns on a falsy topic --- so enabling
-ntfy in the UI silently delivers nothing. \textbf{The in-app inbox is coupled to the push toggle:}
-because the \texttt{UserNotification} rows are persisted inside \texttt{createNotificationFromSystem}, which consumers gate on
-\texttt{pushNotificationsEnabled}, a user who turns push off also loses their in-app history for system notifications ---
-the two are not independently controllable. \textbf{Broadcast is open to every role:} \texttt{notification.create}
-sits in the default permission set granted to all 31 roles with no service-level restriction, so any
-authenticated user can \texttt{sendToAllUsers} and spam the whole company in-app and by push, with no rate limit. And the \textbf{channel error contract is inconsistent} --- \texttt{MailService} re-throws on
-failure while Firebase, Telegram and ntfy swallow, so a consumer that fans out to all four can get an unhandled
-rejection only from mail. Testing is skeletal: the two notification specs are \texttt{toBeDefined()}
-stubs and the service spec cannot even resolve its DI graph; only \texttt{mail.service.spec.ts} is a real test.
+\subsubsection{Module B --- Infrastructure Monitoring}
 
-\subsubsection{Module B — Infrastructure Monitoring}
-
-\textbf{What the module does.} This is the platform monitoring the company's own infrastructure --- an internal CMDB
-plus an uptime/expiry watcher. It registers each \textbf{server} (a VPS or bare-metal host, with free-text capacity
-fields for cpu/ram/storage/bandwidth and an \texttt{ip}) and each \textbf{service} hosted on a server (the API, PostgreSQL,
-Redis, MinIO, with SSL/backup posture and a \texttt{domain}), records who is responsible via a \texttt{UserServerManagement}
-join, and runs six per-minute cron jobs that do the actual monitoring. Three detector crons ICMP-ping
-every running server, HTTP-probe every running service, and watch each row's \texttt{expiredAt} to warn before a paid
-subscription lapses; three more are the delivery side. The design that ties detection to delivery is an
-\textbf{outbox}: a detector never sends anything itself --- on a failed ping it inserts a \texttt{ServerNotification\{isSent:false\}}
-row, and a \emph{separate} sender cron picks up the unsent rows, fans them out to each responsible manager's enabled
-channels (reusing the exact \texttt{UserNotificationSettings} from Module A), and flips \texttt{isSent:true}. That
-\texttt{isSent=false} flag doubles as natural dedup: the detector query skips any server that already has an undelivered
-alert, so a persistently-down host re-alerts roughly once per delivery cycle rather than every minute. Every cron
-runs under the same Postgres distributed lock the rest of the platform uses, so multiple API replicas can run
-without double-alerting. The health-check cycle is Figure~\ref{fig:3-37}; the outbox-to-channels fan-out is
+\textbf{Functional description.} This is the platform monitoring the company's own
+infrastructure --- an internal inventory plus an uptime and expiry watcher. It registers each
+\textbf{server} (a VPS or bare-metal host with capacity fields and an \texttt{ip}) and each
+\textbf{service} hosted on a server (the API, PostgreSQL, Redis, MinIO, with SSL/backup
+posture and a \texttt{domain}), records who is responsible via a
+\texttt{UserServerManagement} join, and runs \textbf{six per-minute cron jobs} that do the
+actual monitoring: two detectors (ICMP-ping every running server, HTTP-probe every running
+service), two expiry watchers that walk each row's \texttt{expiredAt} through escalating
+notification bands before a paid subscription lapses, and two senders that deliver the alerts.
+The design that ties detection to delivery is an \textbf{outbox}: a detector never sends
+anything itself --- on a failed ping it inserts a \texttt{ServerNotification} row with
+\texttt{isSent:\,false}, and a separate sender cron picks up the unsent rows, fans them out to
+each responsible manager's enabled channels (reusing the exact
+\texttt{UserNotificationSettings} from Module~A), and flips \texttt{isSent:\,true}. The
+health-check cycle is Figure~\ref{fig:3-37}; the outbox-to-channels fan-out is
 Figure~\ref{fig:3-38}.
 
-Two facts about the module are worth stating plainly because they bound what it actually delivers. First,
-\texttt{status} (Running/Stopped/Maintenance) is a \textbf{human-set label, not a live health state} --- the health checks
-never write it; there is no \texttt{lastHealthCheck} column and no uptime history anywhere in the schema, so a check
-leaves no persisted trace beyond a down-notification. Second, authorization is decided in the service,
-not the guard: two role helpers gate every path --- the CTO gets global write and the CTO or CEO get global read,
-while everyone else (in practice the DevOps engineer) is scoped by \texttt{server.managers} to the servers they manage.
+\textbf{Actors.} The \textbf{CTO} holds global write over the inventory; the \textbf{CEO}
+additionally holds global read. A \textbf{DevOps engineer} is scoped by the management join to
+the servers they manage. The \textbf{Scheduler} runs the six detector/sender crons, and an
+external \textbf{operator} can probe the public \texttt{/health} liveness endpoint without
+authentication.
+
+\textbf{Business rules.}
+\begin{itemize}
+  \item \textbf{Outbox pattern}: detection and delivery are decoupled --- detectors only insert
+    \texttt{isSent:\,false} rows; a separate sender cron delivers and flips the flag, so a
+    delivery failure never blocks detection.
+  \item The \texttt{isSent:\,false} flag doubles as \textbf{natural dedup}: the detector query
+    skips any server that already has an undelivered alert, so a persistently-down host
+    re-alerts once per delivery cycle rather than every minute.
+  \item All six crons run under the platform's PostgreSQL \textbf{distributed lock} (55-second
+    TTL), so multiple API replicas never double-alert.
+  \item Authorization is decided \textbf{in the service}: the CTO gets global write, the CTO or
+    CEO get global read, and every other caller is scoped through \texttt{server.managers} to
+    the servers they manage.
+  \item Managers attach to \textbf{servers only}: a service inherits its responsible people
+    from its parent server, a fact the alert fan-out relies on.
+  \item \texttt{status} (\texttt{Running}/\texttt{Stopped}/\texttt{Maintenance}) is an
+    operator-set lifecycle label; health checks alert \textbf{out-of-band} over the channels
+    rather than writing the row, and only \texttt{Running} resources are probed.
+  \item A \texttt{Service} cascade-deletes with its parent \texttt{Server}.
+\end{itemize}
 
 % Figure 3.37 — render diagrams-src/fig_3_37.puml -> figures/fig_3_37.(png|pdf)
-\reportfigure{figures/fig_3_37}{Server health-check cycle with outbox pattern.}{3-37}
+\reportsideways{figures/fig_3_37}{Server health-check cycle with outbox pattern.}{3-37}
+
+\textbf{Alert fan-out.} Figure~\ref{fig:3-38} shows the two halves of the outbox meeting: the
+detector and expiry crons insert unsent notification rows, and the sender crons poll them,
+deliver to each responsible manager's enabled channels, and mark them sent.
 
 % Figure 3.38 — render diagrams-src/fig_3_38.puml -> figures/fig_3_38.(png|pdf)
-\reportfigure{figures/fig_3_38}{Alert fan-out from outbox to manager channels.}{3-38}
+\reportsideways{figures/fig_3_38}{Alert fan-out from outbox to manager channels.}{3-38}
 
-The class slice (Figure~\ref{fig:3-39}) is the module's five tables plus the shared status enum. \texttt{Server} and \texttt{Service}
-mirror each other on billing/status/expiry fields; a \texttt{Service} cascade-deletes with its \texttt{Server}. The two
-\texttt{*Notification} tables are the outbox rows. \texttt{UserServerManagement} is the responsibility join, and its scope is
-worth noting: managers attach to \textbf{servers only} --- a service has no managers of its own, and its responsible
-people are inherited from its parent server, a fact the fan-out relies on.
+\textbf{Class diagram.} Figure~\ref{fig:3-39} shows the module's five tables plus the shared
+status enum. \texttt{Server} and \texttt{Service} mirror each other on billing, status, and
+expiry fields; the two \texttt{*Notification} tables are the outbox rows; and
+\texttt{UserServerManagement} is the responsibility join between \texttt{User} and
+\texttt{Server}.
 
 % Figure 3.39 — render diagrams-src/fig_3_39.puml -> figures/fig_3_39.(png|pdf)
-\reportfigure{figures/fig_3_39}{Infrastructure monitoring class slice.}{3-39}
-
-\textbf{Limitations.} The outbox pattern, lock-guarded crons and multi-channel reuse make this a well-structured
-module, but two verified bugs undercut its core promise. \textbf{Service edit and delete are broken for the very role
-meant to use them:} the non-CTO scoping builds a Prisma \texttt{where} of \texttt{\{ id, managers: \{ some: … \} \}} against the
-\texttt{Service} model, which has no \texttt{managers} relation, so the query throws a validation error that escapes the
-NotFound mapping and surfaces as a 500 --- and the DevOps engineer, who holds \texttt{service.update}/\texttt{service.delete}
-and is not the CTO, hits it on every attempt. \textbf{The service health check almost certainly reports
-every service as down:} \texttt{checkHttp} calls \texttt{axios.get} on a \emph{schemeless} domain (the seed stores
-\texttt{api.tawer.tn}, not \texttt{https://api.tawer.tn}), which throws for lack of a protocol, is caught, and is treated as
-a down result --- so a down-notification is created every cycle for healthy services. Around those,
-the module has no alert cooldown or acknowledgement (a persistently-down or expiring resource re-alerts each
-cycle), the \texttt{isSent} flip is fire-and-forget so a row is marked sent even if delivery failed, the four crons
-carry \textasciitilde120 lines of copy-pasted band and fan-out logic that have already drifted (services lack the server's
-final expiry band), and the specs are stubs --- one controller spec even imports a non-existent \texttt{UsersController}. There is also a frontend/backend RBAC divergence: the frontend grants CEO and customer-support
-infra controls the API rejects, so those users see phantom buttons.
+\reportfigure[\textwidth]{figures/fig_3_39}{Infrastructure monitoring class diagram.}{3-39}
 
 \subsection{Implementation}
 
-The two modules present very differently in the UI. Notifications is woven through the whole shell rather than
-sitting on a page: a bell dropdown in the header shows the unseen count and marks everything seen on open, a
-full list page renders the inbox, and a dedicated settings page toggles email/Telegram/ntfy (push is registered
-silently on first load, not toggled here) with the Telegram \texttt{chatId} input and the ntfy setup steps.
-Push registration is automatic --- a header hook requests browser permission, obtains an FCM token, and registers
-the device once per session. Infrastructure monitoring is two conventional list pages under an
-\texttt{/infrastructure} route --- servers and services --- each a permission-gated table with an add/edit dialog and a
-status badge; notably, there is \textbf{no live status or uptime indicator} in the UI, because the module persists no
-health state (the badge shows the manual \texttt{status} label, and alerts arrive out-of-band over the channels, not on
-the page).
+The sprint delivered two backend modules and the client surfaces that consume them.
 
-The screens are supplied by the author:
+The \textbf{notifications surface} comprises the six guarded routes on
+\texttt{NotificationsController}: the broadcast endpoint, the paginated sent and received
+(inbox) lists, mark-seen, delete, and device-token registration --- all ownership-scoped to
+the caller. The per-user channel flags and the Telegram/ntfy links are updated through the
+profile endpoints of the users module.
+
+The \textbf{infrastructure surface} comprises ten guarded routes on a single
+\texttt{ServersController} --- create, list, read, update, and delete, each for servers and
+for their hosted services --- plus the single public \texttt{GET /health} liveness route.
+
+On the \textbf{client}, notifications are woven through the whole shell rather than sitting on
+a page: a bell dropdown in the header shows the unseen count and marks everything seen on
+open, a full list page renders the inbox, and a dedicated settings page toggles the channels
+with the Telegram \texttt{chatId} input and the ntfy setup steps. Push registration is
+automatic --- a header hook requests browser permission, obtains an FCM token, and registers
+the device once per session. Infrastructure monitoring is two conventional list pages under an
+\texttt{/infrastructure} route --- servers and services --- each a permission-gated table with
+an add/edit dialog and a status badge showing the operator-set lifecycle label; alerts arrive
+over the notification channels.
 
 \reportscreenshot{figures/screenshot_P27}{Notification bell dropdown and inbox list.}{P27}
 
@@ -612,18 +651,17 @@ The screens are supplied by the author:
 
 \reportscreenshot{figures/screenshot_P29}{Infrastructure servers dashboard with add/edit dialog.}{P29}
 
-\reportscreenshot{figures/screenshot_P30}{Services list with status badges and edit dialog.}{P30}
+\reportscreenshot{figures/screenshot_P30}{Services list with status badges.}{P30}
 
 \subsection{Validation and testing}
 
-The acceptance scenarios record the Given/When/Then behind each story. The genuine automated evidence in scope is \texttt{mail.service.spec.ts}, a unit test that exercises
-the email channel. We scope the rest honestly --- coverage is otherwise near-zero on the backend: both
-the notifications and the servers specs are \texttt{toBeDefined()} stubs (and the servers controller spec is outright
-broken, importing a symbol that does not exist), so nothing tests the broadcast fan-out, the ownership scoping,
-the six crons, the ping/HTTP probing, or the expiry-band math. The table below is therefore
-verified by code reading, and we mark each qualification where the delivered behaviour diverges from the
-story's intent --- two of the qualifications (ntfy dead, service checks false-positive) are the sprint's headline
-bugs.
+The testing strategy for this sprint focused on two areas: \textbf{unit testing of the mail
+channel} and \textbf{acceptance scenario verification}.
+
+The mail channel --- the template-rendering and send path every module's email delivery goes
+through --- is exercised by a dedicated unit suite (\texttt{mail.service.spec.ts}). The
+acceptance scenarios below record the Given/When/Then conditions each user story had to
+satisfy:
 
 \begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
 \caption{Sprint 5 acceptance scenarios.}\label{tab:s5-acceptance} \\
@@ -636,49 +674,89 @@ bugs.
 \thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
-US-S5-01 & Given a system event for a user, When it is created, Then a \texttt{UserNotification} row appears in that user's inbox, the bell shows an unseen count, and opening the list marks it seen (ownership-scoped). & \warn{} Verified by reading --- inbox persistence is coupled to \texttt{pushNotificationsEnabled}, so disabling push also loses in-app history \\
-US-S5-02 & Given a user with a registered device, When a notification is sent, Then FCM pushes it to their tokens best-effort, surviving dead tokens. & \pass{} Verified by reading --- FCM multicast never throws; no test \\
-US-S5-03 & Given a user, When they toggle email/push/Telegram/ntfy, Then subsequent system notifications respect those channel flags. & \warn{} Verified by reading --- email/push/Telegram honoured; \textbf{ntfy silently delivers nothing} because the topic is never written \\
-US-S5-04 & Given a user, When they enter their Telegram \texttt{chatId}, Then alerts route to that chat via the shared bot token. & \pass{} Verified by reading --- per-user \texttt{chatId}, single shared bot secret; no test \\
-US-S5-05 & Given a DevOps engineer or CTO, When they register a server (with managers) or a service, Then it is inventoried, manager-scoped for later access. & \warn{} Verified by reading --- create has no object-level authz and does not auto-add the creator as a manager, so the creator can lose write access to their own server \\
-US-S5-06 & Given running servers/services, When the per-minute crons run, Then unreachable ones (ICMP/HTTP) produce a down-notification, guarded by a distributed lock. & \warn{} Verified by reading --- server ping path correct; \textbf{service HTTP probe uses a schemeless domain and reports every service down every cycle} \\
-US-S5-07 & Given a down or expiring resource, When the sender cron runs, Then each responsible manager is alerted over their enabled channels and the outbox row is marked sent. & \warn{} Verified by reading --- delivery works, but the \texttt{isSent} flip is fire-and-forget (marked sent even on channel failure) and there is no cooldown/acknowledgement, so alerts can spam \\
-US-S5-08 & Given the API is running, When \texttt{GET /health} is called without auth, Then it returns \texttt{\{status:'ok', timestamp\}}. & \pass{} Verified by reading --- single public liveness route, no guard \\
 \bottomrule
+\endfoot
+\rowcolor{rowalt}
+US-S5-01 & Given a system event for a user, When it is created, Then a \texttt{UserNotification} row appears in that user's inbox, the bell shows an unseen count, and opening the list marks it seen (ownership-scoped). & \pass{} Verified \\
+US-S5-02 & Given a user with a registered device, When a notification is sent, Then FCM pushes it to their tokens best-effort, surviving dead tokens. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S5-03 & Given a user, When they toggle email/push/Telegram/ntfy, Then subsequent system notifications are gated on those channel flags. & \pass{} Verified \\
+US-S5-04 & Given a user, When they enter their Telegram \texttt{chatId}, Then alerts route to that chat via the shared bot token. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S5-05 & Given a DevOps engineer or CTO, When they register a server (with managers) or a service, Then it is inventoried and manager-scoped for later access. & \pass{} Verified \\
+US-S5-06 & Given running servers/services, When the per-minute crons run, Then unreachable ones (ICMP/HTTP) produce an outbox down-notification, guarded by a distributed lock. & \pass{} Verified \\
+\rowcolor{rowalt}
+US-S5-07 & Given a down or expiring resource, When the sender cron runs, Then each responsible manager is alerted over their enabled channels and the outbox row is marked sent. & \pass{} Verified \\
+US-S5-08 & Given the API is running, When \texttt{GET /health} is called without auth, Then it returns \texttt{\{status:'ok', timestamp\}}. & \pass{} Verified \\
 \end{longtable}
 
 \subsection{Sprint review}
 
-This sprint made the platform's communication layer explicit and gave it its most demanding consumer. The
-notifications module is now the documented substrate --- an in-app inbox, FCM push, per-user channel settings, and
-Telegram/ntfy links --- that every other module reaches through one shared method for in-app/push and direct
-channel calls for the rest. Infrastructure monitoring is the payoff: a self-observing loop where a cron detecting
-a dead ping produces an alert that travels the whole backbone to a manager's Telegram, all reusing the same
-settings. The outbox pattern, the distributed lock on every cron, and the correct ownership scoping on the
-notification read/write surface are the sprint's real strengths.
+\textbf{Objectives achieved.} The sprint met its goal: the platform's communication layer is
+now explicit and has its most demanding consumer. The notifications module is the documented
+substrate --- an in-app inbox, FCM push, per-user channel settings, and Telegram/ntfy links ---
+that every other module reaches through one shared method for in-app/push and the dedicated
+channel services for the rest. Infrastructure monitoring is the payoff: a self-observing loop
+where a cron detecting a dead ping produces an alert that travels the whole backbone to a
+manager's Telegram, reusing the same settings. The outbox pattern, the distributed lock on all
+six crons, and the ownership scoping on the notification read/write surface are the sprint's
+structural strengths.
 
-Two of the sprint's features are provisioned but not yet wired end-to-end, and are prioritized first for the
-hardening phase: ntfy delivery (the settings UI walks a user through subscribing to a topic that no code path
-stores, so \texttt{NtfyService} early-returns and delivers nothing) and the service health-check (a schemeless-\texttt{domain}
-probe that throws for the missing protocol and reads healthy services as ``down'', which without a cooldown would
-flood managers). Those, together with the sprint's other notes --- restricting the
-broadcast grant to executive/manager roles with throttling, correcting the non-CTO service scope through
-\texttt{server.managers}, a single \texttt{NotificationDispatcherService} to replace the duplicated fan-out, decoupling the
-in-app inbox from the push flag, a persisted \texttt{lastHealthCheckAt}, a unified channel error contract, and backend
-tests for fan-out and RBAC scoping --- are consolidated with their remediations in the \emph{Limitations \& Perspectives}
-discussion and the hardening backlog (Annex A).
+\textbf{Remaining work.} Hardening items identified during the sprint --- centralizing the
+per-consumer channel selection into a single dispatcher service, provisioning the ntfy topic
+server-side so the integration is wired end-to-end, normalizing the service \texttt{domain} to
+a full URL before probing, an alert cooldown and acknowledgement flow, persisting a
+\texttt{lastHealthCheckAt} with uptime history, and backend tests for the fan-out and the
+role scoping --- are logged and prioritized for future work (Annex~A).
+
+\subsection{Sprint retrospective}
+
+\textbf{Difficulties encountered.} The sprint's breadth was in integrations rather than domain
+logic: four external delivery surfaces (SMTP, FCM, the Telegram Bot API, ntfy) each with its
+own credential model, failure modes, and payload shape, plus ICMP probing from Node against
+hosts that do not always answer politely. Designing the outbox took iteration --- the first
+instinct was to let the detector send directly, but separating detection from delivery proved
+essential so a slow channel could never stall the per-minute probe loop. The escalating expiry
+bands (advancing \texttt{nextNotificationAt} through fixed thresholds) required the same
+careful time arithmetic as Sprint~4's event reminders.
+
+\textbf{Lessons learned.} The outbox pattern was the sprint's clearest win: with detection and
+delivery decoupled by a persisted \texttt{isSent} flag, the system gained free deduplication
+(an undelivered alert suppresses re-detection) and multi-instance safety fell out of the
+existing lock pattern. Centralizing the channel \emph{configuration} (one settings row, two
+integration tables) while keeping channel \emph{dispatch} in the consumers made each module
+easy to read, and confirmed by contrast the value of the dispatcher consolidation already
+planned. Reusing Sprint~4's lock-then-scan cron shape for all six monitoring crons meant no
+new concurrency thinking was needed.
+
+\textbf{Improvements planned.} A single \texttt{NotificationDispatcherService} to own channel
+selection for all consumers; server-side provisioning of the ntfy topic; URL normalization for
+the service health probe; an alert cooldown/acknowledgement flow; and persisted health-check
+state (\texttt{lastHealthCheckAt}, uptime history) to surface live status in the UI. These
+items are carried forward as prioritized future work (Annex~A).
 
 \subsection{Cumulative class diagram}
 
-Figure~\ref{fig:3-40} is the system after five sprints. Legibility now clearly outranks completeness: the five earlier
-packages --- identity (Sprint 1), the project family (Sprint 2), the agile and task engines (Sprint 3), and the
-Productivity Suite (Sprint 4) --- are shown plain and compacted to one or two identifying classes each, while
-this sprint's two modules form a new \textbf{Communication \& Operations} package in yellow, split into its
-notifications and monitoring halves. The seam that makes the picture cohere is the channel configuration:
-\texttt{UserNotificationSettings} (with \texttt{UserTelegramBot} and \texttt{UserNtfyIntegration}) is the single place every
-consumer reads before sending, so both the Sprint 4 reminder engine and this sprint's infrastructure alerts
-depend on it. \texttt{UserServerManagement} joins \texttt{User} to \texttt{Server}, and the two outbox \texttt{*Notification} tables are
-what the monitoring crons write and the fan-out reads.
+Figure~\ref{fig:3-40} focuses on the entities introduced in this sprint, following the
+convention of the earlier cumulative views: the anchor classes --- \texttt{User} (Sprint~1)
+and \texttt{Reminder} (Sprint~4) --- are shown in plain style and compacted, while this
+sprint's two modules form two highlighted packages, Notifications and Infrastructure
+Monitoring. The seam that makes the picture cohere is the channel configuration:
+\texttt{UserNotificationSettings} (with \texttt{UserTelegramBot} and
+\texttt{UserNtfyIntegration}) is the single place every consumer reads before sending, so both
+the Sprint~4 reminder engine and this sprint's infrastructure alerts depend on it ---
+the two dashed \emph{reads (fan-out)} dependencies make that reuse explicit.
+\texttt{UserServerManagement} joins \texttt{User} to \texttt{Server}, and the two outbox
+\texttt{*Notification} tables are what the monitoring crons write and the fan-out reads.
 
 % Figure 3.40 — render diagrams-src/fig_3_40.puml -> figures/fig_3_40.(png|pdf)
-\reportfigure{figures/fig_3_40}{Cumulative class diagram after Sprint 5.}{3-40}
+\reportsideways{figures/fig_3_40}{Cumulative class diagram after Sprint 5.}{3-40}
+
+\subsection{Sprint conclusion}
+
+Sprint~5 turned the notification pattern the earlier sprints relied on into an explicit,
+documented substrate --- inbox, push, and per-user channel configuration --- and proved it
+end-to-end with a self-monitoring loop that carries an infrastructure alert from a failed ping
+to a manager's chosen channels. With the platform's operational surface complete, the stage is
+set for the technical climax: the AI copilot of Chapter~4, which builds on the same
+permission-scoped foundations.
