@@ -1,24 +1,24 @@
 \chapter{Project Management and Design}
 
-Chapter~1 established \emph{what} the platform is and \emph{why} it exists. This chapter explains
+Chapter~1 explained \emph{what} the platform is and \emph{why} it exists. This chapter explains
 \emph{how} the project was planned before implementation began. It covers the development
 methodology, the product backlog, the sprint plan, the software architecture, the database
-design, the technology choices, and the anticipated risks and challenges. The five development
-sprints are narrated in Chapter~3, and the AI sprint in Chapter~4.
+design, the technology choices, and the expected risks and challenges. The five development
+sprints are described in Chapter~3, and the AI sprint in Chapter~4.
 
 \section{Development Methodology}
 
 \subsection{Why Scrum}
 
 We adopted \textbf{Scrum}~\cite{schwaber2020scrum} as the development methodology. The choice
-follows from the shape of the work rather than fashion: the platform spans ten operational
-domains (as described in Section~1.3), and the requirements for the later ones --- notifications,
-monitoring, and above all the AI copilot --- were only going to sharpen as the earlier ones
-landed and were used. A single up-front waterfall specification would have frozen decisions we
-were not yet qualified to make. Scrum let us deliver breadth in shippable slices: a working
-authentication core first, then projects on top of it, then the agile backlog on top of
-projects, so that each increment was demonstrable and the next was planned against something
-real.
+comes from the nature of the work itself. The platform covers ten operational domains (as
+described in Section~1.3), and the requirements for the later ones --- notifications,
+monitoring, and above all the AI copilot --- could only become clear after the earlier ones
+were built and used. A single up-front waterfall specification would have fixed decisions too
+early, before we had the knowledge to make them. Scrum allowed us to deliver the platform in
+working increments: first the authentication core, then projects on top of it, then the agile
+backlog on top of projects. Each increment could be demonstrated, and the next one was planned
+against a working system.
 
 \subsection{Scrum roles}
 
@@ -38,12 +38,12 @@ The work was organized as a three-person Scrum team:
 Each sprint followed the standard Scrum ceremonies:
 
 \begin{itemize}
-  \item \textbf{Sprint planning}: pull a slice of the product backlog into the sprint backlog and
-    agree on a sprint goal.
+  \item \textbf{Sprint planning}: select a set of user stories from the product backlog into the
+    sprint backlog and agree on a sprint goal.
   \item \textbf{Daily stand-ups}: short synchronization meetings.
   \item \textbf{Sprint review}: demo the delivered increment.
   \item \textbf{Retrospective}: improve the process for the next sprint.
-  \item \textbf{Backlog refinement}: ran continuously as later domains came into focus.
+  \item \textbf{Backlog refinement}: ran continuously as the later domains became clearer.
 \end{itemize}
 
 Each sprint produced three artifacts: a \textbf{sprint backlog} drawn from the product backlog, a
@@ -58,19 +58,19 @@ spans the five-month internship period (February--July 2026).
 
 \subsection{Methodological note}
 
-The sprint decomposition is reverse-engineered from the delivered system's module dependency
-order: the layers had to be built in this sequence (authentication before projects, projects
-before the agile backlog, content before the copilot that indexes it), so the plan reflects a
-real ordering rather than an invented tracker history.
+The sprint decomposition is derived from the delivered system's module dependency order: the
+layers had to be built in this sequence (authentication before projects, projects before the
+agile backlog, content before the copilot that indexes it). The plan therefore reflects a real
+build order rather than an invented tracker history.
 
-One additional note: inside Sprint~6, where the RAG copilot is built, we layer a second
-methodology --- \textbf{CRISP-DM}~\cite{shearer2000crisp} (Cross-Industry Standard Process for
-Data Mining) --- as a sub-process. An ML component needs an evidence loop that ordinary CRUD
-features do not: data understanding, modeling, and evaluation. This is detailed in Chapter~4.
+One additional note: inside Sprint~6, where the RAG copilot is built, we use a second
+methodology as a sub-process --- \textbf{CRISP-DM}~\cite{shearer2000crisp} (Cross-Industry
+Standard Process for Data Mining). An ML component needs steps that ordinary CRUD features do
+not: data understanding, modeling, and evaluation. This is detailed in Chapter~4.
 
 \section{Product Backlog}
 
-The backlog re-expresses each delivered module's endpoints and features as user stories in the
+The backlog expresses each delivered module's endpoints and features as user stories in the
 canonical \emph{``As a <role>, I want <goal>, so that <value>''} form. Story identifiers are
 stable and sprint-scoped (\texttt{US-S<sprint>-<n>}). Priority uses MoSCoW (\textbf{Must / Should
 / Could}). Story points use a Fibonacci scale (1, 2, 3, 5, 8) as a relative size and complexity
@@ -300,10 +300,10 @@ Sprint 6 & 42 & 0 \\
 
 \section{Sprint Planning}
 
-The plan sequences the backlog into six sprints along a strict dependency order: nothing can be
-built before the authentication and RBAC foundation, projects are the container everything agile
-hangs off, and the AI copilot is deliberately last because it indexes and answers over content
-the earlier sprints produce.
+The plan orders the backlog into six sprints following a strict dependency chain. Nothing can
+be built before the authentication and RBAC foundation. Projects are the container that all
+agile features depend on. The AI copilot comes last because it indexes and answers over the
+content produced by the earlier sprints.
 
 \begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.18\textwidth}l>{\raggedright\arraybackslash}p{0.32\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}ll@{}}
 \caption{Sprint plan overview.}\label{tab:sprint-plan} \\
@@ -319,20 +319,20 @@ the earlier sprints produce.
 \bottomrule
 \endfoot
 \rowcolor{rowalt}
-S1 --- Foundations \& Auth & 3 & Stand up the layered backend, the DB foundation, and the authentication + RBAC core. & auth/JWT/RBAC, users, teams & 41 & 3w \\
+S1 --- Foundations \& Auth & 3 & Build the layered backend, the DB foundation, and the authentication + RBAC core. & auth/JWT/RBAC, users, teams & 41 & 3w \\
 S2 --- Projects \& Membership & 3 & The project container: lifecycle, business-unit scoping, membership, email invitations. & projects, members, invitations & 26 & 2w \\
 \rowcolor{rowalt}
 S3 --- Agile Backlog \& Tasks & 3 & The agile core: epics, sprints, milestones, and a data-driven kanban with dependencies. & epics/sprints/milestones, tasks/kanban & 64 & 5w \\
 S4 --- Productivity Suite & 3 & Individual productivity: personal to-dos, time \& attendance, calendar, reminders. & personal tasks, attendance, events, reminders & 44 & 4w \\
 \rowcolor{rowalt}
 S5 --- Communication \& Ops & 3 & The delivery backbone: multi-channel notifications and infrastructure monitoring. & notifications, infra monitoring & 35 & 3w \\
-S6 --- AI Copilot \& Estimation & 4 & The differentiator: a permission-scoped RAG copilot with grounded answers and task-effort estimation. & AI copilot + estimation & 42 & 4w \\
+S6 --- AI Copilot \& Estimation & 4 & The main contribution: a permission-scoped RAG copilot with grounded answers and task-effort estimation. & AI copilot + estimation & 42 & 4w \\
 \end{longtable}
 
-Figure~\ref{fig:2-1} collapses the platform's approximately 31 role types (as described in
-Section~1.3) into the six actor archetypes that recur across the sprints and maps them onto the
-headline capabilities. Figure~\ref{fig:2-2} is the release roadmap: the six sprints as a
-sequence of timeboxes carrying their planned story-point load.
+Figure~\ref{fig:2-1} groups the platform's approximately 31 role types (described in
+Section~1.3) into the six actor archetypes that appear across the sprints, and maps them onto
+the main capabilities. Figure~\ref{fig:2-2} is the release roadmap: the six sprints as a
+sequence of timeboxes, each with its planned story-point load.
 
 \reportfigure[0.75\textwidth]{figures/fig_2_1}{Global use-case diagram: actor archetypes vs.\ platform capabilities.}{2-1}
 
@@ -343,11 +343,12 @@ sequence of timeboxes carrying their planned story-point load.
 Tawer Management is a \textbf{two-application} system: a stateless \textbf{NestJS REST
 API}~\cite{nestjs} and a separate \textbf{Next.js web client}~\cite{nextjs} that calls it
 directly from the browser over axios with a \texttt{Bearer} JWT~\cite{jwt}. There is no
-backend-for-frontend proxy --- the two apps share no code and communicate only over HTTP/JSON.
-This clean separation means the API could serve any client (mobile, CLI, a second web app)
-unchanged. The verified system totals framing the architecture --- 146~route handlers across
-20~controllers, 55~Prisma models and 25~enums across 13~schema files --- were produced by
-grepping the source. Figure~\ref{fig:2-3} presents the system component view.
+backend-for-frontend proxy: the two apps share no code and communicate only over HTTP/JSON.
+This clean separation means the API could serve any other client (mobile, CLI, a second web
+app) without change. The system's verified totals give the scale of the architecture:
+147~endpoints across 20~controllers, and 55~Prisma models with 25~enums across 13~schema
+files, all counted directly from the source code. Figure~\ref{fig:2-3} presents the system
+component view.
 
 \reportfigure[0.90\textwidth]{figures/fig_2_3}{System component and deployment view.}{2-3}
 
@@ -355,27 +356,27 @@ grepping the source. Figure~\ref{fig:2-3} presents the system component view.
 split: a \textbf{controller} handles HTTP routing, guards, and Swagger~\cite{swagger}
 documentation; a \textbf{service} holds business rules and authorization logic; a
 \textbf{repository} is the only layer that touches Prisma~\cite{prisma}; and a \textbf{DTO}
-carries request and response shapes with validation decorators. This strict convention is what
-lets any of the approximately 20 backend modules be read the same way. Figure~\ref{fig:2-4}
-shows the layering.
+carries request and response shapes with validation decorators. Thanks to this strict
+convention, all of the approximately 20 backend modules follow the same structure and can be
+understood the same way. Figure~\ref{fig:2-4} shows the layering.
 
 \reportfigure[0.75\textwidth]{figures/fig_2_4}{Backend layered architecture: controller \textrightarrow{} service \textrightarrow{} repository \textrightarrow{} Prisma.}{2-4}
 
 \textbf{Frontend architecture.} The Next.js~16 App Router wraps everything in a single dynamic
 \texttt{[locale]} segment with two route groups: \texttt{(guest)} for login, registration, and
 password reset, and \texttt{dashboard/(auth)} for every authenticated feature under one shell.
-Server state lives in TanStack Query~\cite{tanstackquery}; ephemeral UI state lives in
-Zustand~\cite{zustand} stores; forms are validated with Zod~\cite{zod} schema factories that
+Server state is managed by TanStack Query~\cite{tanstackquery}; short-lived UI state is kept
+in Zustand~\cite{zustand} stores; forms are validated with Zod~\cite{zod} schema factories that
 take the next-intl translator so every validation message is localized. Each feature folder
 mirrors the backend's structure: \texttt{components/}, \texttt{hooks/}, \texttt{services/},
 \texttt{store/}, \texttt{types/}, \texttt{validation/}.
 
 \textbf{Deployment topology.} The current deployment is a self-provisioning local stack.
-\texttt{docker-compose}~\cite{docker} brings up three backing services:
+\texttt{docker-compose}~\cite{docker} starts three backing services:
 PostgreSQL~\cite{postgresql} with pgvector~\cite{pgvector}, Redis~\cite{redis}, and Mailpit.
 On container start the backend runs \texttt{prisma migrate deploy}, which is idempotent and
 production-safe. In development both apps run on the host (backend on :3001, frontend on :3000).
-Each app ships a \texttt{Dockerfile} that serves as a reproducible build recipe.
+Each app has its own \texttt{Dockerfile} that serves as a reproducible build recipe.
 
 \section{Database Design}
 
@@ -428,19 +429,19 @@ enables the hybrid retrieval pipeline described in Chapter~4.
 
 \subsection{Relationships}
 
-\texttt{User} is the hub: it connects to roles, teams, projects (as member or creator), tasks
-(as assignee or reporter), work days, events, reminders, notifications, and copilot queries.
-\texttt{Project} is the aggregate root of the operational domain: epics, sprints, milestones,
-tasks, and document embeddings all foreign-key back to it. The AI module's
+\texttt{User} is the central entity: it connects to roles, teams, projects (as member or
+creator), tasks (as assignee or reporter), work days, events, reminders, notifications, and
+copilot queries. \texttt{Project} is the aggregate root of the operational domain: epics,
+sprints, milestones, tasks, and document embeddings all hold a foreign key back to it. The AI module's
 \texttt{DocumentEmbedding} and \texttt{IndexOutbox} tables reference source entities (tasks,
 comments, epics, sprints, milestones) through a polymorphic \texttt{entityType + entityId} pair
 rather than typed foreign keys, because the same table indexes five different entity types.
 
 Figure~\ref{fig:2-8} presents a high-level domain-relationship diagram: the eight packages
 from Table~\ref{tab:domain-entities} and the key cross-domain relationships between them.
-Entities and attributes are omitted from the diagram itself --- Table~\ref{tab:domain-entities}
-lists what each package contains, and each sprint's class diagrams in Chapter~3 progressively
-reveal the full per-entity detail.
+Entities and attributes are omitted from the diagram itself: Table~\ref{tab:domain-entities}
+lists what each package contains, and the class diagrams in Chapter~3 add the full per-entity
+detail sprint by sprint.
 
 \reportfigure[0.92\textwidth]{figures/fig_2_8}{High-level domain-relationship diagram: the eight packages and their key cross-domain relationships.}{2-8}
 
@@ -489,10 +490,10 @@ choice.
 
 \subsection{Backend}
 
-\textbf{NestJS}~\cite{nestjs} (version~11) is the backend framework. It was chosen for its
-opinionated, modular architecture that enforces structure at the framework level --- exactly what
-a ten-domain monolith needs to stay maintainable. Its decorator-based approach to routing,
-dependency injection, guards, and Swagger documentation maps naturally onto the four-layer
+\textbf{NestJS}~\cite{nestjs} (version~11) is the backend framework. It was chosen because its
+modular architecture enforces a clear structure at the framework level --- exactly what a
+ten-domain monolith needs to stay maintainable. Its decorator-based approach to routing,
+dependency injection, guards, and Swagger documentation fits naturally with the four-layer
 convention adopted across the project.
 
 \textbf{Prisma}~\cite{prisma} (version~7) serves as the ORM and database access layer. Its
@@ -501,9 +502,9 @@ The multi-file schema support (13 files) keeps the 55-model schema organized by 
 \texttt{prisma migrate deploy} provides idempotent, production-safe migrations.
 
 \textbf{Google Gemini}~\cite{gemini} provides both the embedding model and the generation model
-for the AI copilot. Using a managed API avoided standing up and operating an inference stack
-during a time-constrained internship. Gemini's \texttt{flash-lite} variant serves as a cheap,
-fast reranking model on its own quota bucket.
+for the AI copilot. Using a managed API avoided installing and operating a self-hosted
+inference stack during a time-limited internship. Gemini's \texttt{flash-lite} variant serves
+as a cheap, fast reranking model on its own quota bucket.
 
 \subsection{Frontend}
 
@@ -523,13 +524,13 @@ accessible, unstyled UI primitives that are customized to the platform's design.
 
 \textbf{PostgreSQL}~\cite{postgresql} (version~15) with the \textbf{pgvector}~\cite{pgvector}
 extension is the single datastore backing both the transactional domain and the RAG vector
-store. This is a deliberate fewer-moving-parts decision: keeping embeddings in the same database
-as the domain data means retrieval can be permission-scoped in plain SQL, with no separate
-vector database to operate, synchronize, or secure.
+store. This choice keeps the system simple: because the embeddings are stored in the same
+database as the domain data, retrieval can be permission-scoped in plain SQL, and there is no
+separate vector database to operate, synchronize, or secure.
 
-\textbf{Redis}~\cite{redis} is provisioned in the compose stack but not yet wired to its
-intended cache and lock path --- a hook reserved for when caching earns the operational cost of a
-second datastore. Currently, distributed locking is handled through a Postgres-based
+\textbf{Redis}~\cite{redis} is included in the compose stack but not yet connected to its
+intended cache and lock path; it is reserved for when caching justifies the operational cost of
+a second datastore. Currently, distributed locking is handled through a Postgres-based
 \texttt{SELECT ... FOR UPDATE SKIP LOCKED} pattern.
 
 \textbf{Docker}~\cite{docker} provisions the local infrastructure via \texttt{docker-compose}:
@@ -558,26 +559,26 @@ notifications to users' devices.
 
 \section{Risks and Technical Challenges}
 
-Several risks and challenges were anticipated at the design stage and shaped the technical
+Several risks and challenges were identified at the design stage and shaped the technical
 decisions described above.
 
 \begin{itemize}
   \item \textbf{AI hallucinations.} A language model asked about the company's projects without
-    grounding will confabulate plausible answers. This is the central risk of the AI feature
+    grounding will invent plausible answers. This is the central risk of the AI feature
     and the reason for adopting RAG: the model only sees retrieved, permission-scoped project
     content, and a confidence gate refuses the question entirely when retrieval finds nothing
     relevant. The design principle is \emph{honesty over coverage}: refuse rather than guess.
   \item \textbf{Breadth versus consistency.} Covering ten operational domains in one codebase
-    risks a sprawling, inconsistent system. The mitigation is the strict four-layer, per-feature
-    architecture enforced across every module, so that any domain reads the same way once the
-    pattern is learned.
-  \item \textbf{No self-hosted ML infrastructure.} Standing up and operating a GPU-backed
+    risks a large, inconsistent system. The mitigation is the strict four-layer, per-feature
+    architecture enforced across every module, so that any domain follows the same structure
+    once the pattern is learned.
+  \item \textbf{No self-hosted ML infrastructure.} Installing and operating a GPU-backed
     inference stack was not feasible within the internship timeline. Using Google Gemini as a
     managed API avoided this, at the cost of an external dependency and its rate limits.
   \item \textbf{Security across a rich role model.} With approximately 31 role types sharing one
     API, the risk of authorization gaps is high. The mitigation is a centralized RBAC catalogue
     (approximately 120 permissions mapped in one constant) applied by a single guard on every
-    route, with finer ownership checks pushed into services where the data lives.
+    route, with finer ownership checks done inside the services, where the data is available.
   \item \textbf{Integration complexity.} Multi-channel notifications (in-app, email, push,
     Telegram, ntfy), infrastructure health checks (ICMP, HTTP), and the AI indexing pipeline
     all involve asynchronous, cross-module orchestration. Distributed Postgres-based locking
@@ -586,12 +587,12 @@ decisions described above.
 
 \section{Chapter Conclusion}
 
-This chapter laid the groundwork for the implementation chapters that follow. The project was
+This chapter prepared the ground for the implementation chapters that follow. The project was
 organized as a Scrum process with variable-length sprints, a 252-point product backlog
 distributed across six sprints, and a strict dependency-driven plan. The architecture is a
 two-application system --- a stateless NestJS API and a Next.js client --- backed by PostgreSQL
 with pgvector, following a uniform four-layer convention that keeps ten domains maintainable.
 The database schema comprises 55 models organized into eight entity families. The technology
 choices were driven by type safety, maintainability, and the need to keep the AI subsystem
-inside the same datastore as the domain. Chapters~3 and~4 now tell the build story sprint by
-sprint.
+inside the same datastore as the domain. Chapters~3 and~4 now describe the implementation
+sprint by sprint.
