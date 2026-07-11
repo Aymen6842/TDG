@@ -33,30 +33,30 @@ package "Read path — query (sync)" {
   [RerankerService\n(flash-lite · optional)] as RER
 }
 
-cloud "Google Gemini" {
-  [gemini-embedding-001\n(1536-dim)] as EMB
-  [gemini-2.5-flash\n(grounded answer)] as GEN
-}
-
 database "PostgreSQL + pgvector" {
   [IndexOutbox\n(work queue)] as OBT
   [DocumentEmbedding\nHNSW (vector) + GIN (tsvector)] as DE
   [CopilotQueryLog\n(telemetry)] as LOG
 }
 
-PROD --> SEAM : enqueue on write
-SEAM --> OBT : idempotent upsert
-SWEEP --> OBT : claimDue(25)
-SWEEP --> IDX
-IDX --> EMB : embedBatch(changed chunks)
-IDX --> DE : upsertChunk ON CONFLICT
+cloud "Google Gemini" {
+  [gemini-embedding-001\n(1536-dim)] as EMB
+  [gemini-2.5-flash\n(grounded answer)] as GEN
+}
 
-COP --> RET
-EST --> RET
-RET --> ACC : allowedProjectIds()
-RET --> DE : vector + lexical search\n(projectId = ANY(allowed))
-RET --> RER
-COP --> GEN : generateGrounded(sources)
-COP --> LOG : write receipt
-EST --> DE : k-NN over DONE tasks
+PROD -down-> SEAM : enqueue on write
+SEAM -down-> OBT : idempotent upsert
+SWEEP -down-> OBT : claimDue(25)
+SWEEP -right-> IDX
+IDX -down-> EMB : embedBatch(changed chunks)
+IDX -down-> DE : upsertChunk ON CONFLICT
+
+COP -down-> RET
+EST -down-> RET
+RET -down-> ACC : allowedProjectIds()
+RET -down-> DE : vector + lexical search\n(projectId = ANY(allowed))
+RET -down-> RER
+COP -down-> GEN : generateGrounded(sources)
+COP -down-> LOG : write receipt
+EST -down-> DE : k-NN over DONE tasks
 @enduml

@@ -12,75 +12,48 @@ skinparam class {
   ArrowColor #33475b
 }
 
-package "Identity & Access (Sprint 1)" {
-  class User {
-    +id : UUID
-    +email : String <<unique>>
-  }
-  class Team {
-    +name : String <<unique>>
-  }
+' ── Anchors from previous sprints (compacted) ──
+class User <<Sprint 1>> {
+  +id : UUID
+  +email : String <<unique>>
 }
 
-package "Projects & Membership (Sprint 2)" {
-  class Project {
-    +id : UUID
-    +businessUnit : BusinessUnit
-  }
-  class ProjectMember {
-    +isManager : Boolean
-  }
+class Project <<Sprint 2>> {
+  +id : UUID
+  +businessUnit : BusinessUnit
 }
 
-package "Agile Planning (Sprint 3)" {
-  class Epic {
-    +id : UUID
-  }
-  class Sprint {
-    +status : SprintStatus
-  }
-  class Milestone {
-    +dueDate : DateTime
-  }
+class Epic <<Sprint 3>> {
+  +id : UUID
+}
+class Sprint <<Sprint 3>> {
+  +status : SprintStatus
+}
+class Milestone <<Sprint 3>> {
+  +dueDate : DateTime
+}
+class Task <<Sprint 3>> {
+  +key : String
+  +status : String
+}
+class TaskComment <<Sprint 3>> {
+  +body : String
 }
 
-package "Tasks & Kanban (Sprint 3)" {
-  class Task {
-    +key : String
-    +status : String
-  }
-  class TaskComment {
-    +body : String
-  }
+class Reminder <<Sprint 4>> {
+  +status : ReminderStatus
 }
 
-package "Productivity Suite (Sprint 4)" {
-  class UserTask {
-    +status : UserTaskStatus
-  }
-  class Event {
-    +type : EventType
-  }
-  class Reminder {
-    +status : ReminderStatus
-  }
+class Notification <<Sprint 5>> {
+  +id : UUID
+}
+class Server <<Sprint 5>> {
+  +ip : String
 }
 
-package "Communication & Operations (Sprint 5)" {
-  class Notification {
-    +id : UUID
-  }
-  class UserNotificationSettings {
-    +emailNotificationsEnabled : Boolean
-  }
-  class Server {
-    +ip : String
-  }
-}
-
+' ── Sprint 6 — AI / RAG ──
 package "AI / RAG (Sprint 6)" {
   class DocumentEmbedding #LightYellow {
-    +id : UUID
     +projectId : UUID «scope»
     +entityType : EmbeddingEntityType
     +entityId : UUID «soft ref»
@@ -103,35 +76,30 @@ package "AI / RAG (Sprint 6)" {
   }
 }
 
-' Prior-sprint relations (compacted)
-User "1" --> "0..*" Team : "member of"
+' ── Prior-sprint relations (compacted) ──
 User "1" --> "0..*" Project : creates
-Project "1" --> "0..*" ProjectMember : team
 Project "1" --> "0..*" Epic : has
 Project "1" --> "0..*" Sprint : has
 Project "1" --> "0..*" Milestone : has
 Project "1" --> "0..*" Task : owns
 Task "1" --> "0..*" TaskComment : has
-User "1" --> "0..*" UserTask : owns
-User "1" --> "0..*" Event : creates
 User "1" --> "0..*" Reminder : "recipient / author"
 User "1" --> "0..*" Notification : "sends / receives"
-User "1" --> "1" UserNotificationSettings : has
-Project "1" --> "0..*" Server : "(via management)"
+User "1" --> "0..*" Server : "manages (via join)"
 
-' Sprint 6 — AI package attachment
+' ── Sprint 6 — AI package attachment ──
 Project "1" --> "0..*" DocumentEmbedding : "projectId (scope)"
 Project "1" --> "0..*" IndexOutbox : projectId
 User "1" --> "0..*" CopilotQueryLog : userId
 
-' Write-path seam: domain services enqueue index jobs (fire-and-forget)
+' ── Write-path seam: domain services enqueue index jobs (fire-and-forget) ──
 Task ..> IndexOutbox : "enqueue on write"
 TaskComment ..> IndexOutbox : "enqueue on create"
 Epic ..> IndexOutbox : "enqueue on write"
 Sprint ..> IndexOutbox : "enqueue on write"
 Milestone ..> IndexOutbox : "enqueue on write"
 
-' Soft (FK-less) polymorphic reference from embeddings to content
+' ── Soft (FK-less) polymorphic reference from embeddings to content ──
 DocumentEmbedding ..> Task : "soft ref (entityId)"
 DocumentEmbedding ..> TaskComment : "soft ref (entityId)"
 @enduml

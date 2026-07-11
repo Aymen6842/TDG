@@ -36,8 +36,8 @@ SW -> IX : syncEntity(TASK, id)
 activate IX
 IX -> IX : re-read live row,\nbuild chunks, sha256 hash
 IX -> GE : embedBatch(changed chunks)\n[skip unchanged by hash]
-GE --> IX : 1536-dim vectors\n(L2-normalized)
-IX -> DE : upsertChunk(...) ON CONFLICT
+GE --> IX : 1536-dim vectors
+IX -> DE : L2-normalize ·\nupsertChunk(...) ON CONFLICT
 deactivate IX
 SW -> OB : markDone / markRetry(backoff) / markFailed
 deactivate SW

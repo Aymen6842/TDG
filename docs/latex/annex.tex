@@ -9,62 +9,72 @@ was found by the author's own review of the code, root-caused, and has a designe
 five themes (\textbf{security · correctness · maintainability · testing · devops}) mirror the Limitations \&
 Perspectives summary; priority follows the order in which the debt actually hurts.
 
-\begin{longtable}{@{}p{1.7cm}p{5.2cm}p{5.8cm}p{1.2cm}@{}}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{6.3cm}>{\raggedright\arraybackslash}p{6.5cm}>{\raggedright\arraybackslash}p{1.4cm}@{}}
 \toprule
-Theme & Item & Planned remediation & Priority \\
+Item & Planned remediation & Priority \\
 \midrule
 \endfirsthead
 \toprule
-Theme & Item & Planned remediation & Priority \\
+Item & Planned remediation & Priority \\
 \midrule
 \endhead
-security & Token lifetimes \& revocation --- access/refresh TTLs configured at \textasciitilde3.3 years; access tokens non-revocable (logout only deletes the refresh row) & Short-lived access tokens + refresh-token rotation/revocation & High \\
-security & Type-claim confusion --- access \& refresh tokens share one secret/payload and differ only by a \texttt{type} claim the guards never check & Enforce the \texttt{type} claim in the guards & High \\
-security & No throttling / weak reset code --- no rate-limit or lockout; 5-digit reset code from non-crypto \texttt{Math.random}, brute-forceable in the 15-min window & Add \texttt{@nestjs/throttler} + a cryptographic reset code & High \\
-security & Delete authorizes the wrong subject --- \texttt{deleteUserByAdmin} checks the caller's own roles, not the target's (verified privilege-escalation) & Authorize delete against the target user & High \\
-security & User enumeration --- login/reset distinguish ``unknown user'' from ``wrong credentials'', aiding reconnaissance & Uniform authentication responses & Medium \\
-security & Fragile raw-SQL user listing --- \texttt{\$queryRawUnsafe} guarded only by DTO escaping + a blacklist regex, not parameterized & Parameterize the user list/count queries & Medium \\
-security & Access-control gaps on the write/manager surface --- worker-update not owner-scoped; manager work-day list leaks all users; any role can broadcast a company-wide event; a reminder can target a non-member & Owner-scope the writes, fix the manager-list scope, gate broadcast, and verify recipient membership & High \\
-security & Broadcast open to everyone --- \texttt{notification.create} granted to all roles with no service gate & Restrict broadcast to executive/manager roles with throttling & High \\
-security & Telemetry stores plaintext --- \texttt{CopilotQueryLog} keeps the question + full answer in plaintext with no retention policy & Retention/redaction policy for the query log & Medium \\
-security & High-blast-radius delete grant --- a project-manager role can hard-delete a whole project, cascading its epics/sprints/tasks & Confirm intent / add a guarded confirmation step & Low \\
+\multicolumn{3}{@{}l}{\textbf{Security}} \\*
+\addlinespace[2pt]
+Token lifetimes \& revocation --- access/refresh TTLs configured at \textasciitilde3.3 years; access tokens non-revocable (logout only deletes the refresh row) & Short-lived access tokens + refresh-token rotation/revocation & High \\
+Type-claim confusion --- access \& refresh tokens share one secret/payload and differ only by a \texttt{type} claim the guards never check & Enforce the \texttt{type} claim in the guards & High \\
+No throttling / weak reset code --- no rate-limit or lockout; 5-digit reset code from non-crypto \texttt{Math.random}, brute-forceable in the 15-min window & Add \texttt{@nestjs/throttler} + a cryptographic reset code & High \\
+Delete authorizes the wrong subject --- \texttt{deleteUserByAdmin} checks the caller's own roles, not the target's (verified privilege-escalation) & Authorize delete against the target user & High \\
+User enumeration --- login/reset distinguish ``unknown user'' from ``wrong credentials'', aiding reconnaissance & Uniform authentication responses & Medium \\
+Fragile raw-SQL user listing --- \texttt{\$queryRawUnsafe} guarded only by DTO escaping + a blacklist regex, not parameterized & Parameterize the user list/count queries & Medium \\
+Access-control gaps on the write/manager surface --- worker-update not owner-scoped; manager work-day list leaks all users; any role can broadcast a company-wide event; a reminder can target a non-member & Owner-scope the writes, fix the manager-list scope, gate broadcast, and verify recipient membership & High \\
+Broadcast open to everyone --- \texttt{notification.create} granted to all roles with no service gate & Restrict broadcast to executive/manager roles with throttling & High \\
+Telemetry stores plaintext --- \texttt{CopilotQueryLog} keeps the question + full answer in plaintext with no retention policy & Retention/redaction policy for the query log & Medium \\
+High-blast-radius delete grant --- a project-manager role can hard-delete a whole project, cascading its epics/sprints/tasks & Confirm intent / add a guarded confirmation step & Low \\
 \midrule
-correctness & Check-in dead zone --- business day anchored on \texttt{createdAt} at a hard-coded 03:00 UTC boundary; the 00:00--02:59 UTC window loops forever & Explicit \texttt{businessDate} column keyed \texttt{@@unique([userId, businessDate])} & High \\
-correctness & No acceptance UI for invitations --- backend complete, but the browser client never reaches the accept endpoint (\texttt{/projects/join} route absent) & Build the \texttt{/projects/join} acceptance page + its service & High \\
-correctness & Collision-prone task keys --- \texttt{TASK-<count+1>} derives the key from a live count outside the insert transaction; concurrent creates collide and deletes cause reuse & Transactional monotonic per-project key counter & High \\
-correctness & Recurrence silently broken --- the pending scan marks recurring reminders \texttt{SENT} (fire once); the \texttt{recurrenceRule} parser recognizes only three hard-coded cron strings & Correct the recurrence scan + swap in a real cron parser & High \\
-correctness & Service monitoring false positives --- \texttt{checkHttp} probes a schemeless \texttt{domain}; the missing-protocol throw is read as ``down'', alerting every minute with no cooldown & Normalize \texttt{domain} to a URL before probing + add an alert cooldown & High \\
-correctness & Service edit/delete 500s for DevOps --- the non-CTO scope filters a \texttt{managers} relation the \texttt{Service} model lacks & Scope the non-CTO service path through \texttt{server.managers} & High \\
-correctness & Comment edits/deletes not enqueued --- only comment \emph{create} enqueues an index job, so a deleted comment stays retrievable for up to \textasciitilde24~h until nightly reconcile & Enqueue \texttt{TASK\_COMMENT} upsert on edit and delete on removal & High \\
-correctness & Confidence gate is cosine-only --- a keyword query the lexical arm answers but the dense arm scores below 0.5 is still refused & Make the gate arm-aware (``any arm above its own threshold'') & High \\
-correctness & Archiving is only cosmetic --- the list query adds no \texttt{isArchived} predicate; archived rows still appear & Server-side archived filtering & Medium \\
-correctness & Destructive member update --- the update transaction \texttt{deleteMany}+\texttt{createMany} discards each member's \texttt{hourlyRate} and resets \texttt{createdAt} & Non-destructive member upserts & Medium \\
-correctness & Non-atomic agile writes --- sprint create/update touch DB, disk, reminders and the index outside a transaction & Wrap the multi-step agile writes in a transaction & Medium \\
-correctness & Inconsistent status-change rules --- \texttt{moveToSprint} resets status to TODO regardless of column; \texttt{bulkUpdateStatus} skips WIP/blocked gates & Align \texttt{bulkUpdateStatus}/\texttt{moveToSprint} with the per-move rules & Medium \\
-correctness & Frontend truncation --- the task list/Kanban silently cap at 100 items & Paginate and surface fetch errors & Medium \\
-correctness & Wrong-target \& dead-endpoint bugs --- auto-reminders nudge the creator not the assignee; the manager work-day update always 404s; an executive's delete of a non-owned event is a silent no-op & Fix targeting, the 404 endpoint, delete authorization, and ownership retention & Medium \\
-correctness & Delivery integrity --- \texttt{SENT} does not mean ``delivered'' and \texttt{FAILED} is never written; deleting a task/milestone orphans its reminders & Add a \texttt{markAsFailed} path + populate the reminder FKs & Medium \\
-correctness & ntfy is inert --- the settings UI subscribes the user to a topic no code path stores & Write the ntfy topic server-side (or send it from the settings form) & Medium \\
-correctness & ``Delete invitation'' is a soft cancel --- revoke sets \texttt{status = CANCELLED} rather than deleting the row & Reconcile the revoke naming/behaviour & Low \\
-correctness & Circular capacity analytics --- per-member utilization algebraically collapses to the project-wide ratio & Redesign capacity from an independent per-member input & Low \\
-correctness & Global project-name uniqueness --- \texttt{@@unique([language, name])} over a single-value \texttt{Language} enum blocks same-named projects & Scope name uniqueness by project (or populate the i18n split) & Low \\
-correctness & Global sprint-name unique key --- \texttt{SprintContent} uniqueness not project-scoped & Project-scoped sprint-name constraint & Low \\
-correctness & Milestone gaps --- create skips project-window date validation; \texttt{completeMilestone} is not idempotent; the Gantt view returns sprint rows with no name & Add date validation + idempotency; name Gantt sprint rows & Low \\
-correctness & AI smaller items --- source text truncated to 1200~chars while chunks reach \textasciitilde2000; the reranker scores an omitted candidate as 0 & Raise truncation to chunk size; preserve fused rank for omitted candidates & Low \\
+\multicolumn{3}{@{}l}{\textbf{Correctness}} \\*
+\addlinespace[2pt]
+Check-in dead zone --- business day anchored on \texttt{createdAt} at a hard-coded 03:00 UTC boundary; the 00:00--02:59 UTC window loops forever & Explicit \texttt{businessDate} column keyed \texttt{@@unique([userId, businessDate])} & High \\
+No acceptance UI for invitations --- backend complete, but the browser client never reaches the accept endpoint (\texttt{/projects/join} route absent) & Build the \texttt{/projects/join} acceptance page + its service & High \\
+Collision-prone task keys --- \texttt{TASK-<count+1>} derives the key from a live count outside the insert transaction; concurrent creates collide and deletes cause reuse & Transactional monotonic per-project key counter & High \\
+Recurrence silently broken --- the pending scan marks recurring reminders \texttt{SENT} (fire once); the \texttt{recurrenceRule} parser recognizes only three hard-coded cron strings & Correct the recurrence scan + swap in a real cron parser & High \\
+Service monitoring false positives --- \texttt{checkHttp} probes a schemeless \texttt{domain}; the missing-protocol throw is read as ``down'', alerting every minute with no cooldown & Normalize \texttt{domain} to a URL before probing + add an alert cooldown & High \\
+Service edit/delete 500s for DevOps --- the non-CTO scope filters a \texttt{managers} relation the \texttt{Service} model lacks & Scope the non-CTO service path through \texttt{server.managers} & High \\
+Comment edits/deletes not enqueued --- only comment \emph{create} enqueues an index job, so a deleted comment stays retrievable for up to \textasciitilde24~h until nightly reconcile & Enqueue \texttt{TASK\_COMMENT} upsert on edit and delete on removal & High \\
+Confidence gate is cosine-only --- a keyword query the lexical arm answers but the dense arm scores below 0.5 is still refused & Make the gate arm-aware (``any arm above its own threshold'') & High \\
+Archiving is only cosmetic --- the list query adds no \texttt{isArchived} predicate; archived rows still appear & Server-side archived filtering & Medium \\
+Destructive member update --- the update transaction \texttt{deleteMany}+\texttt{createMany} discards each member's \texttt{hourlyRate} and resets \texttt{createdAt} & Non-destructive member upserts & Medium \\
+Non-atomic agile writes --- sprint create/update touch DB, disk, reminders and the index outside a transaction & Wrap the multi-step agile writes in a transaction & Medium \\
+Inconsistent status-change rules --- \texttt{moveToSprint} resets status to TODO regardless of column; \texttt{bulkUpdateStatus} skips WIP/blocked gates & Align \texttt{bulkUpdateStatus}/\texttt{moveToSprint} with the per-move rules & Medium \\
+Frontend truncation --- the task list/Kanban silently cap at 100 items & Paginate and surface fetch errors & Medium \\
+Wrong-target \& dead-endpoint bugs --- auto-reminders nudge the creator not the assignee; the manager work-day update always 404s; an executive's delete of a non-owned event is a silent no-op & Fix targeting, the 404 endpoint, delete authorization, and ownership retention & Medium \\
+Delivery integrity --- \texttt{SENT} does not mean ``delivered'' and \texttt{FAILED} is never written; deleting a task/milestone orphans its reminders & Add a \texttt{markAsFailed} path + populate the reminder FKs & Medium \\
+ntfy is inert --- the settings UI subscribes the user to a topic no code path stores & Write the ntfy topic server-side (or send it from the settings form) & Medium \\
+``Delete invitation'' is a soft cancel --- revoke sets \texttt{status = CANCELLED} rather than deleting the row & Reconcile the revoke naming/behaviour & Low \\
+Circular capacity analytics --- per-member utilization algebraically collapses to the project-wide ratio & Redesign capacity from an independent per-member input & Low \\
+Global project-name uniqueness --- \texttt{@@unique([language, name])} over a single-value \texttt{Language} enum blocks same-named projects & Scope name uniqueness by project (or populate the i18n split) & Low \\
+Global sprint-name unique key --- \texttt{SprintContent} uniqueness not project-scoped & Project-scoped sprint-name constraint & Low \\
+Milestone gaps --- create skips project-window date validation; \texttt{completeMilestone} is not idempotent; the Gantt view returns sprint rows with no name & Add date validation + idempotency; name Gantt sprint rows & Low \\
+AI smaller items --- source text truncated to 1200~chars while chunks reach \textasciitilde2000; the reranker scores an omitted candidate as 0 & Raise truncation to chunk size; preserve fused rank for omitted candidates & Low \\
 \midrule
-maintainability & Duplicated executive-RBAC helpers --- the \textasciitilde70-line access helper set is copy-pasted across three agile services and has already drifted & Extract a shared \texttt{ProjectAccessService} & High \\
-maintainability & Decentralized, duplicated fan-out --- the channel-selection block is copy-pasted across \textasciitilde seven consumers, with \textasciitilde120 already-drifted lines & Introduce a single \texttt{NotificationDispatcherService} & High \\
-maintainability & Duplicated notification fan-out (Sprint~4) --- the four-channel selection block is copy-pasted across the to-do, attendance, events and reminders services & Extract a single \texttt{notifyAllChannels} façade & Medium \\
-maintainability & Coupled \& inconsistent delivery --- the in-app inbox cannot be controlled independently of push; channel services disagree on error handling & Decouple the inbox from the push flag + unify the channel error contract & Medium \\
-maintainability & \texttt{reindexAll}/\texttt{reconcile} load whole tables into memory & Batch/stream the reindex and reconcile & Low \\
+\multicolumn{3}{@{}l}{\textbf{Maintainability}} \\*
+\addlinespace[2pt]
+Duplicated executive-RBAC helpers --- the \textasciitilde70-line access helper set is copy-pasted across three agile services and has already drifted & Extract a shared \texttt{ProjectAccessService} & High \\
+Decentralized, duplicated fan-out --- the channel-selection block is copy-pasted across \textasciitilde seven consumers, with \textasciitilde120 already-drifted lines & Introduce a single \texttt{NotificationDispatcherService} & High \\
+Duplicated notification fan-out (Sprint~4) --- the four-channel selection block is copy-pasted across the to-do, attendance, events and reminders services & Extract a single \texttt{notifyAllChannels} façade & Medium \\
+Coupled \& inconsistent delivery --- the in-app inbox cannot be controlled independently of push; channel services disagree on error handling & Decouple the inbox from the push flag + unify the channel error contract & Medium \\
+\texttt{reindexAll}/\texttt{reconcile} load whole tables into memory & Batch/stream the reindex and reconcile & Low \\
 \midrule
-testing & Sprint~3 backend tests near-zero --- the tasks module has no backend specs; the agile module's one spec is stale & Add backend service tests for the tasks/agile logic & High \\
-testing & Sprint~4 backend tests near-zero --- scaffolds only, one broken; no reminders backend spec & Add tests for the business-day boundary and the RBAC scoping & High \\
-testing & Sprint~5 stub/broken tests across both modules --- only the mail-service spec exercises real behaviour & Add backend tests for fan-out and RBAC scoping & Medium \\
-testing & AI subsystem has no unit tests --- RRF fusion, weighted percentiles, citation parsing unguarded & Unit-test the pure functions & Medium \\
+\multicolumn{3}{@{}l}{\textbf{Testing}} \\*
+\addlinespace[2pt]
+Sprint~3 backend tests near-zero --- the tasks module has no backend specs; the agile module's one spec is stale & Add backend service tests for the tasks/agile logic & High \\
+Sprint~4 backend tests near-zero --- scaffolds only, one broken; no reminders backend spec & Add tests for the business-day boundary and the RBAC scoping & High \\
+Sprint~5 stub/broken tests across both modules --- only the mail-service spec exercises real behaviour & Add backend tests for fan-out and RBAC scoping & Medium \\
+AI subsystem has no unit tests --- RRF fusion, weighted percentiles, citation parsing unguarded & Unit-test the pure functions & Medium \\
 \midrule
-devops & No persisted health state --- health checks write nothing on success; no uptime history & Persist \texttt{lastHealthCheckAt} and a health history & Medium \\
-devops & Cancelled SSE streams not logged --- streaming returns on cancellation before writing telemetry & Write the telemetry receipt before returning on cancel & Low \\
-devops & Gemini client can be \texttt{null} on a missing key with no fail-fast & Fail-fast on the missing Gemini key at startup & Low \\
+\multicolumn{3}{@{}l}{\textbf{DevOps}} \\*
+\addlinespace[2pt]
+No persisted health state --- health checks write nothing on success; no uptime history & Persist \texttt{lastHealthCheckAt} and a health history & Medium \\
+Cancelled SSE streams not logged --- streaming returns on cancellation before writing telemetry & Write the telemetry receipt before returning on cancel & Low \\
+Gemini client can be \texttt{null} on a missing key with no fail-fast & Fail-fast on the missing Gemini key at startup & Low \\
 \bottomrule
 \end{longtable}

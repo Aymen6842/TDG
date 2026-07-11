@@ -32,7 +32,7 @@ RE -> AA : allowedProjectIds()
 note right of AA : 403 if explicit projectId out of scope
 RE -> ER : searchVector (cosine ANN)
 RE -> ER : searchLexical (ts_rank_cd)
-RE -> RE : fuseRrf(vector, lexical)  ' k = 60
+RE -> RE : fuseRrf(vector, lexical, k = 60)
 opt rerank flag on
   RE -> RR : rerank(question, fused pool)
 end

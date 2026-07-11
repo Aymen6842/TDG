@@ -29,7 +29,7 @@ enum OutboxStatus {
   FAILED
 }
 
-class DocumentEmbedding #LightYellow {
+class DocumentEmbedding {
   +id : UUID
   +projectId : UUID «scope key»
   +entityType : EmbeddingEntityType
@@ -42,7 +42,7 @@ class DocumentEmbedding #LightYellow {
   --
   @@unique(entityType, entityId, chunkIndex)
 }
-class IndexOutbox #LightYellow {
+class IndexOutbox {
   +id : UUID
   +projectId : UUID
   +entityType : EmbeddingEntityType
@@ -55,7 +55,7 @@ class IndexOutbox #LightYellow {
   --
   @@unique(entityType, entityId)
 }
-class CopilotQueryLog #LightYellow {
+class CopilotQueryLog {
   +id : UUID
   +userId : UUID
   +projectId : UUID?

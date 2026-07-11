@@ -127,42 +127,13 @@ for the honour they do me in accepting to evaluate this work.
 % RÉSUMÉ / ABSTRACT — bodies defined as macros so the back cover reuses them
 % --------------------------------------------------------------------------
 \newcommand{\resumebody}{%
-Tawer Management est une plateforme interne d'exploitation pour une agence digitale, conçue pour
-consolider en une seule application web authentifiée et bilingue (en/fr) des flux de travail aujourd'hui
-dispersés sur de multiples outils : gestion de projets et de leurs membres, backlog agile (epics →
-sprints → tâches, jalons), tâches avec un kanban piloté par les données, to-dos personnels, pointage
-(check-in/out), calendrier d'événements, rappels, notifications multi-canaux et supervision
-d'infrastructure. Le système repose sur une architecture deux-applications : une API REST NestJS 11 sans
-état (20 contrôleurs, 146 endpoints) et un client Next.js 16 / React 19, adossés à PostgreSQL (avec
-l'extension pgvector) et Redis. Un contrôle d'accès à base de rôles (RBAC) centralisé gouverne environ 31
-types de rôles répartis sur deux unités d'affaires. L'élément différenciant est un \textbf{copilote IA à
-génération augmentée par la récupération (RAG)} : indexation par \textit{outbox} transactionnel, embeddings
-Gemini, récupération hybride (vectorielle + lexicale) fusionnée par RRF, reranker LLM, réponses citées et
-estimation d'effort par k plus proches voisins. Le tout est validé par un harnais d'évaluation hors ligne :
-la récupération hybride porte le MRR de 0,57 à 1,00 et le Recall@1 de 0,30 à 1,00 sur le jeu de tests par
-identifiant, avec une fuite inter-rôles nulle à la récupération. Le développement est mené en six sprints
-selon une méthodologie Scrum, livrant une plateforme fonctionnelle dont la large couverture s'appuie sur une
-architecture uniforme et sur une IA validée par la mesure.}
+Tawer Management est une plateforme interne de gestion des opérations destinée à une agence digitale. Son objectif est de réunir, au sein d'une application web unique, authentifiée et bilingue (fr/en), des processus jusque-là dispersés entre plusieurs outils : gestion des projets et de leurs membres, backlog agile (epics, sprints, tâches et jalons), tableau Kanban piloté par les données, gestion des to-dos personnels, pointage (check-in/check-out), calendrier d'événements, rappels, notifications multi-canaux et supervision de l'infrastructure. La plateforme repose sur une architecture à deux applications composée d'une API REST NestJS~11 sans état (20 contrôleurs, 147 endpoints) et d'un client Next.js~16 / React~19, s'appuyant sur PostgreSQL (avec l'extension pgvector) et Redis. La sécurité est assurée par un modèle centralisé de contrôle d'accès basé sur les rôles (RBAC), couvrant environ 31 types de rôles répartis sur deux unités d'affaires. La principale contribution du projet est un \textbf{copilote IA fondé sur la génération augmentée par la récupération (RAG)}, combinant une indexation asynchrone par \textit{transactional outbox}, des embeddings Gemini, une récupération hybride (vectorielle et lexicale) fusionnée par RRF, un reranker fondé sur un LLM, des réponses contextualisées accompagnées de citations, ainsi qu'un estimateur d'effort reposant sur les k plus proches voisins. Ce composant est évalué à l'aide d'un protocole expérimental hors ligne montrant que la récupération hybride améliore le MRR de 0,57 à 1,00 et le Recall@1 de 0,30 à 1,00 sur le jeu de référence par identifiant, sans aucune fuite de données entre rôles. Développée en six sprints selon la méthodologie Scrum, la plateforme offre une couverture fonctionnelle étendue, une architecture homogène et maintenable, ainsi qu'un composant d'intelligence artificielle validé par des mesures quantitatives.}
 
 \newcommand{\motscles}{gestion d'équipe, Scrum, NestJS, Next.js, Prisma, PostgreSQL, pgvector, RBAC, RAG,
 récupération hybride, embeddings, estimation d'effort}
 
 \newcommand{\abstractbody}{%
-Tawer Management is an internal operations platform for a digital agency, built to consolidate, in one
-authenticated, bilingual (en/fr) web application, workflows that today are scattered across many separate
-tools: project and membership management, an agile backlog (epics → sprints → tasks, milestones), tasks on
-a data-driven kanban, personal to-dos, attendance (check-in/out), a calendar of events, reminders,
-multi-channel notifications, and infrastructure monitoring. The system follows a two-application
-architecture: a stateless NestJS~11 REST API (20 controllers, 146 endpoints) and a Next.js~16 / React~19
-web client, backed by PostgreSQL (with the pgvector extension) and Redis. A centralized role-based access
-control (RBAC) model governs roughly 31 role types across two business units. The differentiator is a
-\textbf{Retrieval-Augmented Generation (RAG) AI copilot}: transactional-outbox indexing, Gemini embeddings,
-hybrid vector + lexical retrieval fused with RRF, an LLM reranker, cited grounded answers, and k-NN effort
-estimation. All of it is validated by an offline evaluation harness (hybrid retrieval lifts MRR from 0.57 to
-1.00 and Recall@1 from 0.30 to 1.00 on the identifier gold set, with zero cross-role retrieval leakage). The
-build is delivered across six sprints under a Scrum methodology, yielding a functional platform whose broad
-feature coverage rests on a uniform architecture and on AI validated by measurement.}
-
+Tawer Management is an internal operations platform for a digital agency, designed to consolidate workflows that were previously scattered across multiple tools into a single authenticated, bilingual (en/fr) web application. The platform integrates project and membership management, an agile backlog (epics, sprints, tasks, and milestones), a data-driven Kanban board, personal to-dos, attendance (check-in/check-out), event scheduling, reminders, multi-channel notifications, and infrastructure monitoring. It follows a two-application architecture consisting of a stateless NestJS~11 REST API (20 controllers, 147 endpoints) and a Next.js~16 / React~19 web client, backed by PostgreSQL (extended with pgvector) and Redis. Access is governed through a centralized role-based access control (RBAC) model supporting approximately 31 role types across two business units. The project's main contribution is a \textbf{Retrieval-Augmented Generation (RAG) AI copilot} that combines transactional-outbox indexing, Gemini embeddings, hybrid vector and lexical retrieval fused with Reciprocal Rank Fusion (RRF), an LLM-based reranker, grounded responses with citations, and k-nearest-neighbour effort estimation. The AI component is evaluated through an offline benchmark, where hybrid retrieval improves Mean Reciprocal Rank (MRR) from 0.57 to 1.00 and Recall@1 from 0.30 to 1.00 on the identifier gold set while maintaining zero cross-role retrieval leakage. Developed over six Scrum sprints, the resulting platform combines broad functional coverage with a uniform, maintainable architecture and an AI component whose effectiveness is supported by quantitative evaluation.}
 \newcommand{\keywordsen}{team management, Scrum, NestJS, Next.js, Prisma, PostgreSQL, pgvector, RBAC, RAG, hybrid
 retrieval, embeddings, effort estimation}
 

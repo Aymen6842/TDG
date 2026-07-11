@@ -20,8 +20,7 @@ actor "Scheduler\n(system)" as S
 
 rectangle "Tawer Management — Sprint 6 (AI)" {
   usecase "Ask copilot\n(natural language)" as UC_Ask
-  usecase "Stream grounded\nanswer" as UC_Stream
-  usecase "View citations\n(deep-link to source)" as UC_Cite
+  usecase "Stream grounded answer\nwith citations" as UC_Stream
   usecase "Honest refusal\n(insufficient context)" as UC_Refuse
   usecase "Estimate draft-task\neffort (k-NN)" as UC_Est
   usecase "Retrieve permission-\nscoped content" as UC_Retrieve
@@ -39,7 +38,5 @@ S --> UC_Index
 UC_Ask ..> UC_Retrieve : <<include>>
 UC_Ask ..> UC_Stream : <<include>>
 UC_Est ..> UC_Retrieve : <<include>>
-UC_Stream ..> UC_Cite : <<extend>>
-UC_Stream ..> UC_Refuse : <<extend>>
-UC_Retrieve ..> UC_Index : "reads the index"
+UC_Refuse ..> UC_Stream : <<extend>>
 @enduml
