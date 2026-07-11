@@ -12,70 +12,34 @@ skinparam class {
   ArrowColor #33475b
 }
 
-package "Identity & Access (Sprint 1)" {
-  class User {
-    +id : UUID
-    +email : String <<unique>>
-  }
-  class Role {
-    +type : UserType
-  }
-  class Team {
-    +name : String <<unique>>
-  }
-  class UserTeam {
-    +isManager : Boolean
-  }
+' ── Anchors from previous sprints (compacted) ──
+class User <<Sprint 1>> {
+  +id : UUID
+  +email : String <<unique>>
 }
 
-package "Projects & Membership (Sprint 2)" {
-  class Project {
-    +id : UUID
-    +businessUnit : BusinessUnit
-    +projectType : ProjectType
-  }
-  class ProjectMember {
-    +isManager : Boolean
-  }
-  class ProjectInvitation {
-    +status : InvitationStatus
-  }
+class Project <<Sprint 2>> {
+  +id : UUID
+  +businessUnit : BusinessUnit
 }
 
-package "Agile Planning (Sprint 3)" {
-  class Epic {
-    +id : UUID
-    +name : String
-  }
-  class Sprint {
-    +id : UUID
-    +status : SprintStatus
-  }
-  class Milestone {
-    +id : UUID
-    +dueDate : DateTime
-  }
+class Task <<Sprint 3>> {
+  +id : UUID
+  +key : String
 }
 
-package "Tasks & Kanban (Sprint 3)" {
-  class Task {
-    +id : UUID
-    +key : String
-    +status : String
-    +storyPoints : Integer
-  }
-  class ProjectTaskStatus {
-    +name : String
-    +allowedTransitions : String[]
-  }
-  class TaskTimeEntry {
-    +id : UUID
-    +hours : Float
-  }
+class Milestone <<Sprint 3>> {
+  +id : UUID
+  +dueDate : DateTime
 }
 
-package "Productivity Suite (Sprint 4)" {
-  ' --- Personal to-dos ---
+class TaskTimeEntry <<Sprint 3>> {
+  +id : UUID
+  +hours : Float
+}
+
+' ── Sprint 4 — Personal To-Dos ──
+package "Personal To-Dos (Sprint 4)" {
   class UserTask #LightYellow {
     +id : UUID
     +status : UserTaskStatus
@@ -95,7 +59,10 @@ package "Productivity Suite (Sprint 4)" {
   class UserTaskAttachment #LightYellow {
     +file : String
   }
-  ' --- Attendance ---
+}
+
+' ── Sprint 4 — Time & Attendance ──
+package "Time & Attendance (Sprint 4)" {
   class WorkDay #LightYellow {
     +id : UUID
     +dailyMood : Integer
@@ -108,7 +75,10 @@ package "Productivity Suite (Sprint 4)" {
     +location : WorkSessionLocation
     +device : WorkSessionDevice
   }
-  ' --- Calendar ---
+}
+
+' ── Sprint 4 — Events & Calendar ──
+package "Events & Calendar (Sprint 4)" {
   class Event #LightYellow {
     +id : UUID
     +type : EventType
@@ -125,7 +95,10 @@ package "Productivity Suite (Sprint 4)" {
     +eventId : UUID <<PK>>
     +userId : UUID <<PK>>
   }
-  ' --- Reminders ---
+}
+
+' ── Sprint 4 — Reminders ──
+package "Reminders (Sprint 4)" {
   class Reminder #LightYellow {
     +id : UUID
     +entityType : ReminderEntityType
@@ -139,42 +112,27 @@ package "Productivity Suite (Sprint 4)" {
   }
 }
 
-' Prior-sprint relations (compacted)
-User "1" --> "0..*" Role : has
-User "1" --> "0..*" UserTeam : "member of"
-Team "1" --> "0..*" UserTeam : has
-User "1" --> "0..*" Project : creates
-Project "1" --> "0..*" ProjectMember : team
-Project "1" --> "0..*" ProjectInvitation : invites
-Project "1" --> "0..*" Epic : has
-Project "1" --> "0..*" Sprint : has
-Project "1" --> "0..*" Milestone : has
-Project "1" --> "0..*" Task : owns
-Project "1" --> "0..*" ProjectTaskStatus : columns
-Task "1" --> "0..*" TaskTimeEntry : logs
-
-' Sprint 4 — Personal to-dos
+' ── Relations from the anchors into Sprint 4 ──
 User "1" --> "0..*" UserTask : owns
+User "1" --> "0..*" WorkDay : has
+User "1" --> "0..*" Event : creates
+User "1" --> "0..*" Reminder : "recipient / author"
+
+Project "1" --> "0..*" Reminder : "projectId?"
+Task "0..1" ..> "0..*" Reminder : "entityId?"
+Milestone "0..1" ..> "0..*" Reminder : "entityId?"
+
+' ── Sprint 4 internal relations ──
 UserTask "1" --> "0..*" UserTask : sub-tasks
 UserTask "1" --> "1..*" UserTaskContent : content
 UserTask "1" --> "0..*" UserTaskComment : comments
 UserTask "1" --> "0..*" UserTaskAttachment : attachments
 
-' Sprint 4 — Attendance
-User "1" --> "0..*" WorkDay : has
 WorkDay "1" --> "0..*" WorkSession : has
 WorkSession "1" --> "0..*" TaskTimeEntry : "anchors (Sprint 3)"
 
-' Sprint 4 — Calendar
-User "1" --> "0..*" Event : creates
 Event "1" --> "1..*" EventContent : content
 Event "1" --> "0..*" EventParticipant : participants
-User "1" --> "0..*" EventParticipant : invited
 
-' Sprint 4 — Reminders
-User "1" --> "0..*" Reminder : "recipient / author"
 Reminder "1" --> "1..*" ReminderChannel : channels
-Project "1" --> "0..*" Reminder : "projectId?"
-Task "0..1" ..> "0..*" Reminder : "entityId?"
-Milestone "0..1" ..> "0..*" Reminder : "entityId?"
 @enduml

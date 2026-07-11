@@ -17,18 +17,18 @@ class User {
   +email : String
 }
 
-enum UserTaskStatus <<enum>> #LightYellow {
+enum UserTaskStatus {
   Pending
   InProgress
   Completed
 }
-enum UserTaskPriority <<enum>> #LightYellow {
+enum UserTaskPriority {
   Low
   Medium
   High
 }
 
-class UserTask #LightYellow {
+class UserTask {
   +id : UUID
   -userId : UUID
   -parentTaskId : UUID
@@ -41,18 +41,18 @@ class UserTask #LightYellow {
   +archived : Boolean
   +displayOrder : Integer
 }
-class UserTaskContent #LightYellow {
+class UserTaskContent {
   +id : UUID
   +title : String
   +description : String
   +language : Language
 }
-class UserTaskComment #LightYellow {
+class UserTaskComment {
   +id : UUID
   +comment : String
   -userId : UUID
 }
-class UserTaskAttachment #LightYellow {
+class UserTaskAttachment {
   +id : UUID
   +file : String
 }
@@ -63,4 +63,7 @@ UserTask "1" --> "1..*" UserTaskContent : "content (i18n)"
 UserTask "1" --> "0..*" UserTaskComment : comments
 UserTask "1" --> "0..*" UserTaskAttachment : attachments
 User "1" --> "0..*" UserTaskComment : authored
+
+UserTask ..> UserTaskStatus
+UserTask ..> UserTaskPriority
 @enduml

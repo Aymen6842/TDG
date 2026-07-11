@@ -16,20 +16,17 @@ participant "Postgres" as DB
 U -> GATE : open dashboard route
 GATE -> API : GET /work-days/current
 API -> SVC : getCurrentWorkDayForUser
-SVC -> REPO : query window [today 03:00Z, tmrw 02:59Z]
-REPO -> DB : WorkDay where createdAt in window
-DB --> GATE : 404 (status = out)
+SVC -> REPO : fetch WorkDay for current business day
+REPO -> DB : query
+DB --> GATE : 404 (status = out) -> gate shows
 
 U -> GATE : pick Remote/Onsite -> Check In
 GATE -> API : POST /work-days/sessions/start
-API -> SVC : createWorkSession (startTime=now, userId)
+API -> SVC : createWorkSession (startTime=now,\nlocation, device, userId)
+SVC -> SVC : reject if a session is already open
 SVC -> DB : get-or-create WorkDay + open WorkSession
 SVC --> GATE : 201 + WorkDay ("Welcome!")
 
 GATE -> API : GET /work-days/current (refetch)
-alt now in 03:00-23:59 UTC (normal)
-  DB --> GATE : 200 WorkDay -> status = in -> gate hides
-else now in 00:00-02:59 UTC (dead zone, P1-1)
-  DB --> GATE : 404 (createdAt < today 03:00Z) -> gate loops forever
-end
+DB --> GATE : 200 WorkDay -> status = in -> gate hides
 @enduml

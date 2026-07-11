@@ -13,7 +13,7 @@ to-do list, the check-in/out attendance ritual, the shared calendar, and the rem
 tie it all together. Four modules land in one sprint because they share a
 \textbf{cron-driven, multi-channel notification backbone}: each runs a scheduled job that fans
 the same four delivery channels (in-app push, email, Telegram, ntfy) out to a user's enabled
-endpoints, all guarded by a single PostgreSQL-backed distributed lock. Where Sprint~3's
+endpoints, the per-minute jobs guarded by a single PostgreSQL-backed distributed lock. Where Sprint~3's
 authorization was project-scoped and role-graduated, most of this sprint is personal: the
 to-do, calendar and attendance data is \texttt{.own}-scoped and enforced in the data layer. At
 \textbf{44 story points} it is a broad rather than deep sprint: four self-contained aggregates,
@@ -62,11 +62,12 @@ Figure~\ref{fig:3-23}. Two actor archetypes appear: a \textbf{User} (any authent
 who manages their own to-dos, attendance, calendar events, and reminders, and a
 \textbf{Manager} (CEO, CTO, CMO, or Project Manager) who additionally reviews their team's
 attendance and schedules project-scoped reminders. The shared ``notify across channels'' use
-case is drawn explicitly because it is the seam that binds the sprint: three of the four
+case is drawn explicitly because it is the seam that binds the sprint: all four
 modules \texttt{<<include>>} it from their reminder paths.
 
 % Figure 3.23 — render diagrams-src/fig_3_23.puml -> figures/fig_3_23.(png|pdf)
-\reportfigure{figures/fig_3_23}{Sprint 4 use-case diagram.}{3-23}
+{\renewcommand{\figmaxheight}{0.75\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_23}{Sprint 4 use-case diagram.}{3-23}}
 
 \subsubsection{Module A --- Personal To-Dos}
 
@@ -109,7 +110,7 @@ passed and are still un-notified, fans each one out to the owner's enabled chann
 \texttt{notified = true}. It is the same lock-then-scan shape all four Sprint~4 crons use.
 
 % Figure 3.24 — render diagrams-src/fig_3_24.puml -> figures/fig_3_24.(png|pdf)
-\reportfigure{figures/fig_3_24}{Personal-task reminder cron sequence.}{3-24}
+\reportsideways{figures/fig_3_24}{Personal-task reminder cron sequence.}{3-24}
 
 \textbf{Class diagram.} Figure~\ref{fig:3-25} shows a small, cohesive aggregate: a
 \texttt{UserTask} root with the content-table split for i18n, comments carrying their own author
@@ -161,7 +162,7 @@ opens a new \texttt{WorkSession} with the chosen location and device, and return
 work day.
 
 % Figure 3.26 — render diagrams-src/fig_3_26.puml -> figures/fig_3_26.(png|pdf)
-\reportfigure{figures/fig_3_26}{Check-in sequence diagram.}{3-26}
+\reportsideways{figures/fig_3_26}{Check-in sequence diagram.}{3-26}
 
 \textbf{Class diagram.} Figure~\ref{fig:3-27} shows the two-level \texttt{WorkDay} \textrightarrow{}
 \texttt{WorkSession} split. The single documented seam into Sprint~3 is visible: a
@@ -169,7 +170,8 @@ work day.
 logged task time is anchored to an attendance session.
 
 % Figure 3.27 — render diagrams-src/fig_3_27.puml -> figures/fig_3_27.(png|pdf)
-\reportfigure{figures/fig_3_27}{Time \& Attendance class diagram.}{3-27}
+{\renewcommand{\figmaxheight}{0.60\textheight}%
+\reportfigure[0.90\textwidth]{figures/fig_3_27}{Time \& Attendance class diagram.}{3-27}}
 
 \subsubsection{Module C --- Events \& Calendar}
 
@@ -211,7 +213,7 @@ tick it queries events whose \texttt{nextNotificationTime} has passed, resolves 
 recipient's enabled channels, computes the next threshold, and updates the event row.
 
 % Figure 3.28 — render diagrams-src/fig_3_28.puml -> figures/fig_3_28.(png|pdf)
-\reportfigure{figures/fig_3_28}{Event reminder cron with escalating thresholds.}{3-28}
+\reportsideways{figures/fig_3_28}{Event reminder cron with escalating thresholds.}{3-28}
 
 \textbf{Class diagram.} Figure~\ref{fig:3-29} shows a clean three-table aggregate ---
 \texttt{Event}, its i18n \texttt{EventContent}, and the \texttt{EventParticipant} join. The
@@ -267,7 +269,7 @@ the per-minute scheduler acquires the distributed lock, queries \texttt{PENDING}
 enabled channels, and marks the reminder \texttt{SENT}.
 
 % Figure 3.30 — render diagrams-src/fig_3_30.puml -> figures/fig_3_30.(png|pdf)
-\reportfigure{figures/fig_3_30}{Pending-reminder delivery sequence.}{3-30}
+\reportsideways{figures/fig_3_30}{Pending-reminder delivery sequence.}{3-30}
 
 \textbf{Class diagram.} Figure~\ref{fig:3-31} shows the two design decisions worth noting: the
 dual-user foreign keys (\texttt{userId} vs \texttt{createdById}) and the polymorphic target
@@ -304,11 +306,11 @@ inside the project-detail view.
 
 \reportscreenshot{figures/screenshot_P23}{Personal to-do list with filters and task-detail sheet.}{P23}
 
-\reportscreenshot{figures/screenshot_P24}{Check-in gate and header check-out button.}{P24}
+\reportscreenshot{figures/screenshot_P24}{Check-in gate.}{P24}
 
-\reportscreenshot{figures/screenshot_P25}{Calendar month view with event dialog.}{P25}
+\reportscreenshot{figures/screenshot_P25}{Calendar month view.}{P25}
 
-\reportscreenshot{figures/screenshot_P26}{Project-detail reminders list with channel badges.}{P26}
+\reportscreenshot{figures/screenshot_P26}{Project-detail reminders list.}{P26}
 
 \subsection{Validation and testing}
 
@@ -360,9 +362,9 @@ with per-user isolation, an enforced attendance ritual with compliance nudges an
 reporting, a shared calendar with escalating multi-channel reminders, and a project-aware
 reminder engine that other modules write into. All four modules sit on one shared
 infrastructure contribution: a cron-driven, lock-guarded, multi-channel notification backbone
-where each cron acquires a PostgreSQL distributed lock (\texttt{SELECT \ldots{} FOR UPDATE SKIP
-LOCKED} with a 55-second TTL), scans for pending items, fans out to the user's enabled
-channels, and marks the item processed. This backbone is exactly what Sprint~5 will formalize
+where each per-minute cron acquires a PostgreSQL distributed lock (\texttt{SELECT \ldots{} FOR
+UPDATE SKIP LOCKED} with a 55-second TTL), scans for pending items, fans out to the user's
+enabled channels, and marks the item processed. This backbone is exactly what Sprint~5 will formalize
 into a first-class notification module.
 
 \textbf{Remaining work.} Hardening items identified during the sprint --- centralizing the
@@ -398,19 +400,20 @@ boundaries) are needed. These items are carried forward as prioritized future wo
 
 \subsection{Cumulative class diagram}
 
-Figure~\ref{fig:3-32} is the system after four sprints. It is now large enough that legibility,
-not completeness of attributes, is the priority: the three earlier packages --- identity
-(Sprint~1), the project family (Sprint~2), and the agile/task engine (Sprint~3) --- are shown
-in plain style and compacted to their identifying fields, while this sprint's four new
-aggregates are grouped into one \textbf{Productivity Suite} package with fuller attributes. The
+Figure~\ref{fig:3-32} focuses on the entities introduced in this sprint, following the
+convention of the earlier cumulative views: the anchor classes from previous sprints ---
+\texttt{User} (Sprint~1), \texttt{Project} (Sprint~2), and \texttt{Task}, \texttt{Milestone} and
+\texttt{TaskTimeEntry} (Sprint~3) --- are shown in plain style and compacted to their
+identifying fields, so the attachment points are clear, while this sprint's four new
+aggregates are highlighted and grouped by module. The
 seams are what make the picture cohere: every new aggregate hangs off \texttt{User}; a
-\texttt{WorkSession} owns the \texttt{TaskTimeEntry} rows from the Tasks package (attendance
+\texttt{WorkSession} owns the \texttt{TaskTimeEntry} rows from Sprint~3 (attendance
 anchors logged task time); and a \texttt{Reminder} reaches back into \texttt{Project},
 \texttt{Task} and \texttt{Milestone} through its \texttt{projectId} and its polymorphic
 \texttt{entityId}, tying the new personal layer to the project engine built in Sprints~2 and~3.
 
 % Figure 3.32 — render diagrams-src/fig_3_32.puml -> figures/fig_3_32.(png|pdf)
-\reportfigure{figures/fig_3_32}{Cumulative class diagram after Sprint 4.}{3-32}
+\reportsideways{figures/fig_3_32}{Cumulative class diagram after Sprint 4.}{3-32}
 
 \subsection{Sprint conclusion}
 

@@ -6,6 +6,8 @@ skinparam roundcorner 8
 skinparam defaultFontName "Helvetica"
 skinparam classAttributeIconSize 0
 skinparam ArrowColor #33475b
+skinparam nodesep 60
+skinparam ranksep 70
 skinparam class {
   BackgroundColor #FBFCFE
   BorderColor #33475b
@@ -21,18 +23,18 @@ class TaskTimeEntry {
   +hours : Float
 }
 
-enum WorkSessionLocation <<enum>> #LightYellow {
+enum WorkSessionLocation {
   REMOTE
   ONSITE
 }
-enum WorkSessionDevice <<enum>> #LightYellow {
+enum WorkSessionDevice {
   DESKTOP
   MOBILE
   TABLET
   OTHER
 }
 
-class WorkDay #LightYellow {
+class WorkDay {
   +id : UUID
   -userId : UUID
   +dailyMood : Integer
@@ -41,7 +43,7 @@ class WorkDay #LightYellow {
   +managerNotes : String
   +createdAt : DateTime «business-day key»
 }
-class WorkSession #LightYellow {
+class WorkSession {
   +id : UUID
   +startTime : DateTime
   +endTime : DateTime «null = open»
@@ -53,4 +55,7 @@ class WorkSession #LightYellow {
 User "1" --> "0..*" WorkDay : "has (cascade)"
 WorkDay "1" --> "0..*" WorkSession : "has (cascade)"
 WorkSession "1" --> "0..*" TaskTimeEntry : "logs (Sprint 3)"
+
+WorkSession ..> WorkSessionLocation
+WorkSession ..> WorkSessionDevice
 @enduml

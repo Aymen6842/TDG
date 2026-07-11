@@ -17,12 +17,12 @@ class User {
   +email : String
 }
 
-enum EventType <<enum>> #LightYellow {
+enum EventType {
   Meeting
   Event
   PersonalEvent
 }
-enum EventColor <<enum>> #LightYellow {
+enum EventColor {
   Sky
   Amber
   Violet
@@ -31,7 +31,7 @@ enum EventColor <<enum>> #LightYellow {
   Orange
 }
 
-class Event #LightYellow {
+class Event {
   +id : UUID
   +type : EventType
   +color : EventColor
@@ -43,13 +43,13 @@ class Event #LightYellow {
   +toAllUsers : Boolean
   -createdById : UUID
 }
-class EventContent #LightYellow {
+class EventContent {
   +id : UUID
   +title : String
   +description : String
   +language : Language
 }
-class EventParticipant #LightYellow {
+class EventParticipant {
   +eventId : UUID <<PK>>
   +userId : UUID <<PK>>
 }
@@ -58,4 +58,7 @@ User "1" --> "0..*" Event : "creates (cascade)"
 Event "1" --> "1..*" EventContent : "content (i18n)"
 Event "1" --> "0..*" EventParticipant : participants
 User "1" --> "0..*" EventParticipant : invited
+
+Event ..> EventType
+Event ..> EventColor
 @enduml
