@@ -17,7 +17,7 @@ actor "Agency user\n(~31 roles)" as User
 
 rectangle "Tawer Management" as Platform {
   component "Next.js 16 web client\n(en/fr, browser)" as FE
-  component "NestJS 11 REST API\n20 controllers · 146 endpoints" as API
+  component "NestJS 11 REST API\n20 controllers · 147 endpoints" as API
   database "PostgreSQL + pgvector\n55 models · RAG store" as DB
 }
 

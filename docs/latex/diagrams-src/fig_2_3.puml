@@ -14,7 +14,7 @@ node "tawer-management-frontend\n(Next.js, :3000)" as FEnode {
   [Next server\n(SSR + next-intl middleware)] as NEXT
 }
 node "tdg-management-api-backend\n(NestJS 11, :3001)" as BEnode {
-  [REST API\n20 controllers · 146 endpoints\nValidationPipe · Guards · Filter\nScheduleModule (cron) · Swagger /api] as API
+  [REST API\n20 controllers · 147 endpoints\nValidationPipe · Guards · Filter\nScheduleModule (cron) · Swagger /api] as API
 }
 node "Local infra (docker-compose)" as Infra {
   database "PostgreSQL + pgvector\n:5432 · 55 models" as PG

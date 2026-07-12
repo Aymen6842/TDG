@@ -5,8 +5,7 @@
 
 Over six sprints this project delivered \textbf{Tawer Management}, a two-application platform that consolidates
 an agency's operational work into one authenticated, bilingual system: a stateless NestJS~11 REST API of
-147~endpoints across 20~controllers, and a Next.js~16 / React~19 client, backed by PostgreSQL + pgvector
-and Redis. The four objectives set out in Section~1.6 were met. The breadth objective is visible in
+147~endpoints across 20~controllers, and a Next.js~16 / React~19 client, backed by PostgreSQL + pgvector. The four objectives set out in Section~1.6 were met. The breadth objective is visible in
 the ten operational domains that Chapters~3 and~4 present sprint by sprint: projects and membership,
 the agile backlog, a data-driven kanban, personal to-dos, attendance, calendar, reminders, multi-channel
 notifications, infrastructure monitoring, and the AI copilot. The access-control objective is met by a
@@ -42,7 +41,7 @@ issues fall into five themes:
   the access-control fixes from Sprints~4 and~5: shorter token TTLs with an enforced \texttt{type} claim, request
   throttling and a global guard, \texttt{ValidationPipe(\{ whitelist: true \})} against mass-assignment, tighter
   CORS, moving frontend tokens off \texttt{localStorage} to HttpOnly cookies with edge auth re-enabled, and the
-  \texttt{deleteUserByAdmin}/IDOR fixes (Annex~A; Section~3.1.5).
+  \texttt{deleteUserByAdmin}/IDOR fixes (Annex~A; Section~3.1.6).
   \item \textbf{Correctness.} A small set of concrete, code-verified defects, each with its root cause and a fix in
   Annex~A: the check-in dead zone, server-side archived filtering, the racy \texttt{generateTaskKey},
   reminder recurrence, \texttt{checkHttp} on a schemeless domain, event ownership on edit, and the AI
@@ -52,7 +51,7 @@ issues fall into five themes:
   structures (the single-value \texttt{Language} enum, the dead \texttt{RedisModule}/\texttt{RolesGuard}/\texttt{UserManager}/
   \texttt{Task.statusType}, stale branding) should be connected or removed rather than left misleading.
   \item \textbf{Testing.} Backend behavioural coverage is near-zero outside the projects module (the 854-line
-  \texttt{projects.service.spec.ts}, cited as genuine coverage in Section~3.2.3) and the frontend property-based suites;
+  \texttt{projects.service.spec.ts}, cited as genuine coverage in Section~3.2.5) and the frontend property-based suites;
   the highest-value missing tests are the ones the bugs above name, and a business-day-boundary test would
   have caught the check-in dead zone.
   \item \textbf{DevOps.} No CI/CD, app Dockerfiles not yet orchestrated by compose, uploads stored on a

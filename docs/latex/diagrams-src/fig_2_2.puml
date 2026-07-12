@@ -45,13 +45,13 @@ Project starts 2026-02-20
 [S6] starts at [S5]'s end
 
 caption
-|= Code |= Sprint |= Story Points |
-| S1 | Foundations & Auth | 41 SP |
-| S2 | Projects & Membership | 26 SP |
-| S3 | Agile Backlog & Tasks | 64 SP |
-| S4 | Productivity Suite | 44 SP |
-| S5 | Communication & Ops | 35 SP |
-| S6 | AI Copilot & Estimation | 42 SP |
+|= Code |= Sprint |= Start |= End |= Duration |= Story Points |
+| S1 | Foundations & Auth | Feb 20 | Mar 12 | 3w | 41 SP |
+| S2 | Projects & Membership | Mar 13 | Mar 26 | 2w | 26 SP |
+| S3 | Agile Backlog & Tasks | Mar 27 | Apr 30 | 5w | 64 SP |
+| S4 | Productivity Suite | May 1 | May 28 | 4w | 44 SP |
+| S5 | Communication & Ops | May 29 | Jun 18 | 3w | 35 SP |
+| S6 | AI Copilot & Estimation | Jun 19 | Jul 16 | 4w | 42 SP |
 end caption
 
 @endgantt
