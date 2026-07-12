@@ -11,7 +11,6 @@ skinparam usecase {
   BackgroundColor #FBFCFE
   BorderColor #33475b
 }
-left to right direction
 
 actor "Agency user\n(~31 roles)" as User
 
@@ -26,9 +25,11 @@ cloud "External services" as Ext {
   component "Firebase / ntfy /\nTelegram / SMTP" as Channels
 }
 
-User --> FE
-FE --> API : "axios REST + JWT"
-API --> DB
-API --> Gemini
-API --> Channels
+User -right-> FE
+FE -right-> API : "axios REST + JWT"
+API -down-> DB
+DB -[hidden]down- Gemini
+DB -[hidden]down- Channels
+API -down-> Gemini
+API -down-> Channels
 @enduml

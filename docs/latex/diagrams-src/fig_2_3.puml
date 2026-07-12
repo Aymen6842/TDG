@@ -33,6 +33,10 @@ UI --> API : axios REST + JWT Bearer
 API --> PG
 API ..> REDIS : (reserved)
 API --> MAIL : SMTP
+MAIL -[hidden]down- FCM
+MAIL -[hidden]down- GEMINI
+FCM -[hidden]down- TG
+GEMINI -[hidden]down- NTFY
 API --> GEMINI
 API --> FCM
 API --> NTFY

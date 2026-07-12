@@ -337,7 +337,8 @@ Section~1.3) into the six actor archetypes that appear across the sprints, and m
 the main capabilities. Figure~\ref{fig:2-2} is the release roadmap: the six sprints as a
 sequence of timeboxes, each with its planned story-point load.
 
-\reportfigure[0.75\textwidth]{figures/fig_2_1}{Global use-case diagram: actor archetypes vs.\ platform capabilities.}{2-1}
+{\renewcommand{\figmaxheight}{0.75\textheight}%
+\reportfigure[0.75\textwidth]{figures/fig_2_1}{Global use-case diagram: actor archetypes vs.\ platform capabilities.}{2-1}}
 
 \reportfigure[0.90\textwidth]{figures/fig_2_2}{Project roadmap: six sprints with planned story-point loads.}{2-2}
 
@@ -353,7 +354,8 @@ app) without change. The system's verified totals give the scale of the architec
 files, all counted directly from the source code. Figure~\ref{fig:2-3} presents the system
 component view.
 
-\reportfigure[0.90\textwidth]{figures/fig_2_3}{System component and deployment view.}{2-3}
+{\renewcommand{\figmaxheight}{0.50\textheight}%
+\reportfigure[0.90\textwidth]{figures/fig_2_3}{System component and deployment view.}{2-3}}
 
 \textbf{Layered backend.} Every domain module follows the same \textbf{four-layer, per-feature}
 split: a \textbf{controller} handles HTTP routing, guards, and Swagger~\cite{swagger}
@@ -363,7 +365,8 @@ carries request and response shapes with validation decorators. Thanks to this s
 convention, all of the approximately 20 backend modules follow the same structure and can be
 understood the same way. Figure~\ref{fig:2-4} shows the layering.
 
-\reportfigure[0.75\textwidth]{figures/fig_2_4}{Backend layered architecture: controller \textrightarrow{} service \textrightarrow{} repository \textrightarrow{} Prisma.}{2-4}
+{\renewcommand{\figmaxheight}{0.55\textheight}%
+\reportfigure[0.75\textwidth]{figures/fig_2_4}{Backend layered architecture: controller \textrightarrow{} service \textrightarrow{} repository \textrightarrow{} Prisma.}{2-4}}
 
 \textbf{Frontend architecture.} The Next.js~16 App Router wraps everything in a single dynamic
 \texttt{[locale]} segment with two route groups: \texttt{(guest)} for login, registration, and
@@ -446,7 +449,8 @@ Entities and attributes are omitted from the diagram itself: Table~\ref{tab:doma
 lists what each package contains, and the class diagrams in Chapter~3 add the full per-entity
 detail sprint by sprint.
 
-\reportfigure[0.92\textwidth]{figures/fig_2_8}{High-level domain-relationship diagram: the eight packages and their key cross-domain relationships.}{2-8}
+{\renewcommand{\figmaxheight}{0.55\textheight}%
+\reportfigure[0.92\textwidth]{figures/fig_2_8}{High-level domain-relationship diagram: the eight packages and their key cross-domain relationships.}{2-8}}
 
 Table~\ref{tab:domain-entities} maps each package to the entities it owns, so the diagram above
 and the class diagrams in Chapter~3 can both be read against one reference.
