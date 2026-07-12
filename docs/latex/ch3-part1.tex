@@ -3,12 +3,13 @@
 
 \chapter{Development Sprints}
 
-This chapter narrates the five development sprints that built the platform, in the dependency
-order fixed by the sprint plan in Section~2.3. Each sprint opens with its goal and backlog,
-analyses the requirements per module, presents the UML design alongside the features it
-describes, reports the implementation with screenshots, validates the deliverables through
-testing, and closes with a review, retrospective, and cumulative class diagram showing how the
-domain model grew. The AI sprint, being the technical climax, is told separately in Chapter~4.
+This chapter describes the five development sprints that built the platform, in the dependency
+order fixed by the sprint plan in Section~2.3. Every sprint follows the same structure. It
+opens with its goal and backlog, analyses the requirements per module, and presents the UML
+design next to the features it describes. It then reports the implementation with screenshots,
+validates the deliverables through testing, and closes with a review, a retrospective, and a
+cumulative class diagram showing how the domain model grew. The AI sprint, the project's main
+technical contribution, is described separately in Chapter~4.
 
 %% ====================================================================
 %% SPRINT 1
@@ -19,16 +20,16 @@ domain model grew. The AI sprint, being the technical climax, is told separately
 
 \subsection{Sprint goal}
 
-Stand up everything the rest of the platform stands on: a layered NestJS backend with a Prisma
-multi-file schema, and the identity core --- authentication (login, token refresh, password
-reset), role-based access control, and administration of users and teams. Nothing in later
-sprints can be built or even reached until a caller can be identified and authorized, which is
-why this work comes first.
+Build the base that the rest of the platform depends on: a layered NestJS backend with a
+Prisma multi-file schema, and the identity core --- authentication (login, token refresh,
+password reset), role-based access control, and administration of users and teams. Nothing in
+later sprints can be built or even reached until a caller can be identified and authorized,
+which is why this work comes first.
 
 \subsection{Sprint backlog}
 
-The user stories for this sprint, repeated from the product backlog in Section~2.2 so the
-sprint reads self-contained:
+The user stories for this sprint, repeated from the product backlog in Section~2.2 so that the
+sprint can be read on its own:
 
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 1 backlog.}\label{tab:s1-backlog-detail} \\
@@ -64,7 +65,7 @@ US-S1-10 & As an admin, I want to create teams and assign members and a manager,
 
 \subsection{Requirements analysis}
 
-The sprint delivers two modules. The features, actors, and use cases are collected in
+The sprint delivers two modules. The features, actors, and use cases are shown in
 Figure~\ref{fig:3-1}.
 
 {\renewcommand{\figmaxheight}{0.75\textheight}%
@@ -102,7 +103,7 @@ logout. The platform itself (via the guard) enforces permissions on every protec
     that at least one of the caller's roles carries at least one of the route's required
     permissions (\textbf{OR} across permissions, \textbf{OR} across roles).
   \item Finer ownership distinctions (\texttt{*.own} vs \texttt{*.any}) are resolved inside each
-    service, where the data needed to make that call lives.
+    service, where the data needed for that decision is available.
   \item Only one password-reset code may be active per user at a time.
   \item Self-registration lands in a \texttt{PendingApproval} state with minimal permissions (a
     least-privilege default); only a privileged role can promote the account.
@@ -110,7 +111,7 @@ logout. The platform itself (via the guard) enforces permissions on every protec
 
 \textbf{Login sequence.} Figure~\ref{fig:3-2} shows the login path: the service fetches the user
 by email or phone (matching only active accounts), compares the password with bcrypt, and on
-success mints the token pair and persists the refresh row.
+success creates the token pair and stores the refresh row.
 
 \reportfigure{figures/fig_3_2}{Login sequence diagram.}{3-2}
 
@@ -135,7 +136,7 @@ administrative user lifecycle --- create, read, update, soft-delete, profile sel
 password change, and bulk email --- and groups users into teams. Account provisioning is a
 privileged action: an admin or HR user creates accounts that are immediately active with the
 requested roles. This is the counterpart to self-registration in Module~A, which produces an
-inert, pending account.
+inactive, pending account.
 
 \textbf{Actors.} An \textbf{Admin / HR} provisions and manages user accounts. A \textbf{User}
 manages their own profile and password.
@@ -173,18 +174,18 @@ whose \texttt{isManager} flag carries management semantics.
 The sprint delivered two backend modules and the guest and administration screens that consume
 them.
 
-The \textbf{authentication surface} comprises eight endpoints: \texttt{POST /auths/register},
+The \textbf{authentication surface} consists of eight endpoints: \texttt{POST /auths/register},
 \texttt{/auths/login}, \texttt{/auths/logout}, the three-step password reset
 (\texttt{/auths/request-reset-code}, \texttt{/verify-reset-code}, \texttt{/reset-password}), and
 the token endpoints \texttt{/tokens/verify} and \texttt{/tokens/refresh}.
 
-The \textbf{administration surface} comprises fourteen guarded endpoints across \texttt{/users}
+The \textbf{administration surface} consists of fourteen guarded endpoints across \texttt{/users}
 and \texttt{/teams}: user provisioning, \texttt{GET /users/me}, the role-scoped user list with
 CSV export, self and admin profile updates, password change, soft delete, bulk email, and team
 CRUD.
 
-On the \textbf{client}, the guest route group carries the login, registration, and
-reset-password screens. The authenticated \texttt{users} section carries the directory table
+On the \textbf{client}, the guest route group contains the login, registration, and
+reset-password screens. The authenticated \texttt{users} section contains the directory table
 (with search by name, email, or phone, role filtering, sorting, and pagination), the
 create/edit user dialog, and the teams view.
 
@@ -203,7 +204,7 @@ create/edit user dialog, and the teams view.
 The testing strategy for this sprint focused on two areas: an \textbf{end-to-end RBAC suite} and
 \textbf{acceptance scenario verification}.
 
-The e2e suite (\texttt{test/agile-permissions.e2e-spec.ts}) drives the full permission matrix
+The e2e suite (\texttt{test/agile-permissions.e2e-spec.ts}) runs the full permission matrix
 over supertest for the CEO, PM, PO, Scrum Master, and engineer roles, verifying that each role
 can only reach the routes its permissions allow. This suite validates the core authorization
 contract established in this sprint.
@@ -256,19 +257,19 @@ and prioritized for future work (Annex~A).
 
 \subsection{Sprint retrospective}
 
-\textbf{Difficulties encountered.} This sprint involved a significant learning curve, as it was
-the author's first experience with both NestJS and Prisma. Understanding NestJS's
-decorator-based dependency injection, guard composition, and module wiring required upfront
-investment before productive development could begin. Similarly, learning Prisma's multi-file
-schema, migration workflow, and query API added to the ramp-up time. Designing the RBAC
-catalogue --- mapping approximately 120 permissions across 31 role types into a single
-declarative constant --- was a non-trivial design effort that required iterating on the
-permission granularity to find the right balance between expressiveness and maintainability.
+\textbf{Difficulties encountered.} This sprint required a lot of learning, as it was the
+author's first experience with both NestJS and Prisma. Understanding NestJS's decorator-based
+dependency injection, guard composition, and module wiring took time before productive
+development could begin. Learning Prisma's multi-file schema, migration workflow, and query API
+added to this initial period. Designing the RBAC catalogue --- mapping approximately 120
+permissions across 31 role types into a single declarative constant --- was a real design
+effort: the permission granularity had to be adjusted several times to find the right balance
+between expressiveness and maintainability.
 
 \textbf{Lessons learned.} Investing time in a strict, uniform architecture from the start (the
-four-layer controller-service-repository-DTO convention) paid off immediately: once the
-pattern was established in this sprint, every subsequent module could be scaffolded quickly
-by following the same structure. The table-driven RBAC approach also proved its value early ---
+four-layer controller-service-repository-DTO convention) showed its value immediately: once the
+pattern was established in this sprint, every following module could be scaffolded quickly
+by copying the same structure. The table-driven RBAC approach also proved useful early ---
 a single guard and one permission constant are far easier to audit than scattered authorization
 checks.
 
@@ -280,7 +281,7 @@ password-reset endpoints. These items are carried forward as prioritized future 
 
 Figure~\ref{fig:3-7} is the first cumulative view of the domain model. After Sprint~1 it
 contains exactly this sprint's identity core, so every class is new. Later sprints extend this
-same diagram, highlighting only their additions, so the reader can watch the model grow.
+same diagram, highlighting only their additions, so the reader can follow how the model grows.
 
 \reportfigure[\textwidth]{figures/fig_3_7}{Cumulative class diagram after Sprint 1.}{3-7}
 
@@ -289,7 +290,7 @@ same diagram, highlighting only their additions, so the reader can watch the mod
 Sprint~1 established the foundation the entire platform depends on: a layered backend
 architecture, a stateless JWT authentication system, a centralized RBAC model, and user/team
 administration. The identity classes and the two-tier authorization pattern introduced here are
-the hub that the entire domain model and every subsequent sprint build upon.
+the base that the entire domain model and every later sprint build on.
 
 % Sprints 2-3 are omitted from the partial (Sprint-1-only) excerpt build.
 \ifpartialbuild\else
@@ -298,18 +299,18 @@ the hub that the entire domain model and every subsequent sprint build upon.
 
 \subsection{Sprint goal}
 
-With identity and access in place, Sprint 2 introduces the unit of work everything else in
-the platform hangs off: the \textbf{project}. The goal was the full project lifecycle (create, read, update,
-archive, hard-delete), per-project team membership with a single project manager, and an email/token
-invitation flow for bringing people who are not yet members onto a project. This is the largest
-domain module and the aggregate root of the whole agile domain: epics, sprints, tasks, milestones,
-labels and reminders all foreign-key back to a \texttt{Project}, so it had to land before any of the planning or
-execution work in the sprints that follow.
+With identity and access in place, Sprint 2 introduces the unit of work that everything else
+in the platform depends on: the \textbf{project}. The goal was the full project lifecycle (create,
+read, update, archive, hard-delete), per-project team membership with a single project manager,
+and an email/token invitation flow for bringing people who are not yet members onto a project.
+This is the largest domain module and the aggregate root of the whole agile domain: epics,
+sprints, tasks, milestones, labels and reminders all hold a foreign key back to a
+\texttt{Project}, so it had to be delivered before any of the planning or execution work in the
+sprints that follow.
 
 \subsection{Sprint backlog}
 
-The user stories for this sprint, repeated from the product backlog in Section~2.2 so the
-sprint reads self-contained:
+The following stories, taken from the product backlog in Section~2.2, form the sprint backlog:
 
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 2 backlog.}\label{tab:s2-backlog-detail} \\
@@ -341,8 +342,8 @@ US-S2-07 & As a member, I want to see only the projects I belong to (executives 
 
 \subsection{Requirements analysis}
 
-The sprint delivers one module. The features, actors, and use cases are collected in
-Figure~\ref{fig:3-8}.
+The sprint delivers one module. Figure~\ref{fig:3-8} shows the features, actors, and use
+cases.
 
 \reportfigure[0.70\textwidth]{figures/fig_3_8}{Sprint 2 use-case diagram.}{3-8}
 
@@ -361,8 +362,8 @@ business unit (\texttt{TawerDev} or \texttt{TawerCreative}), and carries a \text
 gathers a team through \texttt{ProjectMember} rows, of which exactly one is flagged \texttt{isManager};
 that single-manager invariant is enforced on create and protected on every mutation, so demoting
 or removing the last manager is rejected. Translatable fields (\texttt{name}, \texttt{description},
-\texttt{details}) live in a child \texttt{ProjectContent} table keyed by language, mirroring the
-app-wide i18n content pattern. WIP limits per kanban column are stored as a JSON map on the
+\texttt{details}) are stored in a child \texttt{ProjectContent} table keyed by language, following
+the app-wide i18n content pattern. WIP limits per kanban column are stored as a JSON map on the
 project itself (\texttt{kanbanSettings}), validated against the project's actual status names.
 Two onboarding paths exist: executives can attach an existing user to a project directly, while
 managers invite by email through a tokenized \texttt{ProjectInvitation} with a default seven-day
@@ -378,8 +379,8 @@ Invitee (not yet a member) accepts a tokenized invitation to join.
     \texttt{HasPermissionGuard} gates the route, then a fine-grained check runs inside the service.
     The read isolation is pushed into the Prisma \texttt{where} clause and runs atomically with the
     fetch, so a caller who lacks access simply gets zero rows or a \texttt{403}.
-  \item A non-executive caller is pinned to projects they belong to
-    (\texttt{members.some(\{ userId \})}); a unit executive is pinned to their \texttt{businessUnit};
+  \item A non-executive caller is restricted to projects they belong to
+    (\texttt{members.some(\{ userId \})}); a unit executive is restricted to their \texttt{businessUnit};
     the CEO is global; management operations additionally require \texttt{isManager: true} or
     executive status.
   \item The \textbf{single-manager invariant} is enforced in three places: on create (exactly one
@@ -397,7 +398,7 @@ Invitee (not yet a member) accepts a tokenized invitation to join.
 re-checks executive status and business-unit access (defense in depth), normalizes the input and
 defaults the manager to the creator when none is given, validates the single-manager invariant,
 then writes the project with its nested members and contents in one repository call; a duplicate
-name surfaces as a Prisma \texttt{P2002} that becomes a \texttt{409}.
+name raises a Prisma \texttt{P2002} error, which is returned as a \texttt{409}.
 
 % Figure 3.9 — render diagrams-src/fig_3_9.puml -> figures/fig_3_9.(png|pdf)
 \reportfigure{figures/fig_3_9}{Create-project sequence diagram.}{3-9}
@@ -416,8 +417,8 @@ invitee already has an account.
 is the aggregate root; its translatable fields are split into \texttt{ProjectContent};
 \texttt{ProjectMember} is the join to \texttt{User} that also carries the \texttt{isManager} flag and a
 per-member \texttt{hourlyRate}; and \texttt{ProjectInvitation} holds the email-bound token lifecycle.
-\texttt{User} is shown again --- not new --- because it now gains three roles against the project
-family: creator, member, and inviter.
+\texttt{User} is shown again --- not new --- because it now has three associations with the
+project family: creator, member, and inviter.
 
 % Figure 3.11 — render diagrams-src/fig_3_11.puml -> figures/fig_3_11.(png|pdf)
 {\renewcommand{\figmaxheight}{0.62\textheight}%
@@ -427,15 +428,15 @@ family: creator, member, and inviter.
 
 The sprint delivered one backend module and the project management screens that consume it.
 
-The \textbf{project surface} comprises seventeen endpoints on \texttt{ProjectsController} covering
+The \textbf{project surface} consists of seventeen endpoints on \texttt{ProjectsController} covering
 the lifecycle (register, list, get, get capacity, update, delete, archive, restore), membership
 (smart add-member, update-member, remove-member), the invitation flow (create, revoke, resend,
 accept), and the kanban settings (get, patch).
 
 On the \textbf{client}, the projects section is a status-tabbed list with search, a filter panel,
-and drag-reorder. Opening a project reveals a tabbed detail whose \textbf{Members} tab lists members
-and pending invitations with direct-add, invite-by-email, role-toggle, remove, and resend/revoke
-actions.
+and drag-reorder. Opening a project shows a tabbed detail view; its \textbf{Members} tab lists
+members and pending invitations with direct-add, invite-by-email, role-toggle, remove, and
+resend/revoke actions.
 
 \reportscreenshot{figures/screenshot_P12}{Projects list view.}{P12}
 
@@ -489,9 +490,9 @@ US-S2-07 & Given a non-executive, When they list projects, Then only projects th
 \subsection{Sprint review}
 
 \textbf{Objectives achieved.} The sprint met its goal: the platform has a project aggregate root
-with full lifecycle management, business-unit scoping enforced inside the query rather than bolted
-on after it, a single-manager invariant guarded on every mutation, and an email-based invitation
-flow with identity-verified token acceptance. It is also the first module with a dedicated
+with full lifecycle management, business-unit scoping enforced inside the query itself rather
+than applied after it, a single-manager invariant guarded on every mutation, and an email-based
+invitation flow with identity-verified token acceptance. It is also the first module with a dedicated
 behavioural test suite --- an 854-line \texttt{projects.service.spec.ts} exercising the
 create/list/update/delete/membership paths --- which raised confidence in exactly those paths.
 
@@ -503,17 +504,18 @@ an independent per-member capacity input --- are logged and prioritized for futu
 
 \textbf{Difficulties encountered.} The main challenge was designing the project-scoped
 authorization model. Unlike Sprint~1's global RBAC, this sprint required data-scoped isolation
-where the permission predicate and the database query had to be a single atomic statement. Getting
-the business-unit scoping right --- CEO global, CTO/CMO unit-pinned, manager project-pinned ---
-required careful layering of the Prisma \texttt{where} clauses. The single-manager invariant also
-demanded attention: enforcing it across create, demotion, and removal without leaving an
-inconsistent window required validating at three separate points in the service.
+where the permission predicate and the database query had to be a single atomic statement.
+Getting the business-unit scoping right --- CEO global, CTO/CMO limited to their unit, manager
+limited to their projects --- required building the Prisma \texttt{where} clauses carefully. The
+single-manager invariant also needed care: enforcing it across create, demotion, and removal
+without leaving an inconsistent window required validating at three separate points in the
+service.
 
 \textbf{Lessons learned.} Pushing the access check into the query itself (rather than fetching
-first and filtering after) proved to be the strongest pattern in the module: it eliminates the
-window between a check passing and data escaping its scope. The i18n content-table pattern
-(\texttt{ProjectContent} keyed by language) also demonstrated its reusability --- it was adopted
-directly in later sprints for sprints and tasks.
+first and filtering after) proved to be the strongest pattern in the module: it removes any gap
+between the access check and the data fetch. The i18n content-table pattern
+(\texttt{ProjectContent} keyed by language) also proved reusable --- it was adopted directly in
+later sprints for sprints and tasks.
 
 \textbf{Improvements planned.} Archived-project filtering should move to the server side so the
 list endpoint excludes them by default. The project-name uniqueness constraint should be scoped
@@ -524,8 +526,8 @@ per project rather than enforced globally.
 Figure~\ref{fig:3-12} focuses on the entities introduced in this sprint. The \texttt{User} anchor
 from Sprint~1 is shown in plain style so the attachment point is clear; this sprint's additions ---
 \texttt{Project}, \texttt{ProjectContent}, \texttt{ProjectMember}, \texttt{ProjectInvitation} and
-their enums --- are highlighted. The link back to \texttt{User} (creator, member, inviter) is the
-seam that ties the new project aggregate to the identity core established previously.
+their enums --- are highlighted. The link back to \texttt{User} (creator, member, inviter) is
+what ties the new project aggregate to the identity core established previously.
 
 % Figure 3.12 — render diagrams-src/fig_3_12.puml -> figures/fig_3_12.(png|pdf)
 {\renewcommand{\figmaxheight}{0.82\textheight}%
@@ -548,15 +550,15 @@ With people, access, and projects in place, Sprint~3 adds the work itself. The s
 two inseparable modules: the agile planning layer (epics, sprints with a governed lifecycle,
 milestones, and burndown/velocity/Gantt analytics) and, on top of it, the task engine --- a
 per-project data-driven Kanban with custom columns, WIP limits, dependency-blocking, story
-points, time logging, labels, and threaded comments. They land together because a sprint is only
-meaningful once tasks can be assigned to it, and the burndown chart reads directly from each
-task's \texttt{storyPoints} and \texttt{completedAt}. At \textbf{64 story points} over five weeks
-this is the heaviest load in the plan and the richest domain code in the codebase.
+points, time logging, labels, and threaded comments. They are delivered together because a
+sprint is only meaningful once tasks can be assigned to it, and the burndown chart reads
+directly from each task's \texttt{storyPoints} and \texttt{completedAt}. At \textbf{64 story
+points} over five weeks this is the heaviest load in the plan and the most complex domain code
+in the codebase.
 
 \subsection{Sprint backlog}
 
-The user stories for this sprint, repeated from the product backlog in Section~2.2 so the
-sprint reads self-contained:
+The sprint backlog below repeats the relevant stories from the product backlog in Section~2.2:
 
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 3 backlog.}\label{tab:s3-backlog-detail} \\
@@ -595,15 +597,15 @@ US-S3-12 & As a member, I want labels and to assign a task to a sprint/epic/mile
 
 \subsection{Requirements analysis}
 
-The sprint delivers two modules. The features, actors, and use cases are collected in
+The sprint delivers two modules. The features, actors, and use cases are summarized in
 Figure~\ref{fig:3-13}.
 
 {\renewcommand{\figmaxheight}{0.75\textheight}%
 \reportfigure[\textwidth]{figures/fig_3_13}{Sprint 3 use-case diagram.}{3-13}}
 
-Four Scrum-shaped roles appear, each mapped to a capability helper the service enforces. A
-\textbf{Project Manager} and \textbf{Product Owner} shape structure --- epics, milestones, task
-creation, dependencies, labels, and board columns. A \textbf{Scrum Master} governs the sprint
+Four Scrum roles appear, each mapped to a capability helper the service enforces. A
+\textbf{Project Manager} and \textbf{Product Owner} manage the structure --- epics, milestones,
+task creation, dependencies, labels, and board columns. A \textbf{Scrum Master} governs the sprint
 lifecycle and, with the PM/PO, grooms the backlog and assigns items to sprints. Any
 \textbf{Assignee/Developer} who is a project member performs the day-to-day work --- moving their
 own cards, logging time, and commenting.
@@ -611,16 +613,16 @@ own cards, logging time, and commenting.
 \subsubsection{Module A --- Agile Backlog (Epics, Sprints \& Milestones)}
 
 \textbf{Functional description.} The agile layer adds three planning artefacts, each scoped to a
-project. An \textbf{epic} is a large feature that groups tasks under a named, colour-coded,
-optionally date-bounded umbrella so progress can be rolled up. A \textbf{sprint} is a time-boxed
-iteration with planned and estimated date windows, a story-point \texttt{capacity}, multilingual
-content, file attachments, and a genuine lifecycle. A \textbf{milestone} is a target date for a
-set of tasks. Epics and sprints are hard-gated to \texttt{AGILE} projects by an
-\texttt{AgileOnlyGuard}, while milestones carry no such guard because a deadline is useful to a
-\texttt{FREESTYLE} project too. All three follow the project-wide four-layer pattern
-(controller → service → repository → DTO) with four thin repositories apiece, and all three
-enqueue an AI embedding job on every write via the \texttt{IndexOutboxService}, so agile artefacts
-are first-class documents for the copilot built in Sprint~6.
+project. An \textbf{epic} is a large feature that groups tasks under a name and a colour, with
+optional dates, so progress can be rolled up. A \textbf{sprint} is a time-boxed iteration with
+planned and estimated date windows, a story-point \texttt{capacity}, multilingual content, file
+attachments, and a real lifecycle. A \textbf{milestone} is a target date for a set of tasks.
+Epics and sprints are restricted to \texttt{AGILE} projects by an \texttt{AgileOnlyGuard}, while
+milestones have no such guard because a deadline is useful to a \texttt{FREESTYLE} project too.
+All three follow the project-wide four-layer pattern (controller → service → repository → DTO),
+each with four thin repositories, and all three enqueue an AI embedding job on every write via
+the \texttt{IndexOutboxService}, so agile artefacts are first-class documents for the copilot
+built in Sprint~6.
 
 \textbf{Actors.} A \textbf{Scrum Master} creates and manages sprints and controls the sprint
 lifecycle (start, stop, complete, restart). A \textbf{Product Owner} creates and manages epics and
@@ -637,7 +639,7 @@ service.
     \texttt{Running} (guarded by the rule that no other sprint in the same project may already be
     running), and from \texttt{Running} it may be stopped or completed. Both \texttt{Stopped} and
     \texttt{Completed} can be restarted back to \texttt{Running}.
-  \item Moving to \texttt{Running} or \texttt{Completed} fans out a notification to every project
+  \item Moving to \texttt{Running} or \texttt{Completed} sends a notification to every project
     member; moving to \texttt{Stopped} or \texttt{Completed} cancels the sprint's still-pending
     reminders.
   \item Sprint date windows are validated: end after start, estimated-end after estimated-start,
@@ -658,24 +660,25 @@ end). Finally, it enqueues the embedding upsert so the sprint is immediately sea
 % Figure 3.14 — render diagrams-src/fig_3_14.puml -> figures/fig_3_14.(png|pdf)
 \reportsideways{figures/fig_3_14}{Create-sprint sequence diagram.}{3-14}
 
-\textbf{Sprint analytics sequence.} The planning artefacts pay off as analytics, computed
-server-side from real task data. Burndown (Figure~\ref{fig:3-15}) is the clearest example: for a
-chosen sprint the service loads every task's \texttt{storyPoints}, \texttt{status},
-\texttt{completedAt} and \texttt{createdAt}, sums the committed points, then walks day-by-day
-across the sprint window computing an \emph{ideal} line (total minus an even daily burn) against
-the \emph{actual} remaining (total minus the points of tasks marked \texttt{DONE} on or before that
-day). Velocity aggregates completed-sprint points across the project, and the Gantt view fans
-four parallel queries --- milestones, epics, sprints, tasks --- into one timeline payload.
+\textbf{Sprint analytics sequence.} The planning artefacts become visible results through the
+analytics, computed server-side from real task data. Burndown (Figure~\ref{fig:3-15}) is the
+clearest example: for a chosen sprint the service loads every task's \texttt{storyPoints},
+\texttt{status}, \texttt{completedAt} and \texttt{createdAt}, sums the committed points, then
+goes day by day across the sprint window, computing an \emph{ideal} line (total minus an even
+daily burn) against the \emph{actual} remaining (total minus the points of tasks marked
+\texttt{DONE} on or before that day). Velocity aggregates completed-sprint points across the
+project, and the Gantt view combines four parallel queries --- milestones, epics, sprints,
+tasks --- into one timeline payload.
 
 % Figure 3.15 — render diagrams-src/fig_3_15.puml -> figures/fig_3_15.(png|pdf)
 \reportsideways{figures/fig_3_15}{Sprint burndown sequence diagram.}{3-15}
 
-\textbf{Sprint lifecycle state machine.} The richest piece of business logic in this module is
-the sprint state machine (Figure~\ref{fig:3-16}). A sprint is always created \texttt{Pending}.
+\textbf{Sprint lifecycle state machine.} The most complex piece of business logic in this module
+is the sprint state machine (Figure~\ref{fig:3-16}). A sprint is always created \texttt{Pending}.
 Starting it is guarded by the rule that no other sprint in the same project may already be
 running. From \texttt{Running} a sprint may be stopped or completed, and both \texttt{Stopped} and
-\texttt{Completed} can be restarted back to \texttt{Running}. Two side effects hang off the
-transitions: moving to \texttt{Running} or \texttt{Completed} fans out a notification to every
+\texttt{Completed} can be restarted back to \texttt{Running}. Two side effects are attached to the
+transitions: moving to \texttt{Running} or \texttt{Completed} sends a notification to every
 other project member, and moving to \texttt{Stopped} or \texttt{Completed} cancels the sprint's
 still-pending reminders. The state machine is a shared contract --- the backend validator and the
 frontend sprint card's action buttons (Start / Stop / Complete / Restart) mirror each other
@@ -698,21 +701,21 @@ the next module.
 
 \subsubsection{Module B --- Tasks \& Data-Driven Kanban}
 
-\textbf{Functional description.} The task engine is the core unit of work and the richest domain
-module in the codebase (\texttt{tasks.service.ts} alone is 2\,735 lines). A task carries the
-expected fields --- type, priority, assignee, reporter, story points, estimated and actual hours,
-due date --- plus the machinery for a real board: a free-string \texttt{status}, a
+\textbf{Functional description.} The task engine is the core unit of work and the most complex
+domain module in the codebase (\texttt{tasks.service.ts} alone is 2\,735 lines). A task carries
+the expected fields --- type, priority, assignee, reporter, story points, estimated and actual
+hours, due date --- plus everything a real board needs: a free-string \texttt{status}, a
 \texttt{displayOrder} for manual ordering, one level of subtasks, dependencies, labels, time
 entries, and threaded comments with likes and mentions. The design adapts to the project type: an
 \texttt{AGILE} project gets the full six-column workflow (\texttt{BACKLOG → TODO → IN\_PROGRESS →
 IN\_REVIEW → TESTING → DONE}) with sprints, epics and story points, while a \texttt{FREESTYLE}
-project gets a lean three-column board (\texttt{TODO / IN\_PROGRESS / DONE}) and a progress
+project gets a simple three-column board (\texttt{TODO / IN\_PROGRESS / DONE}) and a progress
 percentage instead; the service enforces which fields are allowed per type.
 
 The board itself is \textbf{data-driven}. Rather than hard-code columns, each project owns a set
 of \texttt{ProjectTaskStatus} rows --- the source of truth for its columns, their order, colours,
 and the legal transitions out of each. A task's \texttt{status} is a plain string that holds either
-a system enum name or a custom column name, which lets a team invent columns without a schema
+a system enum name or a custom column name, which lets a team add new columns without a schema
 change; the link between \texttt{Task.status} and \texttt{ProjectTaskStatus.name} is
 application-enforced since a free string cannot carry a foreign key. Statuses are seeded lazily on
 first read of the board rather than at project creation, and transition validation prefers the DB
@@ -723,9 +726,9 @@ actual status names on every column move.
 \textbf{Actors.} A \textbf{Project Manager / Product Owner} creates tasks, manages structure
 (dependencies, labels, board columns), and grooms the backlog. A \textbf{Scrum Master} assigns
 tasks to sprints and manages sprint-level backlog operations. An \textbf{Assignee / Developer}
-moves their own cards across columns, logs time, and comments. Authorization is graduated into
-seven capability helpers --- from \texttt{canAccessProject} (any member may read, comment, and log
-time) up through \texttt{canCreateTaskForProject}, \texttt{canManageTaskStructure},
+moves their own cards across columns, logs time, and comments. Authorization is organized into
+seven tiered capability helpers --- from \texttt{canAccessProject} (any member may read, comment,
+and log time) up through \texttt{canCreateTaskForProject}, \texttt{canManageTaskStructure},
 \texttt{canManageBacklog}, \texttt{canManageSprintAssignment}, and
 \texttt{canAdvanceTaskWorkflow}, the last of which lets the assignee move their own card even
 without a management role.
@@ -756,13 +759,13 @@ without a management role.
     \texttt{IndexOutboxService}, so the entire task corpus is searchable ahead of Sprint~6.
 \end{itemize}
 
-\textbf{Create-task sequence.} Figure~\ref{fig:3-18} shows the create path, which validates on
-three axes before it writes: the caller's capability, the project-type field rules (rejecting a
+\textbf{Create-task sequence.} Figure~\ref{fig:3-18} shows the create path, which validates
+three things before it writes: the caller's capability, the project-type field rules (rejecting a
 sprint, epic, or story-point value on a \texttt{FREESTYLE} task), and referential integrity (any
 sprint, epic, or milestone named must belong to this project). The repository then generates a
 \texttt{TASK-<n>} key and inserts the task with its attachments. Afterwards the service optionally
-spawns due-date reminders, fires a fire-and-forget assignment notification if the assignee is not
-the author, and enqueues the AI index upsert.
+creates due-date reminders, fires a fire-and-forget assignment notification if the assignee is
+not the author, and enqueues the AI index upsert.
 
 % Figure 3.18 — render diagrams-src/fig_3_18.puml -> figures/fig_3_18.(png|pdf)
 \reportsideways{figures/fig_3_18}{Create-task sequence diagram.}{3-18}
@@ -781,7 +784,7 @@ the task lands on \texttt{DONE} --- and fire the assignee notification.
 \textbf{Task status transitions.} The status transitions (Figure~\ref{fig:3-20}) show the two
 seeded system boards. \texttt{FREESTYLE} keeps a simple three-column loop; \texttt{AGILE} runs the
 full six-column pipeline where each column allows moving forward or one step back (a card in
-\texttt{TESTING} can drop to \texttt{IN\_REVIEW} or advance to \texttt{DONE}, and \texttt{DONE} can
+\texttt{TESTING} can move back to \texttt{IN\_REVIEW} or advance to \texttt{DONE}, and \texttt{DONE} can
 reopen to \texttt{TESTING}). These are the default transitions seeded per project; a team can edit
 its \texttt{ProjectTaskStatus} rows to add custom columns, and a move into a custom status is
 permitted from anywhere, keeping the board flexible while still guarding moves between the known
@@ -792,7 +795,7 @@ system columns.
 \reportfigure[\textwidth]{figures/fig_3_20}{Task status transitions for FREESTYLE and AGILE boards.}{3-20}}
 
 \textbf{Class diagram.} Figure~\ref{fig:3-21} is the largest single-module class diagram in the
-report. \texttt{Task} is the hub; \texttt{ProjectTaskStatus} holds the board columns and their
+report. \texttt{Task} is the central class; \texttt{ProjectTaskStatus} holds the board columns and their
 \texttt{allowedTransitions}; \texttt{TaskComment} carries \texttt{TaskCommentLike} and
 \texttt{TaskCommentMention} children; \texttt{TaskLabel} reaches \texttt{Task} through the
 \texttt{TaskLabelAssignment} junction; \texttt{TaskDependency} is the self-referential blocking
@@ -810,10 +813,11 @@ Between the two modules the sprint delivers a large API surface --- nineteen agi
 across the epics, sprints and milestones controllers (including the burndown, velocity and Gantt
 analytics routes), and thirty-five task endpoints covering task CRUD, the dynamic status board,
 Kanban move, backlog reorder and move-to-sprint, dependencies, time entries, comments, and
-labels. On the client all of this lives inside the \textbf{project-detail} page rather than in
-standalone routes: the project opens onto Tasks, Kanban, Backlog, Sprints and Milestones tabs, a
-card click opens a detail sheet composed of comment, attachment, dependency, label, subtask and
-time-entry sections, and the analytics tab renders the burndown and velocity charts and the Gantt.
+labels. On the client, all of this sits inside the \textbf{project-detail} page rather than in
+separate routes. The project opens onto Tasks, Kanban, Backlog, Sprints and Milestones tabs.
+Clicking a card opens a detail sheet composed of comment, attachment, dependency, label, subtask
+and time-entry sections, and the analytics tab renders the burndown and velocity charts and the
+Gantt.
 
 \reportscreenshot{figures/screenshot_P16}{Backlog view.}{P16}
 \reportscreenshot{figures/screenshot_P17}{Kanban board.}{P17}
@@ -828,12 +832,12 @@ time-entry sections, and the analytics tab renders the burndown and velocity cha
 The testing strategy for this sprint focused on two areas: \textbf{property-based frontend
 testing} and \textbf{acceptance scenario verification}.
 
-Eleven property-based test suites (\texttt{fast-check} + \texttt{vitest}) pin client-side
+Eleven property-based test suites (\texttt{fast-check} + \texttt{vitest}) verify client-side
 invariants across the sprint's transform and parsing layers: Kanban no-task-loss and swimlane
 membership, backlog casting, bulk-status transforms, time-entry and dependency normalization,
 comment casting, analytics transforms, epic and milestone casting, label casting, and task-status
-validation. Property-based testing generates hundreds of random inputs per run and asserts an
-invariant holds across all of them, which is a stronger guarantee than a handful of example
+validation. Property-based testing generates hundreds of random inputs per run and asserts that
+an invariant holds across all of them, which is a stronger guarantee than a small set of example
 cases.
 
 The acceptance scenarios below record the Given/When/Then conditions each user story had to
@@ -874,13 +878,13 @@ US-S3-12 & Given a member, When they create/assign labels or move a task to a sp
 
 \subsection{Sprint review}
 
-\textbf{Objectives achieved.} The sprint delivered the substance of the platform: a governed
+\textbf{Objectives achieved.} The sprint delivered the core of the platform: a governed
 sprint lifecycle whose state machine is a shared frontend/backend contract, server-side
 burndown/velocity/Gantt analytics computed from real task points, and a data-driven Kanban that
-is a genuine workflow engine --- custom columns, per-column WIP limits, dependency-blocking, and
-a circular-dependency guard, all applied under a graduated, project-scoped capability model that
-even lets an assignee advance their own card. Every mutation feeds the AI index outbox, so the
-whole agile and task corpus is already searchable ahead of Sprint~6.
+is a true workflow engine --- custom columns, per-column WIP limits, dependency-blocking, and
+a circular-dependency guard, all applied under a tiered, project-scoped capability model that
+even lets an assignee advance their own card. Every write also feeds the AI index outbox, so the
+whole agile and task corpus is already searchable before Sprint~6.
 
 \textbf{Remaining work.} Hardening items identified during the sprint --- backend service tests
 for the tasks module, transaction-wrapped agile writes, and a shared
@@ -892,9 +896,9 @@ for the tasks module, transaction-wrapped agile writes, and a shared
 five weeks) and the most demanding in domain complexity. The data-driven Kanban engine required
 designing a system where board columns, their transitions, and WIP limits are stored as data
 rather than code, which introduced application-level invariants that could not be enforced by the
-database schema alone. The graduated capability model --- seven distinct helpers from read-only
-access up to workflow advancement, with an assignee-specific override --- required careful layering
-to avoid either over-permitting or locking out legitimate moves. The sprint lifecycle state
+database schema alone. The tiered capability model --- seven distinct helpers from read-only
+access up to workflow advancement, with an assignee-specific override --- required care to avoid
+either granting too much or blocking legitimate moves. The sprint lifecycle state
 machine, with its notification side effects and reminder cancellation on certain transitions,
 added further coordination between subsystems.
 
@@ -902,9 +906,9 @@ added further coordination between subsystems.
 layers: generating hundreds of random inputs per run caught edge cases that hand-written examples
 would have missed, particularly in the Kanban no-task-loss invariant and dependency normalization.
 The fire-and-forget notification pattern (unawaited calls to the notification service) kept the
-critical write path fast without sacrificing user feedback. The AI embedding outbox --- enqueueing
-an index upsert on every agile and task write --- was straightforward to wire in and ensures the
-entire corpus is searchable by the time the copilot lands in Sprint~6.
+critical write path fast without losing user feedback. The AI embedding outbox --- enqueueing
+an index upsert on every agile and task write --- was easy to connect and ensures the
+entire corpus is searchable by the time the copilot arrives in Sprint~6.
 
 \textbf{Improvements planned.} Backend service tests for the tasks module's transition
 validation, capability matrix, and circular-dependency guard. A shared
@@ -916,7 +920,7 @@ services. These items are carried forward as prioritized future work (Annex~A).
 Figure~\ref{fig:3-22} focuses on the eighteen entities introduced in this sprint, grouped into
 Agile Planning and Tasks \& Kanban. The two anchor classes from earlier sprints ---
 \texttt{User} (Sprint~1) and \texttt{Project} (Sprint~2) --- are shown in plain style so the
-attachment points are clear: every agile artefact hangs off \texttt{Project}, and \texttt{Task}
+attachment points are clear: every agile artefact is attached to \texttt{Project}, and \texttt{Task}
 carries optional foreign keys into \texttt{Sprint}, \texttt{Epic} and \texttt{Milestone} while
 pointing back to \texttt{User} as assignee and reporter.
 
@@ -927,8 +931,8 @@ pointing back to \texttt{User} as assignee and reporter.
 
 Sprint~3 delivered the agile planning layer and a data-driven task engine that together form the
 working core of the platform: governed sprints, server-side analytics, and a Kanban board whose
-columns, transitions, WIP limits, and dependency gates are enforced end-to-end. The graduated
-capability model and the AI embedding outbox introduced here carry forward into every subsequent
-sprint.
+columns, transitions, WIP limits, and dependency gates are enforced end-to-end. The tiered
+capability model and the AI embedding outbox introduced here are carried forward into every
+later sprint.
 
 \fi % \ifpartialbuild (Sprints 2-3 guard opened before Sprint 2's heading above)
