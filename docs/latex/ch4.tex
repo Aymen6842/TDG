@@ -1,50 +1,50 @@
 \chapter{Sprint 6: AI Copilot \& Estimation (RAG)}
 
 Five sprints built the platform: identity, projects, the agile and task engines, the productivity suite, and
-the communication and monitoring backbone. Everything since Sprint 1 has been accumulating one thing the last
-sprint finally puts to work: \emph{project data}. Tasks, comments, epics, sprints, and milestones are, between
-them, a written record of how the team actually works: what was decided, what is blocking whom, how long a
-piece of work really took. Sprint 6 turns that record into two assistive features without standing up a
+the communication and monitoring backbone. Since Sprint~1, the platform has been accumulating one thing that
+this last sprint finally puts to work: \emph{project data}. Tasks, comments, epics, sprints, and milestones
+together form a written record of how the team actually works: what was decided, what is blocking whom, how
+long a piece of work really took. Sprint 6 turns that record into two assistive features without installing a
 separate machine-learning stack: a copilot that answers natural-language questions grounded strictly in the
-team's own content, and an estimator that grounds a draft task's effort in the measured outcomes of similar
-completed work. It is the report's technical climax, and unlike the earlier sprints it comes with quantitative
-evidence that it works. This chapter provides an in-depth treatment, as this module constitutes the project's main contribution.
+team's own content, and an estimator that bases a draft task's effort on the measured outcomes of similar
+completed work. It is the project's main technical contribution and, unlike the earlier sprints, it comes
+with quantitative evidence that it works. For this reason, this chapter treats it in more depth.
 
 \section{Sprint goal}
 
-\textbf{Sprint goal.} Give the platform two features that read its own data back to the user: (a) a \textbf{copilot}
-that answers questions like ``why did we choose X?'' or ``what is blocking Y?'' grounded only in retrieved project
-content, with clickable citations back to the exact task or comment, and that refuses honestly when the corpus
-cannot support an answer; and (b) an \textbf{estimation} feature that predicts a draft task's effort from the real
-\texttt{actualHours} of the most similar completed tasks. Both are strictly permission-scoped: a user can only ever
-retrieve from projects they may access. The single design principle running through the whole subsystem is
-\emph{honesty over coverage}: refuse rather than guess, show an uncertainty band instead of a false point
-estimate, and cite the source instead of asserting it.
+\textbf{Sprint goal.} Give the platform two features that read its own data back to the user. The first is a
+\textbf{copilot} that answers questions like ``why did we choose X?'' or ``what is blocking Y?'' grounded only in
+retrieved project content, with clickable citations back to the exact task or comment, and that refuses
+honestly when the corpus cannot support an answer. The second is an \textbf{estimation} feature that predicts a
+draft task's effort from the real \texttt{actualHours} of the most similar completed tasks. Both are strictly
+permission-scoped: a user can only ever retrieve from projects they may access. One design principle runs
+through the whole subsystem, \emph{honesty over coverage}: refuse rather than guess, show an uncertainty band
+instead of a false point estimate, and cite the source instead of just stating it.
 
-\textbf{Why RAG, and why not a bare LLM.} The obvious naive design, sending the question straight to a large language
-model, fails for exactly the reason this platform exists: the model knows nothing about \emph{this} company's
-projects, and asked about them it will confabulate a plausible answer. Retrieval-Augmented Generation~\cite{lewis2020rag} fixes
-that by inverting the flow. We first \emph{retrieve} the handful of real project chunks most relevant to the
-question, then hand only those to the model as its sources, with an instruction to answer from them and cite
-them by number. The model becomes a summarizer of retrieved evidence rather than an oracle, which means an
-answer can always be traced back to a source the user can open, and, critically, when nothing relevant is
-retrieved, the system can \emph{decline} instead of inventing. We enforce that decline with a confidence gate: if
-the best retrieved chunk is not similar enough to the question, the copilot refuses without ever calling the
-generation model.
+\textbf{Why RAG, and why not a bare LLM.} The naive design --- sending the question straight to a large language
+model --- fails for exactly the reason this platform exists: the model knows nothing about \emph{this} company's
+projects, and asked about them, it will invent a plausible answer. Retrieval-Augmented
+Generation~\cite{lewis2020rag} fixes that by reversing the flow. We first \emph{retrieve} the few real project
+chunks most relevant to the question, then give only those to the model as its sources, with an instruction to
+answer from them and cite them by number. The model becomes a summarizer of retrieved evidence rather than an
+oracle. An answer can therefore always be traced back to a source the user can open. Most importantly, when
+nothing relevant is retrieved, the system can \emph{decline} instead of inventing. We enforce that decline with
+a confidence gate: if the best retrieved chunk is not similar enough to the question, the copilot refuses
+without ever calling the generation model.
 
-The same reference-class logic drives estimation. Rather than ask an LLM to guess ``how many hours will this
-take?'', a question it has no grounded basis to answer, we treat estimation as \textbf{reference-class
+The same logic drives estimation. Rather than ask an LLM to guess ``how many hours will this
+take?'' --- a question it has no real basis to answer --- we treat estimation as \textbf{reference-class
 forecasting}~\cite{kahneman1977reference}: find the completed tasks most similar to the draft, and base the estimate on how long \emph{they}
-actually took. The suggestion is evidence-backed and comes with the neighbours attached, so the user sees the
-tasks the number is derived from and can judge it. In both features, the point is not that AI is
+actually took. The suggestion is backed by evidence and comes with the neighbour tasks attached, so the user
+sees where the number comes from and can judge it. In both features, the point is not that AI is
 present. The value is that its output stays grounded in real data, scoped to a user's permissions, and honest
 about what it does not know.
 
 \section{Sprint backlog}
 
-The stories drawn from the product backlog (Section~2.2) for this sprint. At \textbf{42 story points} it is a substantial
-sprint despite touching only one module, because that module is deep: an asynchronous indexing pipeline, a
-hybrid retrieval engine, a grounded-generation orchestrator, an estimator, and an evaluation harness.
+The stories below are drawn from the product backlog (Section~2.2). At \textbf{42 story points} it is a large
+sprint even though it touches only one module, because that module is deep: an asynchronous indexing pipeline,
+a hybrid retrieval engine, a grounded-generation orchestrator, an estimator, and an evaluation harness.
 
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
 \caption{Sprint 6 backlog.}\label{tab:s6-backlog-detail} \\
@@ -73,14 +73,13 @@ US-S6-07 & As the platform, I want retrieval scoped by permissions in SQL, so th
 \section{Requirements analysis}
 
 The sprint delivers a single AI module with two user-facing features --- a copilot and a task
-estimator --- sharing the same indexing infrastructure and retrieval engine. The features, actors,
-and use cases are collected in Figure~\ref{fig:4-1}.
+estimator --- sharing the same indexing infrastructure and retrieval engine.
 
-Figure~\ref{fig:4-1} shows the actor split. A plain \textbf{User} (holding \texttt{TASKS.TASK\_READ\_MANY}) asks the copilot; a \textbf{task
+Figure~\ref{fig:4-1} shows the features, actors, and use cases. A plain \textbf{User} (holding \texttt{TASKS.TASK\_READ\_MANY}) asks the copilot; a \textbf{task
 author} (holding \texttt{TASKS.TASK\_CREATE}) triggers an estimate while drafting a task; an \textbf{admin / executive}
 (holding \texttt{PROJECTS.PROJECT\_CREATE}) operates the subsystem by reindexing and reading telemetry. A \textbf{Scheduler}
-actor stands for the automated indexer --- no human triggers embedding; content flows into the index by itself
-after a write. The two user-facing features both \texttt{<<include>>} a permission-scoped \emph{retrieve} use case, and
+actor represents the automated indexer --- no human triggers embedding; content flows into the index
+automatically after a write. The two user-facing features both \texttt{<<include>>} a permission-scoped \emph{retrieve} use case, and
 an honest refusal \texttt{<<extend>>}s the streamed, cited answer when retrieval cannot support one.
 
 % Figure 4.1 — render diagrams-src/fig_4_1.puml -> figures/fig_4_1.(png|pdf)
@@ -104,9 +103,9 @@ automatically.
 
 \textbf{Business rules.}
 \begin{itemize}
-  \item Retrieval is \textbf{permission-scoped in SQL}: a user can only surface content from
+  \item Retrieval is \textbf{permission-scoped in SQL}: a user can only retrieve content from
     projects they may access; out-of-scope rows are never returned to rank, making
-    cross-project leakage unrepresentable rather than merely checked.
+    cross-project leakage impossible by construction rather than merely checked.
   \item A \textbf{confidence gate} refuses without calling the generation model when the best
     retrieved chunk is insufficiently similar to the question (cosine $< 0.5$).
   \item Answers are streamed with numbered \textbf{citation markers} (\texttt{[n]}) linking back
@@ -149,16 +148,15 @@ drafting or editing a task.
 \section{Methodology note --- a CRISP-DM sub-process}
 
 Scrum organizes the project as a whole, but the AI work inside this sprint is a data-mining task, and we
-framed it with the vocabulary of \textbf{CRISP-DM}~\cite{shearer2000crisp} (Cross-Industry Standard Process for Data Mining) as a
-sub-process nested inside Sprint 6. The mapping is direct and it explains why the subsystem is shaped the way
-it is:
+organized it using the vocabulary of \textbf{CRISP-DM}~\cite{shearer2000crisp} (Cross-Industry Standard Process for Data Mining) as a
+sub-process inside Sprint 6. The mapping is direct, and it explains the shape of the subsystem:
 
 \begin{itemize}
   \item \textbf{Business understanding.} The goal is assistive, not autonomous: help a user find and estimate, never
-  decide for them. That framing is what makes \emph{honesty over coverage} the governing constraint.
+  decide for them. This is what makes \emph{honesty over coverage} the governing rule.
   \item \textbf{Data understanding.} The corpus is the platform's own content --- five entity types (tasks, task comments,
   epics, milestones, sprints) --- small, clean, permission-partitioned, and already relational. There is no
-  external dataset to wrangle; the data understanding step is really \emph{scope} understanding (who may see what).
+  external dataset to clean; the data understanding step is really \emph{scope} understanding (who may see what).
   \item \textbf{Data preparation.} Chunking (\textasciitilde2000-character windows with 300-character overlap, per entity type), sha256
   hashing to skip unchanged content, and embedding into 1536-dimensional vectors. This is the indexing
   pipeline of Section~4.5.
@@ -170,17 +168,17 @@ it is:
 
 We did not build a \emph{deployment} step in the CRISP-DM sense of shipping a model artefact, because there is no
 model to ship: the ``model'' is Google Gemini~\cite{gemini} behind an API, and our contribution is the retrieval,
-grounding, and scoping around it. Naming these phases provides explicit scaffolding --- it makes clear that the
-evaluation harness is the quality gate that stands in for a trained model's validation curve.
+grounding, and scoping around it. Naming these phases gives the work an explicit structure --- it makes clear
+that the evaluation harness is the quality gate that plays the role of a trained model's validation curve.
 
 \section{RAG architecture}
 
 The subsystem follows the project's layering convention (controller \textrightarrow{} service \textrightarrow{} repository), with two
-Prisma-raw repositories quarantining the pgvector~\cite{pgvector} and tsvector SQL that Prisma cannot type. It is three
+Prisma-raw repositories isolating the pgvector~\cite{pgvector} and tsvector SQL that Prisma cannot type. It is three
 tables, five endpoints, nine single-responsibility services, and one cron worker carrying two schedules (the
 per-minute sweep and the nightly reconcile). Figure~\ref{fig:4-2} presents the
-whole pipeline at a glance; the two sequences and the class diagram that follow zoom into the write path, the
-read path, and the data model.
+whole pipeline in one view; the two sequence diagrams and the class diagram that follow detail the write path,
+the read path, and the data model.
 
 % Figure 4.2 — render diagrams-src/fig_4_2.puml -> figures/fig_4_2.(png|pdf)
 \reportsideways{figures/fig_4_2}{RAG pipeline overview.}{4-2}
@@ -193,13 +191,13 @@ propagated --- so a problem in the AI subsystem can never break a task save. A s
 \texttt{IndexSweeperJob} cron runs every minute under a Postgres distributed lock (so only one instance sweeps, the
 same pattern as the reminder scheduler), claims up to 25 due rows, and for each one re-reads the \emph{live} source
 row, rebuilds its chunks, embeds only the chunks whose sha256 hash changed, and upserts them. Success marks
-the row done; a transient failure schedules a retry with exponential backoff (30 s up to \textasciitilde15 min); an
-exhausted budget marks it failed. A nightly reconcile re-queues any source newer than its embedding and
+the row done; a transient failure schedules a retry with exponential backoff (30 s up to \textasciitilde15 min); when
+the retry budget is exhausted, the row is marked failed. A nightly reconcile re-queues any source newer than its embedding and
 enqueues deletes for orphaned embeddings, so the index self-heals from any missed write.
 Two properties make this safe under repeated edits: the outbox has a \texttt{@@unique(entityType, entityId)}
 constraint, so a task edited ten times before the next sweep collapses to a single pending row and is embedded
 once; and re-reading the live row at sweep time means a stale queued edit always embeds the \emph{current} content.
-Figure~\ref{fig:4-3} traces one task through this path.
+Figure~\ref{fig:4-3} follows one task through this path.
 
 % Figure 4.3 — render diagrams-src/fig_4_3.puml -> figures/fig_4_3.(png|pdf)
 \reportsideways{figures/fig_4_3}{Asynchronous index-a-task sequence.}{4-3}
@@ -227,13 +225,13 @@ telemetry receipt. Figure~\ref{fig:4-4} traces the streaming path.
 
 \textbf{Estimation (read path, no generation).} Estimation reuses the same scoped retrieval but never calls the
 generation model. It embeds the draft's \texttt{title} + \texttt{description}, runs a k-NN search restricted to \texttt{status = 'DONE' AND actualHours > 0} tasks (taking each task's single nearest chunk), and if the project yields fewer
-than three neighbours widens the search to the same business unit. From the neighbours it predicts two ways:
+than three neighbours widens the search to the same business unit. From the neighbours it predicts in two ways:
 with draft story points present and pointed neighbours, it computes a \textbf{size-aware} estimate --- draft points \texttimes{}
 a similarity-weighted hours-per-point percentile, reported as a median with a 10/90 band; otherwise it falls
 back to a \textbf{size-agnostic} similarity-weighted median of \texttt{actualHours} with a 25/75 IQR band. Either way the
 neighbours are returned as evidence, so the suggestion is never a bare number.
 
-\textbf{The data model.} Three tables carry the subsystem, modeled together in a dedicated Prisma schema file; the
+\textbf{The data model.} Three tables support the subsystem, modeled together in a dedicated Prisma schema file; the
 vector column, the generated \texttt{tsvector} column, and the HNSW and GIN indexes are created in hand-written
 migration SQL because Prisma cannot emit them. Figure~\ref{fig:4-5} presents the class diagram.
 \texttt{DocumentEmbedding} holds one embedded chunk --- a \texttt{vector(1536)} column indexed by HNSW for cosine ANN, a
@@ -251,11 +249,14 @@ database.
 
 \section{Security considerations}
 
-Security is a genuine strength of this module, and the reason is structural rather than procedural.
+Security is a real strength of this module, and the reason is structural rather than procedural: the
+protection comes from the query design, not from checks added afterwards.
 \textbf{Retrieval permission scoping is enforced in SQL, before ranking.} \texttt{AiAccessService.allowedProjectIds}
 resolves the caller's scope, and every search --- vector and lexical alike --- applies \texttt{projectId = ANY(\$allowedIds)} inside the query itself. There is no code path that can surface a chunk from a project the
-user cannot access, because the out-of-scope rows are never returned to rank in the first place; the headline
-safety property is not ``checked'' but ``unrepresentable''. An explicit out-of-scope \texttt{projectId} returns 403. This is the property the evaluation independently confirmed with zero cross-role leaks (Section~4.8).
+user cannot access, because the out-of-scope rows are never returned to rank in the first place; the main
+safety property is not just checked --- it is impossible by construction. An explicit out-of-scope
+\texttt{projectId} returns 403. This is the property the evaluation independently confirmed with zero
+cross-role leaks (Section~4.8).
 
 Four further controls reinforce it:
 
@@ -264,7 +265,7 @@ Four further controls reinforce it:
   \texttt{TASK\_CREATE}, and reindex/telemetry \texttt{PROJECT\_CREATE} (executive-only).
   \item \textbf{A prompt-injection boundary.} The system instruction and the untrusted retrieved sources are passed in
   separate turns, and the instruction explicitly tells the model to treat source text as data and never obey
-  instructions embedded in it --- the same discipline in the reranker. Temperature is held at 0.2 for faithful,
+  instructions embedded in it --- the same rule applies in the reranker. Temperature is held at 0.2 for faithful,
   low-variance answers.
   \item \textbf{DTO validation} bounds every input (question 3--1000 chars, story points 1--100, UUIDs).
   \item \textbf{No SQL-injection surface despite raw SQL.} Every raw query is a parameterized tagged template; the
@@ -272,10 +273,10 @@ Four further controls reinforce it:
   the only interpolated value is the app-built numeric vector literal.
 \end{itemize}
 
-One counter-note worth stating is that access control is \textbf{project-level, not entity-level}: any content in an
+One limitation must be stated: access control is \textbf{project-level, not entity-level}. Any content in an
 allowed project is retrievable, with no per-task or per-comment visibility check. That matches the tasks
 module's own project-scoped authorization today, but if finer-grained task visibility were ever added,
-retrieval would over-share until it was taught the same rule. This and the telemetry-privacy point
+retrieval would expose too much until it applied the same rule. This and the telemetry-privacy point
 are carried into the sprint review (Section~4.10).
 
 \section{Implementation}
@@ -285,11 +286,11 @@ token-by-token behind a blinking caret as the SSE stream arrives, and then a row
 honest ``not found in this project's content'' note when retrieval was insufficient. The stream client is a
 manual \texttt{fetch} + SSE-frame parser rather than the browser \texttt{EventSource}, specifically so it can send the
 \texttt{Authorization} header, with one silent token-refresh retry on a 401. This is a deliberate engineering
-choice, not an accident of convenience: \texttt{EventSource} cannot set request headers, so a permission-scoped
-streaming endpoint behind JWT auth would otherwise have to smuggle the token through the query string; the
-module instead reads the response body as a stream and splits SSE frames itself, so the bearer token rides in
-the header and a mid-stream 401 transparently refreshes and replays the request without the user seeing a
-dropped answer. Each \textbf{citation chip} deep-links by
+choice: \texttt{EventSource} cannot set request headers, so a permission-scoped streaming endpoint behind JWT
+auth would otherwise have to pass the token through the query string. Instead, the module reads the response
+body as a stream and splits the SSE frames itself. The bearer token stays in the header, and a mid-stream 401
+silently refreshes the token and replays the request, so the user never sees a dropped answer.
+Each \textbf{citation chip} deep-links by
 rewriting the URL's tab and task parameters: a task or comment citation opens the tasks tab and the task
 sheet, while an epic, milestone, or sprint citation switches to the relevant tab, with the source snippet on
 hover. Estimation appears inline in the create/edit task form as a single suggestion line --- ``$\approx$ Xh (low--high) $\cdot$
@@ -307,7 +308,7 @@ characters, with appropriate empty and error states.
 
 \section{Evaluation \& testing}
 
-Unlike every other module, the AI subsystem ships with quantitative evidence. Rather than unit tests it
+Unlike every other module, the AI subsystem comes with quantitative evidence. Rather than unit tests it
 carries a substantial \textbf{offline evaluation harness} (\texttt{src/ai/eval/}, run via \texttt{npm run ai:eval:*}) with
 committed gold sets and stable human-readable references, measuring three things: \textbf{retrieval} quality
 (Recall@k, Precision@k, MRR, nDCG@k over 12 semantic and 10 keyword gold questions, comparing vector-only vs
@@ -315,14 +316,14 @@ hybrid vs hybrid+rerank, plus ablations); \textbf{answer} quality (an LLM faithf
 precision/recall against a \texttt{mustCite} set, and refusal correctness on answerable vs deliberately-unanswerable
 questions); and \textbf{estimation} (leave-one-out MAE/RMSE and within-$\pm$25\% of the k-NN predictor against
 project-mean and story-points baselines). This is measurement rather than regression testing, but it is the
-de-facto quality gate that stands in for the trained-model validation a CRISP-DM process would expect.
+de-facto quality gate that plays the role of the trained-model validation a CRISP-DM process would expect.
 The three retrieval arms are themselves the ablation: \textbf{vector-only} (baseline),
 \textbf{vector + lexical fused by RRF}~\cite{cormack2009rrf} (hybrid), and \textbf{hybrid followed by the LLM reranker} --- each flag-gated
 (\texttt{AI\_RETRIEVAL\_HYBRID}, \texttt{AI\_RETRIEVAL\_RERANK}), so any arm can be switched off and re-measured in isolation.
 
-The headline result is on retrieval. On the \textbf{keyword / identifier} gold set (re-run 2026-07-07) --- bare
+The main result is on retrieval. On the \textbf{keyword / identifier} gold set (re-run 2026-07-07) --- bare
 ticket-key lookups like \texttt{NDF-24}, the worst case for a dense embedder because an opaque token carries almost
-no semantic signal --- adding the lexical arm transforms the numbers:
+no semantic signal --- adding the lexical arm changes the numbers completely:
 
 \begin{longtable}{@{}lcccccc@{}}
 \caption{Keyword/identifier gold-set retrieval metrics.}\label{tab:eval-keyword} \\
@@ -346,10 +347,10 @@ first only 30\% of the time, while the lexical arm matches the identifier every 
 perfect ranking. On the \textbf{semantic} gold set the result is the opposite and equally informative: the
 bi-encoder is already saturated on this small 73-chunk corpus (MRR 0.958, the first relevant hit at rank 1
 almost every time), so \textbf{hybrid ties the saturated baseline (0.958, no regression); the LLM reranker matches
-or slightly edges it (1.000 this run)}. Because the reranker is an LLM scoring pass, its number varies
+or slightly beats it (1.000 this run)}. Because the reranker is an LLM scoring pass, its number varies
 slightly run-to-run, while the deterministic vector and hybrid arms do not --- so the accurate reading is that
-rerank never regresses the semantic set and sometimes improves it. Hybrid earns its place as the default by
-dominating the keyword regime and matching the semantic one.
+rerank never regresses the semantic set and sometimes improves it. Hybrid is the right default: it is far
+better in the keyword case and equal in the semantic one.
 
 \begin{longtable}{@{}p{2.6cm}p{2.4cm}p{5.2cm}p{4.2cm}@{}}
 \caption{Retrieval evaluation summary.}\label{tab:eval-summary} \\
@@ -363,7 +364,7 @@ dominating the keyword regime and matching the semantic one.
 \midrule
 \endhead
 Keyword (10 Q) & MRR / R@1 & 0.57 \textrightarrow{} \textbf{1.00} / 0.30 \textrightarrow{} \textbf{1.00} (hybrid vs vector) & hybrid closes the keyword gap \\
-Semantic (12 Q) & MRR / R@1 / nDCG@1 & 0.958 / 0.583 / 0.917 (baseline = hybrid); rerank \textbf{1.000} / --- / \textbf{1.000} & embedder saturated; hybrid no regression, rerank edges it \\
+Semantic (12 Q) & MRR / R@1 / nDCG@1 & 0.958 / 0.583 / 0.917 (baseline = hybrid); rerank \textbf{1.000} / --- / \textbf{1.000} & embedder saturated; hybrid no regression, rerank slightly better \\
 Cross-role leakage & out-of-scope hits & \textbf{0} in both arms & confirms the in-SQL scoping of Section~4.6 \\
 \bottomrule
 \end{longtable}
@@ -373,12 +374,12 @@ and confirmed each actor's candidates came only from their allowed projects --- 
 arm, exactly as the shared \texttt{projectId = ANY(\$allowedIds)} filter predicts.
 
 \textbf{What a retrieval miss looks like.} The vector-only failures on the keyword set are not random --- they have a
-single, explainable cause. A bare identifier like \texttt{NDF-24} carries almost no distributional meaning, so the
+single, explainable cause. A bare identifier like \texttt{NDF-24} carries almost no semantic meaning, so the
 dense embedder places it among many unrelated chunks and ranks the true task low (hence R@1 0.30). The lexical
 arm has no such difficulty: \texttt{websearch\_to\_tsquery} matches the token exactly and returns the one chunk that
 contains it. RRF then fuses the two ranked lists and promotes that exact-match hit to rank 1. The failure and
-its fix are therefore structural, not tuned --- the lexical arm exists precisely to cover the class of queries
-the embedder cannot.
+its fix are therefore structural, not the result of tuning --- the lexical arm exists exactly to cover the type
+of queries the embedder cannot handle.
 
 \textbf{Answer quality.} Answer quality was measured with the same hybrid retrieval, re-run on 2026-07-07. Over the
 10-question QA gold set (7 answerable, 3 deliberately unanswerable), the copilot was fully grounded on every
@@ -410,17 +411,17 @@ answer, which we report rather than silently drop.
 
 \textbf{Estimation quality.} The estimator was evaluated by \textbf{leave-one-out} over the 43 completed tasks with
 recorded hours: each task is held out in turn, predicted from its neighbours, and compared to its real
-\texttt{actualHours}. Two baselines calibrate the numbers: the \emph{project mean} (predict every task at its project's
+\texttt{actualHours}. Two baselines put the numbers in context: the \emph{project mean} (predict every task at its project's
 average) and a \emph{story-points fit} (a least-squares hours-per-point line --- the best a team could do with points
 alone). The first finding is negative and instructive: \textbf{text similarity alone carries almost no effort
 signal}. The size-agnostic k-NN lands at MAE 3.83\,h --- statistically indistinguishable from the project-mean
 baseline (3.82\,h) --- because text-similar neighbours are often \emph{size}-mismatched, so the estimate regresses to
 the mean. Normalizing by size fixes it: the \textbf{size-aware} mode (draft points \texttimes{} the neighbours'
-similarity-weighted hours-per-point rate) cuts MAE to \textbf{2.12\,h}, matching the story-points baseline (2.10\,h)
-while returning what no regression line can --- the neighbour tasks as inspectable evidence and an honest
-uncertainty band that covers the true value 74\% of the time (against the \textasciitilde80\% its 10/90 band nominally
-targets). In the shipped form the suggestion is size-agnostic (a draft being typed carries no points yet); the
-size-aware mode activates whenever a pointed draft is estimated through the API.
+similarity-weighted hours-per-point rate) cuts MAE to \textbf{2.12\,h}, matching the story-points baseline
+(2.10\,h). Unlike a regression line, it also returns the neighbour tasks as evidence the user can inspect, and
+an honest uncertainty band that covers the true value 74\% of the time (against the \textasciitilde80\% its 10/90 band
+nominally targets). In the delivered form the suggestion is size-agnostic (a draft being typed carries no
+points yet); the size-aware mode activates whenever a pointed draft is estimated through the API.
 
 \begin{longtable}{@{}lcccc@{}}
 \caption{Estimation leave-one-out results (n = 43 completed tasks).}\label{tab:eval-estimation} \\
@@ -442,38 +443,38 @@ story-points fit baseline & 2.10 & 2.58 & 62.8\% & --- \\
 
 \section{Challenges \& design decisions}
 
-Several non-obvious choices shaped the subsystem, and each has a rationale worth stating:
+Several non-obvious choices shaped the subsystem. Each has a clear reason:
 
 \begin{itemize}
   \item \textbf{1536-dimensional embeddings, not the model's native 3072.} Gemini's embedding model supports Matryoshka
   truncation --- the first 1536 dimensions of a 3072-vector are themselves a usable embedding. Halving the
-  dimension halves storage and speeds the ANN scan for negligible quality loss on this corpus. Because reduced
+  dimension halves storage and speeds up the ANN scan for almost no quality loss on this corpus. Because reduced
   Gemini vectors are not pre-normalized and cosine ANN needs unit vectors, we L2-normalize them in application
   code before storing.
   \item \textbf{RRF with k = 60 to fuse the arms.} Reciprocal Rank Fusion~\cite{cormack2009rrf} combines the two ranked lists by rank position
-  (\texttt{$\Sigma$ 1/(60 + rank)}) rather than by raw score, which sidesteps the problem that cosine similarity and
-  \texttt{ts\_rank\_cd} are on incomparable scales. The constant 60 is the standard damping value that keeps a single
+  (\texttt{$\Sigma$ 1/(60 + rank)}) rather than by raw score, which avoids the problem that cosine similarity and
+  \texttt{ts\_rank\_cd} are on different scales. The constant 60 is the standard damping value that keeps a single
   arm's top rank from dominating.
   \item \textbf{A cosine-only confidence gate at 0.5.} Refusing before generation is the cheapest way to avoid a
   hallucination, and 0.5 is the threshold below which retrieved content is too dissimilar to trust. This gate
   is effective but has a known limitation --- it ignores the lexical arm --- which we carry into the review (Section~4.10).
-  \item \textbf{Why Gemini.} Using a managed provider~\cite{gemini} for both embeddings and generation avoided standing up and
+  \item \textbf{Why Gemini.} Using a managed provider~\cite{gemini} for both embeddings and generation avoided installing and
   operating an inference stack for a single sprint, and Gemini's \texttt{flash-lite} gave us a cheap, fast reranking
   model on its own quota bucket, separate from the main generation quota. The trade-off is a dependency on an
-  external API and its rate limits --- visible in the evaluation caveat above.
+  external API and its rate limits --- visible in the evaluation note above.
   \item \textbf{A generated, stored \texttt{tsvector} instead of a maintained column.} Declaring the full-text column
   \texttt{GENERATED ALWAYS AS (...) STORED} means Postgres back-fills every existing row when the migration runs and
   keeps it current on every write, with no application code on the write path and no backfill script.
-  \item \textbf{The outbox seam, fire-and-forget.} Making index enqueues swallow their own errors is a deliberate
+  \item \textbf{The outbox boundary, fire-and-forget.} Making index enqueues catch their own errors is a deliberate
   coupling decision: the AI subsystem depends on the domain (it reads tasks, epics, sprints) but the domain
-  must not depend on it, so a failure in indexing can never surface as a failed task save.
+  must not depend on it, so a failure in indexing can never appear as a failed task save.
 \end{itemize}
 
 \section{Sprint review}
 
-The subsystem is the cleanest module in the codebase --- each concern (embedding, chunking, the outbox seam,
+The subsystem is the cleanest module in the codebase --- each concern (embedding, chunking, the outbox boundary,
 retrieval, reranking, generation, access control, telemetry) is a single-responsibility class, the raw SQL is
-quarantined in two repositories, and the docstrings explain \emph{why} as well as \emph{what}. It delivers all seven
+isolated in two repositories, and the docstrings explain \emph{why} as well as \emph{what}. It delivers all seven
 stories, and it is the only feature backed by measured results. The same review also documents its
 verified gaps:
 
@@ -482,8 +483,8 @@ verified gaps:
   job; edits and deletes rely on the nightly reconcile. The consequence is the one property that undermines the
   ``never cite what does not exist'' promise: a \textbf{deleted comment stays retrievable and citable for up to \textasciitilde24 h}
   until reconcile runs, and the copilot can then cite content that is gone. This is the module's most
-  significant debt and the first item to address --- mirror the task producers and enqueue \texttt{TASK\_COMMENT} upsert on
-  edit and delete on removal.
+  important known issue and the first item to address --- copy the task producers and enqueue a
+  \texttt{TASK\_COMMENT} upsert on edit and a delete on removal.
   \item \textbf{The confidence gate is cosine-only.} Because \texttt{sufficient} is derived solely from the top cosine score, a
   bare-keyword query that the \emph{lexical} arm answers perfectly but the \emph{dense} arm scores below 0.5 is still
   refused --- so the copilot's answer path does not fully inherit the hybrid keyword improvement demonstrated in Section~4.8. Making
@@ -491,12 +492,12 @@ verified gaps:
 \end{itemize}
 
 That these two gaps were found by the module's own review is the point: the same evaluation discipline that
-measured the retrieval also surfaced where the answer path lags it. The remaining, smaller gaps from the same
+measured the retrieval also showed where the answer path falls behind it. The remaining, smaller gaps from the same
 review --- cancelled SSE streams that skip their telemetry receipt, the plaintext \texttt{CopilotQueryLog}, source-text
 truncation shorter than the chunk, the reranker's scoring of omitted candidates, in-memory reindex/reconcile,
 a missing fail-fast on the Gemini key, and the absence of unit tests around the pure functions (RRF fusion,
-weighted percentiles, citation parsing) --- are consolidated with their remediations in Annex A. Prioritized, the
-two items above lead: enqueue comment edits and deletes so the copilot never cites content that is gone
+weighted percentiles, citation parsing) --- are collected with their fixes in Annex A. In priority order, the
+two items above come first: enqueue comment edits and deletes so the copilot never cites content that is gone
 (correctness), then make the confidence gate arm-aware so the answer path inherits the proven keyword improvement (UX).
 
 \section{Sprint retrospective}
@@ -506,13 +507,13 @@ Prisma-managed codebase. Prisma cannot type pgvector or tsvector columns, so the
 full-text search queries had to be written as parameterized raw templates and quarantined in
 dedicated repositories. Ensuring these raw queries remained injection-safe while handling the
 polymorphic \texttt{entityId} soft reference required careful attention. The asynchronous nature
-of the indexing pipeline --- with its outbox seam, retry backoff, and nightly reconcile --- also
-made end-to-end verification more involved than synchronous modules.
+of the indexing pipeline --- with its outbox boundary, retry backoff, and nightly reconcile --- also
+made end-to-end verification more difficult than for synchronous modules.
 
-\textbf{Lessons learned.} Building the offline evaluation harness early proved invaluable: it
-caught the keyword-regime retrieval gap before the feature shipped and validated the hybrid fix
-quantitatively. The CRISP-DM framing also paid off --- naming the phases made it explicit that
-the evaluation harness is the quality gate standing in for a trained model's validation curve,
+\textbf{Lessons learned.} Building the offline evaluation harness early proved extremely useful: it
+caught the keyword retrieval gap before the feature was delivered and validated the hybrid fix
+quantitatively. The CRISP-DM framing also helped --- naming the phases made it explicit that
+the evaluation harness is the quality gate playing the role of a trained model's validation curve,
 which guided both design and review discussions.
 
 \textbf{Improvements planned.} Enqueue comment edits and deletes on the write path so the
@@ -524,12 +525,12 @@ fully inherits the proven hybrid keyword improvement.
 Figure~\ref{fig:4-6} completes the picture: the whole system after six sprints, with the earlier sprints
 compacted to their identifying anchor classes and the new \textbf{AI / RAG} package highlighted in yellow. The AI package
 attaches to the rest in a deliberately loose manner. \texttt{DocumentEmbedding} and
-\texttt{IndexOutbox} hang off \texttt{Project} by their \texttt{projectId} scope key, and \texttt{CopilotQueryLog} off \texttt{User}; but the
+\texttt{IndexOutbox} are attached to \texttt{Project} by their \texttt{projectId} scope key, and \texttt{CopilotQueryLog} to \texttt{User}; but the
 link to the \emph{content} --- tasks, comments, epics, sprints, milestones --- is drawn as a dashed \textbf{soft reference},
 because those \texttt{entityId} columns carry no foreign key (they are polymorphic across the five types). The only
-inbound coupling is the write-path seam: the task, epic, sprint, and milestone services enqueue into
+inbound coupling is the write-path enqueue: the task, epic, sprint, and milestone services enqueue into
 \texttt{IndexOutbox}, shown as dependencies, and that is the entire surface the AI subsystem exposes to the domain ---
-fire-and-forget one-liners that the domain can ignore. High cohesion inside, loose coupling out.
+fire-and-forget one-line calls that the domain can ignore. High cohesion inside, loose coupling outside.
 
 % Figure 4.6 — render diagrams-src/fig_4_6.puml -> figures/fig_4_6.(png|pdf)
 \reportsideways{figures/fig_4_6}{Final cumulative class diagram after six sprints.}{4-6}
@@ -539,6 +540,6 @@ fire-and-forget one-liners that the domain can ignore. High cohesion inside, loo
 Sprint~6 delivered the platform's AI subsystem: a permission-scoped copilot with grounded,
 citation-backed answers and an evidence-based task estimator, both built on a hybrid retrieval
 engine whose quality is measured by an offline evaluation harness. The module integrates with
-the domain through a deliberately loose outbox seam and attaches to the cumulative data model
-via soft references, keeping the AI subsystem's concerns self-contained while reading from the
-full breadth of project content accumulated over the five preceding sprints.
+the domain through a deliberately loose outbox boundary and attaches to the cumulative data model
+via soft references, keeping the AI subsystem self-contained while reading from all the project
+content accumulated over the five preceding sprints.
