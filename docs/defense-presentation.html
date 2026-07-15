@@ -651,13 +651,32 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .roadmap-card .rc-code { font-family: var(--mono); font-weight: 800; font-size: 12px; color: var(--brand-deep); }
 .roadmap-card .rc-name { min-height: 34px; margin: 6px 0 9px; color: var(--text); font-size: 13px; line-height: 1.2; font-weight: 750; }
 .roadmap-card .rc-meta { font-family: var(--mono); color: var(--brand); font-size: 12px; font-weight: 700; }
-.roadmap-hint { position: absolute; left: 0; right: 0; top: 190px; color: var(--faint); font-size: 15px; text-align: center; transition: opacity .35s ease; }
-.roadmap-focus { position: absolute; left: 50%; top: 232px; width: 630px; transform: translate(-50%, -50%); z-index: 3; }
-.roadmap-focus-card { position: absolute; inset: 0; min-height: 158px; padding: 24px 28px; border-radius: 18px; background: linear-gradient(135deg, var(--brand-deep), var(--brand)); box-shadow: 0 24px 55px rgba(91,63,160,.30); color: #fff; opacity: 0; transform: scale(.76) translateY(20px); pointer-events: none; transition: opacity .35s ease, transform .65s cubic-bezier(.2,.8,.2,1); }
-.focus-code { font-family: var(--mono); font-size: 14px; font-weight: 700; letter-spacing: .08em; opacity: .82; }
-.focus-name { margin-top: 7px; font-size: 27px; line-height: 1.1; font-weight: 800; letter-spacing: -.02em; }
-.focus-detail { margin-top: 10px; font-size: 16px; line-height: 1.45; opacity: .92; }
-.focus-metric { position: absolute; right: 28px; top: 31px; font-family: var(--mono); font-size: 18px; font-weight: 800; }
+/* focus track shares the pipeline's own 6-column grid (no pixel math) —
+   each focus card lives in the slot directly above its sprint, so it
+   visually rises up out of that exact card and sinks back on the next
+   click, reading as motion traveling along the pipeline rather than a
+   fixed box that merely fades in the center. */
+.roadmap-focus-track { position: absolute; left: 0; right: 0; top: 150px; display: grid; grid-template-columns: repeat(6, 1fr); column-gap: 11px; z-index: 3; transition: opacity .4s ease, transform .5s ease; }
+.roadmap-focus-slot { position: relative; display: flex; justify-content: center; }
+.roadmap-focus-card {
+  position: absolute; top: 0; left: 50%; width: 292px;
+  padding: 20px 24px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--brand-deep), var(--brand));
+  box-shadow: 0 22px 48px rgba(91,63,160,.30); color: #fff;
+  opacity: 0; transform: translateX(-50%) translateY(26px) scale(.85);
+  pointer-events: none;
+  transition: opacity .4s ease, transform .55s cubic-bezier(.2,.8,.2,1);
+}
+/* diamond tail pointing down at the pipeline card the panel emerged from */
+.roadmap-focus-card::after {
+  content: ""; position: absolute; left: 50%; bottom: -8px; width: 16px; height: 16px;
+  transform: translateX(-50%) rotate(45deg); border-radius: 3px;
+  background: linear-gradient(135deg, var(--brand-deep), var(--brand));
+}
+.focus-code { font-family: var(--mono); font-size: 13px; font-weight: 700; letter-spacing: .08em; opacity: .82; }
+.focus-name { margin-top: 7px; font-size: 22px; line-height: 1.12; font-weight: 800; letter-spacing: -.02em; }
+.focus-detail { margin-top: 9px; font-size: 14px; line-height: 1.42; opacity: .92; }
+.focus-metric { position: absolute; right: 22px; top: 24px; font-family: var(--mono); font-size: 16px; font-weight: 800; }
 .scrum-practice { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
 .practice-stats { display: flex; gap: 54px; margin-bottom: 22px; }
 .practice-stat { text-align: center; }
@@ -668,11 +687,14 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .practice-ceremonies { display: flex; align-items: center; gap: 9px; margin-top: 20px; }
 .practice-ceremonies span { padding: 7px 13px; border-radius: 999px; color: var(--brand-deep); background: var(--brand-soft); font-size: 12px; font-weight: 700; }
 .practice-ceremonies i { display: block; width: 18px; height: 1px; background: var(--line); }
-.slide-method-roadmap[data-step="1"] .roadmap-hint, .slide-method-roadmap[data-step="2"] .roadmap-hint, .slide-method-roadmap[data-step="3"] .roadmap-hint, .slide-method-roadmap[data-step="4"] .roadmap-hint, .slide-method-roadmap[data-step="5"] .roadmap-hint, .slide-method-roadmap[data-step="6"] .roadmap-hint { opacity: 0; }
-.slide-method-roadmap[data-step="1"] .roadmap-pipeline, .slide-method-roadmap[data-step="2"] .roadmap-pipeline, .slide-method-roadmap[data-step="3"] .roadmap-pipeline, .slide-method-roadmap[data-step="4"] .roadmap-pipeline, .slide-method-roadmap[data-step="5"] .roadmap-pipeline, .slide-method-roadmap[data-step="6"] .roadmap-pipeline { opacity: .20; transform: scale(.94); }
+/* active pipeline card pops forward; the other five dim individually so the
+   whole strip stays legible instead of blanket-fading as one flat group */
 .slide-method-roadmap[data-step="1"] .roadmap-card:nth-child(1), .slide-method-roadmap[data-step="2"] .roadmap-card:nth-child(2), .slide-method-roadmap[data-step="3"] .roadmap-card:nth-child(3), .slide-method-roadmap[data-step="4"] .roadmap-card:nth-child(4), .slide-method-roadmap[data-step="5"] .roadmap-card:nth-child(5), .slide-method-roadmap[data-step="6"] .roadmap-card:nth-child(6) { opacity: 1; transform: scale(1.08); border-color: var(--brand); box-shadow: 0 12px 28px rgba(91,63,160,.18); }
-.slide-method-roadmap[data-step="1"] .roadmap-focus-card[data-focus="1"], .slide-method-roadmap[data-step="2"] .roadmap-focus-card[data-focus="2"], .slide-method-roadmap[data-step="3"] .roadmap-focus-card[data-focus="3"], .slide-method-roadmap[data-step="4"] .roadmap-focus-card[data-focus="4"], .slide-method-roadmap[data-step="5"] .roadmap-focus-card[data-focus="5"], .slide-method-roadmap[data-step="6"] .roadmap-focus-card[data-focus="6"] { opacity: 1; transform: scale(1) translateY(0); }
-.slide-method-roadmap[data-step="7"] .roadmap-pipeline, .slide-method-roadmap[data-step="7"] .roadmap-hint { opacity: 0; transform: translateY(-18px) scale(.96); }
+.slide-method-roadmap[data-step="1"] .roadmap-card:not(:nth-child(1)), .slide-method-roadmap[data-step="2"] .roadmap-card:not(:nth-child(2)), .slide-method-roadmap[data-step="3"] .roadmap-card:not(:nth-child(3)), .slide-method-roadmap[data-step="4"] .roadmap-card:not(:nth-child(4)), .slide-method-roadmap[data-step="5"] .roadmap-card:not(:nth-child(5)), .slide-method-roadmap[data-step="6"] .roadmap-card:not(:nth-child(6)) { opacity: .4; transform: scale(.96); }
+/* the focus card rises out of its own slot — directly above the active
+   pipeline card — so each click visibly travels along the strip */
+.slide-method-roadmap[data-step="1"] .roadmap-focus-card[data-focus="1"], .slide-method-roadmap[data-step="2"] .roadmap-focus-card[data-focus="2"], .slide-method-roadmap[data-step="3"] .roadmap-focus-card[data-focus="3"], .slide-method-roadmap[data-step="4"] .roadmap-focus-card[data-focus="4"], .slide-method-roadmap[data-step="5"] .roadmap-focus-card[data-focus="5"], .slide-method-roadmap[data-step="6"] .roadmap-focus-card[data-focus="6"] { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); pointer-events: auto; }
+.slide-method-roadmap[data-step="7"] .roadmap-pipeline, .slide-method-roadmap[data-step="7"] .roadmap-focus-track { opacity: 0; transform: translateY(-18px) scale(.96); pointer-events: none; }
 .slide-method-roadmap[data-step="7"] .scrum-practice { opacity: 1; transform: none; pointer-events: auto; }
 
 /* ============================================================= */
@@ -1144,7 +1166,7 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
   </section>
 
   <!-- ===== SLIDE 9 : REQUIREMENTS — 02.1 ===== -->
-  <section class="slide slide-req sub-section-slide" data-steps="6">
+  <section class="slide slide-req sub-section-slide" data-steps="7">
     <div class="stepper">
       <div class="step-item active"><span class="step-tag" data-morph="s02-t1-dst">02.1</span><span class="step-label" data-morph="s02-l1-dst">Requirements</span></div>
       <div class="step-sep" data-morph="s02-sep1-dst"></div>
@@ -1172,28 +1194,28 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
         <div class="req-left">
           <div class="req-col-title">Functional scope — ordered by delivery priority</div>
           <div class="req-priority-list">
-            <div class="req-priority" data-reveal-step="1"><div class="req-priority-code">P0</div><div><div class="req-priority-name">Foundation</div><div class="req-priority-desc">Identity, teams, and the access model every other domain depends on.</div><div class="req-priority-tags"><span>Users &amp; Teams</span><span>RBAC</span></div></div></div>
-            <div class="req-priority" data-reveal-step="2"><div class="req-priority-code">P1</div><div><div class="req-priority-name">Delivery management</div><div class="req-priority-desc">Plan work, assemble teams, and move delivery through a governed workflow.</div><div class="req-priority-tags"><span>Projects &amp; Membership</span><span>Agile Backlog</span><span>Kanban &amp; Tasks</span></div></div></div>
-            <div class="req-priority" data-reveal-step="3"><div class="req-priority-code">P2</div><div><div class="req-priority-name">Daily operations</div><div class="req-priority-desc">Coordinate the operational routines that sit around project delivery.</div><div class="req-priority-tags"><span>To-dos</span><span>Attendance</span><span>Calendar &amp; Events</span><span>Reminders</span></div></div></div>
-            <div class="req-priority" data-reveal-step="4"><div class="req-priority-code">P3</div><div><div class="req-priority-name">Operations &amp; intelligence</div><div class="req-priority-desc">Keep teams informed, monitor services, and ground AI in the work itself.</div><div class="req-priority-tags"><span>Notifications</span><span>Monitoring</span><span>AI Copilot</span></div></div></div>
+            <div class="req-priority" data-reveal-step="2"><div class="req-priority-code">P0</div><div><div class="req-priority-name">Foundation</div><div class="req-priority-desc">Identity, teams, and the access model every other domain depends on.</div><div class="req-priority-tags"><span>Users &amp; Teams</span><span>RBAC</span></div></div></div>
+            <div class="req-priority" data-reveal-step="3"><div class="req-priority-code">P1</div><div><div class="req-priority-name">Delivery management</div><div class="req-priority-desc">Plan work, assemble teams, and move delivery through a governed workflow.</div><div class="req-priority-tags"><span>Projects &amp; Membership</span><span>Agile Backlog</span><span>Kanban &amp; Tasks</span></div></div></div>
+            <div class="req-priority" data-reveal-step="4"><div class="req-priority-code">P2</div><div><div class="req-priority-name">Daily operations</div><div class="req-priority-desc">Coordinate the operational routines that sit around project delivery.</div><div class="req-priority-tags"><span>To-dos</span><span>Attendance</span><span>Calendar &amp; Events</span><span>Reminders</span></div></div></div>
+            <div class="req-priority" data-reveal-step="5"><div class="req-priority-code">P3</div><div><div class="req-priority-name">Operations &amp; intelligence</div><div class="req-priority-desc">Keep teams informed, monitor services, and ground AI in the work itself.</div><div class="req-priority-tags"><span>Notifications</span><span>Monitoring</span><span>AI Copilot</span></div></div></div>
           </div>
         </div>
         <div class="req-right">
           <div class="req-col-title">Non-functional priorities</div>
           <div class="req-nfr">
-            <div class="nfr-card" data-reveal-step="5">
+            <div class="nfr-card" data-reveal-step="6">
               <div class="nfr-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
               <div><div class="nfr-t">Security</div><div class="nfr-d">Centralized RBAC · ~31 roles · ~120 permissions, one guard per route.</div></div>
             </div>
-            <div class="nfr-card" data-reveal-step="5">
+            <div class="nfr-card" data-reveal-step="6">
               <div class="nfr-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><rect x="10" y="13" width="4" height="5" rx="1"/></svg></div>
               <div><div class="nfr-t">Data sovereignty</div><div class="nfr-d">Self-hosted; internal data never leaves the organization.</div></div>
             </div>
-            <div class="nfr-card" data-reveal-step="5">
+            <div class="nfr-card" data-reveal-step="6">
               <div class="nfr-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M12 15l4-3"/><circle cx="12" cy="15" r="1.4"/></svg></div>
               <div><div class="nfr-t">Performance</div><div class="nfr-d">Stateless API, indexed Postgres, asynchronous indexing.</div></div>
             </div>
-            <div class="nfr-card" data-reveal-step="5">
+            <div class="nfr-card" data-reveal-step="6">
               <div class="nfr-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M3.5 12h17M12 4c2.6 2.6 2.6 13.4 0 16M12 4c-2.6 2.6-2.6 13.4 0 16"/></svg></div>
               <div><div class="nfr-t">Internationalization</div><div class="nfr-d">Fully bilingual (en / fr) via next-intl.</div></div>
             </div>
@@ -1204,7 +1226,7 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
   </section>
 
   <!-- ===== SLIDE 10 : METHODOLOGY — 02.2 / WHY SCRUM ===== -->
-  <section class="slide slide-method-why sub-section-slide" data-steps="2">
+  <section class="slide slide-method-why sub-section-slide" data-steps="5">
     <div class="stepper">
       <div class="step-item"><span class="step-tag">02.1</span><span class="step-label">Requirements</span></div>
       <div class="step-sep"></div>
@@ -1229,9 +1251,9 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
       <div class="sub-body why-scrum-body">
         <p class="why-scrum-line">We chose <b>Scrum</b> to deliver a broad platform incrementally, validate each module with TDG, and adapt priorities as the project evolved.</p>
         <div class="why-scrum-cards">
-          <div class="why-scrum-card"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l4 4 6-8"/><path d="M16 7h4v4"/></svg></div><h3>Incremental delivery</h3><p>Each sprint produced a working slice of the platform.</p></div>
-          <div class="why-scrum-card"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg></div><h3>Continuous feedback</h3><p>Reviews with TDG kept the solution close to operational needs.</p></div>
-          <div class="why-scrum-card"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7a8 8 0 1 0 1 5"/><path d="M20 3v4h-4"/></svg></div><h3>Adaptive priorities</h3><p>The AI sprint could build on the real work history delivered earlier.</p></div>
+          <div class="why-scrum-card reveal-item" data-reveal-step="2"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l4 4 6-8"/><path d="M16 7h4v4"/></svg></div><h3>Incremental delivery</h3><p>Each sprint produced a working slice of the platform.</p></div>
+          <div class="why-scrum-card reveal-item" data-reveal-step="3"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg></div><h3>Continuous feedback</h3><p>Reviews with TDG kept the solution close to operational needs.</p></div>
+          <div class="why-scrum-card reveal-item" data-reveal-step="4"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7a8 8 0 1 0 1 5"/><path d="M20 3v4h-4"/></svg></div><h3>Adaptive priorities</h3><p>The AI sprint could build on the real work history delivered earlier.</p></div>
         </div>
       </div>
     </div>
@@ -1261,14 +1283,13 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
           <div class="roadmap-card"><div class="rc-code">S5 · 3w</div><div class="rc-name">Communication &amp; Ops</div><div class="rc-meta">35 SP</div></div>
           <div class="roadmap-card"><div class="rc-code">S6 · 4w</div><div class="rc-name">AI Copilot &amp; Estimation</div><div class="rc-meta">42 SP</div></div>
         </div>
-        <div class="roadmap-hint">Click to follow the delivery story, sprint by sprint.</div>
-        <div class="roadmap-focus">
-          <div class="roadmap-focus-card" data-focus="1"><div class="focus-code">SPRINT 1 · 3 WEEKS</div><div class="focus-metric">41 SP</div><div class="focus-name">Foundations &amp; Authentication</div><div class="focus-detail">JWT authentication and the RBAC foundation: <b>~31 roles</b> mapped to <b>~120 permissions</b>.</div></div>
-          <div class="roadmap-focus-card" data-focus="2"><div class="focus-code">SPRINT 2 · 2 WEEKS</div><div class="focus-metric">26 SP</div><div class="focus-name">Projects &amp; Membership</div><div class="focus-detail">Project lifecycle, membership, invitations, and business-unit-aware scope.</div></div>
-          <div class="roadmap-focus-card" data-focus="3"><div class="focus-code">SPRINT 3 · 5 WEEKS</div><div class="focus-metric">64 SP</div><div class="focus-name">Agile Backlog &amp; Tasks</div><div class="focus-detail">The delivery core: epics, sprints, a data-driven Kanban, and server-computed metrics.</div></div>
-          <div class="roadmap-focus-card" data-focus="4"><div class="focus-code">SPRINT 4 · 4 WEEKS</div><div class="focus-metric">44 SP</div><div class="focus-name">Productivity Suite</div><div class="focus-detail">To-dos, attendance, calendar, and reminders on one scheduled notification backbone.</div></div>
-          <div class="roadmap-focus-card" data-focus="5"><div class="focus-code">SPRINT 5 · 3 WEEKS</div><div class="focus-metric">35 SP</div><div class="focus-name">Communication &amp; Operations</div><div class="focus-detail">Multi-channel notifications, health monitoring, and an outbox-led alert pipeline.</div></div>
-          <div class="roadmap-focus-card" data-focus="6"><div class="focus-code">SPRINT 6 · 4 WEEKS</div><div class="focus-metric">42 SP</div><div class="focus-name">AI Copilot &amp; Estimation</div><div class="focus-detail">Permission-scoped RAG answers, cited evidence, and task-effort estimation.</div></div>
+        <div class="roadmap-focus-track">
+          <div class="roadmap-focus-slot"><div class="roadmap-focus-card" data-focus="1"><div class="focus-code">SPRINT 1 · 3 WEEKS</div><div class="focus-metric">41 SP</div><div class="focus-name">Foundations &amp; Authentication</div><div class="focus-detail">JWT authentication and the RBAC foundation: <b>~31 roles</b> mapped to <b>~120 permissions</b>.</div></div></div>
+          <div class="roadmap-focus-slot"><div class="roadmap-focus-card" data-focus="2"><div class="focus-code">SPRINT 2 · 2 WEEKS</div><div class="focus-metric">26 SP</div><div class="focus-name">Projects &amp; Membership</div><div class="focus-detail">Project lifecycle, membership, invitations, and business-unit-aware scope.</div></div></div>
+          <div class="roadmap-focus-slot"><div class="roadmap-focus-card" data-focus="3"><div class="focus-code">SPRINT 3 · 5 WEEKS</div><div class="focus-metric">64 SP</div><div class="focus-name">Agile Backlog &amp; Tasks</div><div class="focus-detail">The delivery core: epics, sprints, a data-driven Kanban, and server-computed metrics.</div></div></div>
+          <div class="roadmap-focus-slot"><div class="roadmap-focus-card" data-focus="4"><div class="focus-code">SPRINT 4 · 4 WEEKS</div><div class="focus-metric">44 SP</div><div class="focus-name">Productivity Suite</div><div class="focus-detail">To-dos, attendance, calendar, and reminders on one scheduled notification backbone.</div></div></div>
+          <div class="roadmap-focus-slot"><div class="roadmap-focus-card" data-focus="5"><div class="focus-code">SPRINT 5 · 3 WEEKS</div><div class="focus-metric">35 SP</div><div class="focus-name">Communication &amp; Operations</div><div class="focus-detail">Multi-channel notifications, health monitoring, and an outbox-led alert pipeline.</div></div></div>
+          <div class="roadmap-focus-slot"><div class="roadmap-focus-card" data-focus="6"><div class="focus-code">SPRINT 6 · 4 WEEKS</div><div class="focus-metric">42 SP</div><div class="focus-name">AI Copilot &amp; Estimation</div><div class="focus-detail">Permission-scoped RAG answers, cited evidence, and task-effort estimation.</div></div></div>
         </div>
         <div class="scrum-practice">
           <div class="practice-stats"><div class="practice-stat"><div class="sv">252</div><div class="sk">story points</div></div><div class="practice-stat"><div class="sv">21</div><div class="sk">weeks</div></div><div class="practice-stat"><div class="sv">6</div><div class="sk">sprints</div></div></div>
