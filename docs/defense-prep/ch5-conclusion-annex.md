@@ -7,7 +7,7 @@
 F 6 sprints, delivrina **Tawer Management** — plateforme b 2 applications:
 - **API REST NestJS 11**: 147 endpoints, 20 controllers, stateless JWT auth
 - **Client Next.js 16 / React 19**: frontend complet
-- **PostgreSQL + pgvector** (single datastore — transactional + vector) + Redis
+- **PostgreSQL + pgvector** (single datastore — transactional + vector)
 - **Bilingual** (i18n content tables)
 
 ### El 4 objectives mta3 Section 1.6 — kolhom met:

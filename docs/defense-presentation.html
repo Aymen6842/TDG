@@ -597,21 +597,22 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .req-body { display: grid; grid-template-columns: 1fr 372px; gap: 46px; height: 100%; align-content: center; padding-top: 6px; }
 .req-col-title { font-family: var(--mono); font-size: 13.5px; letter-spacing: .16em; text-transform: uppercase; color: var(--brand); margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
 .req-col-title::before { content: ""; width: 22px; height: 1.5px; background: var(--brand); }
-.req-chips { display: flex; flex-wrap: wrap; gap: 11px; }
-.req-chip {
-  display: inline-flex; align-items: center; gap: 9px; padding: 10px 15px; border-radius: 12px;
-  background: #fff; border: 1px solid var(--line); box-shadow: 0 6px 16px rgba(40,30,80,.05);
-  font-size: 15px; font-weight: 600; color: var(--text);
-  opacity: 0; transform: translateY(10px) scale(.96); transition: opacity .45s ease, transform .45s cubic-bezier(.2,.8,.2,1);
+.req-priority-list { display: flex; flex-direction: column; gap: 9px; }
+.req-priority {
+  display: grid; grid-template-columns: 48px 1fr; gap: 14px; padding: 12px 15px; border-radius: 14px;
+  background: #fff; border: 1px solid var(--line); box-shadow: 0 7px 18px rgba(40,30,80,.05);
+  opacity: 0; transform: translateY(14px) scale(.98); transition: opacity .48s ease, transform .55s cubic-bezier(.2,.8,.2,1);
 }
-.req-chip.is-revealed { opacity: 1; transform: none; }
-.req-chip svg { width: 18px; height: 18px; color: var(--brand-deep); flex: none; }
-.req-chip:nth-child(1){transition-delay:.03s} .req-chip:nth-child(2){transition-delay:.09s}
-.req-chip:nth-child(3){transition-delay:.15s} .req-chip:nth-child(4){transition-delay:.21s}
-.req-chip:nth-child(5){transition-delay:.27s} .req-chip:nth-child(6){transition-delay:.33s}
-.req-chip:nth-child(7){transition-delay:.39s} .req-chip:nth-child(8){transition-delay:.45s}
-.req-chip:nth-child(9){transition-delay:.51s} .req-chip:nth-child(10){transition-delay:.57s}
-.req-chip:nth-child(11){transition-delay:.63s} .req-chip:nth-child(12){transition-delay:.69s}
+.req-priority.is-revealed { opacity: 1; transform: none; }
+.req-priority:nth-child(1){ border-left: 4px solid var(--brand-deep); }
+.req-priority:nth-child(2){ border-left: 4px solid var(--brand); }
+.req-priority:nth-child(3){ border-left: 4px solid var(--chart-b); }
+.req-priority:nth-child(4){ border-left: 4px solid #b3b0c4; }
+.req-priority-code { font-family: var(--mono); font-size: 14px; font-weight: 800; color: var(--brand-deep); letter-spacing: .04em; padding-top: 2px; }
+.req-priority-name { font-size: 16px; font-weight: 760; color: var(--text); letter-spacing: -.01em; }
+.req-priority-desc { font-size: 13px; line-height: 1.4; color: var(--muted); margin-top: 3px; }
+.req-priority-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.req-priority-tags span { font-size: 11.5px; font-weight: 650; color: var(--brand-deep); background: var(--brand-soft); border-radius: 999px; padding: 4px 9px; }
 .req-nfr { display: flex; flex-direction: column; gap: 9px; }
 .nfr-card {
   display: flex; gap: 12px; padding: 11px 16px; border-radius: 13px;
@@ -627,47 +628,52 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .nfr-d { font-size: 12.5px; color: var(--muted); margin-top: 2px; line-height: 1.35; }
 
 /* ============================================================= */
-/* SLIDE — 02.2 METHODOLOGY                                      */
+/* SLIDES — 02.2 METHODOLOGY                                     */
 /* ============================================================= */
-.method-body { display: flex; flex-direction: column; justify-content: center; height: 100%; gap: 18px; padding-top: 2px; }
-.mth-timeline { display: grid; grid-template-columns: repeat(6, 1fr); gap: 11px; }
-.mth-sprint {
-  background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px 13px;
-  box-shadow: 0 8px 20px rgba(40,30,80,.05);
-  opacity: 0; transform: translateX(46px); transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1);
-}
-.mth-sprint.is-revealed { opacity: 1; transform: none; }
-.mth-sprint:nth-child(1){transition-delay:.05s} .mth-sprint:nth-child(2){transition-delay:.18s}
-.mth-sprint:nth-child(3){transition-delay:.31s} .mth-sprint:nth-child(4){transition-delay:.44s}
-.mth-sprint:nth-child(5){transition-delay:.57s} .mth-sprint:nth-child(6){transition-delay:.70s}
-.mth-code { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--brand-deep); letter-spacing: .04em; }
-.mth-name { font-size: 13px; font-weight: 700; color: var(--text); margin: 5px 0 8px; line-height: 1.2; min-height: 30px; }
-.mth-sp { font-family: var(--mono); font-size: 17px; font-weight: 700; color: var(--brand); }
-.mth-sp span { font-size: 11px; color: var(--faint); font-weight: 600; }
-.mth-bar { height: 4px; border-radius: 3px; background: linear-gradient(90deg, var(--brand-deep), var(--chart-b)); margin-top: 9px; transform-origin: left; transform: scaleX(0); transition: transform .6s ease; }
-.mth-sprint.is-revealed .mth-bar { transform: scaleX(1); transition-delay: .25s; }
-.mth-lower { display: grid; grid-template-columns: 1fr 300px; gap: 30px; align-items: stretch; }
-.mth-kanban { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-.mk-col { background: rgba(122,100,188,.055); border-radius: 12px; padding: 11px 11px 5px; }
-.mk-h { font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 9px; text-align: center; letter-spacing: .02em; }
-.mk-card {
-  background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 12px;
-  color: var(--text); margin-bottom: 8px; box-shadow: 0 3px 8px rgba(40,30,80,.05);
-  opacity: 0; transform: translateY(8px); transition: opacity .45s ease, transform .45s ease;
-}
-.mk-card .mk-tag { font-family: var(--mono); font-size: 10px; color: var(--brand); }
-.mth-lower.is-revealed .mk-card { opacity: 1; transform: none; }
-.mth-lower.is-revealed .mk-card:nth-child(2){transition-delay:.1s}
-.mth-lower.is-revealed .mk-card:nth-child(3){transition-delay:.2s}
-.mth-side { display: flex; flex-direction: column; justify-content: center; gap: 14px; opacity: 0; transform: translateX(20px); transition: opacity .5s ease, transform .5s ease; }
-.mth-lower.is-revealed .mth-side { opacity: 1; transform: none; transition-delay: .15s; }
-.mth-stats { display: flex; gap: 22px; }
-.mth-stat .sv { font-family: var(--mono); font-size: 26px; font-weight: 700; color: var(--brand-deep); line-height: 1; }
-.mth-stat .sk { font-size: 12px; color: var(--faint); margin-top: 4px; }
-.mth-roles { font-size: 13px; color: var(--muted); line-height: 1.5; }
-.mth-roles b { color: var(--text); font-weight: 700; }
-.mth-cer { display: flex; flex-wrap: wrap; gap: 7px; }
-.mth-cer span { font-size: 11.5px; color: var(--brand-deep); background: var(--brand-soft); border-radius: 999px; padding: 4px 11px; }
+.why-scrum-body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding-top: 4px; }
+.why-scrum-line { max-width: 830px; margin: 0 0 32px; font-size: 27px; line-height: 1.4; color: var(--muted); text-align: center; }
+.why-scrum-line b { color: var(--text); }
+.why-scrum-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: 880px; }
+.why-scrum-card { padding: 21px 22px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 10px 25px rgba(40,30,80,.06); }
+.why-scrum-icon { width: 42px; height: 42px; display: grid; place-items: center; margin-bottom: 14px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-deep); }
+.why-scrum-icon svg { width: 23px; height: 23px; }
+.why-scrum-card h3 { margin: 0; color: var(--text); font-size: 18px; letter-spacing: -.01em; }
+.why-scrum-card p { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+
+.slide-method-roadmap { padding-bottom: 40px; }
+.roadmap-wrap { position: relative; flex: 1 1 auto; overflow: hidden; padding: 20px 64px 0; }
+.roadmap-title { font-family: var(--mono); color: var(--brand); text-transform: uppercase; letter-spacing: .16em; font-size: 13.5px; margin: 0 0 18px; }
+.roadmap-title::before { content: ""; display: inline-block; width: 22px; height: 1.5px; margin: 0 10px 4px 0; background: var(--brand); }
+.roadmap-stage { position: relative; height: 392px; }
+.roadmap-pipeline { display: grid; grid-template-columns: repeat(6, 1fr); gap: 11px; position: relative; z-index: 1; transition: opacity .45s ease, transform .6s ease; }
+.roadmap-pipeline::before { content: ""; position: absolute; height: 2px; left: 42px; right: 42px; top: 47px; background: var(--line); z-index: -1; }
+.roadmap-card { min-height: 132px; padding: 13px; border-radius: 14px; border: 1px solid var(--line); background: #fff; box-shadow: 0 8px 20px rgba(40,30,80,.05); transition: opacity .45s ease, transform .65s cubic-bezier(.2,.8,.2,1), border-color .4s ease, box-shadow .4s ease; }
+.roadmap-card .rc-code { font-family: var(--mono); font-weight: 800; font-size: 12px; color: var(--brand-deep); }
+.roadmap-card .rc-name { min-height: 34px; margin: 6px 0 9px; color: var(--text); font-size: 13px; line-height: 1.2; font-weight: 750; }
+.roadmap-card .rc-meta { font-family: var(--mono); color: var(--brand); font-size: 12px; font-weight: 700; }
+.roadmap-hint { position: absolute; left: 0; right: 0; top: 190px; color: var(--faint); font-size: 15px; text-align: center; transition: opacity .35s ease; }
+.roadmap-focus { position: absolute; left: 50%; top: 232px; width: 630px; transform: translate(-50%, -50%); z-index: 3; }
+.roadmap-focus-card { position: absolute; inset: 0; min-height: 158px; padding: 24px 28px; border-radius: 18px; background: linear-gradient(135deg, var(--brand-deep), var(--brand)); box-shadow: 0 24px 55px rgba(91,63,160,.30); color: #fff; opacity: 0; transform: scale(.76) translateY(20px); pointer-events: none; transition: opacity .35s ease, transform .65s cubic-bezier(.2,.8,.2,1); }
+.focus-code { font-family: var(--mono); font-size: 14px; font-weight: 700; letter-spacing: .08em; opacity: .82; }
+.focus-name { margin-top: 7px; font-size: 27px; line-height: 1.1; font-weight: 800; letter-spacing: -.02em; }
+.focus-detail { margin-top: 10px; font-size: 16px; line-height: 1.45; opacity: .92; }
+.focus-metric { position: absolute; right: 28px; top: 31px; font-family: var(--mono); font-size: 18px; font-weight: 800; }
+.scrum-practice { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+.practice-stats { display: flex; gap: 54px; margin-bottom: 22px; }
+.practice-stat { text-align: center; }
+.practice-stat .sv { font-family: var(--mono); font-size: 43px; color: var(--brand-deep); line-height: 1; font-weight: 800; }
+.practice-stat .sk { margin-top: 6px; font-size: 13px; color: var(--faint); }
+.practice-team { max-width: 690px; color: var(--muted); font-size: 16px; line-height: 1.5; text-align: center; }
+.practice-team b { color: var(--text); }
+.practice-ceremonies { display: flex; align-items: center; gap: 9px; margin-top: 20px; }
+.practice-ceremonies span { padding: 7px 13px; border-radius: 999px; color: var(--brand-deep); background: var(--brand-soft); font-size: 12px; font-weight: 700; }
+.practice-ceremonies i { display: block; width: 18px; height: 1px; background: var(--line); }
+.slide-method-roadmap[data-step="1"] .roadmap-hint, .slide-method-roadmap[data-step="2"] .roadmap-hint, .slide-method-roadmap[data-step="3"] .roadmap-hint, .slide-method-roadmap[data-step="4"] .roadmap-hint, .slide-method-roadmap[data-step="5"] .roadmap-hint, .slide-method-roadmap[data-step="6"] .roadmap-hint { opacity: 0; }
+.slide-method-roadmap[data-step="1"] .roadmap-pipeline, .slide-method-roadmap[data-step="2"] .roadmap-pipeline, .slide-method-roadmap[data-step="3"] .roadmap-pipeline, .slide-method-roadmap[data-step="4"] .roadmap-pipeline, .slide-method-roadmap[data-step="5"] .roadmap-pipeline, .slide-method-roadmap[data-step="6"] .roadmap-pipeline { opacity: .20; transform: scale(.94); }
+.slide-method-roadmap[data-step="1"] .roadmap-card:nth-child(1), .slide-method-roadmap[data-step="2"] .roadmap-card:nth-child(2), .slide-method-roadmap[data-step="3"] .roadmap-card:nth-child(3), .slide-method-roadmap[data-step="4"] .roadmap-card:nth-child(4), .slide-method-roadmap[data-step="5"] .roadmap-card:nth-child(5), .slide-method-roadmap[data-step="6"] .roadmap-card:nth-child(6) { opacity: 1; transform: scale(1.08); border-color: var(--brand); box-shadow: 0 12px 28px rgba(91,63,160,.18); }
+.slide-method-roadmap[data-step="1"] .roadmap-focus-card[data-focus="1"], .slide-method-roadmap[data-step="2"] .roadmap-focus-card[data-focus="2"], .slide-method-roadmap[data-step="3"] .roadmap-focus-card[data-focus="3"], .slide-method-roadmap[data-step="4"] .roadmap-focus-card[data-focus="4"], .slide-method-roadmap[data-step="5"] .roadmap-focus-card[data-focus="5"], .slide-method-roadmap[data-step="6"] .roadmap-focus-card[data-focus="6"] { opacity: 1; transform: scale(1) translateY(0); }
+.slide-method-roadmap[data-step="7"] .roadmap-pipeline, .slide-method-roadmap[data-step="7"] .roadmap-hint { opacity: 0; transform: translateY(-18px) scale(.96); }
+.slide-method-roadmap[data-step="7"] .scrum-practice { opacity: 1; transform: none; pointer-events: auto; }
 
 /* ============================================================= */
 /* SLIDE — 02.3 ARCHITECTURE                                     */
@@ -1125,30 +1131,30 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
       <p class="hero-desc">What the platform must do, how it was built, and the architecture that keeps ten domains coherent.</p>
     </div>
     <div class="hero-subs">
-      <div class="hero-sub"><span class="hs-tag">02.1</span><span class="hs-label">Requirements</span></div>
-      <div class="hero-sub-line"></div>
-      <div class="hero-sub"><span class="hs-tag">02.2</span><span class="hs-label">Methodology</span></div>
-      <div class="hero-sub-line"></div>
-      <div class="hero-sub"><span class="hs-tag">02.3</span><span class="hs-label">Architecture</span></div>
-      <div class="hero-sub-line"></div>
-      <div class="hero-sub"><span class="hs-tag">02.4</span><span class="hs-label">Use Cases</span></div>
-      <div class="hero-sub-line"></div>
-      <div class="hero-sub"><span class="hs-tag">02.5</span><span class="hs-label">Technology Stack</span></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s02-t1-src">02.1</span><span class="hs-label" data-morph="s02-l1-src">Requirements</span></div>
+      <div class="hero-sub-line" data-morph="s02-sep1-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s02-t2-src">02.2</span><span class="hs-label" data-morph="s02-l2-src">Methodology</span></div>
+      <div class="hero-sub-line" data-morph="s02-sep2-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s02-t3-src">02.3</span><span class="hs-label" data-morph="s02-l3-src">Architecture</span></div>
+      <div class="hero-sub-line" data-morph="s02-sep3-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s02-t4-src">02.4</span><span class="hs-label" data-morph="s02-l4-src">Use Cases</span></div>
+      <div class="hero-sub-line" data-morph="s02-sep4-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s02-t5-src">02.5</span><span class="hs-label" data-morph="s02-l5-src">Technology Stack</span></div>
     </div>
   </section>
 
   <!-- ===== SLIDE 9 : REQUIREMENTS — 02.1 ===== -->
-  <section class="slide slide-req sub-section-slide" data-steps="3">
+  <section class="slide slide-req sub-section-slide" data-steps="6">
     <div class="stepper">
-      <div class="step-item active"><span class="step-tag">02.1</span><span class="step-label">Requirements</span></div>
-      <div class="step-sep"></div>
-      <div class="step-item"><span class="step-tag">02.2</span><span class="step-label">Methodology</span></div>
-      <div class="step-sep"></div>
-      <div class="step-item"><span class="step-tag">02.3</span><span class="step-label">Architecture</span></div>
-      <div class="step-sep"></div>
-      <div class="step-item"><span class="step-tag">02.4</span><span class="step-label">Use Cases</span></div>
-      <div class="step-sep"></div>
-      <div class="step-item"><span class="step-tag">02.5</span><span class="step-label">Tech Stack</span></div>
+      <div class="step-item active"><span class="step-tag" data-morph="s02-t1-dst">02.1</span><span class="step-label" data-morph="s02-l1-dst">Requirements</span></div>
+      <div class="step-sep" data-morph="s02-sep1-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s02-t2-dst">02.2</span><span class="step-label" data-morph="s02-l2-dst">Methodology</span></div>
+      <div class="step-sep" data-morph="s02-sep2-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s02-t3-dst">02.3</span><span class="step-label" data-morph="s02-l3-dst">Architecture</span></div>
+      <div class="step-sep" data-morph="s02-sep3-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s02-t4-dst">02.4</span><span class="step-label" data-morph="s02-l4-dst">Use Cases</span></div>
+      <div class="step-sep" data-morph="s02-sep4-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s02-t5-dst">02.5</span><span class="step-label" data-morph="s02-l5-dst">Tech Stack</span></div>
     </div>
     <div class="sub-stagewrap">
       <div class="sub-intro">
@@ -1164,38 +1170,30 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
       </div>
       <div class="sub-body req-body">
         <div class="req-left">
-          <div class="req-col-title">Functional — ten operational domains</div>
-          <div class="req-chips">
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 5M18.5 20a6 6 0 0 0-3-5"/></svg>Users &amp; Teams</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>Projects</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 11 0"/><path d="M18 8v6M15 11h6"/></svg>Membership</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5z"/><path d="M3 12l9 5 9-5M3 16l9 5 9-5"/></svg>Agile Backlog</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="4" height="10" rx="1"/><rect x="16" y="4" width="5" height="13" rx="1"/></svg>Kanban Board</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 12l3 3 5-6"/></svg>Personal To-dos</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>Attendance</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/></svg>Calendar &amp; Events</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>Reminders</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4l10 4V6z"/><path d="M14 8a4 4 0 0 1 0 8"/></svg>Notifications</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l3 8 4-16 3 8h4"/></svg>Monitoring</div>
-            <div class="req-chip" data-reveal-step="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg>AI Copilot</div>
+          <div class="req-col-title">Functional scope — ordered by delivery priority</div>
+          <div class="req-priority-list">
+            <div class="req-priority" data-reveal-step="1"><div class="req-priority-code">P0</div><div><div class="req-priority-name">Foundation</div><div class="req-priority-desc">Identity, teams, and the access model every other domain depends on.</div><div class="req-priority-tags"><span>Users &amp; Teams</span><span>RBAC</span></div></div></div>
+            <div class="req-priority" data-reveal-step="2"><div class="req-priority-code">P1</div><div><div class="req-priority-name">Delivery management</div><div class="req-priority-desc">Plan work, assemble teams, and move delivery through a governed workflow.</div><div class="req-priority-tags"><span>Projects &amp; Membership</span><span>Agile Backlog</span><span>Kanban &amp; Tasks</span></div></div></div>
+            <div class="req-priority" data-reveal-step="3"><div class="req-priority-code">P2</div><div><div class="req-priority-name">Daily operations</div><div class="req-priority-desc">Coordinate the operational routines that sit around project delivery.</div><div class="req-priority-tags"><span>To-dos</span><span>Attendance</span><span>Calendar &amp; Events</span><span>Reminders</span></div></div></div>
+            <div class="req-priority" data-reveal-step="4"><div class="req-priority-code">P3</div><div><div class="req-priority-name">Operations &amp; intelligence</div><div class="req-priority-desc">Keep teams informed, monitor services, and ground AI in the work itself.</div><div class="req-priority-tags"><span>Notifications</span><span>Monitoring</span><span>AI Copilot</span></div></div></div>
           </div>
         </div>
         <div class="req-right">
           <div class="req-col-title">Non-functional priorities</div>
           <div class="req-nfr">
-            <div class="nfr-card" data-reveal-step="2">
+            <div class="nfr-card" data-reveal-step="5">
               <div class="nfr-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
               <div><div class="nfr-t">Security</div><div class="nfr-d">Centralized RBAC · ~31 roles · ~120 permissions, one guard per route.</div></div>
             </div>
-            <div class="nfr-card" data-reveal-step="2">
+            <div class="nfr-card" data-reveal-step="5">
               <div class="nfr-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11l8-6 8 6"/><path d="M6 10v9h12v-9"/><rect x="10" y="13" width="4" height="5" rx="1"/></svg></div>
               <div><div class="nfr-t">Data sovereignty</div><div class="nfr-d">Self-hosted; internal data never leaves the organization.</div></div>
             </div>
-            <div class="nfr-card" data-reveal-step="2">
+            <div class="nfr-card" data-reveal-step="5">
               <div class="nfr-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M12 15l4-3"/><circle cx="12" cy="15" r="1.4"/></svg></div>
               <div><div class="nfr-t">Performance</div><div class="nfr-d">Stateless API, indexed Postgres, asynchronous indexing.</div></div>
             </div>
-            <div class="nfr-card" data-reveal-step="2">
+            <div class="nfr-card" data-reveal-step="5">
               <div class="nfr-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M3.5 12h17M12 4c2.6 2.6 2.6 13.4 0 16M12 4c-2.6 2.6-2.6 13.4 0 16"/></svg></div>
               <div><div class="nfr-t">Internationalization</div><div class="nfr-d">Fully bilingual (en / fr) via next-intl.</div></div>
             </div>
@@ -1205,8 +1203,8 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
     </div>
   </section>
 
-  <!-- ===== SLIDE 10 : METHODOLOGY — 02.2 ===== -->
-  <section class="slide slide-method sub-section-slide" data-steps="3">
+  <!-- ===== SLIDE 10 : METHODOLOGY — 02.2 / WHY SCRUM ===== -->
+  <section class="slide slide-method-why sub-section-slide" data-steps="2">
     <div class="stepper">
       <div class="step-item"><span class="step-tag">02.1</span><span class="step-label">Requirements</span></div>
       <div class="step-sep"></div>
@@ -1228,30 +1226,54 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
         </div>
         <h2 class="sub-intro-title">Methodology</h2>
       </div>
-      <div class="sub-body method-body">
-        <div class="mth-timeline">
-          <div class="mth-sprint" data-reveal-step="1"><div class="mth-code">S1 · 3w</div><div class="mth-name">Foundations &amp; Auth</div><div class="mth-sp">41 <span>SP</span></div><div class="mth-bar" style="width:65%"></div></div>
-          <div class="mth-sprint" data-reveal-step="1"><div class="mth-code">S2 · 2w</div><div class="mth-name">Projects &amp; Membership</div><div class="mth-sp">26 <span>SP</span></div><div class="mth-bar" style="width:41%"></div></div>
-          <div class="mth-sprint" data-reveal-step="1"><div class="mth-code">S3 · 5w</div><div class="mth-name">Agile Backlog &amp; Tasks</div><div class="mth-sp">64 <span>SP</span></div><div class="mth-bar" style="width:100%"></div></div>
-          <div class="mth-sprint" data-reveal-step="1"><div class="mth-code">S4 · 4w</div><div class="mth-name">Productivity Suite</div><div class="mth-sp">44 <span>SP</span></div><div class="mth-bar" style="width:69%"></div></div>
-          <div class="mth-sprint" data-reveal-step="1"><div class="mth-code">S5 · 3w</div><div class="mth-name">Communication &amp; Ops</div><div class="mth-sp">35 <span>SP</span></div><div class="mth-bar" style="width:55%"></div></div>
-          <div class="mth-sprint" data-reveal-step="1"><div class="mth-code">S6 · 4w</div><div class="mth-name">AI Copilot &amp; Estimation</div><div class="mth-sp">42 <span>SP</span></div><div class="mth-bar" style="width:66%"></div></div>
+      <div class="sub-body why-scrum-body">
+        <p class="why-scrum-line">We chose <b>Scrum</b> to deliver a broad platform incrementally, validate each module with TDG, and adapt priorities as the project evolved.</p>
+        <div class="why-scrum-cards">
+          <div class="why-scrum-card"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l4 4 6-8"/><path d="M16 7h4v4"/></svg></div><h3>Incremental delivery</h3><p>Each sprint produced a working slice of the platform.</p></div>
+          <div class="why-scrum-card"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg></div><h3>Continuous feedback</h3><p>Reviews with TDG kept the solution close to operational needs.</p></div>
+          <div class="why-scrum-card"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7a8 8 0 1 0 1 5"/><path d="M20 3v4h-4"/></svg></div><h3>Adaptive priorities</h3><p>The AI sprint could build on the real work history delivered earlier.</p></div>
         </div>
-        <div class="mth-lower" data-reveal-step="2">
-          <div class="mth-kanban">
-            <div class="mk-col"><div class="mk-h">To Do</div><div class="mk-card"><span class="mk-tag">S-06</span><br>Sprint backlog</div><div class="mk-card"><span class="mk-tag">S-11</span><br>Refinement</div></div>
-            <div class="mk-col"><div class="mk-h">In Progress</div><div class="mk-card"><span class="mk-tag">S-03</span><br>Story in flight</div></div>
-            <div class="mk-col"><div class="mk-h">Done</div><div class="mk-card"><span class="mk-tag">S-01</span><br>Increment shipped</div><div class="mk-card"><span class="mk-tag">S-02</span><br>Demo &amp; review</div></div>
-          </div>
-          <div class="mth-side">
-            <div class="mth-stats">
-              <div class="mth-stat"><div class="sv">252</div><div class="sk">story points</div></div>
-              <div class="mth-stat"><div class="sv">21</div><div class="sk">weeks</div></div>
-              <div class="mth-stat"><div class="sv">6</div><div class="sk">sprints</div></div>
-            </div>
-            <div class="mth-roles">3-person Scrum team — <b>Product Owner</b> (CEO), <b>Backend supervisor</b> (CTO), <b>Development Team</b> (author).</div>
-            <div class="mth-cer"><span>Planning</span><span>Stand-ups</span><span>Review</span><span>Retrospective</span><span>Refinement</span></div>
-          </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE 11 : METHODOLOGY — SPRINT ROADMAP ===== -->
+  <section class="slide slide-method-roadmap" data-steps="8">
+    <div class="stepper">
+      <div class="step-item"><span class="step-tag">02.1</span><span class="step-label">Requirements</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item active"><span class="step-tag">02.2</span><span class="step-label">Methodology</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">02.3</span><span class="step-label">Architecture</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">02.4</span><span class="step-label">Use Cases</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">02.5</span><span class="step-label">Tech Stack</span></div>
+    </div>
+    <div class="roadmap-wrap">
+      <p class="roadmap-title">Six-sprint delivery roadmap</p>
+      <div class="roadmap-stage">
+        <div class="roadmap-pipeline">
+          <div class="roadmap-card"><div class="rc-code">S1 · 3w</div><div class="rc-name">Foundations &amp; Auth</div><div class="rc-meta">41 SP</div></div>
+          <div class="roadmap-card"><div class="rc-code">S2 · 2w</div><div class="rc-name">Projects &amp; Membership</div><div class="rc-meta">26 SP</div></div>
+          <div class="roadmap-card"><div class="rc-code">S3 · 5w</div><div class="rc-name">Agile Backlog &amp; Tasks</div><div class="rc-meta">64 SP</div></div>
+          <div class="roadmap-card"><div class="rc-code">S4 · 4w</div><div class="rc-name">Productivity Suite</div><div class="rc-meta">44 SP</div></div>
+          <div class="roadmap-card"><div class="rc-code">S5 · 3w</div><div class="rc-name">Communication &amp; Ops</div><div class="rc-meta">35 SP</div></div>
+          <div class="roadmap-card"><div class="rc-code">S6 · 4w</div><div class="rc-name">AI Copilot &amp; Estimation</div><div class="rc-meta">42 SP</div></div>
+        </div>
+        <div class="roadmap-hint">Click to follow the delivery story, sprint by sprint.</div>
+        <div class="roadmap-focus">
+          <div class="roadmap-focus-card" data-focus="1"><div class="focus-code">SPRINT 1 · 3 WEEKS</div><div class="focus-metric">41 SP</div><div class="focus-name">Foundations &amp; Authentication</div><div class="focus-detail">JWT authentication and the RBAC foundation: <b>~31 roles</b> mapped to <b>~120 permissions</b>.</div></div>
+          <div class="roadmap-focus-card" data-focus="2"><div class="focus-code">SPRINT 2 · 2 WEEKS</div><div class="focus-metric">26 SP</div><div class="focus-name">Projects &amp; Membership</div><div class="focus-detail">Project lifecycle, membership, invitations, and business-unit-aware scope.</div></div>
+          <div class="roadmap-focus-card" data-focus="3"><div class="focus-code">SPRINT 3 · 5 WEEKS</div><div class="focus-metric">64 SP</div><div class="focus-name">Agile Backlog &amp; Tasks</div><div class="focus-detail">The delivery core: epics, sprints, a data-driven Kanban, and server-computed metrics.</div></div>
+          <div class="roadmap-focus-card" data-focus="4"><div class="focus-code">SPRINT 4 · 4 WEEKS</div><div class="focus-metric">44 SP</div><div class="focus-name">Productivity Suite</div><div class="focus-detail">To-dos, attendance, calendar, and reminders on one scheduled notification backbone.</div></div>
+          <div class="roadmap-focus-card" data-focus="5"><div class="focus-code">SPRINT 5 · 3 WEEKS</div><div class="focus-metric">35 SP</div><div class="focus-name">Communication &amp; Operations</div><div class="focus-detail">Multi-channel notifications, health monitoring, and an outbox-led alert pipeline.</div></div>
+          <div class="roadmap-focus-card" data-focus="6"><div class="focus-code">SPRINT 6 · 4 WEEKS</div><div class="focus-metric">42 SP</div><div class="focus-name">AI Copilot &amp; Estimation</div><div class="focus-detail">Permission-scoped RAG answers, cited evidence, and task-effort estimation.</div></div>
+        </div>
+        <div class="scrum-practice">
+          <div class="practice-stats"><div class="practice-stat"><div class="sv">252</div><div class="sk">story points</div></div><div class="practice-stat"><div class="sv">21</div><div class="sk">weeks</div></div><div class="practice-stat"><div class="sv">6</div><div class="sk">sprints</div></div></div>
+          <div class="practice-team">3-person Scrum team — <b>Product Owner</b> (CEO), <b>Technical supervisor</b> (CTO), <b>Development Team</b> (author).</div>
+          <div class="practice-ceremonies"><span>Planning</span><i></i><span>Stand-ups</span><i></i><span>Refinement</span><i></i><span>Review</span><i></i><span>Retrospective</span></div>
         </div>
       </div>
     </div>
@@ -1319,8 +1341,9 @@ var GEAR_TARGETS = {
   'slide-existing': { cx: 1235, cy: 66,  s: 0.34 },
   'slide-proposed': { cx: 1235, cy: 66,  s: 0.34 },
   'slide-hero02':   { cx: 1110, cy: 360, s: 1.00 },
-  'slide-req':      { cx: 1235, cy: 66,  s: 0.34 },
-  'slide-method':   { cx: 1235, cy: 66,  s: 0.34 }
+  'slide-req':             { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-method-why':      { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-method-roadmap':  { cx: 1235, cy: 66,  s: 0.34 }
 };
 var gearEl = document.querySelector('.deck-gear');
 function applyGear(slideEl) {
@@ -1590,12 +1613,10 @@ function buildHero01Jobs() {
   }
   return jobs;
 }
-function buildStepperJobs() {
+function buildStepperJobs(prefix, count) {
   var jobs = [];
-  for (var i = 1; i <= 4; i++) { jobs.push(elementJob('s01-t' + i)); jobs.push(elementJob('s01-l' + i)); }
-  jobs.push(elementJob('s01-sep1'));
-  jobs.push(elementJob('s01-sep2'));
-  jobs.push(elementJob('s01-sep3'));
+  for (var i = 1; i <= count; i++) { jobs.push(elementJob(prefix + '-t' + i)); jobs.push(elementJob(prefix + '-l' + i)); }
+  for (var s = 1; s < count; s++) jobs.push(elementJob(prefix + '-sep' + s));
   return jobs;
 }
 
@@ -1624,8 +1645,18 @@ function advance() {
     var stepperEl = document.querySelector('.slide-hostorg .stepper');
     var hostorgSlide = slides[3];
     hostorgSlide.classList.remove('body-reveal', 'content-shown');
-    runMorphBatch(buildStepperJobs(), 3, { revealAncestors: stepperEl ? [stepperEl] : [] });
+    runMorphBatch(buildStepperJobs('s01', 4), 3, { revealAncestors: stepperEl ? [stepperEl] : [] });
     setTimeout(function () { hostorgSlide.classList.add('body-reveal'); }, 500);
+    return;
+  }
+  /* Section 02 repeats the same visual language: the hero's subsection
+     list flies into the 02.1 stepper before its intro beat enters. */
+  if (slides[si].classList.contains('slide-hero02') && step === stepsOf(si) - 1 && slides[si + 1] && slides[si + 1].classList.contains('slide-req')) {
+    var reqSlide = slides[si + 1];
+    var reqStepper = reqSlide.querySelector('.stepper');
+    reqSlide.classList.remove('body-reveal', 'content-shown');
+    runMorphBatch(buildStepperJobs('s02', 5), si + 1, { revealAncestors: reqStepper ? [reqStepper] : [] });
+    setTimeout(function () { reqSlide.classList.add('body-reveal'); }, 500);
     return;
   }
   if (step < stepsOf(si) - 1) { step++; render(); }
