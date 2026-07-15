@@ -25,3 +25,10 @@ tdg-management-api-backend/build/
 logs/
 .DS_Store
 Thumbs.db
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+tawer-management-frontend/.ds-compiled.css
+tawer-management-frontend/.ds-entry.tsx
