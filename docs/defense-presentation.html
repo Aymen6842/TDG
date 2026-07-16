@@ -697,12 +697,13 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .arch-body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; padding-top: 2px; }
 .arch-stage { position: relative; width: 960px; height: 400px; }
 .arch-links { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
-.arch-link { fill: none; stroke: var(--brand); stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 240; stroke-dashoffset: 240; transition: stroke-dashoffset .7s ease; }
+.arch-link { fill: none; stroke: var(--brand-deep); stroke-width: 2.8; stroke-linecap: round; stroke-dasharray: 240; stroke-dashoffset: 240; transition: stroke-dashoffset .7s ease; }
 .arch-link.is-revealed { stroke-dashoffset: 0; }
-.arch-link.dash { stroke: var(--chart-b); stroke-width: 2; stroke-dasharray: 6 5; stroke-dashoffset: 0; opacity: 0; transition: opacity .5s ease .2s; }
-.arch-link.dash.is-revealed { opacity: .85; }
-.arch-linklabel { font-family: var(--mono); font-size: 10px; fill: var(--faint); opacity: 0; transition: opacity .5s ease; }
+.arch-link.dash { stroke: var(--chart-b); stroke-width: 2.4; stroke-dasharray: 6 5; stroke-dashoffset: 0; opacity: 0; transition: opacity .5s ease .2s; }
+.arch-link.dash.is-revealed { opacity: .9; }
+.arch-linklabel { font-family: var(--mono); font-size: 10.5px; font-weight: 600; fill: var(--brand); opacity: 0; transition: opacity .5s ease; }
 .arch-linklabel.is-revealed { opacity: 1; }
+.arch-linklabel.dash { fill: var(--chart-b); }
 
 .arch-box { position: absolute; z-index: 2; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 26px rgba(40,30,80,.06); opacity: 0; transform: translateY(12px); transition: opacity .5s ease, transform .55s cubic-bezier(.2,.8,.2,1); }
 .arch-box.is-revealed { opacity: 1; transform: none; }
@@ -765,13 +766,17 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .uc-case ellipse { fill: #fff; stroke: var(--line); stroke-width: 1.6; transition: stroke .35s ease, fill .35s ease; }
 .uc-case text { fill: var(--text); font-size: 11.5px; font-weight: 600; text-anchor: middle; }
 .role-active .uc-case:not(.uc-dim) ellipse { stroke: var(--brand); fill: var(--brand-soft); }
-/* association lines + extend */
-.uc-link { stroke: #c7c1da; stroke-width: 1.4; fill: none; transition: opacity .35s ease, stroke .35s ease; }
-.role-active .uc-link:not(.uc-dim) { stroke: var(--brand); stroke-width: 1.8; }
-.uc-extend { stroke: var(--chart-b); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; transition: opacity .35s ease; }
-.uc-extend-label { fill: var(--faint); font-family: var(--mono); font-size: 10px; text-anchor: middle; font-style: italic; }
-/* dim state */
-.uc-dim { opacity: .12 !important; }
+/* association lines + extend. In the global view they're a soft grey web;
+   once a role is picked, non-matching lines are hidden entirely (not just
+   faded) so only that role's few associations remain — no spaghetti. */
+.uc-link { stroke: #c7c1da; stroke-width: 1.4; fill: none; opacity: .55; transition: opacity .35s ease, stroke .35s ease, stroke-width .35s ease; }
+.role-active .uc-link { opacity: .9; }
+.role-active .uc-link:not(.uc-dim) { stroke: var(--brand-deep); stroke-width: 2; }
+.uc-extend { stroke: var(--chart-b); stroke-width: 1.5; stroke-dasharray: 5 4; fill: none; opacity: .7; transition: opacity .35s ease; }
+.uc-extend-label { fill: var(--faint); font-family: var(--mono); font-size: 10px; text-anchor: middle; font-style: italic; transition: opacity .35s ease; }
+/* dim state: actors/ovals fade to faint; lines & labels hide completely */
+.uc-dim { opacity: .14 !important; }
+.uc-link.uc-dim, .uc-extend.uc-dim, .uc-extend-label.uc-dim { opacity: 0 !important; }
 /* entrance: whole diagram fades/lifts in with the sub-body reveal */
 .uc-diagram { opacity: 0; transform: translateY(12px); transition: opacity .6s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
 .uc-diagram.is-revealed { opacity: 1; transform: none; }
@@ -1383,21 +1388,21 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
       </div>
       <div class="sub-body arch-body">
         <div class="arch-stage">
-          <svg class="arch-links" viewBox="0 0 960 400" preserveAspectRatio="none">
+          <svg class="arch-links" viewBox="0 0 960 410" preserveAspectRatio="none">
             <defs>
-              <marker id="arch-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7a64bc" stroke-width="1.6" stroke-linecap="round"/></marker>
-              <marker id="arch-ah2" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#8b78c8" stroke-width="1.6" stroke-linecap="round"/></marker>
+              <marker id="arch-ah" markerWidth="11" markerHeight="11" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#5b3fa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+              <marker id="arch-ah2" markerWidth="11" markerHeight="11" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#8b78c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker>
             </defs>
-            <path class="arch-link" data-reveal-step="1" d="M92,173 L110,173" marker-end="url(#arch-ah)"/>
-            <path class="arch-link" data-reveal-step="1" d="M302,173 L330,173" marker-end="url(#arch-ah)"/>
-            <path class="arch-link" data-reveal-step="1" d="M564,140 L604,108" marker-end="url(#arch-ah)"/>
-            <path class="arch-link" data-reveal-step="2" d="M564,215 L602,283" marker-end="url(#arch-ah)"/>
-            <path class="arch-link" data-reveal-step="2" d="M820,286 L834,286" marker-end="url(#arch-ah)"/>
-            <path class="arch-link dash" data-reveal-step="2" d="M708,158 L708,210" marker-end="url(#arch-ah2)"/>
-            <text class="arch-linklabel" data-reveal-step="1" x="316" y="166" text-anchor="middle">REST · JWT</text>
-            <text class="arch-linklabel" data-reveal-step="1" x="600" y="118" text-anchor="middle">Prisma</text>
-            <text class="arch-linklabel dash" data-reveal-step="2" x="740" y="188" text-anchor="middle">pgvector</text>
-            <text class="arch-linklabel" data-reveal-step="2" x="827" y="278" text-anchor="middle">API</text>
+            <path class="arch-link" data-reveal-step="1" d="M88,160 L102,160" marker-end="url(#arch-ah)"/>
+            <path class="arch-link" data-reveal-step="1" d="M282,160 L338,160" marker-end="url(#arch-ah)"/>
+            <path class="arch-link" data-reveal-step="1" d="M552,120 L616,120" marker-end="url(#arch-ah)"/>
+            <path class="arch-link" data-reveal-step="2" d="M447,238 L447,252" marker-end="url(#arch-ah)"/>
+            <path class="arch-link dash" data-reveal-step="2" d="M552,286 L616,205" marker-end="url(#arch-ah2)"/>
+            <path class="arch-link" data-reveal-step="2" d="M552,332 L616,324" marker-end="url(#arch-ah)"/>
+            <text class="arch-linklabel" data-reveal-step="1" x="310" y="151" text-anchor="middle">REST · JWT</text>
+            <text class="arch-linklabel" data-reveal-step="1" x="584" y="112" text-anchor="middle">Prisma / SQL</text>
+            <text class="arch-linklabel dash" data-reveal-step="2" x="602" y="232" text-anchor="middle">pgvector</text>
+            <text class="arch-linklabel" data-reveal-step="2" x="584" y="316" text-anchor="middle">LLM API</text>
           </svg>
 
           <div class="arch-box arch-actors" data-reveal-step="1" style="left:0;top:100px;">
@@ -1405,31 +1410,31 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
             <div class="arch-actor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Managers<br>&amp; execs</span></div>
           </div>
 
-          <div class="arch-box pres" data-reveal-step="1" style="left:116px;top:80px;width:186px;height:186px;padding:15px 17px;">
+          <div class="arch-box pres" data-reveal-step="1" style="left:106px;top:82px;width:176px;height:156px;padding:15px 17px;">
             <div class="arch-tier-label">Presentation · Browser</div>
             <div class="arch-tier-title">Next.js 16 · React 19</div>
-            <div class="arch-tier-sub">Component-based UI, bilingual en/fr, server state via TanStack Query.</div>
+            <div class="arch-tier-sub">Component UI, bilingual en/fr.</div>
             <div class="arch-logos"><span class="tlogo tlogo-next arch-logo"></span><span class="tlogo tlogo-react arch-logo"></span><span class="tlogo tlogo-tailwind arch-logo"></span></div>
           </div>
 
-          <div class="arch-box app" data-reveal-step="1" style="left:336px;top:80px;width:228px;height:186px;padding:15px 17px;">
+          <div class="arch-box app" data-reveal-step="1" style="left:342px;top:82px;width:210px;height:156px;padding:15px 17px;">
             <div class="arch-tier-label">Application · NestJS 11</div>
             <div class="arch-tier-title">REST API · 147 endpoints</div>
             <div class="arch-substack">
-              <div class="arch-sub"><b>Controller</b> <span>· guards · Swagger</span></div>
+              <div class="arch-sub"><b>Controller</b> <span>· guards</span></div>
               <div class="arch-sub"><b>Service</b> <span>· business rules</span></div>
-              <div class="arch-sub"><b>Repository</b> <span>· Prisma queries</span></div>
+              <div class="arch-sub"><b>Repository</b> <span>· Prisma</span></div>
             </div>
           </div>
 
-          <div class="arch-box data" data-reveal-step="1" style="left:610px;top:52px;width:200px;height:104px;padding:14px 17px;">
+          <div class="arch-box data" data-reveal-step="1" style="left:620px;top:82px;width:170px;height:140px;padding:14px 16px;">
             <div class="arch-tier-label">Data</div>
-            <div class="arch-tier-title">PostgreSQL + pgvector</div>
-            <div class="arch-tier-sub">55 Prisma models · vector store</div>
+            <div class="arch-tier-title">PostgreSQL<br>+ pgvector</div>
+            <div class="arch-tier-sub">55 models · vector store</div>
             <div class="arch-logos"><span class="tlogo tlogo-postgresql arch-logo"></span><span class="tlogo tlogo-prisma arch-logo"></span></div>
           </div>
 
-          <div class="arch-box ai" data-reveal-step="2" style="left:606px;top:210px;width:214px;height:150px;padding:14px 17px;">
+          <div class="arch-box ai" data-reveal-step="2" style="left:342px;top:254px;width:210px;height:150px;padding:14px 17px;">
             <div class="arch-tier-label">AI Copilot · in-process module</div>
             <div class="arch-pipe">
               <div class="arch-pipe-step"><i>1</i> Hybrid retrieval (vector + lexical)</div>
@@ -1438,10 +1443,10 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
             </div>
           </div>
 
-          <div class="arch-box ext" data-reveal-step="2" style="left:838px;top:238px;width:120px;height:96px;padding:13px 14px;text-align:center;">
-            <div class="arch-tier-label" style="text-align:center;">External</div>
-            <div class="arch-logos" style="justify-content:center;margin-top:8px;"><span class="tlogo tlogo-gemini" style="width:78px;height:26px;"></span></div>
-            <div class="arch-tier-sub" style="text-align:center;">embeddings ·<br>generation</div>
+          <div class="arch-box ext" data-reveal-step="2" style="left:620px;top:258px;width:170px;height:120px;padding:14px 16px;text-align:center;">
+            <div class="arch-tier-label" style="text-align:center;">External · LLM</div>
+            <div class="arch-logos" style="justify-content:center;margin-top:12px;"><span class="tlogo tlogo-gemini" style="width:104px;height:34px;"></span></div>
+            <div class="arch-tier-sub" style="text-align:center;margin-top:10px;">embeddings · generation</div>
           </div>
         </div>
         <p class="arch-caption" data-reveal-step="3">A <b>modular monolith</b>: strong boundaries between layers and domains — the AI copilot is a module inside the API, not a separate service — without the operational overhead of microservices.</p>
@@ -1717,7 +1722,7 @@ function runRoleSpotlight(scope, step) {
   var svg = scope.querySelector('.uc-svg'); if (!svg) return;
   var role = UC_ROLE_STEPS[step];
   scope.querySelectorAll('.uc-tab').forEach(function (t) {
-    t.classList.toggle('uc-tab-active', role && t.getAttribute('data-role') === role);
+    t.classList.toggle('uc-tab-active', !!role && t.getAttribute('data-role') === role);
   });
   scope.classList.toggle('role-active', !!role);
   scope.querySelectorAll('.uc-actor[data-role], .uc-case[data-role], .uc-link[data-role], .uc-extend[data-role]').forEach(function (el) {
