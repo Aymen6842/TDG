@@ -692,45 +692,53 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 /* ============================================================= */
 /* SLIDE — 02.3 ARCHITECTURE                                     */
 /* ============================================================= */
-/* layered container diagram (actors -> tiers -> data, with an AI-module
-   branch), tech logos inside each tier; SVG overlay draws the connectors */
-.arch-body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 16px; padding-top: 2px; }
-.arch-stage { position: relative; width: 960px; height: 400px; }
+/* dashed-container diagram, one box per tier — Frontend (blue) and
+   Backend+AI (same purple family, since the AI copilot is a module INSIDE
+   the backend, not a separate service) — with plain solid cards for the
+   terminal nodes (data store, external LLM). Small clean arrows only. */
+.arch-body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; gap: 14px; padding-top: 2px; }
+.arch-stage { position: relative; width: 1000px; height: 452px; }
 .arch-links { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; overflow: visible; }
-.arch-link { fill: none; stroke: var(--brand-deep); stroke-width: 2.8; stroke-linecap: round; stroke-dasharray: 240; stroke-dashoffset: 240; transition: stroke-dashoffset .7s ease; }
+.arch-link { fill: none; stroke: #7c7c94; stroke-width: 1.6; stroke-linecap: round; stroke-dasharray: 200; stroke-dashoffset: 200; transition: stroke-dashoffset .6s ease; }
 .arch-link.is-revealed { stroke-dashoffset: 0; }
-.arch-link.dash { stroke: var(--chart-b); stroke-width: 2.4; stroke-dasharray: 6 5; stroke-dashoffset: 0; opacity: 0; transition: opacity .5s ease .2s; }
-.arch-link.dash.is-revealed { opacity: .9; }
-.arch-linklabel { font-family: var(--mono); font-size: 10.5px; font-weight: 600; fill: var(--brand); opacity: 0; transition: opacity .5s ease; }
+.arch-link.dash { stroke: var(--chart-b); stroke-width: 1.6; stroke-dasharray: 5 4; stroke-dashoffset: 0; opacity: 0; transition: opacity .5s ease .2s; }
+.arch-link.dash.is-revealed { opacity: .95; }
+.arch-linklabel { font-family: var(--mono); font-size: 10px; font-weight: 600; fill: var(--faint); opacity: 0; transition: opacity .5s ease; }
 .arch-linklabel.is-revealed { opacity: 1; }
 .arch-linklabel.dash { fill: var(--chart-b); }
 
-.arch-box { position: absolute; z-index: 2; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 26px rgba(40,30,80,.06); opacity: 0; transform: translateY(12px); transition: opacity .5s ease, transform .55s cubic-bezier(.2,.8,.2,1); }
+.arch-box { position: absolute; z-index: 2; box-sizing: border-box; border-radius: 16px; opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .55s cubic-bezier(.2,.8,.2,1); }
 .arch-box.is-revealed { opacity: 1; transform: none; }
-.arch-box.pres { border-top: 3px solid var(--brand); }
-.arch-box.app { border-top: 3px solid var(--brand-deep); }
-.arch-box.ai  { border-top: 3px solid var(--chart-b); }
-.arch-tier-label { font-family: var(--mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--brand); }
-.arch-tier-title { font-size: 14.5px; font-weight: 750; color: var(--text); letter-spacing: -.01em; margin-top: 2px; }
-.arch-tier-sub { font-size: 11px; color: var(--muted); line-height: 1.35; margin-top: 3px; }
-.arch-logos { display: flex; gap: 9px; align-items: center; margin-top: 10px; }
-.arch-logo { width: 23px; height: 23px; flex: none; }
+/* dashed layer containers */
+.arch-box.layer { border: 2px dashed; background: rgba(122,100,188,.035); padding: 16px; }
+.arch-box.layer.pres { border-color: var(--brand); }
+.arch-box.layer.app, .arch-box.layer.ai { border-color: var(--brand-deep); }
+.arch-layer-caption { position: absolute; left: 0; right: 0; bottom: -22px; text-align: center; font-size: 11px; color: var(--muted); }
+/* solid inner card at the top of a layer box (the concrete tech) */
+.arch-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; box-shadow: 0 6px 16px rgba(40,30,80,.05); }
+.arch-card-eyebrow { font-family: var(--mono); font-size: 9.5px; letter-spacing: .09em; text-transform: uppercase; color: var(--brand); }
+.arch-card-title { font-size: 14px; font-weight: 750; color: var(--text); letter-spacing: -.01em; margin-top: 2px; }
+.arch-card-sub { font-size: 10.5px; color: var(--muted); margin-top: 3px; line-height: 1.3; }
+.arch-logos { display: flex; gap: 8px; align-items: center; margin-top: 9px; flex-wrap: wrap; }
+.arch-logo { width: 20px; height: 20px; flex: none; }
+/* terminal nodes: plain solid card, no dashed border */
+.arch-box.terminal { background: #fff; border: 1px solid var(--line); box-shadow: 0 8px 20px rgba(40,30,80,.06); padding: 14px 16px; text-align: center; }
+.arch-db-icn { width: 30px; height: 30px; margin: 0 auto 6px; color: var(--brand-deep); }
 
-.arch-actors { background: transparent; border: none; box-shadow: none; display: flex; flex-direction: column; gap: 20px; padding: 0; }
-.arch-actor { display: flex; flex-direction: column; align-items: center; gap: 5px; color: var(--brand-deep); }
-.arch-actor svg { width: 34px; height: 34px; }
-.arch-actor span { font-size: 11px; font-weight: 700; color: var(--text); text-align: center; line-height: 1.2; }
+.arch-actors { display: flex; flex-direction: column; gap: 16px; }
+.arch-actor { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--brand-deep); }
+.arch-actor svg { width: 30px; height: 30px; }
+.arch-actor span { font-size: 10.5px; font-weight: 700; color: var(--text); text-align: center; line-height: 1.2; }
 
-.arch-substack { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
-.arch-sub { background: var(--brand-soft); border-radius: 8px; padding: 6px 10px; font-size: 11.5px; }
+/* internal mini-pipeline (Controller/Service/Repository, or the RAG steps)
+   with a small connecting down-arrow between each stacked row */
+.arch-substack { display: flex; flex-direction: column; align-items: center; margin-top: 10px; }
+.arch-sub { align-self: stretch; background: var(--brand-soft); border-radius: 8px; padding: 7px 11px; font-size: 11px; }
 .arch-sub b { color: var(--brand-deep); font-weight: 700; }
 .arch-sub span { color: var(--muted); }
+.arch-sub-conn { width: 14px; height: 14px; margin: 2px 0; color: var(--brand); opacity: .6; }
 
-.arch-pipe { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
-.arch-pipe-step { display: flex; align-items: center; gap: 7px; background: var(--brand-soft); color: var(--brand-deep); border-radius: 8px; padding: 6px 10px; font-size: 11.5px; font-weight: 650; }
-.arch-pipe-step i { font-family: var(--mono); font-style: normal; color: var(--brand); opacity: .7; }
-
-.arch-caption { text-align: center; font-size: 16px; line-height: 1.5; color: var(--muted); opacity: 0; transform: translateY(8px); transition: opacity .55s ease, transform .55s ease; }
+.arch-caption { max-width: 900px; text-align: center; font-size: 15.5px; line-height: 1.5; color: var(--muted); opacity: 0; transform: translateY(8px); transition: opacity .55s ease, transform .55s ease; }
 .arch-caption.is-revealed { opacity: 1; transform: none; }
 .arch-caption b { color: var(--text); font-weight: 700; }
 
@@ -1388,68 +1396,82 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
       </div>
       <div class="sub-body arch-body">
         <div class="arch-stage">
-          <svg class="arch-links" viewBox="0 0 960 410" preserveAspectRatio="none">
+          <svg class="arch-links" viewBox="0 0 1000 452" preserveAspectRatio="none">
             <defs>
-              <marker id="arch-ah" markerWidth="11" markerHeight="11" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#5b3fa0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker>
-              <marker id="arch-ah2" markerWidth="11" markerHeight="11" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#8b78c8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></marker>
+              <marker id="arch-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7c7c94" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+              <marker id="arch-ah2" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#8b78c8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
             </defs>
-            <path class="arch-link" data-reveal-step="1" d="M88,160 L102,160" marker-end="url(#arch-ah)"/>
-            <path class="arch-link" data-reveal-step="1" d="M282,160 L338,160" marker-end="url(#arch-ah)"/>
-            <path class="arch-link" data-reveal-step="1" d="M552,120 L616,120" marker-end="url(#arch-ah)"/>
-            <path class="arch-link" data-reveal-step="2" d="M447,238 L447,252" marker-end="url(#arch-ah)"/>
-            <path class="arch-link dash" data-reveal-step="2" d="M552,286 L616,205" marker-end="url(#arch-ah2)"/>
-            <path class="arch-link" data-reveal-step="2" d="M552,332 L616,324" marker-end="url(#arch-ah)"/>
-            <text class="arch-linklabel" data-reveal-step="1" x="310" y="151" text-anchor="middle">REST · JWT</text>
-            <text class="arch-linklabel" data-reveal-step="1" x="584" y="112" text-anchor="middle">Prisma / SQL</text>
-            <text class="arch-linklabel dash" data-reveal-step="2" x="602" y="232" text-anchor="middle">pgvector</text>
-            <text class="arch-linklabel" data-reveal-step="2" x="584" y="316" text-anchor="middle">LLM API</text>
+            <path class="arch-link" data-reveal-step="1" d="M58,140 L92,158" marker-end="url(#arch-ah)"/>
+            <path class="arch-link" data-reveal-step="1" d="M58,220 L92,202" marker-end="url(#arch-ah)"/>
+            <path class="arch-link" data-reveal-step="1" d="M280,175 L318,175" marker-end="url(#arch-ah)"/>
+            <path class="arch-link" data-reveal-step="2" d="M552,110 L588,110" marker-end="url(#arch-ah)"/>
+            <path class="arch-link" data-reveal-step="2" d="M460,322 L500,349" marker-end="url(#arch-ah)"/>
+            <path class="arch-link dash" data-reveal-step="2" d="M680,322 L622,349" marker-end="url(#arch-ah2)"/>
+            <path class="arch-link" data-reveal-step="2" d="M800,175 L828,175" marker-end="url(#arch-ah)"/>
+            <text class="arch-linklabel" data-reveal-step="1" x="299" y="167" text-anchor="middle">REST · JWT</text>
+            <text class="arch-linklabel" data-reveal-step="2" x="570" y="101" text-anchor="middle">module call</text>
+            <text class="arch-linklabel" data-reveal-step="2" x="437" y="345" text-anchor="middle">Prisma</text>
+            <text class="arch-linklabel dash" data-reveal-step="2" x="668" y="345" text-anchor="middle">pgvector</text>
+            <text class="arch-linklabel" data-reveal-step="2" x="814" y="167" text-anchor="middle">LLM API</text>
           </svg>
 
-          <div class="arch-box arch-actors" data-reveal-step="1" style="left:0;top:100px;">
+          <div class="arch-box arch-actors" data-reveal-step="1" style="left:0;top:110px;">
             <div class="arch-actor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Team<br>members</span></div>
             <div class="arch-actor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Managers<br>&amp; execs</span></div>
           </div>
 
-          <div class="arch-box pres" data-reveal-step="1" style="left:106px;top:82px;width:176px;height:156px;padding:15px 17px;">
-            <div class="arch-tier-label">Presentation · Browser</div>
-            <div class="arch-tier-title">Next.js 16 · React 19</div>
-            <div class="arch-tier-sub">Component UI, bilingual en/fr.</div>
-            <div class="arch-logos"><span class="tlogo tlogo-next arch-logo"></span><span class="tlogo tlogo-react arch-logo"></span><span class="tlogo tlogo-tailwind arch-logo"></span></div>
+          <div class="arch-box layer pres" data-reveal-step="1" style="left:92px;top:60px;width:188px;height:230px;">
+            <div class="arch-card">
+              <div class="arch-card-eyebrow">Presentation · Browser</div>
+              <div class="arch-card-title">Next.js 16<br>React 19</div>
+              <div class="arch-card-sub">Component UI, bilingual en/fr</div>
+              <div class="arch-logos"><span class="tlogo tlogo-next arch-logo"></span><span class="tlogo tlogo-react arch-logo"></span><span class="tlogo tlogo-tailwind arch-logo"></span></div>
+            </div>
+            <div class="arch-layer-caption">Presentation Layer</div>
           </div>
 
-          <div class="arch-box app" data-reveal-step="1" style="left:342px;top:82px;width:210px;height:156px;padding:15px 17px;">
-            <div class="arch-tier-label">Application · NestJS 11</div>
-            <div class="arch-tier-title">REST API · 147 endpoints</div>
+          <div class="arch-box layer app" data-reveal-step="1" style="left:320px;top:30px;width:230px;height:290px;">
+            <div class="arch-card">
+              <div class="arch-card-eyebrow">Application · NestJS 11</div>
+              <div class="arch-card-title">REST API</div>
+              <div class="arch-card-sub">147 endpoints</div>
+            </div>
             <div class="arch-substack">
               <div class="arch-sub"><b>Controller</b> <span>· guards</span></div>
+              <svg class="arch-sub-conn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="18"/><path d="M7 13l5 5 5-5"/></svg>
               <div class="arch-sub"><b>Service</b> <span>· business rules</span></div>
-              <div class="arch-sub"><b>Repository</b> <span>· Prisma</span></div>
+              <svg class="arch-sub-conn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="18"/><path d="M7 13l5 5 5-5"/></svg>
+              <div class="arch-sub"><b>Repository</b> <span>· Prisma queries</span></div>
             </div>
           </div>
 
-          <div class="arch-box data" data-reveal-step="1" style="left:620px;top:82px;width:170px;height:140px;padding:14px 16px;">
-            <div class="arch-tier-label">Data</div>
-            <div class="arch-tier-title">PostgreSQL<br>+ pgvector</div>
-            <div class="arch-tier-sub">55 models · vector store</div>
-            <div class="arch-logos"><span class="tlogo tlogo-postgresql arch-logo"></span><span class="tlogo tlogo-prisma arch-logo"></span></div>
-          </div>
-
-          <div class="arch-box ai" data-reveal-step="2" style="left:342px;top:254px;width:210px;height:150px;padding:14px 17px;">
-            <div class="arch-tier-label">AI Copilot · in-process module</div>
-            <div class="arch-pipe">
-              <div class="arch-pipe-step"><i>1</i> Hybrid retrieval (vector + lexical)</div>
-              <div class="arch-pipe-step"><i>2</i> RRF fusion + LLM rerank</div>
-              <div class="arch-pipe-step"><i>3</i> Grounded, cited answer</div>
+          <div class="arch-box layer ai" data-reveal-step="2" style="left:588px;top:30px;width:212px;height:290px;">
+            <div class="arch-card">
+              <div class="arch-card-eyebrow">AI Copilot · in-process module</div>
+              <div class="arch-card-title">RAG Pipeline</div>
+            </div>
+            <div class="arch-substack">
+              <div class="arch-sub"><b>Retrieve</b> <span>· vector + lexical</span></div>
+              <svg class="arch-sub-conn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="18"/><path d="M7 13l5 5 5-5"/></svg>
+              <div class="arch-sub"><b>Fuse</b> <span>· RRF + LLM rerank</span></div>
+              <svg class="arch-sub-conn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="4" x2="12" y2="18"/><path d="M7 13l5 5 5-5"/></svg>
+              <div class="arch-sub"><b>Ground</b> <span>· cited answer</span></div>
             </div>
           </div>
 
-          <div class="arch-box ext" data-reveal-step="2" style="left:620px;top:258px;width:170px;height:120px;padding:14px 16px;text-align:center;">
-            <div class="arch-tier-label" style="text-align:center;">External · LLM</div>
-            <div class="arch-logos" style="justify-content:center;margin-top:12px;"><span class="tlogo tlogo-gemini" style="width:104px;height:34px;"></span></div>
-            <div class="arch-tier-sub" style="text-align:center;margin-top:10px;">embeddings · generation</div>
+          <div class="arch-box terminal" data-reveal-step="2" style="left:428px;top:350px;width:240px;height:88px;">
+            <svg class="arch-db-icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+            <div class="arch-card-title" style="margin-top:0;">PostgreSQL + pgvector</div>
+            <div class="arch-card-sub">One store — relational &amp; vector · 55 models</div>
+          </div>
+
+          <div class="arch-box terminal" data-reveal-step="2" style="left:828px;top:110px;width:150px;height:130px;">
+            <div class="arch-card-eyebrow" style="text-align:center;">External · LLM</div>
+            <div class="arch-logos" style="justify-content:center;margin:12px 0;"><span class="tlogo tlogo-gemini" style="width:98px;height:32px;"></span></div>
+            <div class="arch-card-sub" style="text-align:center;">embeddings · generation</div>
           </div>
         </div>
-        <p class="arch-caption" data-reveal-step="3">A <b>modular monolith</b>: strong boundaries between layers and domains — the AI copilot is a module inside the API, not a separate service — without the operational overhead of microservices.</p>
+        <p class="arch-caption" data-reveal-step="3">A <b>modular monolith</b>: the AI copilot is a module inside the API, not a separate service, and both share <b>one Postgres instance</b> for relational and vector data — grounded in the platform's own live domain data, not uploaded files.</p>
       </div>
     </div>
   </section>
@@ -1491,41 +1513,47 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
             <rect x="224" y="8" width="168" height="18" fill="#f5f4f8"/>
             <text class="uc-boundary-title" x="232" y="21">TAWER MANAGEMENT</text>
 
-            <!-- association lines (drawn first, behind ovals) -->
-            <line class="uc-link" data-role="exec"    x1="66" y1="404" x2="292" y2="62"/>
-            <line class="uc-link" data-role="manager" x1="66" y1="116" x2="292" y2="138"/>
-            <line class="uc-link" data-role="exec"    x1="66" y1="44"  x2="292" y2="138"/>
-            <line class="uc-link" data-role="exec"    x1="66" y1="44"  x2="682" y2="62"/>
-            <line class="uc-link" data-role="exec"    x1="66" y1="44"  x2="682" y2="290"/>
-            <line class="uc-link" data-role="manager" x1="66" y1="188" x2="292" y2="214"/>
-            <line class="uc-link" data-role="member"  x1="66" y1="260" x2="292" y2="290"/>
-            <line class="uc-link" data-role="member"  x1="66" y1="260" x2="292" y2="366"/>
-            <line class="uc-link" data-role="member"  x1="66" y1="260" x2="682" y2="214"/>
-            <line class="uc-link" data-role="member"  x1="66" y1="260" x2="682" y2="290"/>
-            <line class="uc-link" data-role="exec"    x1="66" y1="332" x2="682" y2="138"/>
+            <!-- association lines (drawn first, behind ovals). Actors are
+                 clustered by role (exec / manager / member) and use-case
+                 rows are placed to match that cluster's height, so almost
+                 every line is short — only the two genuinely shared cases
+                 (Manage projects, Ask AI copilot) need a longer reach. -->
+            <line class="uc-link" data-role="exec"    x1="66" y1="128" x2="292" y2="70"/>   <!-- HR -> Administer -->
+            <line class="uc-link" data-role="exec"    x1="66" y1="60"  x2="682" y2="70"/>   <!-- Exec -> Oversee -->
+            <line class="uc-link" data-role="exec"    x1="66" y1="196" x2="292" y2="150"/>  <!-- Ops -> Monitor -->
+            <line class="uc-link" data-role="manager" x1="66" y1="264" x2="682" y2="150"/>  <!-- PM -> Manage projects -->
+            <line class="uc-link" data-role="exec"    x1="66" y1="60"  x2="682" y2="150"/>  <!-- Exec -> Manage projects -->
+            <line class="uc-link" data-role="manager" x1="66" y1="332" x2="292" y2="230"/>  <!-- SM -> Agile backlog -->
+            <line class="uc-link" data-role="exec"    x1="66" y1="60"  x2="682" y2="230"/>  <!-- Exec -> Ask AI copilot -->
+            <line class="uc-link" data-role="member"  x1="66" y1="400" x2="682" y2="230"/>  <!-- Dev -> Ask AI copilot -->
+            <line class="uc-link" data-role="member"  x1="66" y1="400" x2="292" y2="310"/>  <!-- Dev -> Track tasks -->
+            <line class="uc-link" data-role="member"  x1="66" y1="400" x2="682" y2="310"/>  <!-- Dev -> Notifications -->
+            <line class="uc-link" data-role="member"  x1="66" y1="400" x2="292" y2="390"/>  <!-- Dev -> Personal productivity -->
             <!-- extend: Estimate ..> Track tasks -->
-            <path class="uc-extend" data-role="member" d="M682,366 L528,290" marker-end="url(#uc-ah)"/>
-            <text class="uc-extend-label" data-role="member" x="618" y="322">&#171;extend&#187;</text>
+            <path class="uc-extend" data-role="member" d="M682,378 L508,318" marker-end="url(#uc-ah)"/>
+            <text class="uc-extend-label" data-role="member" x="600" y="338">&#171;extend&#187;</text>
 
-            <!-- actors -->
+            <!-- actors, grouped top-to-bottom: executive cluster, manager
+                 cluster, then the member -->
             <g class="uc-actor" data-role="exec"><g class="fig"><circle cx="55" cy="28" r="7"/><line x1="55" y1="35" x2="55" y2="51"/><line x1="46" y1="41" x2="64" y2="41"/><line x1="55" y1="51" x2="47" y2="64"/><line x1="55" y1="51" x2="63" y2="64"/></g><text x="55" y="76">Executive</text><text x="55" y="88" style="font-size:9.5px;font-weight:600;fill:var(--faint)">CEO·CTO·CMO</text></g>
-            <g class="uc-actor" data-role="manager"><g class="fig"><circle cx="55" cy="100" r="7"/><line x1="55" y1="107" x2="55" y2="123"/><line x1="46" y1="113" x2="64" y2="113"/><line x1="55" y1="123" x2="47" y2="136"/><line x1="55" y1="123" x2="63" y2="136"/></g><text x="55" y="148">Project</text><text x="55" y="160">Manager</text></g>
-            <g class="uc-actor" data-role="manager"><g class="fig"><circle cx="55" cy="172" r="7"/><line x1="55" y1="179" x2="55" y2="195"/><line x1="46" y1="185" x2="64" y2="185"/><line x1="55" y1="195" x2="47" y2="208"/><line x1="55" y1="195" x2="63" y2="208"/></g><text x="55" y="220">Scrum Master</text><text x="55" y="232" style="font-size:9.5px;font-weight:600;fill:var(--faint)">/ Product Owner</text></g>
-            <g class="uc-actor" data-role="member"><g class="fig"><circle cx="55" cy="244" r="7"/><line x1="55" y1="251" x2="55" y2="267"/><line x1="46" y1="257" x2="64" y2="257"/><line x1="55" y1="267" x2="47" y2="280"/><line x1="55" y1="267" x2="63" y2="280"/></g><text x="55" y="292">Member /</text><text x="55" y="304">Developer</text></g>
-            <g class="uc-actor" data-role="exec"><g class="fig"><circle cx="55" cy="316" r="7"/><line x1="55" y1="323" x2="55" y2="339"/><line x1="46" y1="329" x2="64" y2="329"/><line x1="55" y1="339" x2="47" y2="352"/><line x1="55" y1="339" x2="63" y2="352"/></g><text x="55" y="364">DevOps</text><text x="55" y="376">Engineer</text></g>
-            <g class="uc-actor" data-role="exec"><g class="fig"><circle cx="55" cy="388" r="7"/><line x1="55" y1="395" x2="55" y2="411"/><line x1="46" y1="401" x2="64" y2="401"/><line x1="55" y1="411" x2="47" y2="424"/><line x1="55" y1="411" x2="63" y2="424"/></g><text x="55" y="436">HR /</text><text x="55" y="448">Admin</text></g>
+            <g class="uc-actor" data-role="exec"><g class="fig"><circle cx="55" cy="96" r="7"/><line x1="55" y1="103" x2="55" y2="119"/><line x1="46" y1="109" x2="64" y2="109"/><line x1="55" y1="119" x2="47" y2="132"/><line x1="55" y1="119" x2="63" y2="132"/></g><text x="55" y="144">HR /</text><text x="55" y="156">Admin</text></g>
+            <g class="uc-actor" data-role="exec"><g class="fig"><circle cx="55" cy="164" r="7"/><line x1="55" y1="171" x2="55" y2="187"/><line x1="46" y1="177" x2="64" y2="177"/><line x1="55" y1="187" x2="47" y2="200"/><line x1="55" y1="187" x2="63" y2="200"/></g><text x="55" y="212">DevOps</text><text x="55" y="224">Engineer</text></g>
+            <g class="uc-actor" data-role="manager"><g class="fig"><circle cx="55" cy="232" r="7"/><line x1="55" y1="239" x2="55" y2="255"/><line x1="46" y1="245" x2="64" y2="245"/><line x1="55" y1="255" x2="47" y2="268"/><line x1="55" y1="255" x2="63" y2="268"/></g><text x="55" y="280">Project</text><text x="55" y="292">Manager</text></g>
+            <g class="uc-actor" data-role="manager"><g class="fig"><circle cx="55" cy="300" r="7"/><line x1="55" y1="307" x2="55" y2="323"/><line x1="46" y1="313" x2="64" y2="313"/><line x1="55" y1="323" x2="47" y2="336"/><line x1="55" y1="323" x2="63" y2="336"/></g><text x="55" y="348">Scrum Master</text><text x="55" y="360" style="font-size:9.5px;font-weight:600;fill:var(--faint)">/ Product Owner</text></g>
+            <g class="uc-actor" data-role="member"><g class="fig"><circle cx="55" cy="368" r="7"/><line x1="55" y1="375" x2="55" y2="391"/><line x1="46" y1="381" x2="64" y2="381"/><line x1="55" y1="391" x2="47" y2="404"/><line x1="55" y1="391" x2="63" y2="404"/></g><text x="55" y="416">Member /</text><text x="55" y="428">Developer</text></g>
 
-            <!-- use-case ovals -->
-            <g class="uc-case" data-role="exec"><ellipse cx="410" cy="62" rx="118" ry="30"/><text x="410" y="59">Administer users,</text><text x="410" y="74">roles &amp; teams</text></g>
-            <g class="uc-case" data-role="manager exec"><ellipse cx="410" cy="138" rx="118" ry="30"/><text x="410" y="135">Manage projects</text><text x="410" y="150">&amp; membership</text></g>
-            <g class="uc-case" data-role="manager"><ellipse cx="410" cy="214" rx="118" ry="30"/><text x="410" y="211">Run agile backlog</text><text x="410" y="226">&amp; sprints</text></g>
-            <g class="uc-case" data-role="member"><ellipse cx="410" cy="290" rx="118" ry="30"/><text x="410" y="287">Track tasks on</text><text x="410" y="302">data-driven Kanban</text></g>
-            <g class="uc-case" data-role="member"><ellipse cx="410" cy="366" rx="118" ry="30"/><text x="410" y="363">Manage personal</text><text x="410" y="378">productivity</text></g>
-            <g class="uc-case" data-role="exec"><ellipse cx="800" cy="62" rx="118" ry="30"/><text x="800" y="59">Oversee portfolio</text><text x="800" y="74">&amp; analytics</text></g>
-            <g class="uc-case" data-role="exec"><ellipse cx="800" cy="138" rx="118" ry="30"/><text x="800" y="135">Monitor servers</text><text x="800" y="150">&amp; services</text></g>
-            <g class="uc-case" data-role="member"><ellipse cx="800" cy="214" rx="118" ry="30"/><text x="800" y="211">Receive multi-channel</text><text x="800" y="226">notifications</text></g>
-            <g class="uc-case" data-role="exec member"><ellipse cx="800" cy="290" rx="118" ry="30"/><text x="800" y="287">Ask AI copilot</text><text x="800" y="302">(grounded, cited)</text></g>
-            <g class="uc-case" data-role="member"><ellipse cx="800" cy="366" rx="118" ry="30"/><text x="800" y="363">Estimate task</text><text x="800" y="378">effort (AI)</text></g>
+            <!-- use-case ovals: 5 rows, positioned to match the actor
+                 cluster that owns each case -->
+            <g class="uc-case" data-role="exec"><ellipse cx="410" cy="70" rx="108" ry="28"/><text x="410" y="67">Administer users,</text><text x="410" y="81">roles &amp; teams</text></g>
+            <g class="uc-case" data-role="exec"><ellipse cx="410" cy="150" rx="108" ry="28"/><text x="410" y="147">Monitor servers</text><text x="410" y="161">&amp; services</text></g>
+            <g class="uc-case" data-role="manager"><ellipse cx="410" cy="230" rx="108" ry="28"/><text x="410" y="227">Run agile backlog</text><text x="410" y="241">&amp; sprints</text></g>
+            <g class="uc-case" data-role="member"><ellipse cx="410" cy="310" rx="108" ry="28"/><text x="410" y="307">Track tasks on</text><text x="410" y="321">data-driven Kanban</text></g>
+            <g class="uc-case" data-role="member"><ellipse cx="410" cy="390" rx="108" ry="28"/><text x="410" y="387">Manage personal</text><text x="410" y="401">productivity</text></g>
+            <g class="uc-case" data-role="exec"><ellipse cx="770" cy="70" rx="108" ry="28"/><text x="770" y="67">Oversee portfolio</text><text x="770" y="81">&amp; analytics</text></g>
+            <g class="uc-case" data-role="manager exec"><ellipse cx="770" cy="150" rx="108" ry="28"/><text x="770" y="147">Manage projects</text><text x="770" y="161">&amp; membership</text></g>
+            <g class="uc-case" data-role="exec member"><ellipse cx="770" cy="230" rx="108" ry="28"/><text x="770" y="227">Ask AI copilot</text><text x="770" y="241">(grounded, cited)</text></g>
+            <g class="uc-case" data-role="member"><ellipse cx="770" cy="310" rx="108" ry="28"/><text x="770" y="307">Receive multi-channel</text><text x="770" y="321">notifications</text></g>
+            <g class="uc-case" data-role="member"><ellipse cx="770" cy="390" rx="108" ry="28"/><text x="770" y="387">Estimate task</text><text x="770" y="401">effort (AI)</text></g>
           </svg>
         </div>
       </div>
