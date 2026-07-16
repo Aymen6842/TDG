@@ -128,8 +128,8 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .t-header-left img.coat  { height: 64px; }
 .t-header-left .ministry { font-size: 12px; font-weight: 600; color: var(--brand-deep); text-align: center; line-height: 1.4; }
 .t-header-center img.flag { height: 50px; border-radius: 2px; box-shadow: 0 2px 8px rgba(40,30,80,0.12); }
-.t-header-right img.iit    { height: 50px; }
-.t-header-right img.arabic { height: 50px; margin-top: 2px; }
+.t-header-right img.iit    { height: 60px; }
+.t-header-right img.arabic { height: 65px; margin-top: 2px; }
 .shimmer { position: relative; overflow: hidden; }
 .shimmer::after {
   content: ""; position: absolute; top: -50%; left: -75%; width: 50%; height: 200%;
@@ -644,7 +644,7 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .roadmap-wrap { position: relative; flex: 1 1 auto; overflow: hidden; padding: 46px 64px 0; }
 .roadmap-title { font-family: var(--mono); color: var(--brand); text-transform: uppercase; letter-spacing: .16em; font-size: 13.5px; margin: 0 0 26px; }
 .roadmap-title::before { content: ""; display: inline-block; width: 22px; height: 1.5px; margin: 0 10px 4px 0; background: var(--brand); }
-.roadmap-stage { position: relative; height: 392px; }
+.roadmap-stage { position: relative; height: 430px; }
 .roadmap-pipeline { display: grid; grid-template-columns: repeat(6, 1fr); gap: 11px; position: relative; z-index: 1; transition: opacity .45s ease, transform .6s ease; }
 .roadmap-pipeline::before { content: ""; position: absolute; height: 2px; left: 42px; right: 42px; top: 47px; background: var(--line); z-index: -1; }
 .roadmap-card { min-height: 132px; padding: 13px; border-radius: 14px; border: 1px solid var(--line); background: #fff; box-shadow: 0 8px 20px rgba(40,30,80,.05); transition: opacity .45s ease, transform .65s cubic-bezier(.2,.8,.2,1), border-color .4s ease, box-shadow .4s ease; }
@@ -654,7 +654,7 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 /* one fixed panel, centered in the empty half below the pipeline row, in
    the same white-card language as the pipeline itself (not a purple
    callout) — only its content swaps per sprint as you click through. */
-.roadmap-focus-track { position: absolute; left: 0; right: 0; top: 150px; bottom: 0; z-index: 3; }
+.roadmap-focus-track { position: absolute; left: 0; right: 0; top: 150px; bottom: 0; z-index: 3; transition: opacity .4s ease, transform .55s cubic-bezier(.2,.8,.2,1); }
 .roadmap-focus-card {
   position: absolute; left: 50%; top: 50%; width: 560px;
   padding: 26px 32px; border-radius: 18px;
@@ -669,7 +669,7 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .focus-detail { margin-top: 10px; font-size: 15px; line-height: 1.45; color: var(--muted); }
 .focus-detail b { color: var(--text); }
 .focus-metric { position: absolute; right: 30px; top: 28px; font-family: var(--mono); font-size: 17px; font-weight: 800; color: var(--brand-deep); }
-.scrum-practice { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+.scrum-practice { position: absolute; left: 0; right: 0; top: 156px; bottom: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; transform: translateY(14px); pointer-events: none; transition: opacity .5s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
 .practice-stats { display: flex; gap: 54px; margin-bottom: 22px; }
 .practice-stat { text-align: center; }
 .practice-stat .sv { font-family: var(--mono); font-size: 43px; color: var(--brand-deep); line-height: 1; font-weight: 800; }
@@ -686,7 +686,7 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 /* the focus card rises out of its own slot — directly above the active
    pipeline card — so each click visibly travels along the strip */
 .slide-method-roadmap[data-step="1"] .roadmap-focus-card[data-focus="1"], .slide-method-roadmap[data-step="2"] .roadmap-focus-card[data-focus="2"], .slide-method-roadmap[data-step="3"] .roadmap-focus-card[data-focus="3"], .slide-method-roadmap[data-step="4"] .roadmap-focus-card[data-focus="4"], .slide-method-roadmap[data-step="5"] .roadmap-focus-card[data-focus="5"], .slide-method-roadmap[data-step="6"] .roadmap-focus-card[data-focus="6"] { opacity: 1; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
-.slide-method-roadmap[data-step="7"] .roadmap-pipeline, .slide-method-roadmap[data-step="7"] .roadmap-focus-track { opacity: 0; transform: translateY(-18px) scale(.96); pointer-events: none; }
+.slide-method-roadmap[data-step="7"] .roadmap-focus-track { opacity: 0; transform: translateY(16px) scale(.97); pointer-events: none; }
 .slide-method-roadmap[data-step="7"] .scrum-practice { opacity: 1; transform: none; pointer-events: auto; }
 
 /* ============================================================= */
