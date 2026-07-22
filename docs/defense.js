@@ -540,6 +540,37 @@ var METRIC_SETS = {
       cap: 'Velocity &mdash; story points completed per finished sprint, the team\'s track record for planning capacity.' },
     { src: 'latex/figures/screenshot_P22.png', alt: 'Gantt chart combining milestones, epics, sprints, and tasks on one timeline',
       cap: 'Gantt &mdash; milestones, epics, sprints, and tasks fanned into one project-wide timeline from four parallel queries.' }
+  ],
+  's4-task-detail': [
+    { src: 'latex/figures/screenshot_P18a.png', alt: 'Task detail sheet — header, description, points, labels, and dependencies',
+      cap: 'Type (<code>STORY</code>), priority, and a free-string status feed the Kanban column. <b>Labels</b> are project-level <code>TaskLabel</code> rows attached through a <code>TaskLabelAssignment</code> junction. <b>Dependencies</b> are blocking / blocked-by links to other tasks, guarded against cycles on every add. <b>Subtasks</b> go one level deep, linked back here by <code>parentTaskId</code>.' },
+    { src: 'latex/figures/screenshot_P18b.png', alt: 'Task detail sheet — time entries, attachments, and comments',
+      cap: '<b>Time entries</b> each log their own hours; the task\'s <code>actualHours</code> is re-aggregated as their sum on every write &mdash; 15.5h here from one entry. <b>Attachments</b> store files per task. <b>Comments</b> support <code>@mentions</code> that notify inside the same transaction, plus likes &mdash; capped at one <code>TaskCommentLike</code> per user.' }
+  ],
+  's4-capability-tiers': [
+    { body:
+        '<div class="s3c-tiers">' +
+          '<div class="s3c-tier"><div class="s3c-tier-n">1</div><div class="s3c-tier-t">canAccessProject</div><div class="s3c-tier-d">any project member</div></div>' +
+          '<div class="s3c-tier"><div class="s3c-tier-n">2</div><div class="s3c-tier-t">canUpdateTask</div><div class="s3c-tier-d">Scrum Master, or the assigned developer</div></div>' +
+        '</div>' +
+        '<p class="s4cap-p"><b>Everyone on the project</b> can read tasks, comment, and log time &mdash; just by being a member, no special role needed. Editing a task\'s own fields is tighter: either the Scrum Master, or the developer it is actually assigned to.</p>' },
+    { body:
+        '<div class="s3c-tiers">' +
+          '<div class="s3c-tier"><div class="s3c-tier-n">3</div><div class="s3c-tier-t">canCreateTaskForProject</div><div class="s3c-tier-d">manager, Product Owner, or Business Analyst</div></div>' +
+          '<div class="s3c-tier"><div class="s3c-tier-n">4</div><div class="s3c-tier-t">canManageTaskStructure</div><div class="s3c-tier-d">manager or Product Owner</div></div>' +
+        '</div>' +
+        '<p class="s4cap-p"><b>Shaping the work</b> is more restricted than doing it. Creating new tasks needs a manager, Product Owner, or Business Analyst. Changing how tasks connect &mdash; dependencies, labels, board columns &mdash; narrows further to just manager or Product Owner.</p>' },
+    { body:
+        '<div class="s3c-tiers">' +
+          '<div class="s3c-tier"><div class="s3c-tier-n">5</div><div class="s3c-tier-t">canManageBacklog</div><div class="s3c-tier-d">manager, Product Owner, or Scrum Master</div></div>' +
+          '<div class="s3c-tier"><div class="s3c-tier-n">6</div><div class="s3c-tier-t">canManageSprintAssignment</div><div class="s3c-tier-d">manager, Product Owner, or Scrum Master</div></div>' +
+        '</div>' +
+        '<p class="s4cap-p"><b>Planning across sprints</b> &mdash; grooming epics and milestones, or moving a task into a sprint &mdash; is reserved for the three planning roles: manager, Product Owner, and Scrum Master. Developers plan within a sprint; these three decide what goes into one.</p>' },
+    { body:
+        '<div class="s3c-tiers">' +
+          '<div class="s3c-tier override"><div class="s3c-tier-n">7</div><div class="s3c-tier-t">canAdvanceTaskWorkflow<span class="s3c-badge">exception</span></div><div class="s3c-tier-d">manager/PO/SM/executive &mdash; <b>or the assignee</b></div></div>' +
+        '</div>' +
+        '<p class="s4cap-p"><b>The one everyday exception.</b> Dragging a card across the Kanban board normally still needs a management role &mdash; except here: the task\'s own assignee can always move their own card, even as a plain developer with no management role at all. Without this, developers could not use the board day to day.</p>' }
   ]
 };
 (function preloadMetricImages() {
@@ -561,12 +592,16 @@ function applyMetricIdx(root, idx, animate) {
   var activeLayer = root.querySelector('.mv-layer.mv-active') || layers[0];
   var otherLayer = activeLayer === layers[0] ? layers[1] : layers[0];
   root._metricIdx = idx;
+  var pageEl = root.querySelector('[data-metric-page]');
+  if (pageEl) pageEl.textContent = (idx + 1) + ' / ' + items.length;
 
   function write(layer) {
     var img = layer.querySelector('[data-metric-img]');
     var cap = layer.querySelector('[data-metric-caption]');
-    img.src = items[idx].src; img.alt = items[idx].alt;
-    cap.innerHTML = items[idx].cap;
+    var body = layer.querySelector('[data-metric-body]');
+    if (img && items[idx].src != null) { img.src = items[idx].src; img.alt = items[idx].alt || ''; }
+    if (cap && items[idx].cap != null) cap.innerHTML = items[idx].cap;
+    if (body && items[idx].body != null) body.innerHTML = items[idx].body;
   }
 
   if (!animate) {
