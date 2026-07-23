@@ -1529,15 +1529,66 @@
             </div>
           </div>
 
-          <!-- PANEL 6 — seven-tier capability ladder, paged: 2 tiers + one
-               plain-language paragraph per page instead of 7 terse rows at
-               once. Same metric-viewer pager as the Task Detail tab, HTML
-               body per page instead of a screenshot (data-metric-body). -->
+          <!-- PANEL 6 — seven-tier capability ladder, single screen. Each row
+               leads with a plain-English action (what a user actually sees),
+               then who can do it as small role badges (not a role-name
+               sentence), then a short outcome tag. The camelCase helper name
+               is kept only as a small muted subtitle for traceability to the
+               code, never the primary label. -->
           <div class="uc-panel" data-panel-step="6">
-            <div class="s3-metric-viewer s4cap-viewer" data-metric-viewer="s4-capability-tiers">
-              <div class="mv-page" data-metric-page></div>
-              <div class="mv-layer mv-active"><div data-metric-body></div></div>
-              <div class="mv-layer"><div data-metric-body></div></div>
+            <div class="s3c-tiers-wrap">
+              <div class="s3c-tiers">
+                <div class="s3c-tier">
+                  <div class="s3c-tier-bar" style="width:100%;"></div>
+                  <div class="s3c-tier-n">1</div>
+                  <div class="s3c-tier-main"><div class="s3c-tier-label">Read &amp; comment</div><div class="s3c-tier-code">canAccessProject</div></div>
+                  <div class="s3c-tier-roles"><span class="s3c-role all">Any member</span></div>
+                  <div class="s3c-tier-out">+ log time</div>
+                </div>
+                <div class="s3c-tier">
+                  <div class="s3c-tier-bar" style="width:84%;"></div>
+                  <div class="s3c-tier-n">2</div>
+                  <div class="s3c-tier-main"><div class="s3c-tier-label">Edit a task</div><div class="s3c-tier-code">canUpdateTask</div></div>
+                  <div class="s3c-tier-roles"><span class="s3c-role">SM</span><span class="s3c-role">Dev &middot; own task</span></div>
+                  <div class="s3c-tier-out">field updates</div>
+                </div>
+                <div class="s3c-tier">
+                  <div class="s3c-tier-bar" style="width:68%;"></div>
+                  <div class="s3c-tier-n">3</div>
+                  <div class="s3c-tier-main"><div class="s3c-tier-label">Create tasks</div><div class="s3c-tier-code">canCreateTaskForProject</div></div>
+                  <div class="s3c-tier-roles"><span class="s3c-role">PM</span><span class="s3c-role">PO</span><span class="s3c-role">BA</span></div>
+                  <div class="s3c-tier-out">new cards</div>
+                </div>
+                <div class="s3c-tier">
+                  <div class="s3c-tier-bar" style="width:52%;"></div>
+                  <div class="s3c-tier-n">4</div>
+                  <div class="s3c-tier-main"><div class="s3c-tier-label">Manage structure</div><div class="s3c-tier-code">canManageTaskStructure</div></div>
+                  <div class="s3c-tier-roles"><span class="s3c-role">PM</span><span class="s3c-role">PO</span></div>
+                  <div class="s3c-tier-out">deps, labels, columns</div>
+                </div>
+                <div class="s3c-tier">
+                  <div class="s3c-tier-bar" style="width:36%;"></div>
+                  <div class="s3c-tier-n">5</div>
+                  <div class="s3c-tier-main"><div class="s3c-tier-label">Groom backlog</div><div class="s3c-tier-code">canManageBacklog</div></div>
+                  <div class="s3c-tier-roles"><span class="s3c-role">PM</span><span class="s3c-role">PO</span><span class="s3c-role">SM</span></div>
+                  <div class="s3c-tier-out">epics &amp; milestones</div>
+                </div>
+                <div class="s3c-tier">
+                  <div class="s3c-tier-bar" style="width:20%;"></div>
+                  <div class="s3c-tier-n">6</div>
+                  <div class="s3c-tier-main"><div class="s3c-tier-label">Assign to sprint</div><div class="s3c-tier-code">canManageSprintAssignment</div></div>
+                  <div class="s3c-tier-roles"><span class="s3c-role">PM</span><span class="s3c-role">PO</span><span class="s3c-role">SM</span></div>
+                  <div class="s3c-tier-out">plan sprint scope</div>
+                </div>
+                <div class="s3c-tier override">
+                  <div class="s3c-tier-bar" style="width:8%;"></div>
+                  <div class="s3c-tier-n">7</div>
+                  <div class="s3c-tier-main"><div class="s3c-tier-label">Move Kanban card</div><div class="s3c-tier-code">canAdvanceTaskWorkflow</div></div>
+                  <div class="s3c-tier-roles"><span class="s3c-role">PM</span><span class="s3c-role">PO</span><span class="s3c-role">SM</span><span class="s3c-role">Exec</span><span class="s3c-role override">Assignee &middot; always</span></div>
+                  <div class="s3c-tier-out">even without a role</div>
+                </div>
+              </div>
+              <p class="s3c-legend"><b>PM</b> Manager &middot; <b>PO</b> Product Owner &middot; <b>SM</b> Scrum Master &middot; <b>BA</b> Business Analyst &middot; <b>Exec</b> Executive</p>
             </div>
           </div>
 
@@ -1709,5 +1760,15 @@
   </div>
 
 </div>
+
+<!-- hover-zoom lightbox for every screenshot in the deck (see .s2-shot-frame /
+     .s3-shot-frame / .s4td-shot img — bound generically in defense.js so any
+     screenshot, including ones swapped in by the metric-viewer pager, zooms
+     on hover without per-slide wiring). Deliberately a SIBLING of .stage, not
+     a child: .stage has its own `transform`, which makes it the containing
+     block for any `position:fixed` descendant, so a zoom overlay placed
+     inside it would be capped at the stage's own (possibly scaled-down) box
+     instead of the real viewport. -->
+<div class="shot-zoom" id="shotZoom"><img id="shotZoomImg" alt=""></div>
 
 <script src="defense.js"></script>

@@ -115,6 +115,21 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 }
 .quicknav-item:hover { background: var(--brand-soft); color: var(--brand-deep); }
 
+/* hover-zoom lightbox — bound generically in defense.js to every screenshot
+   thumbnail (.s2-shot-frame / .s3-shot-frame / .s4td-shot img) so any small
+   or later-in-deck screenshot can be read at full size without leaving the
+   slide. Overlay is a sibling of .stage (see the HTML comment there), so it
+   sits at real viewport resolution regardless of the stage's own scale. */
+.s2-shot-frame img, .s3-shot-frame img, .s4td-shot img { cursor: zoom-in; transition: filter .15s ease; }
+.s2-shot-frame:hover img, .s3-shot-frame:hover img, .s4td-shot:hover img { filter: brightness(1.03); }
+.shot-zoom {
+  position: fixed; inset: 0; z-index: 500; display: flex; align-items: center; justify-content: center;
+  background: rgba(20,14,40,.72); opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .18s ease;
+}
+.shot-zoom.open { opacity: 1; visibility: visible; }
+.shot-zoom img { max-width: 92vw; max-height: 92vh; border-radius: 10px; box-shadow: 0 30px 80px rgba(0,0,0,.45); }
+
 /* ============================================================= */
 /* SLIDE 1 — TITLE                                                */
 /* ============================================================= */
@@ -1051,9 +1066,9 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 
 /* seven-tier capability ladder */
 .s3c-tiers-wrap { display: flex; flex-direction: column; align-items: center; }
-.s3c-tiers { display: flex; flex-direction: column; gap: 8px; width: 760px; }
+.s3c-tiers { display: flex; flex-direction: column; gap: 7px; width: 940px; }
 .s3c-tier {
-  position: relative; overflow: hidden; display: flex; align-items: baseline; gap: 12px; padding: 8px 16px; border-radius: 10px;
+  position: relative; overflow: hidden; display: flex; align-items: center; gap: 16px; padding: 8px 18px; border-radius: 10px;
   border: 1px solid var(--line); background: #fff;
 }
 .s3c-tier-bar {
@@ -1065,10 +1080,20 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
   flex: none; width: 20px; height: 20px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-deep);
   font-family: var(--mono); font-size: 11px; font-weight: 750; display: flex; align-items: center; justify-content: center;
 }
-.s3c-tier-t { position: relative; z-index: 1; flex: none; width: 210px; font-family: var(--mono); font-size: 12px; font-weight: 750; color: var(--text); }
-.s3c-tier-d { position: relative; z-index: 1; font-size: 12px; color: var(--muted); line-height: 1.35; }
-.s3c-tier-d b { color: var(--brand-deep); }
-.s3c-tier.override { border-color: var(--brand-deep); background: var(--brand-soft); }
+.s3c-tier-main { position: relative; z-index: 1; flex: none; width: 210px; }
+.s3c-tier-label { font-size: 13.5px; font-weight: 750; color: var(--text); }
+.s3c-tier-code { margin-top: 1px; font-family: var(--mono); font-size: 10px; color: var(--faint); }
+.s3c-tier-roles { position: relative; z-index: 1; flex: 1 1 auto; display: flex; flex-wrap: wrap; gap: 6px; }
+.s3c-role {
+  padding: 3px 9px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-deep);
+  font-family: var(--sans); font-size: 11px; font-weight: 700; white-space: nowrap;
+}
+.s3c-role.all { background: var(--text); color: #fff; }
+.s3c-role.override { background: var(--brand-deep); color: #fff; }
+.s3c-tier-out { position: relative; z-index: 1; flex: none; width: 150px; text-align: right; font-size: 11.5px; color: var(--muted); }
+.s3c-tier.override { border-color: var(--brand-deep); }
+.s3c-legend { margin-top: 18px; font-size: 12px; color: var(--faint); }
+.s3c-legend b { color: var(--muted); font-family: var(--mono); }
 
 /* task detail sheet & collaboration — a metric-viewer pager (same crossfade
    system as 03.3's burndown/velocity/gantt) over two cropped, readable
@@ -1081,18 +1106,6 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .s4td-cap { display: flex; flex-direction: column; gap: 14px; width: 620px; }
 .s4td-cap .s2-callout { width: auto; }
 .s4td-cap .s2-callout-d { font-size: 13px; }
-
-/* capability tiers — same pager, HTML body per page instead of a screenshot
-   (there's nothing to photograph here, just permission logic to explain).
-   Reuses .s3c-tiers/.s3c-tier as-is for the 1-2 highlighted rows per page. */
-.s4cap-viewer.s3-metric-viewer { width: 1080px; height: 460px; }
-.s4cap-viewer [data-metric-body] { display: flex; flex-direction: column; align-items: center; gap: 22px; }
-.s4cap-p { max-width: 720px; text-align: center; font-size: 14.5px; line-height: 1.6; color: var(--text); margin: 0; }
-.s4cap-p b { color: var(--brand-deep); }
-.s3c-badge {
-  margin-left: 8px; padding: 2px 7px; border-radius: 999px; background: var(--brand-deep); color: #fff;
-  font-family: var(--sans); font-size: 9.5px; font-weight: 700; letter-spacing: .02em; vertical-align: middle;
-}
 
 /* ---- 03.1 Foundations & Auth: three tab panels (Roles & Scope / Layered
    Architecture / Authorization Flow) on the generic .uc-tabs conveyor. */

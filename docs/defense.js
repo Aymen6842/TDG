@@ -105,6 +105,30 @@ if (!SHOW_QUICKNAV) {
   });
 }
 
+/* ---------- screenshot hover-zoom ----------
+   Every screenshot thumbnail in the deck (.s2-shot-frame / .s3-shot-frame /
+   .s4td-shot img) zooms to near-fullscreen on hover, via one shared overlay
+   (#shotZoom) instead of per-slide wiring. Bound once at load — the
+   metric-viewer pager only ever swaps `img.src` on existing <img> nodes, it
+   never creates new ones, so a single pass here covers every screenshot the
+   pager will ever show. */
+(function () {
+  var zoom = document.getElementById('shotZoom');
+  var zoomImg = document.getElementById('shotZoomImg');
+  if (!zoom || !zoomImg) return;
+  document.querySelectorAll('.s2-shot-frame img, .s3-shot-frame img, .s4td-shot img').forEach(function (img) {
+    img.addEventListener('mouseenter', function () {
+      if (!img.currentSrc && !img.src) return;
+      zoomImg.src = img.currentSrc || img.src;
+      zoomImg.alt = img.alt || '';
+      zoom.classList.add('open');
+    });
+    img.addEventListener('mouseleave', function () {
+      zoom.classList.remove('open');
+    });
+  });
+})();
+
 /* ---------- deck navigation ---------- */
 var slides = [].slice.call(document.querySelectorAll('.slide'));
 var si = 0, step = 0;
@@ -551,31 +575,6 @@ var METRIC_SETS = {
            '<div class="s2-callout"><div class="s2-callout-t">Attachments</div><div class="s2-callout-d">files, per task</div></div>' +
            '<div class="s2-callout"><div class="s2-callout-t">Comments</div><div class="s2-callout-d"><code>@mentions</code> &middot; 1 like / user</div></div>' }
   ],
-  's4-capability-tiers': [
-    { body:
-        '<div class="s3c-tiers">' +
-          '<div class="s3c-tier"><div class="s3c-tier-n">1</div><div class="s3c-tier-t">canAccessProject</div><div class="s3c-tier-d">any project member</div></div>' +
-          '<div class="s3c-tier"><div class="s3c-tier-n">2</div><div class="s3c-tier-t">canUpdateTask</div><div class="s3c-tier-d">Scrum Master, or the assigned developer</div></div>' +
-        '</div>' +
-        '<p class="s4cap-p"><b>Everyone on the project</b> can read tasks, comment, and log time &mdash; just by being a member, no special role needed. Editing a task\'s own fields is tighter: either the Scrum Master, or the developer it is actually assigned to.</p>' },
-    { body:
-        '<div class="s3c-tiers">' +
-          '<div class="s3c-tier"><div class="s3c-tier-n">3</div><div class="s3c-tier-t">canCreateTaskForProject</div><div class="s3c-tier-d">manager, Product Owner, or Business Analyst</div></div>' +
-          '<div class="s3c-tier"><div class="s3c-tier-n">4</div><div class="s3c-tier-t">canManageTaskStructure</div><div class="s3c-tier-d">manager or Product Owner</div></div>' +
-        '</div>' +
-        '<p class="s4cap-p"><b>Shaping the work</b> is more restricted than doing it. Creating new tasks needs a manager, Product Owner, or Business Analyst. Changing how tasks connect &mdash; dependencies, labels, board columns &mdash; narrows further to just manager or Product Owner.</p>' },
-    { body:
-        '<div class="s3c-tiers">' +
-          '<div class="s3c-tier"><div class="s3c-tier-n">5</div><div class="s3c-tier-t">canManageBacklog</div><div class="s3c-tier-d">manager, Product Owner, or Scrum Master</div></div>' +
-          '<div class="s3c-tier"><div class="s3c-tier-n">6</div><div class="s3c-tier-t">canManageSprintAssignment</div><div class="s3c-tier-d">manager, Product Owner, or Scrum Master</div></div>' +
-        '</div>' +
-        '<p class="s4cap-p"><b>Planning across sprints</b> &mdash; grooming epics and milestones, or moving a task into a sprint &mdash; is reserved for the three planning roles: manager, Product Owner, and Scrum Master. Developers plan within a sprint; these three decide what goes into one.</p>' },
-    { body:
-        '<div class="s3c-tiers">' +
-          '<div class="s3c-tier override"><div class="s3c-tier-n">7</div><div class="s3c-tier-t">canAdvanceTaskWorkflow<span class="s3c-badge">exception</span></div><div class="s3c-tier-d">manager/PO/SM/executive &mdash; <b>or the assignee</b></div></div>' +
-        '</div>' +
-        '<p class="s4cap-p"><b>The one everyday exception.</b> Dragging a card across the Kanban board normally still needs a management role &mdash; except here: the task\'s own assignee can always move their own card, even as a plain developer with no management role at all. Without this, developers could not use the board day to day.</p>' }
-  ]
 };
 (function preloadMetricImages() {
   Object.keys(METRIC_SETS).forEach(function (key) {
