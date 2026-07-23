@@ -1858,6 +1858,483 @@
     </div>
   </section>
 
+  <!-- ===== SLIDE : HERO 04 ===== -->
+  <section class="slide slide-hero04" data-steps="1">
+    <div class="hero-content">
+      <div class="hero-num">04</div>
+      <h2 class="hero-title">AI Copilot &amp;<br>Estimation</h2>
+      <p class="hero-desc">A bare language model asked about this company's projects would invent a plausible answer &mdash; it knows nothing about them. Retrieval-Augmented Generation reverses the flow: retrieve the team's own content first, so the model only ever summarizes evidence it can cite.</p>
+    </div>
+    <div class="hero-subs">
+      <div class="hero-sub"><span class="hs-tag" data-morph="s04-t1-src">04.1</span><span class="hs-label" data-morph="s04-l1-src">Methodology</span></div>
+      <div class="hero-sub-line" data-morph="s04-sep1-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s04-t2-src">04.2</span><span class="hs-label" data-morph="s04-l2-src">RAG Architecture</span></div>
+      <div class="hero-sub-line" data-morph="s04-sep2-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s04-t3-src">04.3</span><span class="hs-label" data-morph="s04-l3-src">Task Estimation</span></div>
+      <div class="hero-sub-line" data-morph="s04-sep3-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s04-t4-src">04.4</span><span class="hs-label" data-morph="s04-l4-src">Security &amp; Grounding</span></div>
+      <div class="hero-sub-line" data-morph="s04-sep4-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s04-t5-src">04.5</span><span class="hs-label" data-morph="s04-l5-src">Evaluation &amp; Results</span></div>
+      <div class="hero-sub-line" data-morph="s04-sep5-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s04-t6-src">04.6</span><span class="hs-label" data-morph="s04-l6-src">Capstone</span></div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 04.1 — Methodology (CRISP-DM sub-process) ===== -->
+  <section class="slide slide-ai-method sub-section-slide" data-steps="3">
+    <div class="stepper">
+      <div class="step-item active"><span class="step-tag" data-morph="s04-t1-dst">04.1</span><span class="step-label" data-morph="s04-l1-dst">Methodology</span></div>
+      <div class="step-sep" data-morph="s04-sep1-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s04-t2-dst">04.2</span><span class="step-label" data-morph="s04-l2-dst">RAG Architecture</span></div>
+      <div class="step-sep" data-morph="s04-sep2-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s04-t3-dst">04.3</span><span class="step-label" data-morph="s04-l3-dst">Task Estimation</span></div>
+      <div class="step-sep" data-morph="s04-sep3-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s04-t4-dst">04.4</span><span class="step-label" data-morph="s04-l4-dst">Security</span></div>
+      <div class="step-sep" data-morph="s04-sep4-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s04-t5-dst">04.5</span><span class="step-label" data-morph="s04-l5-dst">Evaluation</span></div>
+      <div class="step-sep" data-morph="s04-sep5-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s04-t6-dst">04.6</span><span class="step-label" data-morph="s04-l6-dst">Capstone</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="32" cy="32" r="21"/><path d="M32 11v9M32 44v9M11 32h9M44 32h9"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">Methodology &mdash; A CRISP-DM Sub-Process</h2>
+      </div>
+      <div class="sub-body">
+        <div class="s1-body">
+          <div class="s1-kicker">Scrum organizes the sprint &middot; CRISP-DM organizes the AI work inside it</div>
+          <div class="s1-flow" data-reveal-step="1">
+            <div class="s1-node"><div class="s1-node-t">Business<br>Understanding</div><div class="s1-node-d">Assistive, not autonomous &mdash; &ldquo;honesty over coverage&rdquo;</div></div>
+            <div class="s1-arrow">&rarr;</div>
+            <div class="s1-node"><div class="s1-node-t">Data<br>Understanding</div><div class="s1-node-d">The platform's own 5 entity types &mdash; relational, permission-partitioned</div></div>
+            <div class="s1-arrow">&rarr;</div>
+            <div class="s1-node"><div class="s1-node-t">Data<br>Preparation</div><div class="s1-node-d">Chunk ~2000/300-overlap &middot; sha256 hash &middot; 1536-dim embed</div></div>
+            <div class="s1-arrow">&rarr;</div>
+            <div class="s1-node guard"><div class="s1-node-t">Modeling</div><div class="s1-node-d">Hybrid vector+lexical (RRF) &middot; optional rerank &middot; k-NN estimator</div></div>
+            <div class="s1-arrow">&rarr;</div>
+            <div class="s1-node scoped"><div class="s1-node-t">Evaluation</div><div class="s1-node-d">Recall@k &middot; MRR &middot; nDCG &middot; faithfulness &middot; citation P/R &middot; refusal &middot; est. error</div></div>
+          </div>
+          <p class="s1-closing" data-reveal-step="2">No <b>Deployment</b> phase in the CRISP-DM sense &mdash; there is no model to ship. Gemini sits behind a managed API; the contribution is the retrieval, grounding, and scoping built around it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 04.2 — RAG Architecture ===== -->
+  <section class="slide slide-ai-arch sub-section-slide" data-steps="5">
+    <div class="stepper">
+      <div class="step-item"><span class="step-tag">04.1</span><span class="step-label">Methodology</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item active"><span class="step-tag">04.2</span><span class="step-label">RAG Architecture</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.3</span><span class="step-label">Task Estimation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.4</span><span class="step-label">Security</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.5</span><span class="step-label">Evaluation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.6</span><span class="step-label">Capstone</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="18" cy="18" r="7"/><circle cx="46" cy="18" r="7"/><circle cx="32" cy="48" r="7"/><path d="M23 21l6 21M41 21l-6 21M25 18h14"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">RAG Architecture</h2>
+      </div>
+      <div class="sub-body uc-body">
+        <div class="uc-tabs" data-reveal-step="1">
+          <div class="uc-tab">Indexing Pipeline</div>
+          <div class="uc-tab">Retrieval &amp; Generation</div>
+          <div class="uc-tab">Data Model</div>
+          <div class="uc-tab">Client Experience</div>
+        </div>
+        <div class="uc-conveyor" data-reveal-step="1">
+
+          <!-- PANEL 1 — Indexing pipeline (write path), same shape/coordinates
+               as 03.6's outbox-pattern flow (pill, node-wide x3, pill). -->
+          <div class="uc-panel" data-panel-step="1">
+            <div class="s1c-flow">
+              <div class="s1c-flow-wrap">
+                <svg class="s1c-flow-svg" viewBox="0 0 1080 340" width="1080" height="340">
+                  <defs>
+                    <marker id="s4a-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7a64bc" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                  </defs>
+                  <path class="s1c-line" d="M160,140 L215,140" marker-end="url(#s4a-ah)"/>
+                  <path class="s1c-line" d="M395,140 L425,140" marker-end="url(#s4a-ah)"/>
+                  <path class="s1c-line" d="M605,140 L635,140" marker-end="url(#s4a-ah)"/>
+                  <path class="s1c-line" d="M815,140 L885,140" marker-end="url(#s4a-ah)"/>
+                </svg>
+                <div class="s1c-pill start" style="left:100px;top:140px;">Domain write</div>
+                <div class="s1c-node wide" style="left:305px;top:140px;">enqueueUpsert / enqueueDelete<span>fire-and-forget &middot; errors caught, never thrown</span></div>
+                <div class="s1c-node wide" style="left:515px;top:140px;">IndexOutbox<span>@@unique(entityType, entityId) collapses repeated edits</span></div>
+                <div class="s1c-node wide" style="left:725px;top:140px;">Sweeper cron &middot; 1 min<span>Postgres lock &middot; claims &le;25 &middot; re-reads live row &middot; embeds changed chunks</span></div>
+                <div class="s1c-pill ok" style="left:965px;top:140px;">Embedded &amp;<br>searchable</div>
+              </div>
+              <p class="s1c-flow-note">Every write to a <b>Task, Epic, Sprint, or Milestone</b> triggers this. Same per-minute distributed-lock cron pattern as the reminder scheduler (03.1) and the server sender (03.6). On failure, a retry with exponential backoff (30s &rarr; ~15 min) runs before a row is marked <b>FAILED</b>. A <b>nightly reconcile</b> re-queues any source newer than its embedding and enqueues deletes for orphaned embeddings &mdash; the index self-heals from any missed write.</p>
+            </div>
+          </div>
+
+          <!-- PANEL 2 — Retrieval & generation (read path): scope resolution,
+               hybrid search, RRF fusion, then the confidence gate — mirrors
+               03.4's gate-with-stop-branch shape (one diamond, one refusal). -->
+          <div class="uc-panel" data-panel-step="2">
+            <div class="s1c-flow">
+              <div class="s1c-flow-wrap">
+                <svg class="s1c-flow-svg" viewBox="0 0 1080 340" width="1080" height="340">
+                  <defs>
+                    <marker id="s4b-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7a64bc" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                    <marker id="s4b-ah-no" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#c0475a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                  </defs>
+                  <path class="s1c-line" d="M114,150 L136,150" marker-end="url(#s4b-ah)"/>
+                  <path class="s1c-line" d="M284,150 L316,150" marker-end="url(#s4b-ah)"/>
+                  <path class="s1c-line" d="M464,150 L496,150" marker-end="url(#s4b-ah)"/>
+                  <path class="s1c-line" d="M644,150 L745,150" marker-end="url(#s4b-ah)"/>
+                  <path class="s1c-line" d="M875,150 L916,150" marker-end="url(#s4b-ah)"/>
+                  <path class="s1c-line no" d="M810,215 L810,254" marker-end="url(#s4b-ah-no)"/>
+                </svg>
+                <div class="s1c-pill start" style="left:50px;top:150px;">Question asked</div>
+                <div class="s1c-node" style="left:210px;top:150px;">Resolve allowedProjectIds<span>CEO all &middot; CTO/CMO by BU &middot; else membership</span></div>
+                <div class="s1c-node" style="left:390px;top:150px;">Vector + lexical search<span>cosine ANN (HNSW) &middot; ts_rank_cd (GIN) &middot; SQL-scoped</span></div>
+                <div class="s1c-node" style="left:570px;top:150px;">RRF fuse<span>&Sigma; 1/(60+rank) &middot; optional rerank, safe fallback</span></div>
+                <div class="s1c-diamond" style="left:810px;top:150px;"><span>cosine &ge; 0.5?</span></div>
+                <div class="s1c-node wide" style="left:1000px;top:150px;">Stream cited answer<span>separate turns &middot; temp 0.2 &middot; [n] &rarr; deep-link</span></div>
+                <div class="s1c-pill stop" style="left:810px;top:280px;">Refuse honestly<br>no generation call</div>
+                <div class="s1c-branch-label" style="left:895px;top:138px;">yes</div>
+                <div class="s1c-branch-label" style="left:833px;top:234px;">no</div>
+              </div>
+              <p class="s1c-flow-note">The <b>confidence gate</b> is the cheapest way to avoid a hallucination: below 0.5 cosine, the generation model is never even called.</p>
+            </div>
+          </div>
+
+          <!-- PANEL 3 — Data model: three tables verified against
+               ai.schema.prisma. entityId is a soft reference (no FK),
+               polymorphic across the 5 indexed entity types. -->
+          <div class="uc-panel" data-panel-step="3">
+            <div class="s3-rel">
+              <div class="s3cd-wrap" style="height:420px;">
+                <svg style="position:absolute;inset:0;overflow:visible;" width="1080" height="420" viewBox="0 0 1080 420">
+                  <defs>
+                    <marker id="s4c-ah-d" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#8b78c8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                  </defs>
+                  <path class="s1c-line dash" d="M480,265 L480,330" marker-end="url(#s4c-ah-d)"/>
+                </svg>
+                <div class="s3cd-class root" id="s4cd-embed" style="left:340px;top:10px;width:280px;">
+                  <div class="s3cd-name">DocumentEmbedding</div>
+                  <div class="s3cd-fields">
+                    <div><b>id</b> : UUID</div><div>projectId : UUID</div><div>entityType : Enum</div><div>entityId : UUID</div>
+                    <div>chunkIndex : Int</div><div>content : String</div><div>embedding : vector(1536)</div>
+                    <div>contentTsv : tsvector</div><div>contentHash : String</div>
+                    <div class="s3cd-note">1536-dim Matryoshka-truncated from Gemini's native 3072 &mdash; halves storage/ANN cost, L2-normalized in app code</div>
+                    <div class="s3cd-note">contentTsv is GENERATED ALWAYS &hellip; STORED &mdash; self-maintains, no write-path code, no backfill script</div>
+                  </div>
+                </div>
+                <div class="s3cd-class" id="s4cd-outbox" style="left:40px;top:200px;width:260px;">
+                  <div class="s3cd-name">IndexOutbox</div>
+                  <div class="s3cd-fields">
+                    <div><b>id</b> : UUID</div><div>projectId : UUID</div><div>entityType : Enum</div><div>entityId : UUID</div>
+                    <div>op : Upsert/Delete</div><div>status : Enum</div><div>attempts : Int</div><div>nextAttemptAt : DateTime</div>
+                    <div class="s3cd-note">@@unique(entityType, entityId) &mdash; the async work queue</div>
+                  </div>
+                </div>
+                <div class="s3cd-class" id="s4cd-log" style="left:760px;top:200px;width:260px;">
+                  <div class="s3cd-name">CopilotQueryLog</div>
+                  <div class="s3cd-fields">
+                    <div><b>id</b> : UUID</div><div>userId : UUID</div><div>projectId : UUID?</div><div>question : String</div>
+                    <div>retrievedIds : UUID[]</div><div>topScore : Float?</div><div>citationsCount : Int</div><div>faithfulnessScore : Float?</div>
+                    <div class="s3cd-note">One telemetry receipt per copilot call</div>
+                  </div>
+                </div>
+                <div class="s3cd-class" id="s4cd-content" style="left:370px;top:330px;width:220px;">
+                  <div class="s3cd-name">Task &middot; Comment &middot; Epic<br>Sprint &middot; Milestone</div>
+                  <div class="s3cd-fields">
+                    <div class="s3cd-note">entityId is a soft reference &mdash; no FK, polymorphic across 5 types</div>
+                  </div>
+                </div>
+              </div>
+              <p class="s1c-flow-note">Referential integrity on the soft reference is maintained by the write-path producers and the nightly reconcile &mdash; not by the database.</p>
+            </div>
+          </div>
+
+          <!-- PANEL 4 — Client experience: manual fetch+SSE (not EventSource)
+               because a JWT-authenticated stream needs a header EventSource
+               can't set — the same flavor of deliberate engineering decision
+               as 03.1's refresh-token design. Paged like 03.3/03.6's 2-image
+               metric-viewer pairs. -->
+          <div class="uc-panel" data-panel-step="4">
+            <div class="s3-metric-viewer s4td-viewer" data-metric-viewer="s4-copilot-client">
+              <div class="mv-page" data-metric-page></div>
+              <div class="mv-layer mv-active">
+                <div class="s4td-shot"><img data-metric-img src="latex/figures/screenshot_P31.png" alt="Copilot panel: grounded answer with citation chips"></div>
+                <div class="s4td-cap" data-metric-caption></div>
+              </div>
+              <div class="mv-layer">
+                <div class="s4td-shot"><img data-metric-img alt=""></div>
+                <div class="s4td-cap" data-metric-caption></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 04.3 — Task Effort Estimation ===== -->
+  <section class="slide slide-ai-estimate sub-section-slide" data-steps="2">
+    <div class="stepper">
+      <div class="step-item"><span class="step-tag">04.1</span><span class="step-label">Methodology</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.2</span><span class="step-label">RAG Architecture</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item active"><span class="step-tag">04.3</span><span class="step-label">Task Estimation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.4</span><span class="step-label">Security</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.5</span><span class="step-label">Evaluation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.6</span><span class="step-label">Capstone</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="32" cy="32" r="22"/><path d="M32 32l12-12"/><circle cx="32" cy="32" r="3" fill="currentColor" stroke="none"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">Task Effort Estimation</h2>
+      </div>
+      <div class="sub-body s2-body">
+        <div class="s1-kicker">Reference-class forecasting &mdash; find similar completed work, base the estimate on what actually happened</div>
+        <div class="s2-shot-frame" style="width:620px;">
+          <img src="latex/figures/screenshot_P33.png" alt="Task estimate suggestion in the create-task form">
+        </div>
+        <div class="s2-callouts" data-reveal-step="1">
+          <div class="s2-callout">
+            <div class="s2-callout-t">Scoped k-NN neighbours</div>
+            <div class="s2-callout-d">Restricted to <code>status = 'DONE' AND actualHours &gt; 0</code>; widens from project to business unit if fewer than 3 neighbours.</div>
+          </div>
+          <div class="s2-callout">
+            <div class="s2-callout-t">Two modes</div>
+            <div class="s2-callout-d"><b>Size-aware</b>: draft points &times; similarity-weighted hours-per-point, median with 10th/90th band. <b>Size-agnostic</b> fallback: similarity-weighted median hours, 25th/75th IQR band.</div>
+          </div>
+          <div class="s2-callout">
+            <div class="s2-callout-t">Never a bare number</div>
+            <div class="s2-callout-d">Neighbour tasks are always returned as evidence &mdash; the user sees where the number comes from and can judge it. No generation model is called.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 04.4 — Security & Grounding ===== -->
+  <section class="slide slide-ai-security sub-section-slide" data-steps="3">
+    <div class="stepper">
+      <div class="step-item"><span class="step-tag">04.1</span><span class="step-label">Methodology</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.2</span><span class="step-label">RAG Architecture</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.3</span><span class="step-label">Task Estimation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item active"><span class="step-tag">04.4</span><span class="step-label">Security</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.5</span><span class="step-label">Evaluation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.6</span><span class="step-label">Capstone</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M32 6l19 8v13c0 14-8.5 24-19 31C21.5 51 13 41 13 27V14z"/>
+            <rect x="24" y="29" width="16" height="12" rx="2"/><path d="M27 29v-5a5 5 0 0110 0v5"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">Security &amp; Grounding</h2>
+      </div>
+      <div class="sub-body s2-body">
+        <div class="s2-callout" style="width:972px;" data-reveal-step="1">
+          <div class="s2-callout-t">Permission scoping is enforced in SQL, before ranking</div>
+          <div class="s2-callout-d"><code>AiAccessService.allowedProjectIds</code> resolves the caller's scope, and every search &mdash; vector and lexical alike &mdash; applies <code>projectId = ANY($allowedIds)</code> inside the query itself. Out-of-scope rows are never returned to rank in the first place: not just checked &mdash; <b>impossible by construction</b>.</div>
+        </div>
+        <div class="s2-callouts cols-4" data-reveal-step="2">
+          <div class="s2-callout">
+            <div class="s2-callout-t">Endpoint RBAC</div>
+            <div class="s2-callout-d">Copilot needs <code>TASK_READ_MANY</code>, estimate <code>TASK_CREATE</code>, reindex/telemetry <code>PROJECT_CREATE</code> (executive-only).</div>
+          </div>
+          <div class="s2-callout">
+            <div class="s2-callout-t">Prompt-injection boundary</div>
+            <div class="s2-callout-d">System instruction and untrusted sources passed in separate turns; low temperature (0.2) for faithful answers.</div>
+          </div>
+          <div class="s2-callout">
+            <div class="s2-callout-t">DTO validation</div>
+            <div class="s2-callout-d">Question 3&ndash;1000 chars, story points 1&ndash;100, UUIDs &mdash; every input bounded.</div>
+          </div>
+          <div class="s2-callout">
+            <div class="s2-callout-t">No SQL-injection surface</div>
+            <div class="s2-callout-d">Parameterized tagged templates; <code>websearch_to_tsquery</code> tolerates arbitrary text safely.</div>
+          </div>
+        </div>
+        <div class="s2-callout limit" style="width:972px;" data-reveal-step="2">
+          <div class="s2-callout-t">Honestly disclosed limitation</div>
+          <div class="s2-callout-d">Access control is <b>project-level, not entity-level</b>: any content in an allowed project is retrievable, with no per-task or per-comment visibility check. This matches the tasks module's own project-scoped model today &mdash; but would need tightening if finer-grained task visibility were ever added.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 04.5 — Evaluation & Results ===== -->
+  <section class="slide slide-ai-eval sub-section-slide" data-steps="4">
+    <div class="stepper">
+      <div class="step-item"><span class="step-tag">04.1</span><span class="step-label">Methodology</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.2</span><span class="step-label">RAG Architecture</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.3</span><span class="step-label">Task Estimation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.4</span><span class="step-label">Security</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item active"><span class="step-tag">04.5</span><span class="step-label">Evaluation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.6</span><span class="step-label">Capstone</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="10" y="30" width="10" height="20"/><rect x="27" y="14" width="10" height="36"/><rect x="44" y="22" width="10" height="28"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">Evaluation &amp; Results</h2>
+      </div>
+      <div class="sub-body uc-body">
+        <div class="uc-tabs" data-reveal-step="1">
+          <div class="uc-tab">Retrieval</div>
+          <div class="uc-tab">Answer Quality</div>
+          <div class="uc-tab">Estimation Accuracy</div>
+        </div>
+        <div class="uc-conveyor" data-reveal-step="1">
+
+          <!-- PANEL 1 — Retrieval: keyword vector->hybrid jump is the single
+               most demoable number in the sprint. -->
+          <div class="uc-panel" data-panel-step="1">
+            <div class="s1-body">
+              <div class="s1-kicker">Keyword / identifier gold set &mdash; vector-only vs. hybrid</div>
+              <div class="s1-stats">
+                <div class="s1-stat"><div class="sv">0.57 &rarr; <span data-count-to="1.00" data-count-decimals="2" data-count-step="1">0.00</span></div><div class="sk">MRR</div></div>
+                <div class="s1-stat"><div class="sv">0.30 &rarr; <span data-count-to="1.00" data-count-decimals="2" data-count-step="1">0.00</span></div><div class="sk">Recall@1</div></div>
+                <div class="s1-stat"><div class="sv"><span data-count-to="0" data-count-step="1">0</span></div><div class="sk">cross-role leaks (CEO 6 proj. &middot; intern 1 proj.)</div></div>
+              </div>
+              <p class="s1-closing">A bare identifier like <code>NDF-24</code> carries almost no semantic meaning &mdash; the dense embedder ranks it low. The lexical arm matches it exactly; RRF fuses that hit to rank 1. On the <b>semantic</b> gold set the embedder is already saturated (MRR 0.958) &mdash; hybrid ties it with no regression, and the reranker matches or slightly beats it.</p>
+            </div>
+          </div>
+
+          <!-- PANEL 2 — Answer quality -->
+          <div class="uc-panel" data-panel-step="2">
+            <div class="s1-body">
+              <div class="s1-kicker">10-question QA gold set &mdash; 7 answerable, 3 deliberately unanswerable</div>
+              <div class="s1-stats">
+                <div class="s1-stat"><div class="sv"><span data-count-to="1.000" data-count-decimals="3" data-count-step="1">0.000</span></div><div class="sk">mean faithfulness</div></div>
+                <div class="s1-stat"><div class="sv"><span data-count-to="0.786" data-count-decimals="3" data-count-step="1">0.000</span> / <span data-count-to="1.000" data-count-decimals="3" data-count-step="1">0.000</span></div><div class="sk">citation precision / recall</div></div>
+                <div class="s1-stat"><div class="sv"><span data-count-to="1.000" data-count-decimals="3" data-count-step="1">0.000</span></div><div class="sk">refusal accuracy</div></div>
+                <div class="s1-stat"><div class="sv"><span data-count-to="0.000" data-count-decimals="3" data-count-step="1">0.000</span></div><div class="sk">false-refusal rate</div></div>
+              </div>
+              <p class="s1-closing">Faithfulness is a mean over n = 6: the LLM judge returned no verdict on one otherwise correctly-cited answer &mdash; reported honestly rather than dropped.</p>
+            </div>
+          </div>
+
+          <!-- PANEL 3 — Estimation: negative-then-fixed narrative, the
+               strongest "real science" beat in the report. -->
+          <div class="uc-panel" data-panel-step="3">
+            <div class="s1-body">
+              <div class="s1-kicker">Leave-one-out over 43 completed tasks</div>
+              <div class="s1-stats">
+                <div class="s1-stat"><div class="sv"><span data-count-to="3.83" data-count-decimals="2" data-count-step="1">0.00</span>h</div><div class="sk">size-agnostic k-NN MAE<br><span style="font-weight:400;">vs. 3.82h project-mean</span></div></div>
+                <div class="s1-stat"><div class="sv"><span data-count-to="2.12" data-count-decimals="2" data-count-step="2">0.00</span>h</div><div class="sk">size-aware k-NN MAE<br><span style="font-weight:400;">vs. 2.10h story-points fit</span></div></div>
+                <div class="s1-stat"><div class="sv"><span data-count-to="67.4" data-count-decimals="1" data-count-step="2">0.0</span>%</div><div class="sk">within &plusmn;25% (up from 44.2%)</div></div>
+                <div class="s1-stat"><div class="sv"><span data-count-to="0.744" data-count-decimals="3" data-count-step="2">0.000</span></div><div class="sk">10/90 band coverage (&middot;~80% target)</div></div>
+              </div>
+              <p class="s1-closing"><b>Text similarity alone carries almost no effort signal</b> &mdash; size-agnostic k-NN is statistically indistinguishable from a dumb project-mean baseline, because text-similar neighbours are often size-mismatched. Normalizing by story points fixes it: size-aware k-NN matches a story-points-fit baseline while still returning neighbour evidence and an honest uncertainty band.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 04.6 — Capstone: The Whole System ===== -->
+  <section class="slide slide-ai-capstone sub-section-slide" data-steps="2">
+    <div class="stepper">
+      <div class="step-item"><span class="step-tag">04.1</span><span class="step-label">Methodology</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.2</span><span class="step-label">RAG Architecture</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.3</span><span class="step-label">Task Estimation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.4</span><span class="step-label">Security</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item"><span class="step-tag">04.5</span><span class="step-label">Evaluation</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item active"><span class="step-tag">04.6</span><span class="step-label">Capstone</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M32 8L54 20L32 32L10 20Z"/><path d="M10 32l22 12 22-12"/><path d="M10 44l22 12 22-12"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">Capstone &mdash; The Whole System</h2>
+      </div>
+      <div class="sub-body">
+        <div class="s3-rel">
+          <div class="s3cd-wrap" style="height:380px;" data-reveal-step="1">
+            <svg style="position:absolute;inset:0;overflow:visible;" width="1080" height="380" viewBox="0 0 1080 380">
+              <defs>
+                <marker id="s46-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7a64bc" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                <marker id="s46-ah-d" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#8b78c8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+              </defs>
+              <path class="s1c-line" d="M302,90 L420,90" marker-end="url(#s46-ah)"/>
+              <path class="s1c-line dash" d="M420,259 L352,259" marker-end="url(#s46-ah-d)"/>
+            </svg>
+            <div class="s3cd-class" id="s46-domain" style="left:60px;top:60px;width:240px;">
+              <div class="s3cd-name">Task &middot; Epic &middot; Sprint<br>Milestone services</div>
+              <div class="s3cd-fields"><div class="s3cd-note">Sprints 3&ndash;5 domain &mdash; can ignore the AI subsystem entirely</div></div>
+            </div>
+            <div class="s3cd-class root" id="s46-outbox" style="left:420px;top:60px;width:240px;">
+              <div class="s3cd-name">IndexOutbox</div>
+              <div class="s3cd-fields"><div class="s3cd-note">projectId scope key</div></div>
+            </div>
+            <div class="s3cd-class root" id="s46-embed" style="left:420px;top:230px;width:240px;">
+              <div class="s3cd-name">DocumentEmbedding</div>
+              <div class="s3cd-fields"><div class="s3cd-note">projectId scope key</div></div>
+            </div>
+            <div class="s3cd-class" id="s46-content" style="left:130px;top:230px;width:220px;">
+              <div class="s3cd-name">Content (5 types)</div>
+              <div class="s3cd-fields"><div class="s3cd-note">dashed soft reference &mdash; entityId, no FK</div></div>
+            </div>
+            <div class="s3cd-class root" id="s46-log" style="left:760px;top:60px;width:220px;">
+              <div class="s3cd-name">CopilotQueryLog</div>
+              <div class="s3cd-fields"><div class="s3cd-note">userId scope key</div></div>
+            </div>
+            <div class="s3cd-class" id="s46-user" style="left:760px;top:230px;width:220px;">
+              <div class="s3cd-name">User</div>
+              <div class="s3cd-fields"><div class="s3cd-note">Sprint 1 anchor</div></div>
+            </div>
+          </div>
+          <p class="s1-closing" data-reveal-step="1"><b>High cohesion inside, loose coupling outside.</b> The AI package attaches by plain scope keys (<code>projectId</code>, <code>userId</code>) and a dashed soft reference to content &mdash; the only inbound coupling is the domain's one-line, fire-and-forget enqueue calls.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ===== Chrome ===== -->
   <div class="bottom-line"></div>
   <div class="nav">
@@ -1893,6 +2370,13 @@
     <div class="quicknav-item" data-si="18">Tasks &amp; Kanban Engine</div>
     <div class="quicknav-item" data-si="19">Productivity Suite</div>
     <div class="quicknav-item" data-si="20">Communication &amp; Operations</div>
+    <div class="quicknav-item" data-si="21">04 &middot; AI Copilot &amp; Estimation</div>
+    <div class="quicknav-item" data-si="22">Methodology (CRISP-DM)</div>
+    <div class="quicknav-item" data-si="23">RAG Architecture</div>
+    <div class="quicknav-item" data-si="24">Task Effort Estimation</div>
+    <div class="quicknav-item" data-si="25">Security &amp; Grounding</div>
+    <div class="quicknav-item" data-si="26">Evaluation &amp; Results</div>
+    <div class="quicknav-item" data-si="27">Capstone: The Whole System</div>
   </div>
 
 </div>

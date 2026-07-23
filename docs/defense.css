@@ -647,6 +647,14 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .slide-hero03.active .hero-desc  { animation: rise 1.2s ease-out .7s forwards; }
 .slide-hero03.active .hero-subs  { animation: fadein 1.4s ease-out .95s forwards; }
 
+.slide-hero04 { justify-content: center; padding: 0 76px; }
+.slide-hero04 .hero-num, .slide-hero04 .hero-title,
+.slide-hero04 .hero-desc, .slide-hero04 .hero-subs { opacity: 0; }
+.slide-hero04.active .hero-num   { animation: rise 1.2s ease-out .2s forwards; }
+.slide-hero04.active .hero-title { animation: rise 1.2s ease-out .45s forwards; }
+.slide-hero04.active .hero-desc  { animation: rise 1.2s ease-out .7s forwards; }
+.slide-hero04.active .hero-subs  { animation: fadein 1.4s ease-out .95s forwards; }
+
 /* ============================================================= */
 /* SLIDE — 02.1 REQUIREMENTS                                     */
 /* ============================================================= */
@@ -1233,6 +1241,16 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .s5-cal-arrow { color: var(--faint); font-size: 12px; }
 .s5-cal-note { margin-left: 10px; font-size: 12px; color: var(--muted); }
 .s5-cal-note code { font-family: var(--mono); font-size: 11px; color: var(--brand); }
+
+/* ---- 04.x AI Copilot & Estimation (Sprint 6) ----
+   04.1–04.6 are standalone slides (not one shared multi-step arc like
+   03.1–03.6), so unlike every earlier sub-section-slide they carry no
+   .stepper bar — see the hero04 house-rule note. Everything else reuses
+   .uc-tabs/.uc-conveyor, .s1-flow, .s1c-flow-wrap, .s3cd-*, .s2-callouts,
+   .s1-stats/data-count-to verbatim; only these two small modifiers are new. */
+.s2-callouts.cols-4 { grid-template-columns: repeat(4, 1fr); width: 1160px; }
+.s2-callout.limit { border-left: 3px solid #c0475a; }
+.s2-callout.limit .s2-callout-t { color: #c0475a; }
 
 @media (prefers-reduced-motion: reduce) {
   .asterisk-canvas { animation: ast-fade 1.2s ease-out forwards; }

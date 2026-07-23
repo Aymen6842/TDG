@@ -60,7 +60,14 @@ var GEAR_TARGETS = {
   'slide-sprint3':   { cx: 1235, cy: 66,  s: 0.34 },
   'slide-sprint4':   { cx: 1235, cy: 66,  s: 0.34 },
   'slide-sprint5':   { cx: 1235, cy: 66,  s: 0.34 },
-  'slide-sprint6':   { cx: 1235, cy: 66,  s: 0.34 }
+  'slide-sprint6':   { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-hero04':      { cx: 1110, cy: 360, s: 1.00 },
+  'slide-ai-method':   { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-ai-arch':     { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-ai-estimate': { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-ai-security': { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-ai-eval':     { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-ai-capstone': { cx: 1235, cy: 66,  s: 0.34 }
 };
 var gearEl = document.querySelector('.deck-gear');
 function applyGear(slideEl) {
@@ -461,15 +468,23 @@ function advance() {
     setTimeout(function () { reqSlide.classList.add('body-reveal'); }, 500);
     return;
   }
-  /* Section 03: same hero-subs-into-stepper morph again (03.1..03.5 only —
-     the hero's 6th "destination" node previews Sprint 6 but isn't part of
-     this section's own stepper, so it's excluded from the morph count). */
+  /* Section 03: same hero-subs-into-stepper morph again, now 6 items
+     (03.1..03.6) since Tasks & Kanban split out of Agile Backlog. */
   if (slides[si].classList.contains('slide-hero03') && step === stepsOf(si) - 1 && slides[si + 1] && slides[si + 1].classList.contains('slide-sprint1')) {
     var sprint1Slide = slides[si + 1];
     var sprint1Stepper = sprint1Slide.querySelector('.stepper');
     sprint1Slide.classList.remove('body-reveal', 'content-shown');
     runMorphBatch(buildStepperJobs('s03', 6), si + 1, { revealAncestors: sprint1Stepper ? [sprint1Stepper] : [] });
     setTimeout(function () { sprint1Slide.classList.add('body-reveal'); }, 500);
+    return;
+  }
+  /* Section 04: same hero-subs-into-stepper morph, 6 items (04.1..04.6). */
+  if (slides[si].classList.contains('slide-hero04') && step === stepsOf(si) - 1 && slides[si + 1] && slides[si + 1].classList.contains('slide-ai-method')) {
+    var aiMethodSlide = slides[si + 1];
+    var aiMethodStepper = aiMethodSlide.querySelector('.stepper');
+    aiMethodSlide.classList.remove('body-reveal', 'content-shown');
+    runMorphBatch(buildStepperJobs('s04', 6), si + 1, { revealAncestors: aiMethodStepper ? [aiMethodStepper] : [] });
+    setTimeout(function () { aiMethodSlide.classList.add('body-reveal'); }, 500);
     return;
   }
   if (step < stepsOf(si) - 1) { step++; render(); }
@@ -542,7 +557,8 @@ addEventListener('keydown', function (e) {
 var SECTION_LABELS = {
   '01': ['Host Organization', 'The Problem', 'Existing Solutions', 'Proposed Solution'],
   '02': ['Requirements', 'Methodology', 'Architecture', 'Use Cases', 'Tech Stack'],
-  '03': ['Foundations', 'Projects', 'Agile Backlog', 'Tasks & Kanban', 'Productivity', 'Communication']
+  '03': ['Foundations', 'Projects', 'Agile Backlog', 'Tasks & Kanban', 'Productivity', 'Communication'],
+  '04': ['Methodology', 'RAG Architecture', 'Task Estimation', 'Security', 'Evaluation', 'Capstone']
 };
 function syncSectionLabels(scopeSel, tagSel, labelSel) {
   document.querySelectorAll(scopeSel).forEach(function (scope) {
@@ -557,7 +573,7 @@ function syncSectionLabels(scopeSel, tagSel, labelSel) {
   });
 }
 syncSectionLabels('.stepper', '.step-tag', '.step-label');
-syncSectionLabels('.slide-hero01, .slide-hero02, .slide-hero03', '.hs-tag', '.hs-label');
+syncSectionLabels('.slide-hero01, .slide-hero02, .slide-hero03, .slide-hero04', '.hs-tag', '.hs-label');
 
 /* ---------- metric viewer (03.3 Metrics tab) ----------
    A [data-metric-viewer="key"] block pages through a set of screenshots in
@@ -609,6 +625,14 @@ var METRIC_SETS = {
       cap: '<div class="s2-callout"><div class="s2-callout-t">Six per-minute crons</div><div class="s2-callout-d">next-date &middot; status-check &middot; sender, &times;2 each</div></div>' +
            '<div class="s2-callout"><div class="s2-callout-t">Responsibility join</div><div class="s2-callout-d"><code>UserServerManagement</code></div></div>' +
            '<div class="s2-callout"><div class="s2-callout-t">Alert routing</div><div class="s2-callout-d">only to a server\'s assigned managers</div></div>' }
+  ],
+  's4-copilot-client': [
+    { src: 'latex/figures/screenshot_P31.png', alt: 'Copilot panel: grounded answer with citation chips',
+      cap: '<div class="s2-callout"><div class="s2-callout-t">Streamed, grounded answer</div><div class="s2-callout-d">Token-by-token behind a blinking caret &middot; numbered <code>[n]</code> citation markers</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Citation chips</div><div class="s2-callout-d">One per source &middot; snippet on hover &middot; honest refusal note when retrieval is insufficient</div></div>' },
+    { src: 'latex/figures/screenshot_P32.png', alt: 'Citation chip deep-link opening a referenced task',
+      cap: '<div class="s2-callout"><div class="s2-callout-t">Deep-link by URL rewrite</div><div class="s2-callout-d">A chip switches tab/task params to open the exact source item</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Manual fetch + SSE, not EventSource</div><div class="s2-callout-d"><code>EventSource</code> cannot set headers; this is a JWT-authenticated stream. A mid-stream 401 silently refreshes the token and replays.</div></div>' }
   ],
 };
 (function preloadMetricImages() {
