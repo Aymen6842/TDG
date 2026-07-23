@@ -105,27 +105,42 @@ if (!SHOW_QUICKNAV) {
   });
 }
 
-/* ---------- screenshot hover-zoom ----------
+/* ---------- screenshot click-to-zoom ----------
    Every screenshot thumbnail in the deck (.s2-shot-frame / .s3-shot-frame /
-   .s4td-shot img) zooms to near-fullscreen on hover, via one shared overlay
+   .s4td-shot img) zooms to near-fullscreen on click, via one shared overlay
    (#shotZoom) instead of per-slide wiring. Bound once at load — the
    metric-viewer pager only ever swaps `img.src` on existing <img> nodes, it
    never creates new ones, so a single pass here covers every screenshot the
-   pager will ever show. */
+   pager will ever show.
+   Click, not hover: a click anywhere in the deck normally advances to the
+   next step/slide (see the window 'click' listener below), and some of
+   these same thumbnails sit inside a metric-viewer where a click instead
+   pages to its next image. Both of those listeners are on ancestors, so
+   e.stopPropagation() here — scoped to just the <img>, not its whole
+   frame/panel — opens/closes the zoom without either behavior firing.
+   Clicking anywhere else on the slide (including the rest of a
+   metric-viewer panel) still advances/pages exactly as before. */
 (function () {
   var zoom = document.getElementById('shotZoom');
   var zoomImg = document.getElementById('shotZoomImg');
   if (!zoom || !zoomImg) return;
   document.querySelectorAll('.s2-shot-frame img, .s3-shot-frame img, .s4td-shot img').forEach(function (img) {
-    img.addEventListener('mouseenter', function () {
-      if (!img.currentSrc && !img.src) return;
-      zoomImg.src = img.currentSrc || img.src;
+    img.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var src = img.currentSrc || img.src;
+      if (!src) return;
+      if (zoom.classList.contains('open') && zoomImg.src === src) {
+        zoom.classList.remove('open');
+        return;
+      }
+      zoomImg.src = src;
       zoomImg.alt = img.alt || '';
       zoom.classList.add('open');
     });
-    img.addEventListener('mouseleave', function () {
-      zoom.classList.remove('open');
-    });
+  });
+  zoom.addEventListener('click', function (e) {
+    e.stopPropagation();
+    zoom.classList.remove('open');
   });
 })();
 
