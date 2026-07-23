@@ -468,7 +468,7 @@ function advance() {
     var sprint1Slide = slides[si + 1];
     var sprint1Stepper = sprint1Slide.querySelector('.stepper');
     sprint1Slide.classList.remove('body-reveal', 'content-shown');
-    runMorphBatch(buildStepperJobs('s03', 5), si + 1, { revealAncestors: sprint1Stepper ? [sprint1Stepper] : [] });
+    runMorphBatch(buildStepperJobs('s03', 6), si + 1, { revealAncestors: sprint1Stepper ? [sprint1Stepper] : [] });
     setTimeout(function () { sprint1Slide.classList.add('body-reveal'); }, 500);
     return;
   }
