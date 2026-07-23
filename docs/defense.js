@@ -575,6 +575,26 @@ var METRIC_SETS = {
            '<div class="s2-callout"><div class="s2-callout-t">Attachments</div><div class="s2-callout-d">files, per task</div></div>' +
            '<div class="s2-callout"><div class="s2-callout-t">Comments</div><div class="s2-callout-d"><code>@mentions</code> &middot; 1 like / user</div></div>' }
   ],
+  's6-notifications': [
+    { src: 'latex/figures/screenshot_P27.png', alt: 'Notification bell dropdown and inbox list',
+      cap: '<div class="s2-callout"><div class="s2-callout-t">Shared entry point</div><div class="s2-callout-d"><code>createNotificationFromSystem()</code> &middot; 7 calling modules</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Envelope / content split</div><div class="s2-callout-d"><code>Notification</code> + <code>NotificationContent</code> (i18n)</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Per-user inbox</div><div class="s2-callout-d"><code>UserNotification</code> &middot; unique per user</div></div>' },
+    { src: 'latex/figures/screenshot_P28.png', alt: 'Notification channel settings page',
+      cap: '<div class="s2-callout"><div class="s2-callout-t">On by default</div><div class="s2-callout-d">Email &amp; Push &middot; opt-out</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Off by default</div><div class="s2-callout-d">Telegram &amp; ntfy &middot; needs chat ID / topic</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Push delivery</div><div class="s2-callout-d"><code>NotificationToken</code> &middot; per device</div></div>' }
+  ],
+  's6-infra': [
+    { src: 'latex/figures/screenshot_P29.png', alt: 'Server record fields — resources, billing, and status',
+      cap: '<div class="s2-callout"><div class="s2-callout-t">Shared status enum</div><div class="s2-callout-d"><code>ServerServiceStatus</code> &middot; Running / Stopped / Maintenance</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Scoped access</div><div class="s2-callout-d"><span class="s3c-role">CTO</span> <span class="s3c-role">DevOps</span> manage &middot; <span class="s3c-role all">CEO</span> view-only</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Public health check</div><div class="s2-callout-d"><code>GET /health</code> &middot; no auth</div></div>' },
+    { src: 'latex/figures/screenshot_P30.png', alt: 'Services list with status and payment columns',
+      cap: '<div class="s2-callout"><div class="s2-callout-t">Six per-minute crons</div><div class="s2-callout-d">next-date &middot; status-check &middot; sender, &times;2 each</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Responsibility join</div><div class="s2-callout-d"><code>UserServerManagement</code></div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Alert routing</div><div class="s2-callout-d">only to a server\'s assigned managers</div></div>' }
+  ],
 };
 (function preloadMetricImages() {
   Object.keys(METRIC_SETS).forEach(function (key) {

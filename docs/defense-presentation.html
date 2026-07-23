@@ -1760,7 +1760,7 @@
   </section>
 
   <!-- ===== SLIDE : SPRINT 5 — 03.5 ===== -->
-  <section class="slide slide-sprint6 sub-section-slide" data-steps="3">
+  <section class="slide slide-sprint6 sub-section-slide" data-steps="4">
     <div class="stepper">
       <div class="step-item"><span class="step-tag">03.1</span><span class="step-label">Foundations</span></div>
       <div class="step-sep"></div>
@@ -1783,37 +1783,77 @@
         </div>
         <h2 class="sub-intro-title">Communication &amp; Operations</h2>
       </div>
-      <div class="sub-body s4-body">
-        <div class="s1-kicker">Sprint 5 &middot; 3 weeks &middot; 35 SP</div>
-        <div class="s4-modules s5-modules reveal-item" data-reveal-step="1">
-          <div class="s4-module">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c-9 0-14 7-14 16v10l-6 10h40l-6-10V24c0-9-5-16-14-16z"/><path d="M26 50a6 6 0 0012 0"/></svg>
-            <div class="s4-mod-t">Notifications</div>
-            <div class="s4-mod-d">In-app inbox, FCM push, per-user channel settings &amp; Telegram/ntfy links</div>
-          </div>
-          <div class="s4-module">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="44" height="16" rx="4"/><rect x="10" y="34" width="44" height="16" rx="4"/><circle cx="19" cy="18" r="2" fill="currentColor" stroke="none"/><circle cx="19" cy="42" r="2" fill="currentColor" stroke="none"/></svg>
-            <div class="s4-mod-t">Infrastructure Monitoring</div>
-            <div class="s4-mod-d">Server &amp; service inventory, six per-minute health-check crons</div>
-          </div>
+      <div class="sub-body uc-body">
+        <div class="uc-tabs" data-reveal-step="1">
+          <div class="uc-tab">Notifications</div>
+          <div class="uc-tab">Infrastructure Monitoring</div>
+          <div class="uc-tab">Outbox Pattern</div>
         </div>
-        <div class="s1-flow s4-flow s5-flow reveal-item" data-reveal-step="2">
-          <div class="s4-pulse"></div>
-          <div class="s1-node"><div class="s1-node-t">Detector</div><div class="s1-node-d">ICMP ping / HTTP probe</div></div>
-          <div class="s1-arrow">&rarr;</div>
-          <div class="s1-node"><div class="s1-node-t">Outbox</div><div class="s1-node-d">row inserted, isSent:false</div></div>
-          <div class="s1-arrow">&rarr;</div>
-          <div class="s1-node scoped"><div class="s1-node-t">Sender Cron</div><div class="s1-node-d">row lock (SKIP LOCKED) &mdash; flips isSent:true</div></div>
-          <div class="s1-arrow">&rarr;</div>
-          <div class="s4-channels s5-channels">
-            <div class="s4-channel">In-app</div>
-            <div class="s4-channel">Email</div>
-            <div class="s4-channel">Push</div>
-            <div class="s4-channel">Telegram</div>
-            <div class="s4-channel">ntfy</div>
+        <div class="uc-conveyor" data-reveal-step="1">
+
+          <!-- PANEL 1 — Notifications: shared entry point + inbox/settings,
+               paged like 03.4's Task Detail (same s4td-viewer classes). -->
+          <div class="uc-panel" data-panel-step="1">
+            <div class="s3-metric-viewer s4td-viewer" data-metric-viewer="s6-notifications">
+              <div class="mv-page" data-metric-page></div>
+              <div class="mv-layer mv-active">
+                <div class="s4td-shot"><img data-metric-img src="latex/figures/screenshot_P27.png" alt="Notification bell dropdown and inbox list"></div>
+                <div class="s4td-cap" data-metric-caption></div>
+              </div>
+              <div class="mv-layer">
+                <div class="s4td-shot"><img data-metric-img alt=""></div>
+                <div class="s4td-cap" data-metric-caption></div>
+              </div>
+            </div>
           </div>
+
+          <!-- PANEL 2 — Infrastructure Monitoring: shared status enum + role
+               scoping (reusing the Capability Tiers role-badge language) +
+               the six per-minute crons, paged over the two real screenshots. -->
+          <div class="uc-panel" data-panel-step="2">
+            <div class="s3-metric-viewer s4td-viewer" data-metric-viewer="s6-infra">
+              <div class="mv-page" data-metric-page></div>
+              <div class="mv-layer mv-active">
+                <div class="s4td-shot"><img data-metric-img src="latex/figures/screenshot_P29.png" alt="Server record fields — resources, billing, and status"></div>
+                <div class="s4td-cap" data-metric-caption></div>
+              </div>
+              <div class="mv-layer">
+                <div class="s4td-shot"><img data-metric-img alt=""></div>
+                <div class="s4td-cap" data-metric-caption></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 3 — Outbox Pattern: the detector/outbox/sender mechanic,
+               same s1c-flow gate vocabulary as 03.5's Notification Backbone
+               tab, since it is literally the same lock-then-scan-then-fanout
+               shape reused for a different trigger. No dedup exists on the
+               outbox insert (verified directly against
+               create-server.repository.ts) — the note says so plainly
+               instead of the debunked "natural dedup" framing. -->
+          <div class="uc-panel" data-panel-step="3">
+            <div class="s1c-flow">
+              <div class="s1c-flow-wrap">
+                <svg class="s1c-flow-svg" viewBox="0 0 1080 340" width="1080" height="340">
+                  <defs>
+                    <marker id="s6o-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7a64bc" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                  </defs>
+                  <path class="s1c-line" d="M197,140 L215,140" marker-end="url(#s6o-ah)"/>
+                  <path class="s1c-line" d="M395,140 L425,140" marker-end="url(#s6o-ah)"/>
+                  <path class="s1c-line" d="M605,140 L635,140" marker-end="url(#s6o-ah)"/>
+                  <path class="s1c-line" d="M815,140 L885,140" marker-end="url(#s6o-ah)"/>
+                </svg>
+                <div class="s1c-pill start" style="left:100px;top:140px;">ICMP ping / HTTP probe</div>
+                <div class="s1c-node wide" style="left:305px;top:140px;">Insert outbox row<span>*Notification, isSent:false</span></div>
+                <div class="s1c-node wide" style="left:515px;top:140px;">Sender cron<span>row lock &middot; SKIP LOCKED</span></div>
+                <div class="s1c-node wide" style="left:725px;top:140px;">Route to managers<span>UserServerManagement</span></div>
+                <div class="s1c-pill ok" style="left:965px;top:140px;">Fan out<br>isSent:true</div>
+              </div>
+              <p class="s1c-flow-note">No dedup on insert &mdash; a server that stays down gets a fresh outbox row <b>every minute</b> until it recovers. The push leg reuses the exact <code>createNotificationFromSystem()</code> from the Notifications tab.</p>
+            </div>
+          </div>
+
         </div>
-        <p class="s1-closing reveal-item" data-reveal-step="3">Detection never sends anything itself &mdash; <b>a failed delivery never blocks detection</b>. Every alert reuses the exact channel settings a user configured in the Notifications module.</p>
       </div>
     </div>
   </section>
