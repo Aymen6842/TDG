@@ -1598,7 +1598,7 @@
   </section>
 
   <!-- ===== SLIDE : SPRINT 4 — 03.5 ===== -->
-  <section class="slide slide-sprint5 sub-section-slide" data-steps="3">
+  <section class="slide slide-sprint5 sub-section-slide" data-steps="5">
     <div class="stepper">
       <div class="step-item"><span class="step-tag">03.1</span><span class="step-label">Foundations</span></div>
       <div class="step-sep"></div>
@@ -1621,44 +1621,140 @@
         </div>
         <h2 class="sub-intro-title">Productivity Suite</h2>
       </div>
-      <div class="sub-body s4-body">
-        <div class="s1-kicker">Sprint 4 &middot; 4 weeks &middot; 44 SP</div>
-        <div class="s4-modules reveal-item" data-reveal-step="1">
-          <div class="s4-module">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="8" width="44" height="48" rx="6"/><path d="M20 24l6 6 12-14"/><path d="M20 42h24"/></svg>
-            <div class="s4-mod-t">To-Dos</div>
-            <div class="s4-mod-d">Sub-tasks, priorities, due &amp; reminder dates</div>
-          </div>
-          <div class="s4-module">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="24"/><path d="M32 18v14l10 8"/></svg>
-            <div class="s4-mod-t">Attendance</div>
-            <div class="s4-mod-d">Daily check-in / check-out, per-team stats</div>
-          </div>
-          <div class="s4-module">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="12" width="48" height="42" rx="6"/><path d="M8 24h48"/><path d="M20 6v10M44 6v10"/></svg>
-            <div class="s4-mod-t">Calendar</div>
-            <div class="s4-mod-d">Meetings, milestones &amp; personal events</div>
-          </div>
-          <div class="s4-module">
-            <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 8c-9 0-14 7-14 16v10l-6 10h40l-6-10V24c0-9-5-16-14-16z"/><path d="M26 50a6 6 0 0012 0"/></svg>
-            <div class="s4-mod-t">Reminders</div>
-            <div class="s4-mod-d">Manual &amp; automatic, project-aware</div>
-          </div>
+      <div class="sub-body uc-body">
+        <div class="uc-tabs" data-reveal-step="1">
+          <div class="uc-tab">Modules</div>
+          <div class="uc-tab">Reminder Lifecycle</div>
+          <div class="uc-tab">Notification Backbone</div>
+          <div class="uc-tab">Attendance Rules</div>
         </div>
-        <div class="s1-flow s4-flow reveal-item" data-reveal-step="2">
-          <div class="s4-pulse"></div>
-          <div class="s1-node"><div class="s1-node-t">4 Modules</div></div>
-          <div class="s1-arrow">&rarr;</div>
-          <div class="s1-node guard"><div class="s1-node-t">Per-minute Cron</div><div class="s1-node-d">PostgreSQL advisory lock &mdash; one instance runs it</div></div>
-          <div class="s1-arrow">&rarr;</div>
-          <div class="s4-channels">
-            <div class="s4-channel">In-app</div>
-            <div class="s4-channel">Email</div>
-            <div class="s4-channel">Telegram</div>
-            <div class="s4-channel">ntfy</div>
+        <div class="uc-conveyor" data-reveal-step="1">
+
+          <!-- PANEL 1 — four modules, each paired with its real screenshot -->
+          <div class="uc-panel" data-panel-step="1">
+            <div class="s5-mods">
+              <div class="s5-mod">
+                <div class="s3-shot-frame" style="width:220px;"><img src="latex/figures/screenshot_P23.png" alt="Personal Tasks list and detail sheet"></div>
+                <div class="s5-mod-t">To-Dos</div>
+                <div class="s5-mod-d"><code>UserTask</code> &middot; subtasks, priority, due &amp; reminder dates</div>
+              </div>
+              <div class="s5-mod">
+                <div class="s3-shot-frame" style="width:220px;"><img src="latex/figures/screenshot_P24.png" alt="Attendance check-in gate — remote or onsite"></div>
+                <div class="s5-mod-t">Attendance</div>
+                <div class="s5-mod-d">check-in / check-out &middot; WorkDay &rarr; WorkSession</div>
+              </div>
+              <div class="s5-mod">
+                <div class="s3-shot-frame" style="width:220px;"><img src="latex/figures/screenshot_P25.png" alt="Calendar month view with events"></div>
+                <div class="s5-mod-t">Calendar</div>
+                <div class="s5-mod-d">meetings, milestones &amp; personal events</div>
+              </div>
+              <div class="s5-mod">
+                <div class="s3-shot-frame" style="width:220px;"><img src="latex/figures/screenshot_P26.png" alt="Project reminders list with type and sent status"></div>
+                <div class="s5-mod-t">Reminders</div>
+                <div class="s5-mod-d">manual &amp; automatic &middot; project-aware</div>
+              </div>
+            </div>
           </div>
+
+          <!-- PANEL 2 — Reminder lifecycle: PENDING is the sole hub, three
+               outgoing edges. Only PENDING->SENT and PENDING->DISMISSED have
+               a confirmed code path; PENDING->CANCELLED is real but is an
+               automatic side effect of the Sprint module (not a manual
+               per-reminder action, corrected against the report), shown
+               dashed to mark it as secondary/indirect. FAILED exists in the
+               enum with no confirmed transition, so it is named in the note
+               only, never drawn as a node. -->
+          <div class="uc-panel" data-panel-step="2">
+            <div class="s1c-flow">
+              <div class="s1c-flow-wrap">
+                <svg class="s1c-flow-svg" viewBox="0 0 1080 340" width="1080" height="340">
+                  <defs>
+                    <marker id="s5r-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7a64bc" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                    <marker id="s5r-ah-d" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#8b78c8" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                  </defs>
+                  <path class="s1c-line" d="M280,170 L620,90" marker-end="url(#s5r-ah)"/>
+                  <path class="s1c-line" d="M280,170 L620,170" marker-end="url(#s5r-ah)"/>
+                  <path class="s1c-line dash" d="M280,170 L620,255" marker-end="url(#s5r-ah-d)"/>
+                </svg>
+                <div class="s3-state hub" style="left:200px;top:170px;">Pending</div>
+                <div class="s3-state" style="left:700px;top:90px;">Sent</div>
+                <div class="s3-state" style="left:700px;top:170px;">Dismissed</div>
+                <div class="s3-state" style="left:700px;top:255px;">Cancelled</div>
+                <div class="s1c-branch-label" style="left:460px;top:117px;">cron: delivered</div>
+                <div class="s1c-branch-label" style="left:450px;top:155px;">user: dismiss</div>
+                <div class="s1c-branch-label" style="left:460px;top:224px;">sprint closed (auto)</div>
+              </div>
+              <p class="s1c-flow-note">Dismiss needs no prior <code>SENT</code> &mdash; a still-pending reminder can be dismissed directly. <code>Cancelled</code> is not manual: it fires only when the reminder's sprint is stopped, completed, or deleted. <code>Failed</code> exists in the enum with no confirmed code path.</p>
+            </div>
+          </div>
+
+          <!-- PANEL 3 — the delivery cron itself: lock, scan, fan-out, mark
+               sent. Plus the Calendar module's separate escalating-threshold
+               cron as a related strip underneath. -->
+          <div class="uc-panel" data-panel-step="3">
+            <div class="s1c-flow">
+              <div class="s1c-flow-wrap">
+                <svg class="s1c-flow-svg" viewBox="0 0 1080 340" width="1080" height="340">
+                  <defs>
+                    <marker id="s5n-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7a64bc" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                  </defs>
+                  <path class="s1c-line" d="M180,140 L230,140" marker-end="url(#s5n-ah)"/>
+                  <path class="s1c-line" d="M410,140 L440,140" marker-end="url(#s5n-ah)"/>
+                  <path class="s1c-line" d="M620,140 L650,140" marker-end="url(#s5n-ah)"/>
+                  <path class="s1c-line" d="M830,140 L900,140" marker-end="url(#s5n-ah)"/>
+                </svg>
+                <div class="s1c-pill start" style="left:110px;top:140px;">Every minute</div>
+                <div class="s1c-node wide" style="left:320px;top:140px;">Acquire row lock<span>SKIP LOCKED &middot; 55s TTL</span></div>
+                <div class="s1c-node wide" style="left:530px;top:140px;">Scan due reminders<span>status = PENDING</span></div>
+                <div class="s1c-node wide" style="left:740px;top:140px;">Fan out<span>Email &middot; Push &middot; Telegram &middot; ntfy</span></div>
+                <div class="s1c-pill ok" style="left:960px;top:140px;">Mark SENT</div>
+              </div>
+              <p class="s1c-flow-note">One instance wins the lock per tick; the rest return immediately &mdash; no duplicate sends.</p>
+              <div class="s5-cal-strip">
+                <div class="s5-cal-t">Calendar reminders escalate on a separate cron</div>
+                <div class="s5-cal-bands">
+                  <span class="s5-cal-band">24h</span><span class="s5-cal-arrow">&rarr;</span>
+                  <span class="s5-cal-band">2.5h</span><span class="s5-cal-arrow">&rarr;</span>
+                  <span class="s5-cal-band">30min</span><span class="s5-cal-arrow">&rarr;</span>
+                  <span class="s5-cal-band">15min</span>
+                  <span class="s5-cal-note">before event start &mdash; advances <code>nextNotificationTime</code></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANEL 4 — Attendance: one compact gate-flow for check-in, plus
+               a note for the separate nightly auto-close cron. -->
+          <div class="uc-panel" data-panel-step="4">
+            <div class="s1c-flow">
+              <div class="s1c-flow-wrap">
+                <svg class="s1c-flow-svg" viewBox="0 0 1080 340" width="1080" height="340">
+                  <defs>
+                    <marker id="s5a-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7a64bc" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                    <marker id="s5a-ah-no" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#c0475a" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+                  </defs>
+                  <path class="s1c-line" d="M100,170 L275,170" marker-end="url(#s5a-ah)"/>
+                  <path class="s1c-line" d="M405,170 L525,170" marker-end="url(#s5a-ah)"/>
+                  <path class="s1c-line no" d="M340,235 L340,260" marker-end="url(#s5a-ah-no)"/>
+                  <path class="s1c-line" d="M655,170 L870,170" marker-end="url(#s5a-ah)"/>
+                  <path class="s1c-line no" d="M590,235 L590,268" marker-end="url(#s5a-ah-no)"/>
+                </svg>
+                <div class="s1c-pill start" style="left:50px;top:170px;">Check in</div>
+                <div class="s1c-diamond" style="left:340px;top:170px;"><span>Session open?</span></div>
+                <div class="s1c-pill stop" style="left:340px;top:290px;">WORK_SESSION<br>_ALREADY_OPEN</div>
+                <div class="s1c-diamond" style="left:590px;top:170px;"><span>Before 08:45 / 13:30?</span></div>
+                <div class="s1c-pill ok" style="left:930px;top:170px;">On time</div>
+                <div class="s1c-branch-label" style="left:360px;top:250px;">yes</div>
+                <div class="s1c-branch-label" style="left:465px;top:153px;">no</div>
+                <div class="s1c-branch-label" style="left:762px;top:153px;">yes</div>
+                <div class="s1c-branch-label" style="left:610px;top:250px;">no</div>
+                <div class="s1c-pill stop" style="left:590px;top:290px;">Late</div>
+              </div>
+              <p class="s1c-flow-note">A nightly <code>3 AM</code> cron auto-closes any session still open, capped at the shift's <b>scheduled</b> end time &mdash; "avoid penalizing the user for time after working hours" (code comment).</p>
+            </div>
+          </div>
+
         </div>
-        <p class="s1-closing reveal-item" data-reveal-step="3">Four self-contained aggregates, <b>one shared notification backbone</b> &mdash; the same lock-guarded fan-out pattern Sprint 5 extends into system alerts.</p>
       </div>
     </div>
   </section>
@@ -1707,7 +1803,7 @@
           <div class="s1-arrow">&rarr;</div>
           <div class="s1-node"><div class="s1-node-t">Outbox</div><div class="s1-node-d">row inserted, isSent:false</div></div>
           <div class="s1-arrow">&rarr;</div>
-          <div class="s1-node scoped"><div class="s1-node-t">Sender Cron</div><div class="s1-node-d">PostgreSQL lock &mdash; flips isSent:true</div></div>
+          <div class="s1-node scoped"><div class="s1-node-t">Sender Cron</div><div class="s1-node-d">row lock (SKIP LOCKED) &mdash; flips isSent:true</div></div>
           <div class="s1-arrow">&rarr;</div>
           <div class="s4-channels s5-channels">
             <div class="s4-channel">In-app</div>

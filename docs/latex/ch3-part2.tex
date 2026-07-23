@@ -248,9 +248,12 @@ business-unit-scoped access model introduced in Sprint~2.
 \begin{itemize}
   \item \texttt{reminderAt} must be \textbf{in the future}; the service rejects any value
     \texttt{<= now()}.
-  \item The reminder follows a \textbf{status machine}: \texttt{PENDING \textrightarrow{} SENT
-    \textrightarrow{} DISMISSED} for normal flow, or \texttt{PENDING \textrightarrow{} CANCELLED}
-    for manual cancellation. Dismissing an already-dismissed or cancelled reminder is rejected.
+  \item The reminder follows a \textbf{status machine}: \texttt{PENDING \textrightarrow{} SENT} on
+    delivery, and \texttt{PENDING \textrightarrow{} DISMISSED} when the user dismisses it --- SENT
+    is not a prerequisite, a still-pending reminder can be dismissed directly.
+    \texttt{PENDING \textrightarrow{} CANCELLED} is not a manual action: it is an automatic side
+    effect scoped to sprint-linked reminders, triggered when the parent sprint is stopped,
+    completed, or deleted. Dismissing an already-dismissed or cancelled reminder is rejected.
   \item The target is \textbf{polymorphic}: \texttt{entityType} (\texttt{TASK}, \texttt{SPRINT},
     \texttt{MILESTONE}, \texttt{PROJECT}, \texttt{CUSTOM}) plus \texttt{entityId} links a reminder
     to any entity kind without requiring a typed foreign key per entity.
