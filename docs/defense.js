@@ -543,9 +543,13 @@ var METRIC_SETS = {
   ],
   's4-task-detail': [
     { src: 'latex/figures/screenshot_P18a.png', alt: 'Task detail sheet — header, description, points, labels, and dependencies',
-      cap: 'Type (<code>STORY</code>), priority, and a free-string status feed the Kanban column. <b>Labels</b> are project-level <code>TaskLabel</code> rows attached through a <code>TaskLabelAssignment</code> junction. <b>Dependencies</b> are blocking / blocked-by links to other tasks, guarded against cycles on every add. <b>Subtasks</b> go one level deep, linked back here by <code>parentTaskId</code>.' },
+      cap: '<div class="s2-callout"><div class="s2-callout-t">Labels</div><div class="s2-callout-d"><code>TaskLabel</code> &middot; junction table</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Dependencies</div><div class="s2-callout-d">blocking / blocked-by &middot; cycle-guarded</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Subtasks</div><div class="s2-callout-d">1 level &middot; <code>parentTaskId</code></div></div>' },
     { src: 'latex/figures/screenshot_P18b.png', alt: 'Task detail sheet — time entries, attachments, and comments',
-      cap: '<b>Time entries</b> each log their own hours; the task\'s <code>actualHours</code> is re-aggregated as their sum on every write &mdash; 15.5h here from one entry. <b>Attachments</b> store files per task. <b>Comments</b> support <code>@mentions</code> that notify inside the same transaction, plus likes &mdash; capped at one <code>TaskCommentLike</code> per user.' }
+      cap: '<div class="s2-callout"><div class="s2-callout-t">Time entries</div><div class="s2-callout-d">sum &rarr; <code>actualHours</code> &middot; 15.5h</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Attachments</div><div class="s2-callout-d">files, per task</div></div>' +
+           '<div class="s2-callout"><div class="s2-callout-t">Comments</div><div class="s2-callout-d"><code>@mentions</code> &middot; 1 like / user</div></div>' }
   ],
   's4-capability-tiers': [
     { body:

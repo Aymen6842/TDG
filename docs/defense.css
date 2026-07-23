@@ -996,6 +996,14 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .s3-state.running { border-color: var(--brand-deep); background: var(--brand-soft); color: var(--brand-deep); }
 .s3-fsm-note { margin-top: 26px; font-size: 13.5px; color: var(--muted); text-align: center; max-width: 480px; }
 .s3-fsm-note b { color: var(--text); }
+/* compact keyword+phrase chips — replaces a prose note with scannable tags */
+.s3b-specs { display: flex; gap: 14px; margin-top: 28px; }
+.s3b-spec {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 20px; border-radius: 12px;
+  background: #fff; border: 1px solid var(--line); box-shadow: 0 6px 14px rgba(40,30,80,.05); min-width: 150px;
+}
+.s3b-spec b { font-size: 13.5px; color: var(--brand-deep); font-weight: 750; }
+.s3b-spec span { font-size: 11.5px; color: var(--muted); font-family: var(--mono); }
 
 /* class relationships: real UML-style class boxes (name + attributes), sourced
    1:1 from fig_3_17 / agile.schema.prisma. Anchored top-left (not centered)
@@ -1070,9 +1078,9 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 .s4td-viewer .mv-layer { flex-direction: row; gap: 40px; }
 .s4td-shot { width: 300px; flex: none; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 20px 46px rgba(40,30,80,.14); }
 .s4td-shot img { display: block; width: 100%; height: auto; }
-.s4td-cap { max-width: 620px; text-align: left; font-size: 14px; line-height: 1.6; color: var(--text); margin: 0; }
-.s4td-cap b { color: var(--brand-deep); }
-.s4td-cap code { font-family: var(--mono); font-size: 12.5px; color: var(--brand); }
+.s4td-cap { display: flex; flex-direction: column; gap: 14px; width: 620px; }
+.s4td-cap .s2-callout { width: auto; }
+.s4td-cap .s2-callout-d { font-size: 13px; }
 
 /* capability tiers — same pager, HTML body per page instead of a screenshot
    (there's nothing to photograph here, just permission logic to explain).

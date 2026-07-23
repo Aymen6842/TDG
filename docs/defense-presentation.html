@@ -1389,7 +1389,11 @@
                   <div class="s3b-node sm custom">QA_SIGNOFF<span>custom</span></div>
                 </div>
               </div>
-              <p class="s3-fsm-note">Columns are <b>data-driven</b>: <code>ProjectTaskStatus</code> rows hold the columns, their order, and each one's <code>allowedTransitions</code> &mdash; e.g. <code>TESTING &rarr; [IN_REVIEW, DONE]</code>. A team can add a column like the dashed one above the same way, with its own transition list. <b>WIP limits</b> (shown as an example above) live in the project's <code>kanbanSettings</code> JSON and are checked on every move.</p>
+              <div class="s3b-specs">
+                <div class="s3b-spec"><b>Data-driven</b><span><code>ProjectTaskStatus</code> rows</span></div>
+                <div class="s3b-spec"><b>WIP-limited</b><span><code>kanbanSettings</code> JSON</span></div>
+                <div class="s3b-spec"><b>Extensible</b><span>custom column, no migration</span></div>
+              </div>
             </div>
           </div>
 
@@ -1440,11 +1444,11 @@
               <div class="mv-page" data-metric-page></div>
               <div class="mv-layer mv-active">
                 <div class="s4td-shot"><img data-metric-img src="latex/figures/screenshot_P18a.png" alt="Task detail sheet — header, description, points, labels, and dependencies"></div>
-                <p class="s4td-cap" data-metric-caption></p>
+                <div class="s4td-cap" data-metric-caption></div>
               </div>
               <div class="mv-layer">
                 <div class="s4td-shot"><img data-metric-img alt=""></div>
-                <p class="s4td-cap" data-metric-caption></p>
+                <div class="s4td-cap" data-metric-caption></div>
               </div>
             </div>
           </div>
