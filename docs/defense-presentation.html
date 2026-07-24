@@ -150,7 +150,7 @@
         <div class="ho-info">
           <div class="ho-eyebrow">Host Organization</div>
           <h2 class="ho-title">Tawer Digital Group</h2>
-          <p class="ho-desc">A Sfax-based digital agency turning ideas into brands, platforms and campaigns — split into two units: <b>Tawer Dev</b> for software, <b>Tawer Creative</b> for marketing &amp; branding. The internship took place inside Tawer Dev.</p>
+          <p class="ho-desc">A Sfax-based digital agency, two units — <b>Tawer Dev</b> for software, <b>Tawer Creative</b> for marketing &amp; branding. Internship: inside Tawer Dev.</p>
           <div class="ho-stats">
             <div class="stat"><div class="stat-v">2<span>yrs</span></div><div class="stat-k">Experience</div></div>
             <div class="stat"><div class="stat-v">30<span>+</span></div><div class="stat-k">Clients</div></div>
@@ -190,6 +190,53 @@
         <h2 class="sub-intro-title">The Problem</h2>
       </div>
       <div class="sub-body">
+        <div class="deck-eyebrow">WHY THE CURRENT TOOLCHAIN FALLS SHORT</div>
+        <div class="prob-body">
+        <div class="prob-illus reveal-item" data-reveal-step="1" aria-hidden="true">
+          <svg viewBox="0 0 860 224">
+            <!-- confused team member -->
+            <g class="pi-fig">
+              <circle cx="62" cy="58" r="17"/>
+              <path d="M62 75 V128 M62 90 L38 112 M62 90 L88 108 M62 128 L44 166 M62 128 L80 166"/>
+            </g>
+            <circle class="pi-bub" cx="90" cy="44" r="3.4"/>
+            <circle class="pi-bub" cx="101" cy="32" r="5"/>
+            <rect class="pi-bubble" x="110" y="2" width="46" height="36" rx="11"/>
+            <text class="pi-q" x="133" y="28">?</text>
+            <!-- scattered tools -->
+            <g class="pi-tool" transform="translate(250,26) rotate(-5 55 37)">
+              <rect width="110" height="74" rx="10"/>
+              <line x1="0" y1="18" x2="110" y2="18"/>
+              <path class="pi-glyph" d="M30 38 h50 v22 h-30 l-9 8 v-8 h-11 z"/>
+              <text class="pi-lab" x="55" y="102">Chat app</text>
+            </g>
+            <g class="pi-tool" transform="translate(422,102) rotate(4 55 37)">
+              <rect width="110" height="74" rx="10"/>
+              <line x1="0" y1="18" x2="110" y2="18"/>
+              <path class="pi-glyph" d="M26 32 h58 v30 h-58 z M26 42 h58 M26 52 h58 M45 32 v30 M65 32 v30"/>
+              <text class="pi-lab" x="55" y="102">Spreadsheets</text>
+            </g>
+            <g class="pi-tool" transform="translate(592,18) rotate(-4 55 37)">
+              <rect width="110" height="74" rx="10"/>
+              <line x1="0" y1="18" x2="110" y2="18"/>
+              <path class="pi-glyph" d="M28 30 h14 v32 h-14 z M48 30 h14 v22 h-14 z M68 30 h14 v27 h-14 z"/>
+              <text class="pi-lab" x="55" y="102">Task board</text>
+            </g>
+            <g class="pi-tool" transform="translate(736,96) rotate(5 55 37)">
+              <rect width="110" height="74" rx="10"/>
+              <line x1="0" y1="18" x2="110" y2="18"/>
+              <path class="pi-glyph" d="M28 34 h54 v28 h-54 z M28 34 l27 18 l27 -18"/>
+              <text class="pi-lab" x="55" y="102">Email</text>
+            </g>
+            <!-- tangled sync lines -->
+            <path class="pi-link" d="M360 70 C 400 120, 400 60, 430 120"/>
+            <path class="pi-link" d="M368 84 C 470 180, 520 40, 596 62"/>
+            <path class="pi-link" d="M534 140 C 600 170, 640 120, 700 60"/>
+            <path class="pi-link" d="M646 96 C 660 150, 700 160, 738 132"/>
+            <text class="pi-x" x="452" y="112">&#10005;</text>
+            <text class="pi-x" x="640" y="140">&#10005;</text>
+          </svg>
+        </div>
         <div class="problem-cards">
           <div class="p-card reveal-item" data-reveal-step="1">
             <div class="p-icon">
@@ -240,12 +287,13 @@
             <p class="p-desc">No single place for a copilot to search internal data.</p>
           </div>
         </div>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ===== SLIDE 6 : EXISTING SOLUTIONS — 01.3 ===== -->
-  <section class="slide slide-existing sub-section-slide" data-steps="5">
+  <section class="slide slide-existing sub-section-slide" data-steps="6">
     <div class="stepper">
       <div class="step-item"><span class="step-tag">01.1</span><span class="step-label">Host Organization</span></div>
       <div class="step-sep"></div>
@@ -270,6 +318,7 @@
         <h2 class="sub-intro-title">Existing Solutions</h2>
       </div>
       <div class="sub-body">
+        <div class="deck-eyebrow">CAN ONE OFF-THE-SHELF TOOL COVER TDG'S NEEDS?</div>
         <div class="cmp-wrap">
           <div class="cmp2">
             <!-- header row (each tool column reveals on its own click) -->
@@ -277,48 +326,57 @@
             <div class="c2-head rc" data-reveal-step="2"><svg class="logo" viewBox="0 0 16 16" fill="#24292f"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.65 7.65 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>GitHub Projects</div>
             <div class="c2-head rc" data-reveal-step="3"><svg class="logo" viewBox="0 0 24 24" fill="none" stroke="#2684FF" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"><path d="M4 8l8 8 8-8"/><path d="M8 4l4 4 4-4" opacity=".55"/></svg>Jira</div>
             <div class="c2-head rc" data-reveal-step="4"><svg class="logo" viewBox="0 0 24 24"><path fill="#7b68ee" d="M3.5 16.8 7 14.2c1 1.6 2.6 2.4 4.5 2.4s3.5-.8 4.5-2.4l3.5 2.6c-1.8 2.6-4.8 4-8 4s-6.2-1.4-8-4Z"/><path fill="#ff02c6" d="M12 3 5.5 8.4l2.9 3.4L12 8.6l3.6 3.2 2.9-3.4z"/></svg>ClickUp</div>
+            <div class="c2-head c2-ours rc" data-reveal-step="5"><svg class="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v18M5 6.5l14 11M19 6.5l-14 11"/></svg>Tawer Management</div>
 
             <div class="c2-crit rc" data-reveal-step="1">Agile backlog — epics, sprints, analytics</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="2">✕</div>
             <div class="c2-cell c2-yes rc"  data-reveal-step="3">✓</div>
             <div class="c2-cell c2-part rc" data-reveal-step="4">◑</div>
+            <div class="c2-cell c2-yes c2-ours rc" data-reveal-step="5">✓</div>
 
             <div class="c2-crit rc" data-reveal-step="1">Time &amp; attendance tracking</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="2">✕</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="3">✕</div>
             <div class="c2-cell c2-part rc" data-reveal-step="4">◑</div>
+            <div class="c2-cell c2-yes c2-ours rc" data-reveal-step="5">✓</div>
 
             <div class="c2-crit rc" data-reveal-step="1">Calendar &amp; event management</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="2">✕</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="3">✕</div>
             <div class="c2-cell c2-part rc" data-reveal-step="4">◑</div>
+            <div class="c2-cell c2-yes c2-ours rc" data-reveal-step="5">✓</div>
 
             <div class="c2-crit rc" data-reveal-step="1">Multi-channel notifications</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="2">✕</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="3">✕</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="4">✕</div>
+            <div class="c2-cell c2-yes c2-ours rc" data-reveal-step="5">✓</div>
 
             <div class="c2-crit rc" data-reveal-step="1">Infrastructure monitoring</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="2">✕</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="3">✕</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="4">✕</div>
+            <div class="c2-cell c2-yes c2-ours rc" data-reveal-step="5">✓</div>
 
             <div class="c2-crit rc" data-reveal-step="1">AI copilot grounded in project data</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="2">✕</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="3">✕</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="4">✕</div>
+            <div class="c2-cell c2-yes c2-ours rc" data-reveal-step="5">✓</div>
 
             <div class="c2-crit rc" data-reveal-step="1">Fine-grained RBAC — ~31 roles</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="2">✕</div>
             <div class="c2-cell c2-yes rc"  data-reveal-step="3">✓</div>
             <div class="c2-cell c2-part rc" data-reveal-step="4">◑</div>
+            <div class="c2-cell c2-yes c2-ours rc" data-reveal-step="5">✓</div>
 
             <div class="c2-crit rc" data-reveal-step="1">Self-hosted / data sovereignty</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="2">✕</div>
             <div class="c2-cell c2-part rc" data-reveal-step="3">◑</div>
             <div class="c2-cell c2-no rc"   data-reveal-step="4">✕</div>
+            <div class="c2-cell c2-yes c2-ours rc" data-reveal-step="5">✓</div>
           </div>
-          <div class="cmp2-note">✓ full &nbsp;·&nbsp; ◑ partial &nbsp;·&nbsp; ✕ none &nbsp;—&nbsp; full 12-criterion study in §1.4</div>
+          <div class="cmp2-note">✓ full &nbsp;·&nbsp; ◑ partial &nbsp;·&nbsp; ✕ none &nbsp;—&nbsp; 12 criteria evaluated</div>
         </div>
       </div>
     </div>
@@ -346,6 +404,7 @@
         <h2 class="sub-intro-title">Proposed Solution</h2>
       </div>
       <div class="sub-body prop-body">
+        <div class="deck-eyebrow">ONE PLATFORM, PURPOSE-BUILT FOR TDG</div>
         <p class="prop-statement">No off-the-shelf tool combines TDG's <b>workflows</b>, <b>access model</b>, and <b>AI context</b> in one platform — so we built <b>Tawer Management</b>.</p>
         <div class="prop-diagram">
           <svg class="prop-lines" viewBox="0 0 880 316" preserveAspectRatio="none">
@@ -484,7 +543,8 @@
         <h2 class="sub-intro-title">Methodology</h2>
       </div>
       <div class="sub-body why-scrum-body">
-        <p class="why-scrum-line">We chose <b>Scrum</b> to deliver a broad platform incrementally, validate each module with TDG, and adapt priorities as the project evolved.</p>
+        <div class="deck-eyebrow">WHY SCRUM</div>
+        <p class="why-scrum-line">We chose <b>Scrum</b> — deliver incrementally, validate with TDG, adapt priorities.</p>
         <div class="why-scrum-cards">
           <div class="why-scrum-card reveal-item" data-reveal-step="2"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l4 4 6-8"/><path d="M16 7h4v4"/></svg></div><h3>Incremental delivery</h3><p>Each sprint produced a working slice of the platform.</p></div>
           <div class="why-scrum-card reveal-item" data-reveal-step="3"><div class="why-scrum-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/></svg></div><h3>Continuous feedback</h3><p>Reviews with TDG kept the solution close to operational needs.</p></div>
@@ -596,7 +656,8 @@
         </div>
         <h2 class="sub-intro-title">Architecture</h2>
       </div>
-      <div class="sub-body arch-body">
+      <div class="sub-body arch-body"><div class="deck-eyebrow">MODULAR MONOLITH · ONE DATABASE</div>
+        
         <div class="arch-stage-wrap"><div class="arch-stage">
           <svg class="arch-links" viewBox="0 0 1000 452" preserveAspectRatio="none">
             <defs>
@@ -606,15 +667,14 @@
             <path class="arch-link" data-reveal-step="1" d="M58,140 L90,158" marker-end="url(#arch-ah)"/>
             <path class="arch-link" data-reveal-step="1" d="M58,220 L90,202" marker-end="url(#arch-ah)"/>
             <path class="arch-link" data-reveal-step="1" d="M300,175 L326,175" marker-end="url(#arch-ah)"/>
-            <path class="arch-link" data-reveal-step="2" d="M556,110 L580,110" marker-end="url(#arch-ah)"/>
+            <path class="arch-link" data-reveal-step="2" d="M556,110 L600,110" marker-end="url(#arch-ah)"/>
             <path class="arch-link" data-reveal-step="2" d="M470,322 L510,349" marker-end="url(#arch-ah)"/>
-            <path class="arch-link dash" data-reveal-step="2" d="M700,322 L630,349" marker-end="url(#arch-ah2)"/>
-            <path class="arch-link" data-reveal-step="2" d="M792,175 L810,175" marker-end="url(#arch-ah)"/>
+            <path class="arch-link dash" data-reveal-step="2" d="M712,322 L648,349" marker-end="url(#arch-ah2)"/>
+            <path class="arch-link" data-reveal-step="2" d="M812,175 L852,175" marker-end="url(#arch-ah)"/>
             <text class="arch-linklabel" data-reveal-step="1" x="313" y="167" text-anchor="middle">REST · JWT</text>
-            <text class="arch-linklabel" data-reveal-step="2" x="568" y="101" text-anchor="middle">module call</text>
-            <text class="arch-linklabel" data-reveal-step="2" x="493" y="345" text-anchor="middle">Prisma</text>
-            <text class="arch-linklabel dash" data-reveal-step="2" x="668" y="345" text-anchor="middle">pgvector</text>
-            <text class="arch-linklabel" data-reveal-step="2" x="801" y="167" text-anchor="middle">LLM API</text>
+                        <text class="arch-linklabel" data-reveal-step="2" x="493" y="345" text-anchor="middle">Prisma</text>
+            <text class="arch-linklabel dash" data-reveal-step="2" x="676" y="345" text-anchor="middle">pgvector</text>
+            <text class="arch-linklabel" data-reveal-step="2" x="832" y="167" text-anchor="middle">API</text>
           </svg>
 
           <div class="arch-box arch-actors" data-reveal-step="1" style="left:0;top:110px;">
@@ -622,7 +682,7 @@
             <div class="arch-actor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Managers<br>&amp; execs</span></div>
           </div>
 
-          <div class="arch-box layer pres" data-reveal-step="1" style="left:90px;top:30px;width:210px;height:290px;">
+          <div class="arch-box layer pres" data-reveal-step="1" style="left:90px;top:30px;width:210px;height:302px;">
             <div class="arch-card">
               <div class="arch-card-eyebrow">Presentation · Browser</div>
               <div class="arch-card-title">Next.js 16</div>
@@ -639,7 +699,7 @@
             <div class="arch-layer-caption">Presentation Layer</div>
           </div>
 
-          <div class="arch-box layer app" data-reveal-step="1" style="left:326px;top:30px;width:230px;height:290px;">
+          <div class="arch-box layer app" data-reveal-step="1" style="left:326px;top:30px;width:230px;height:302px;">
             <div class="arch-card">
               <div class="arch-card-eyebrow">Application · NestJS 11</div>
               <div class="arch-card-title">REST API</div>
@@ -654,7 +714,7 @@
             </div>
           </div>
 
-          <div class="arch-box layer ai" data-reveal-step="2" style="left:580px;top:30px;width:212px;height:290px;">
+          <div class="arch-box layer ai" data-reveal-step="2" style="left:600px;top:30px;width:212px;height:302px;">
             <div class="arch-card">
               <div class="arch-card-eyebrow">AI Copilot · in-process module</div>
               <div class="arch-card-title">RAG Pipeline</div>
@@ -668,19 +728,19 @@
             </div>
           </div>
 
-          <div class="arch-box terminal" data-reveal-step="2" style="left:450px;top:350px;width:240px;height:88px;">
+          <div class="arch-box terminal" data-reveal-step="2" style="left:436px;top:350px;width:300px;height:84px;">
             <svg class="arch-db-icn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
             <div class="arch-card-title" style="margin-top:0;">PostgreSQL + pgvector</div>
             <div class="arch-card-sub">One store — relational &amp; vector · 55 models</div>
           </div>
 
-          <div class="arch-box terminal" data-reveal-step="2" style="left:810px;top:110px;width:150px;height:130px;">
+          <div class="arch-box terminal" data-reveal-step="2" style="left:852px;top:110px;width:148px;height:130px;">
             <div class="arch-card-eyebrow" style="text-align:center;">External · LLM</div>
             <div class="arch-logos" style="justify-content:center;margin:12px 0;"><span class="tlogo tlogo-gemini" style="width:98px;height:32px;"></span></div>
             <div class="arch-card-sub" style="text-align:center;">embeddings · generation</div>
           </div>
         </div></div>
-        <p class="arch-caption" data-reveal-step="3">A <b>modular monolith</b>: the AI copilot is a module inside the API, not a separate service, and both share <b>one Postgres instance</b> for relational and vector data — grounded in the platform's own live domain data, not uploaded files.</p>
+        <p class="arch-caption" data-reveal-step="3">A <b>modular monolith</b> — the copilot is a module inside the API, sharing <b>one Postgres instance</b> for relational + vector data.</p>
       </div>
     </div>
   </section>
@@ -708,6 +768,7 @@
         <h2 class="sub-intro-title">Use Cases</h2>
       </div>
       <div class="sub-body uc-body">
+        <div class="deck-eyebrow">WHO USES TAWER &mdash; AND FOR WHAT</div>
         <div class="uc-tabs" data-reveal-step="1">
           <div class="uc-tab">Manager</div>
           <div class="uc-tab">Team Member</div>
@@ -715,18 +776,30 @@
         </div>
         <div class="uc-conveyor" data-reveal-step="1">
 
-          <!-- PANEL 1 — Manager: PM + Scrum Master, 2 cases, dead simple -->
+          <!-- PANEL 1 — Manager: PM + Scrum Master / PO, five capabilities.
+               Report §1.3: project managers & Scrum Masters do project
+               lifecycle management, sprint governance, team coordination and
+               progress tracking — so the diagram carries the full set, split
+               by which actor owns each, not just two summary cases. -->
           <div class="uc-panel" data-panel-step="1">
-            <svg class="uc-svg" viewBox="0 0 760 320" width="720" height="337">
-              <rect class="uc-boundary-rect" x="300" y="52" width="390" height="216" rx="18"/>
-              <rect x="316" y="42" width="168" height="18" fill="#f5f4f8"/>
-              <text class="uc-boundary-title" x="324" y="55">TAWER MANAGEMENT</text>
-              <line class="uc-link" x1="88" y1="120" x2="382" y2="120"/>
-              <line class="uc-link" x1="88" y1="220" x2="382" y2="220"/>
-              <g class="uc-actor"><g class="fig"><circle cx="70" cy="88" r="8"/><line x1="70" y1="96" x2="70" y2="114"/><line x1="59" y1="103" x2="81" y2="103"/><line x1="70" y1="114" x2="60" y2="129"/><line x1="70" y1="114" x2="80" y2="129"/></g><text x="70" y="146">Project</text><text x="70" y="160">Manager</text></g>
-              <g class="uc-actor"><g class="fig"><circle cx="70" cy="188" r="8"/><line x1="70" y1="196" x2="70" y2="214"/><line x1="59" y1="203" x2="81" y2="203"/><line x1="70" y1="214" x2="60" y2="229"/><line x1="70" y1="214" x2="80" y2="229"/></g><text x="70" y="246">Scrum Master</text><text x="70" y="260" style="font-size:9.5px;font-weight:600;fill:var(--faint)">/ Product Owner</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="120" rx="140" ry="34"/><text x="530" y="116" style="font-size:13px;">Manage projects</text><text x="530" y="133" style="font-size:13px;">&amp; membership</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="220" rx="140" ry="34"/><text x="530" y="216" style="font-size:13px;">Run agile backlog</text><text x="530" y="233" style="font-size:13px;">&amp; sprints</text></g>
+            <svg class="uc-svg" viewBox="0 0 760 520" width="720" height="493">
+              <rect class="uc-boundary-rect" x="300" y="20" width="390" height="480" rx="18"/>
+              <rect x="316" y="10" width="168" height="18" fill="#f5f4f8"/>
+              <text class="uc-boundary-title" x="324" y="23">TAWER MANAGEMENT</text>
+              <!-- Project Manager (top) -> projects, tasks, progress -->
+              <line class="uc-link" x1="90" y1="150" x2="382" y2="60"/>
+              <line class="uc-link" x1="90" y1="150" x2="382" y2="155"/>
+              <line class="uc-link" x1="90" y1="150" x2="382" y2="250"/>
+              <!-- Scrum Master / PO (bottom) -> backlog, sprints -->
+              <line class="uc-link" x1="90" y1="375" x2="382" y2="350"/>
+              <line class="uc-link" x1="90" y1="375" x2="382" y2="445"/>
+              <g class="uc-actor"><g class="fig"><circle cx="70" cy="118" r="8"/><line x1="70" y1="126" x2="70" y2="144"/><line x1="59" y1="133" x2="81" y2="133"/><line x1="70" y1="144" x2="60" y2="159"/><line x1="70" y1="144" x2="80" y2="159"/></g><text x="70" y="176">Project</text><text x="70" y="190">Manager</text></g>
+              <g class="uc-actor"><g class="fig"><circle cx="70" cy="343" r="8"/><line x1="70" y1="351" x2="70" y2="369"/><line x1="59" y1="358" x2="81" y2="358"/><line x1="70" y1="369" x2="60" y2="384"/><line x1="70" y1="369" x2="80" y2="384"/></g><text x="70" y="401">Scrum Master</text><text x="70" y="415" style="font-size:12.5px;font-weight:600;fill:var(--faint)">/ Product Owner</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="60" rx="140" ry="34"/><text x="530" y="56" style="font-size:16px;">Manage projects</text><text x="530" y="73" style="font-size:16px;">&amp; membership</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="155" rx="140" ry="34"/><text x="530" y="151" style="font-size:16px;">Assign &amp; track tasks</text><text x="530" y="168" style="font-size:16px;">on the Kanban board</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="250" rx="140" ry="34"/><text x="530" y="246" style="font-size:16px;">Monitor progress</text><text x="530" y="263" style="font-size:16px;">&amp; analytics</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="350" rx="140" ry="34"/><text x="530" y="346" style="font-size:16px;">Run agile backlog</text><text x="530" y="363" style="font-size:16px;">&amp; sprints</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="445" rx="140" ry="34"/><text x="530" y="441" style="font-size:16px;">Groom &amp; prioritize</text><text x="530" y="458" style="font-size:16px;">the backlog</text></g>
             </svg>
           </div>
 
@@ -747,11 +820,11 @@
               <path class="uc-extend" d="M530,94 L530,120" marker-end="url(#uc-ah3)"/>
               <text class="uc-extend-label" x="600" y="110">&#171;extend&#187;</text>
               <g class="uc-actor"><g class="fig"><circle cx="70" cy="255" r="8"/><line x1="70" y1="263" x2="70" y2="281"/><line x1="59" y1="270" x2="81" y2="270"/><line x1="70" y1="281" x2="60" y2="296"/><line x1="70" y1="281" x2="80" y2="296"/></g><text x="70" y="313">Member /</text><text x="70" y="327">Developer</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="60" rx="140" ry="34"/><text x="530" y="56" style="font-size:13px;">Track tasks on</text><text x="530" y="73" style="font-size:13px;">data-driven Kanban</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="150" rx="140" ry="30" style="stroke-dasharray:5 4;"/><text x="530" y="146" style="font-size:12.5px;">Estimate task</text><text x="530" y="162" style="font-size:12.5px;">effort (AI)</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="250" rx="140" ry="34"/><text x="530" y="246" style="font-size:13px;">Receive multi-channel</text><text x="530" y="263" style="font-size:13px;">notifications</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="350" rx="140" ry="34"/><text x="530" y="346" style="font-size:13px;">Manage personal</text><text x="530" y="363" style="font-size:13px;">productivity</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="450" rx="140" ry="34"/><text x="530" y="446" style="font-size:13px;">Ask AI copilot</text><text x="530" y="463" style="font-size:13px;">(grounded, cited)</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="60" rx="140" ry="34"/><text x="530" y="56" style="font-size:16px;">Track tasks on</text><text x="530" y="73" style="font-size:16px;">data-driven Kanban</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="150" rx="140" ry="30" style="stroke-dasharray:5 4;"/><text x="530" y="146" style="font-size:15.5px;">Estimate task</text><text x="530" y="162" style="font-size:15.5px;">effort (AI)</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="250" rx="140" ry="34"/><text x="530" y="246" style="font-size:16px;">Receive multi-channel</text><text x="530" y="263" style="font-size:16px;">notifications</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="350" rx="140" ry="34"/><text x="530" y="346" style="font-size:16px;">Manage personal</text><text x="530" y="363" style="font-size:16px;">productivity</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="450" rx="140" ry="34"/><text x="530" y="446" style="font-size:16px;">Ask AI copilot</text><text x="530" y="463" style="font-size:16px;">(grounded, cited)</text></g>
             </svg>
           </div>
 
@@ -767,13 +840,13 @@
               <line class="uc-link" x1="90" y1="240" x2="382" y2="310"/>
               <line class="uc-link" x1="90" y1="390" x2="382" y2="390"/>
               <g class="uc-actor"><g class="fig"><circle cx="70" cy="58" r="8"/><line x1="70" y1="66" x2="70" y2="84"/><line x1="59" y1="73" x2="81" y2="73"/><line x1="70" y1="84" x2="60" y2="99"/><line x1="70" y1="84" x2="80" y2="99"/></g><text x="70" y="116">HR /</text><text x="70" y="130">Admin</text></g>
-              <g class="uc-actor"><g class="fig"><circle cx="70" cy="208" r="8"/><line x1="70" y1="216" x2="70" y2="234"/><line x1="59" y1="223" x2="81" y2="223"/><line x1="70" y1="234" x2="60" y2="249"/><line x1="70" y1="234" x2="80" y2="249"/></g><text x="70" y="266">Executive</text><text x="70" y="278" style="font-size:9.5px;font-weight:600;fill:var(--faint)">CEO·CTO·CMO</text></g>
+              <g class="uc-actor"><g class="fig"><circle cx="70" cy="208" r="8"/><line x1="70" y1="216" x2="70" y2="234"/><line x1="59" y1="223" x2="81" y2="223"/><line x1="70" y1="234" x2="60" y2="249"/><line x1="70" y1="234" x2="80" y2="249"/></g><text x="70" y="266">Executive</text><text x="70" y="278" style="font-size:12.5px;font-weight:600;fill:var(--faint)">CEO·CTO·CMO</text></g>
               <g class="uc-actor"><g class="fig"><circle cx="70" cy="358" r="8"/><line x1="70" y1="366" x2="70" y2="384"/><line x1="59" y1="373" x2="81" y2="373"/><line x1="70" y1="384" x2="60" y2="399"/><line x1="70" y1="384" x2="80" y2="399"/></g><text x="70" y="416">DevOps</text><text x="70" y="430">Engineer</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="70" rx="140" ry="34"/><text x="530" y="66" style="font-size:13px;">Administer users,</text><text x="530" y="83" style="font-size:13px;">roles &amp; teams</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="150" rx="140" ry="34"/><text x="530" y="146" style="font-size:13px;">Oversee portfolio</text><text x="530" y="163" style="font-size:13px;">&amp; analytics</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="230" rx="140" ry="34"/><text x="530" y="226" style="font-size:13px;">Manage projects</text><text x="530" y="243" style="font-size:13px;">&amp; membership</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="310" rx="140" ry="34"/><text x="530" y="306" style="font-size:13px;">Ask AI copilot</text><text x="530" y="323" style="font-size:13px;">(grounded, cited)</text></g>
-              <g class="uc-case"><ellipse cx="530" cy="390" rx="140" ry="34"/><text x="530" y="386" style="font-size:13px;">Monitor servers</text><text x="530" y="403" style="font-size:13px;">&amp; services</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="70" rx="140" ry="34"/><text x="530" y="66" style="font-size:16px;">Administer users,</text><text x="530" y="83" style="font-size:16px;">roles &amp; teams</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="150" rx="140" ry="34"/><text x="530" y="146" style="font-size:16px;">Oversee portfolio</text><text x="530" y="163" style="font-size:16px;">&amp; analytics</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="230" rx="140" ry="34"/><text x="530" y="226" style="font-size:16px;">Manage projects</text><text x="530" y="243" style="font-size:16px;">&amp; membership</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="310" rx="140" ry="34"/><text x="530" y="306" style="font-size:16px;">Ask AI copilot</text><text x="530" y="323" style="font-size:16px;">(grounded, cited)</text></g>
+              <g class="uc-case"><ellipse cx="530" cy="390" rx="140" ry="34"/><text x="530" y="386" style="font-size:16px;">Monitor servers</text><text x="530" y="403" style="font-size:16px;">&amp; services</text></g>
             </svg>
           </div>
 
@@ -804,7 +877,8 @@
         </div>
         <h2 class="sub-intro-title">Tech Stack</h2>
       </div>
-      <div class="sub-body stack-body">
+      <div class="sub-body stack-body"><div class="deck-eyebrow">ONE STACK, FOUR LAYERS</div>
+        
         <div class="stack-groups">
           <div class="stack-group g1" data-reveal-step="1">
             <div class="sg-head"><div class="sg-icn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><div><span class="sg-kicker">Frontend</span><div class="sg-title">Presentation</div></div></div>
@@ -885,7 +959,7 @@
         <h2 class="sub-intro-title">Foundations &amp; Auth</h2>
       </div>
       <div class="sub-body uc-body">
-        <div class="s1-kicker">Sprint 1 &middot; 3 weeks &middot; 41 SP</div>
+        <div class="deck-eyebrow">IDENTITY, AUTHENTICATION &amp; ACCESS CONTROL</div>
         <div class="s1-stats reveal-item" data-reveal-step="1">
           <div class="s1-stat"><div class="sv">~31</div><div class="sk">roles</div></div>
           <div class="s1-stat"><div class="sv">~120</div><div class="sk">permissions</div></div>
@@ -983,7 +1057,7 @@
                 <div class="s1c-branch-label" style="left:975px;top:143px;">yes</div>
                 <div class="s1c-branch-label loop-top" style="left:540px;top:22px;">stateless &mdash; every request re-verifies, no session kept</div>
               </div>
-              <p class="s1c-flow-note">A short-lived access token rides in the JWT above; when it expires, a separate <code>/auth/refresh</code> call rotates the stored <b>RefreshToken</b> for a new one &mdash; no re-login needed.</p>
+              <p class="s1c-flow-note">Expired JWT &rarr; <code>/auth/refresh</code> rotates the stored <b>RefreshToken</b> &mdash; no re-login.</p>
             </div>
           </div>
 
@@ -1018,6 +1092,7 @@
         <h2 class="sub-intro-title">Projects &amp; Membership</h2>
       </div>
       <div class="sub-body uc-body">
+        <div class="deck-eyebrow">PROJECTS, MEMBERSHIP &amp; INVITATIONS</div>
         <div class="uc-tabs" data-reveal-step="1">
           <div class="uc-tab">Project &amp; Team</div>
           <div class="uc-tab">Lifecycle</div>
@@ -1114,7 +1189,7 @@
                 <div class="s1c-branch-label" style="left:865px;top:70px;">yes</div>
                 <div class="s1c-branch-label" style="left:796px;top:164px;">no</div>
               </div>
-              <p class="s1c-flow-note">Managers can <b>resend</b> or <b>revoke</b> an invitation any time before acceptance; the accepting user's email must match the invited address, so one invite cannot be claimed by another account.</p>
+              <p class="s1c-flow-note"><b>Resend</b> / <b>revoke</b> before acceptance &middot; accepting email must match the invited address.</p>
             </div>
           </div>
 
@@ -1148,6 +1223,7 @@
         <h2 class="sub-intro-title">Agile Backlog</h2>
       </div>
       <div class="sub-body uc-body">
+        <div class="deck-eyebrow">THE AGILE BACKLOG</div>
         <div class="uc-tabs" data-reveal-step="1">
           <div class="uc-tab">Planning Artefacts</div>
           <div class="uc-tab">Sprint Lifecycle</div>
@@ -1291,7 +1367,7 @@
                 <div class="s3cd-mult" style="left:491px;top:309px;">1 &middot; 1..*</div>
                 <div class="s3cd-mult" style="left:601px;top:309px;">1 &middot; 0..*</div>
               </div>
-              <p class="s1c-flow-note">Epic, Sprint, and Milestone each attach to one <b>Project</b>. Sprint's i18n content and file attachments are child rows &mdash; the same content-table pattern used for projects. Fields match <code>agile.schema.prisma</code> exactly; <b>Task</b> (Module B) is covered in its own diagram.</p>
+              <p class="s1c-flow-note">One <b>Project</b> owns Epics, Sprints &amp; Milestones &middot; fields match <code>agile.schema.prisma</code> &middot; <b>Task</b> has its own diagram.</p>
             </div>
           </div>
 
@@ -1325,6 +1401,7 @@
         <h2 class="sub-intro-title">Tasks &amp; Kanban Engine</h2>
       </div>
       <div class="sub-body uc-body">
+        <div class="deck-eyebrow">THE DATA-DRIVEN KANBAN ENGINE</div>
         <div class="uc-tabs" data-reveal-step="1">
           <div class="uc-tab">Kanban</div>
           <div class="uc-tab">Board Rules</div>
@@ -1525,7 +1602,7 @@
                 <div class="s1c-branch-label" style="left:335px;top:47px;">app-enforced, no FK</div>
                 <div class="s1c-branch-label" style="left:745px;top:170px;">blocking / blocked by</div>
               </div>
-              <p class="s1c-flow-note"><code>Task.status</code> is a free string, so its link to <code>ProjectTaskStatus</code> is application-enforced, not a DB foreign key. <code>TaskContent</code> (i18n) is omitted &mdash; dormant per the report. Sprint/Epic/Milestone FK arrows into Task are already shown on 03.3's diagram.</p>
+              <p class="s1c-flow-note"><code>Task.status</code> is a free string, so its link to <code>ProjectTaskStatus</code> is application-enforced, not a DB foreign key. <code>TaskContent</code> (i18n) is omitted &mdash; not yet used.</p>
             </div>
           </div>
 
@@ -1622,6 +1699,7 @@
         <h2 class="sub-intro-title">Productivity Suite</h2>
       </div>
       <div class="sub-body uc-body">
+        <div class="deck-eyebrow">THE DAILY-WORK MODULES</div>
         <div class="uc-tabs" data-reveal-step="1">
           <div class="uc-tab">Modules</div>
           <div class="uc-tab">Reminder Lifecycle</div>
@@ -1742,7 +1820,7 @@
                 <div class="s1c-pill start" style="left:50px;top:170px;">Check in</div>
                 <div class="s1c-diamond" style="left:340px;top:170px;"><span>Session open?</span></div>
                 <div class="s1c-pill stop" style="left:340px;top:290px;">WORK_SESSION<br>_ALREADY_OPEN</div>
-                <div class="s1c-diamond" style="left:590px;top:170px;"><span>Before 08:45 / 13:30?</span></div>
+                <div class="s1c-diamond" style="left:590px;top:170px;"><span>Before<br>08:45 / 13:30?</span></div>
                 <div class="s1c-pill ok" style="left:930px;top:170px;">On time</div>
                 <div class="s1c-branch-label" style="left:360px;top:250px;">yes</div>
                 <div class="s1c-branch-label" style="left:465px;top:153px;">no</div>
@@ -1750,7 +1828,7 @@
                 <div class="s1c-branch-label" style="left:610px;top:250px;">no</div>
                 <div class="s1c-pill stop" style="left:590px;top:290px;">Late</div>
               </div>
-              <p class="s1c-flow-note">A nightly <code>3 AM</code> cron auto-closes any session still open, capped at the shift's <b>scheduled</b> end time &mdash; "avoid penalizing the user for time after working hours" (code comment).</p>
+              <p class="s1c-flow-note">Nightly <code>3 AM</code> cron closes forgotten sessions &mdash; capped at the shift's <b>scheduled</b> end.</p>
             </div>
           </div>
 
@@ -1784,6 +1862,7 @@
         <h2 class="sub-intro-title">Communication &amp; Operations</h2>
       </div>
       <div class="sub-body uc-body">
+        <div class="deck-eyebrow">NOTIFICATIONS &middot; MONITORING &middot; OUTBOX</div>
         <div class="uc-tabs" data-reveal-step="1">
           <div class="uc-tab">Notifications</div>
           <div class="uc-tab">Infrastructure Monitoring</div>
@@ -1794,7 +1873,7 @@
           <!-- PANEL 1 — Notifications: shared entry point + inbox/settings,
                paged like 03.4's Task Detail (same s4td-viewer classes). -->
           <div class="uc-panel" data-panel-step="1">
-            <div class="s3-metric-viewer s4td-viewer" data-metric-viewer="s6-notifications">
+            <div class="s3-metric-viewer s4td-viewer s4td-wide" data-metric-viewer="s6-notifications">
               <div class="mv-page" data-metric-page></div>
               <div class="mv-layer mv-active">
                 <div class="s4td-shot"><img data-metric-img src="latex/figures/screenshot_P27.png" alt="Notification bell dropdown and inbox list"></div>
@@ -1811,7 +1890,7 @@
                scoping (reusing the Capability Tiers role-badge language) +
                the six per-minute crons, paged over the two real screenshots. -->
           <div class="uc-panel" data-panel-step="2">
-            <div class="s3-metric-viewer s4td-viewer" data-metric-viewer="s6-infra">
+            <div class="s3-metric-viewer s4td-viewer s4td-wide" data-metric-viewer="s6-infra">
               <div class="mv-page" data-metric-page></div>
               <div class="mv-layer mv-active">
                 <div class="s4td-shot"><img data-metric-img src="latex/figures/screenshot_P29.png" alt="Server record fields — resources, billing, and status"></div>
@@ -1849,7 +1928,7 @@
                 <div class="s1c-node wide" style="left:725px;top:140px;">Route to managers<span>UserServerManagement</span></div>
                 <div class="s1c-pill ok" style="left:965px;top:140px;">Fan out<br>isSent:true</div>
               </div>
-              <p class="s1c-flow-note">No dedup on insert &mdash; a server that stays down gets a fresh outbox row <b>every minute</b> until it recovers. The push leg reuses the exact <code>createNotificationFromSystem()</code> from the Notifications tab.</p>
+              <p class="s1c-flow-note">No dedup &mdash; a down server gets a fresh row <b>every minute</b> until it recovers.</p>
             </div>
           </div>
 
@@ -1906,19 +1985,34 @@
       </div>
       <div class="sub-body">
         <div class="s1-body">
-          <div class="s1-kicker">Scrum organizes the sprint &middot; CRISP-DM organizes the AI work inside it</div>
+          <div class="deck-eyebrow">SCRUM FOR THE SPRINT &middot; CRISP-DM FOR THE AI</div>
           <div class="s1-flow" data-reveal-step="1">
-            <div class="s1-node"><div class="s1-node-t">Business<br>Understanding</div><div class="s1-node-d">Assistive, not autonomous &mdash; &ldquo;honesty over coverage&rdquo;</div></div>
+            <div class="s1-node">
+              <svg class="s1-node-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l19 8v13c0 14-8.5 24-19 31C21.5 51 13 41 13 27V14z"/></svg>
+              <div class="s1-node-t">Business<br>Understanding</div><div class="s1-node-d">Assistive, not autonomous &mdash; &ldquo;honesty over coverage&rdquo;</div>
+            </div>
             <div class="s1-arrow">&rarr;</div>
-            <div class="s1-node"><div class="s1-node-t">Data<br>Understanding</div><div class="s1-node-d">The platform's own 5 entity types &mdash; relational, permission-partitioned</div></div>
+            <div class="s1-node">
+              <svg class="s1-node-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="27" cy="27" r="15"/><path d="M38 38l14 14"/></svg>
+              <div class="s1-node-t">Data<br>Understanding</div><div class="s1-node-d">5 entity types &mdash; relational, permission-partitioned</div>
+            </div>
             <div class="s1-arrow">&rarr;</div>
-            <div class="s1-node"><div class="s1-node-t">Data<br>Preparation</div><div class="s1-node-d">Chunk ~2000/300-overlap &middot; sha256 hash &middot; 1536-dim embed</div></div>
+            <div class="s1-node">
+              <svg class="s1-node-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="18" height="18" rx="3"/><rect x="36" y="10" width="18" height="18" rx="3"/><rect x="10" y="36" width="18" height="18" rx="3"/><rect x="36" y="36" width="18" height="18" rx="3"/></svg>
+              <div class="s1-node-t">Data<br>Preparation</div><div class="s1-node-d">Chunk ~2000/300-overlap &middot; sha256 &middot; 1536-dim embed</div>
+            </div>
             <div class="s1-arrow">&rarr;</div>
-            <div class="s1-node guard"><div class="s1-node-t">Modeling</div><div class="s1-node-d">Hybrid vector+lexical (RRF) &middot; optional rerank &middot; k-NN estimator</div></div>
+            <div class="s1-node guard">
+              <svg class="s1-node-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="9"/><path d="M32 10v7M32 47v7M10 32h7M47 32h7M16 16l5 5M43 43l5 5M48 16l-5 5M21 43l-5 5"/></svg>
+              <div class="s1-node-t">Modeling</div><div class="s1-node-d">Hybrid vector+lexical (RRF) &middot; rerank &middot; k-NN estimator</div>
+            </div>
             <div class="s1-arrow">&rarr;</div>
-            <div class="s1-node scoped"><div class="s1-node-t">Evaluation</div><div class="s1-node-d">Recall@k &middot; MRR &middot; nDCG &middot; faithfulness &middot; citation P/R &middot; refusal &middot; est. error</div></div>
+            <div class="s1-node scoped">
+              <svg class="s1-node-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="8" width="44" height="48" rx="6"/><path d="M20 24l6 6 12-14"/><path d="M20 42h24"/></svg>
+              <div class="s1-node-t">Evaluation</div><div class="s1-node-d">Recall@k &middot; MRR &middot; faithfulness &middot; citation P/R &middot; refusal</div>
+            </div>
           </div>
-          <p class="s1-closing" data-reveal-step="2">No <b>Deployment</b> phase in the CRISP-DM sense &mdash; there is no model to ship. Gemini sits behind a managed API; the contribution is the retrieval, grounding, and scoping built around it.</p>
+          <p class="s1-closing" data-reveal-step="2">No <b>Deployment</b> phase &mdash; no model to ship. Gemini sits behind a managed API; the contribution is the retrieval, grounding, and scoping built around it.</p>
         </div>
       </div>
     </div>
@@ -1949,6 +2043,7 @@
         <h2 class="sub-intro-title">RAG Architecture</h2>
       </div>
       <div class="sub-body uc-body">
+        <div class="deck-eyebrow">HOW THE COPILOT KNOWS THE COMPANY'S DATA</div>
         <div class="uc-tabs" data-reveal-step="1">
           <div class="uc-tab">Indexing Pipeline</div>
           <div class="uc-tab">Retrieval &amp; Generation</div>
@@ -1977,7 +2072,12 @@
                 <div class="s1c-node wide" style="left:725px;top:140px;">Sweeper cron &middot; 1 min<span>Postgres lock &middot; claims &le;25 &middot; re-reads live row &middot; embeds changed chunks</span></div>
                 <div class="s1c-pill ok" style="left:965px;top:140px;">Embedded &amp;<br>searchable</div>
               </div>
-              <p class="s1c-flow-note">Every write to a <b>Task, Epic, Sprint, or Milestone</b> triggers this. Same per-minute distributed-lock cron pattern as the reminder scheduler (03.1) and the server sender (03.6). On failure, a retry with exponential backoff (30s &rarr; ~15 min) runs before a row is marked <b>FAILED</b>. A <b>nightly reconcile</b> re-queues any source newer than its embedding and enqueues deletes for orphaned embeddings &mdash; the index self-heals from any missed write.</p>
+              <p class="s1c-flow-note">Every write to a <b>Task, Epic, Sprint, or Milestone</b> triggers this &mdash; same per-minute distributed-lock cron pattern as the reminder scheduler (03.1) and the server sender (03.6).</p>
+              <div class="s3b-specs">
+                <div class="s3b-spec"><b>Retry with backoff</b><span>30s &rarr; ~15 min, then <code>FAILED</code></span></div>
+                <div class="s3b-spec"><b>Nightly reconcile</b><span>re-queues stale &middot; deletes orphaned</span></div>
+                <div class="s3b-spec"><b>Self-healing</b><span>no write is ever silently lost</span></div>
+              </div>
             </div>
           </div>
 
@@ -2068,7 +2168,7 @@
                as 03.1's refresh-token design. Paged like 03.3/03.6's 2-image
                metric-viewer pairs. -->
           <div class="uc-panel" data-panel-step="4">
-            <div class="s3-metric-viewer s4td-viewer" data-metric-viewer="s4-copilot-client">
+            <div class="s3-metric-viewer s4td-viewer s4td-wide" data-metric-viewer="s4-copilot-client">
               <div class="mv-page" data-metric-page></div>
               <div class="mv-layer mv-active">
                 <div class="s4td-shot"><img data-metric-img src="latex/figures/screenshot_P31.png" alt="Copilot panel: grounded answer with citation chips"></div>
@@ -2111,22 +2211,26 @@
         <h2 class="sub-intro-title">Task Effort Estimation</h2>
       </div>
       <div class="sub-body s2-body">
-        <div class="s1-kicker">Reference-class forecasting &mdash; find similar completed work, base the estimate on what actually happened</div>
-        <div class="s2-shot-frame" style="width:620px;">
+        <div class="deck-eyebrow">REFERENCE-CLASS FORECASTING</div>
+        <div class="s1-stats">
+          <div class="s1-stat"><div class="sv">2.12<span style="font-size:24px;">h</span></div><div class="sk">size-aware MAE<br><span style="font-weight:400;">matches story-points-fit baseline</span></div></div>
+          <div class="s1-stat"><div class="sv">67.4<span style="font-size:24px;">%</span></div><div class="sk">within &plusmn;25%<br><span style="font-weight:400;">up from 44.2% baseline</span></div></div>
+        </div>
+        <div class="s2-shot-frame" style="width:560px;">
           <img src="latex/figures/screenshot_P33.png" alt="Task estimate suggestion in the create-task form">
         </div>
         <div class="s2-callouts" data-reveal-step="1">
           <div class="s2-callout">
             <div class="s2-callout-t">Scoped k-NN neighbours</div>
-            <div class="s2-callout-d">Restricted to <code>status = 'DONE' AND actualHours &gt; 0</code>; widens from project to business unit if fewer than 3 neighbours.</div>
+            <div class="s2-callout-d"><code>status='DONE' AND actualHours&gt;0</code>; widens project &rarr; business unit if &lt;3 neighbours.</div>
           </div>
           <div class="s2-callout">
             <div class="s2-callout-t">Two modes</div>
-            <div class="s2-callout-d"><b>Size-aware</b>: draft points &times; similarity-weighted hours-per-point, median with 10th/90th band. <b>Size-agnostic</b> fallback: similarity-weighted median hours, 25th/75th IQR band.</div>
+            <div class="s2-callout-d"><b>Size-aware</b>: points &times; weighted hrs/point, median + 10/90 band. <b>Size-agnostic</b>: weighted median hrs, 25/75 band.</div>
           </div>
           <div class="s2-callout">
             <div class="s2-callout-t">Never a bare number</div>
-            <div class="s2-callout-d">Neighbour tasks are always returned as evidence &mdash; the user sees where the number comes from and can judge it. No generation model is called.</div>
+            <div class="s2-callout-d">Neighbour tasks always returned as evidence &mdash; the user sees where the number comes from. No generation model is called.</div>
           </div>
         </div>
       </div>
@@ -2159,31 +2263,45 @@
         <h2 class="sub-intro-title">Security &amp; Grounding</h2>
       </div>
       <div class="sub-body s2-body">
-        <div class="s2-callout" style="width:972px;" data-reveal-step="1">
-          <div class="s2-callout-t">Permission scoping is enforced in SQL, before ranking</div>
-          <div class="s2-callout-d"><code>AiAccessService.allowedProjectIds</code> resolves the caller's scope, and every search &mdash; vector and lexical alike &mdash; applies <code>projectId = ANY($allowedIds)</code> inside the query itself. Out-of-scope rows are never returned to rank in the first place: not just checked &mdash; <b>impossible by construction</b>.</div>
+        <div class="deck-eyebrow">PERMISSION-SAFE BY CONSTRUCTION</div>
+        <div class="s1c-flow-wrap" style="width:1000px;height:130px;" data-reveal-step="1">
+          <svg class="s1c-flow-svg" viewBox="0 0 1000 130" width="1000" height="130">
+            <defs>
+              <marker id="s4s-ah" markerWidth="8" markerHeight="8" refX="5.5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="#7a64bc" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></marker>
+            </defs>
+            <path class="s1c-line" d="M112,65 L255,65" marker-end="url(#s4s-ah)"/>
+            <path class="s1c-line" d="M645,65 L768,65" marker-end="url(#s4s-ah)"/>
+          </svg>
+          <div class="s1c-pill start" style="left:70px;top:65px;">Query</div>
+          <div class="s1c-node wide" style="left:450px;top:65px;width:380px;">SQL filter, inside the query itself<span><code>projectId = ANY($allowedIds)</code> &middot; vector &amp; lexical alike</span></div>
+          <div class="s1c-pill ok" style="left:850px;top:65px;">Ranked results</div>
         </div>
+        <p class="s1-closing" data-reveal-step="1">Out-of-scope rows are never returned to rank in the first place &mdash; not just checked, <b>impossible by construction</b>.</p>
         <div class="s2-callouts cols-4" data-reveal-step="2">
           <div class="s2-callout">
+            <svg class="s2-callout-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="28" width="32" height="26" rx="4"/><path d="M22 28v-8a10 10 0 0120 0v8"/></svg>
             <div class="s2-callout-t">Endpoint RBAC</div>
-            <div class="s2-callout-d">Copilot needs <code>TASK_READ_MANY</code>, estimate <code>TASK_CREATE</code>, reindex/telemetry <code>PROJECT_CREATE</code> (executive-only).</div>
+            <div class="s2-callout-d">Copilot <code>TASK_READ_MANY</code> &middot; estimate <code>TASK_CREATE</code> &middot; reindex <code>PROJECT_CREATE</code> (exec-only)</div>
           </div>
           <div class="s2-callout">
+            <svg class="s2-callout-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l19 8v13c0 14-8.5 24-19 31C21.5 51 13 41 13 27V14z"/><path d="M23 32l6 6 12-14"/></svg>
             <div class="s2-callout-t">Prompt-injection boundary</div>
-            <div class="s2-callout-d">System instruction and untrusted sources passed in separate turns; low temperature (0.2) for faithful answers.</div>
+            <div class="s2-callout-d">Instruction &amp; untrusted sources in separate turns &middot; temp 0.2</div>
           </div>
           <div class="s2-callout">
+            <svg class="s2-callout-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="8" width="44" height="48" rx="6"/><path d="M20 24l6 6 12-14"/><path d="M20 42h24"/></svg>
             <div class="s2-callout-t">DTO validation</div>
-            <div class="s2-callout-d">Question 3&ndash;1000 chars, story points 1&ndash;100, UUIDs &mdash; every input bounded.</div>
+            <div class="s2-callout-d">Question 3&ndash;1000 chars &middot; story points 1&ndash;100 &middot; UUIDs bounded</div>
           </div>
           <div class="s2-callout">
+            <svg class="s2-callout-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="22"/><path d="M17 47L47 17"/></svg>
             <div class="s2-callout-t">No SQL-injection surface</div>
-            <div class="s2-callout-d">Parameterized tagged templates; <code>websearch_to_tsquery</code> tolerates arbitrary text safely.</div>
+            <div class="s2-callout-d">Parameterized tagged templates &middot; <code>websearch_to_tsquery</code> is safe on arbitrary text</div>
           </div>
         </div>
         <div class="s2-callout limit" style="width:972px;" data-reveal-step="2">
           <div class="s2-callout-t">Honestly disclosed limitation</div>
-          <div class="s2-callout-d">Access control is <b>project-level, not entity-level</b>: any content in an allowed project is retrievable, with no per-task or per-comment visibility check. This matches the tasks module's own project-scoped model today &mdash; but would need tightening if finer-grained task visibility were ever added.</div>
+          <div class="s2-callout-d">Access control is <b>project-level, not entity-level</b> &mdash; matches the tasks module's own model today, but would need tightening if finer-grained task visibility is ever added.</div>
         </div>
       </div>
     </div>
@@ -2214,6 +2332,7 @@
         <h2 class="sub-intro-title">Evaluation &amp; Results</h2>
       </div>
       <div class="sub-body uc-body">
+        <div class="deck-eyebrow">MEASURED, NOT CLAIMED</div>
         <div class="uc-tabs" data-reveal-step="1">
           <div class="uc-tab">Retrieval</div>
           <div class="uc-tab">Answer Quality</div>
@@ -2226,12 +2345,42 @@
           <div class="uc-panel" data-panel-step="1">
             <div class="s1-body">
               <div class="s1-kicker">Keyword / identifier gold set &mdash; vector-only vs. hybrid</div>
-              <div class="s1-stats">
-                <div class="s1-stat"><div class="sv">0.57 &rarr; <span data-count-to="1.00" data-count-decimals="2" data-count-step="1">0.00</span></div><div class="sk">MRR</div></div>
-                <div class="s1-stat"><div class="sv">0.30 &rarr; <span data-count-to="1.00" data-count-decimals="2" data-count-step="1">0.00</span></div><div class="sk">Recall@1</div></div>
-                <div class="s1-stat"><div class="sv"><span data-count-to="0" data-count-step="1">0</span></div><div class="sk">cross-role leaks (CEO 6 proj. &middot; intern 1 proj.)</div></div>
+              <div class="s5-eval-row">
+                <div class="s5-plot">
+                  <div class="s5-plot-title">MRR</div>
+                  <div class="s5-plot-sub">higher = better</div>
+                  <div class="s5-plot-bars">
+                    <div class="s5-vbar-col" data-reveal-step="1">
+                      <span class="s5-vbar-num" data-count-to="0.57" data-count-decimals="2" data-count-step="1">0.00</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar" style="--v:57;"></div></div>
+                      <div class="s5-vbar-lab">Vector-only</div>
+                    </div>
+                    <div class="s5-vbar-col" data-reveal-step="1">
+                      <span class="s5-vbar-num" data-count-to="1.00" data-count-decimals="2" data-count-step="1">0.00</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar hi" style="--v:100;"></div></div>
+                      <div class="s5-vbar-lab">Hybrid</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="s5-plot">
+                  <div class="s5-plot-title">Recall@1</div>
+                  <div class="s5-plot-sub">higher = better</div>
+                  <div class="s5-plot-bars">
+                    <div class="s5-vbar-col" data-reveal-step="1">
+                      <span class="s5-vbar-num" data-count-to="0.30" data-count-decimals="2" data-count-step="1">0.00</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar" style="--v:30;"></div></div>
+                      <div class="s5-vbar-lab">Vector-only</div>
+                    </div>
+                    <div class="s5-vbar-col" data-reveal-step="1">
+                      <span class="s5-vbar-num" data-count-to="1.00" data-count-decimals="2" data-count-step="1">0.00</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar hi" style="--v:100;"></div></div>
+                      <div class="s5-vbar-lab">Hybrid</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="s1-stat s5-side-stat"><div class="sv"><span data-count-to="0" data-count-step="1">0</span></div><div class="sk">cross-role leaks<br><span style="font-weight:400;">CEO 6 proj. &middot; intern 1 proj.</span></div></div>
               </div>
-              <p class="s1-closing">A bare identifier like <code>NDF-24</code> carries almost no semantic meaning &mdash; the dense embedder ranks it low. The lexical arm matches it exactly; RRF fuses that hit to rank 1. On the <b>semantic</b> gold set the embedder is already saturated (MRR 0.958) &mdash; hybrid ties it with no regression, and the reranker matches or slightly beats it.</p>
+              <p class="s1-closing">A bare identifier like <code>NDF-24</code> means nothing to the embedder &mdash; the lexical arm catches it, RRF fuses it to rank 1. On the <b>semantic</b> gold set (already saturated, 0.958), hybrid ties it with zero regression.</p>
             </div>
           </div>
 
@@ -2245,7 +2394,7 @@
                 <div class="s1-stat"><div class="sv"><span data-count-to="1.000" data-count-decimals="3" data-count-step="1">0.000</span></div><div class="sk">refusal accuracy</div></div>
                 <div class="s1-stat"><div class="sv"><span data-count-to="0.000" data-count-decimals="3" data-count-step="1">0.000</span></div><div class="sk">false-refusal rate</div></div>
               </div>
-              <p class="s1-closing">Faithfulness is a mean over n = 6: the LLM judge returned no verdict on one otherwise correctly-cited answer &mdash; reported honestly rather than dropped.</p>
+              <p class="s1-closing">Mean over n = 6 &mdash; the LLM judge gave no verdict on one otherwise correctly-cited answer, reported honestly rather than dropped.</p>
             </div>
           </div>
 
@@ -2254,13 +2403,58 @@
           <div class="uc-panel" data-panel-step="3">
             <div class="s1-body">
               <div class="s1-kicker">Leave-one-out over 43 completed tasks</div>
-              <div class="s1-stats">
-                <div class="s1-stat"><div class="sv"><span data-count-to="3.83" data-count-decimals="2" data-count-step="1">0.00</span>h</div><div class="sk">size-agnostic k-NN MAE<br><span style="font-weight:400;">vs. 3.82h project-mean</span></div></div>
-                <div class="s1-stat"><div class="sv"><span data-count-to="2.12" data-count-decimals="2" data-count-step="2">0.00</span>h</div><div class="sk">size-aware k-NN MAE<br><span style="font-weight:400;">vs. 2.10h story-points fit</span></div></div>
-                <div class="s1-stat"><div class="sv"><span data-count-to="67.4" data-count-decimals="1" data-count-step="2">0.0</span>%</div><div class="sk">within &plusmn;25% (up from 44.2%)</div></div>
-                <div class="s1-stat"><div class="sv"><span data-count-to="0.744" data-count-decimals="3" data-count-step="2">0.000</span></div><div class="sk">10/90 band coverage (&middot;~80% target)</div></div>
+              <div class="s5-eval-row">
+                <div class="s5-plot">
+                  <div class="s5-plot-title">Size-agnostic MAE (h)</div>
+                  <div class="s5-plot-sub">statistically tied</div>
+                  <div class="s5-plot-bars">
+                    <div class="s5-vbar-col" data-reveal-step="3">
+                      <span class="s5-vbar-num" data-count-to="3.83" data-count-decimals="2" data-count-step="3">0.00</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar" style="--v:85.1;"></div></div>
+                      <div class="s5-vbar-lab">k-NN</div>
+                    </div>
+                    <div class="s5-vbar-col" data-reveal-step="3">
+                      <span class="s5-vbar-num" data-count-to="3.82" data-count-decimals="2" data-count-step="3">0.00</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar" style="--v:84.9;"></div></div>
+                      <div class="s5-vbar-lab">Project-mean</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="s5-plot">
+                  <div class="s5-plot-title">Size-aware MAE (h)</div>
+                  <div class="s5-plot-sub">matches baseline</div>
+                  <div class="s5-plot-bars">
+                    <div class="s5-vbar-col" data-reveal-step="3">
+                      <span class="s5-vbar-num" data-count-to="2.12" data-count-decimals="2" data-count-step="3">0.00</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar" style="--v:84.8;"></div></div>
+                      <div class="s5-vbar-lab">k-NN</div>
+                    </div>
+                    <div class="s5-vbar-col" data-reveal-step="3">
+                      <span class="s5-vbar-num" data-count-to="2.10" data-count-decimals="2" data-count-step="3">0.00</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar" style="--v:84;"></div></div>
+                      <div class="s5-vbar-lab">Story-points fit</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="s5-plot">
+                  <div class="s5-plot-title">Within &plusmn;25%</div>
+                  <div class="s5-plot-sub">higher = better</div>
+                  <div class="s5-plot-bars">
+                    <div class="s5-vbar-col" data-reveal-step="3">
+                      <span class="s5-vbar-num" data-count-to="44.2" data-count-decimals="1" data-count-step="3">0.0</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar" style="--v:44.2;"></div></div>
+                      <div class="s5-vbar-lab">Baseline</div>
+                    </div>
+                    <div class="s5-vbar-col" data-reveal-step="3">
+                      <span class="s5-vbar-num" data-count-to="67.4" data-count-decimals="1" data-count-step="3">0.0</span>
+                      <div class="s5-vbar-track"><div class="s5-vbar hi" style="--v:67.4;"></div></div>
+                      <div class="s5-vbar-lab">Size-aware k-NN</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="s1-stat s5-side-stat"><div class="sv"><span data-count-to="0.744" data-count-decimals="3" data-count-step="3">0.000</span></div><div class="sk">10/90 band coverage<br><span style="font-weight:400;">~80% target</span></div></div>
               </div>
-              <p class="s1-closing"><b>Text similarity alone carries almost no effort signal</b> &mdash; size-agnostic k-NN is statistically indistinguishable from a dumb project-mean baseline, because text-similar neighbours are often size-mismatched. Normalizing by story points fixes it: size-aware k-NN matches a story-points-fit baseline while still returning neighbour evidence and an honest uncertainty band.</p>
+              <p class="s1-closing"><b>Story-point normalization is the fix</b> &mdash; size-aware k-NN matches the baseline, plus neighbour evidence and an honest uncertainty band.</p>
             </div>
           </div>
 
@@ -2293,7 +2487,8 @@
         </div>
         <h2 class="sub-intro-title">Capstone &mdash; The Whole System</h2>
       </div>
-      <div class="sub-body">
+      <div class="sub-body s2-body">
+        <div class="deck-eyebrow">HOW THE AI PLUGS INTO THE PLATFORM</div>
         <div class="s3-rel">
           <div class="s3cd-wrap" style="height:380px;" data-reveal-step="1">
             <svg style="position:absolute;inset:0;overflow:visible;" width="1080" height="380" viewBox="0 0 1080 380">
@@ -2329,9 +2524,204 @@
               <div class="s3cd-fields"><div class="s3cd-note">Sprint 1 anchor</div></div>
             </div>
           </div>
-          <p class="s1-closing" data-reveal-step="1"><b>High cohesion inside, loose coupling outside.</b> The AI package attaches by plain scope keys (<code>projectId</code>, <code>userId</code>) and a dashed soft reference to content &mdash; the only inbound coupling is the domain's one-line, fire-and-forget enqueue calls.</p>
+          <p class="s1-closing" data-reveal-step="1"><b>High cohesion inside, loose coupling outside.</b> Plain scope keys and a dashed soft reference attach the AI package &mdash; the only inbound coupling is the domain's one-line, fire-and-forget enqueue call.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : HERO 05 ===== -->
+  <section class="slide slide-hero05" data-steps="1">
+    <div class="hero-content">
+      <div class="hero-num">05</div>
+      <h2 class="hero-title">Testing &amp;<br>Demo</h2>
+      <p class="hero-desc">What was verified, and what the platform looks like end to end &mdash; from login to a cited copilot answer.</p>
+    </div>
+    <div class="hero-subs">
+      <div class="hero-sub"><span class="hs-tag" data-morph="s05-t1-src">05.1</span><span class="hs-label" data-morph="s05-l1-src">Testing</span></div>
+      <div class="hero-sub-line" data-morph="s05-sep1-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s05-t2-src">05.2</span><span class="hs-label" data-morph="s05-l2-src">Demo</span></div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 05.1 — Testing ===== -->
+  <section class="slide slide-testing sub-section-slide" data-steps="5">
+    <div class="stepper">
+      <div class="step-item active"><span class="step-tag" data-morph="s05-t1-dst">05.1</span><span class="step-label" data-morph="s05-l1-dst">Testing</span></div>
+      <div class="step-sep" data-morph="s05-sep1-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s05-t2-dst">05.2</span><span class="step-label" data-morph="s05-l2-dst">Demo</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="10" y="8" width="44" height="48" rx="6"/><path d="M20 24l6 6 12-14"/><path d="M20 42h24"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">Testing</h2>
+      </div>
+      <div class="sub-body">
+        <div class="s1-body">
+          <div class="deck-eyebrow">CLASSICAL TESTING ACROSS THE STACK</div>
+          <div class="s2-callouts">
+            <div class="s2-callout reveal-item" data-reveal-step="1">
+              <svg class="s2-callout-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="8" width="44" height="48" rx="6"/><path d="M20 24l6 6 12-14"/><path d="M20 42h24"/></svg>
+              <div class="s2-callout-t">Unit</div>
+              <div class="s2-callout-d">Service specs with mocked repos &middot; full project lifecycle &middot; controller and the shared mail path.</div>
+            </div>
+            <div class="s2-callout reveal-item" data-reveal-step="2">
+              <svg class="s2-callout-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l19 8v13c0 14-8.5 24-19 31C21.5 51 13 41 13 27V14z"/><path d="M23 32l6 6 12-14"/></svg>
+              <div class="s2-callout-t">Integration / E2E</div>
+              <div class="s2-callout-d">The full RBAC permission matrix &mdash; run end-to-end against a live app, not mocks.</div>
+            </div>
+            <div class="s2-callout reveal-item" data-reveal-step="3">
+              <svg class="s2-callout-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="18" height="18" rx="3"/><rect x="36" y="10" width="18" height="18" rx="3"/><rect x="10" y="36" width="18" height="18" rx="3"/><rect x="36" y="36" width="18" height="18" rx="3"/></svg>
+              <div class="s2-callout-t">Property-based</div>
+              <div class="s2-callout-d">13 <code>fast-check</code> suites &middot; hundreds of generated inputs per run &mdash; Kanban, backlog, dependencies, analytics.</div>
+            </div>
+          </div>
+          <p class="s1-closing reveal-item" data-reveal-step="4">The AI copilot is measured separately &mdash; retrieval, answer quality, and estimation accuracy each have their own metrics.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 05.2 — Demo ===== -->
+  <section class="slide slide-demo sub-section-slide" data-steps="3">
+    <div class="stepper">
+      <div class="step-item"><span class="step-tag">05.1</span><span class="step-label">Testing</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item active"><span class="step-tag">05.2</span><span class="step-label">Demo</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="32" cy="32" r="22"/><path d="M27 22l16 10-16 10z"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">Demo</h2>
+      </div>
+      <div class="sub-body s2-body">
+        <div class="deck-eyebrow">A 60&ndash;75s LIVE WALKTHROUGH</div>
+        <div class="demo-frame reveal-item" data-reveal-step="1">
+          <!-- placeholder: swap for <video controls src="assets/demo.mp4" poster="latex/figures/screenshot_P31.png"></video> once the recording is ready -->
+          <svg class="demo-play-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="22"/><path d="M27 22l16 10-16 10z"/></svg>
+          <div class="demo-frame-t">Demo video &mdash; coming soon</div>
+          <div class="demo-frame-d">Recorded walkthrough to be dropped in here. The sequence below stands in until then.</div>
+        </div>
+        <div class="demo-strip reveal-item" data-reveal-step="2">
+          <div class="demo-shot"><div class="s4td-shot" style="width:168px;"><img src="latex/figures/screenshot_P07.png" alt="Login page"></div><span>Login</span></div>
+          <div class="demo-shot"><div class="s4td-shot" style="width:168px;"><img src="latex/figures/screenshot_P17.png" alt="Kanban board"></div><span>Kanban</span></div>
+          <div class="demo-shot"><div class="s4td-shot" style="width:168px;"><img src="latex/figures/screenshot_P31.png" alt="Copilot panel with grounded, cited answer"></div><span>Cited Answer</span></div>
+          <div class="demo-shot"><div class="s4td-shot" style="width:168px;"><img src="latex/figures/screenshot_P33.png" alt="Task estimate suggestion in the create-task form"></div><span>Estimate</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : HERO 06 ===== -->
+  <section class="slide slide-hero06" data-steps="1">
+    <div class="hero-content">
+      <div class="hero-num">06</div>
+      <h2 class="hero-title">Outcomes &amp;<br>Perspectives</h2>
+      <p class="hero-desc">What six sprints delivered, and where the platform goes from here.</p>
+    </div>
+    <div class="hero-subs">
+      <div class="hero-sub"><span class="hs-tag" data-morph="s06-t1-src">06.1</span><span class="hs-label" data-morph="s06-l1-src">Conclusion</span></div>
+      <div class="hero-sub-line" data-morph="s06-sep1-src"></div>
+      <div class="hero-sub"><span class="hs-tag" data-morph="s06-t2-src">06.2</span><span class="hs-label" data-morph="s06-l2-src">Perspectives</span></div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 06.1 — Conclusion ===== -->
+  <section class="slide slide-conclusion sub-section-slide" data-steps="3">
+    <div class="stepper">
+      <div class="step-item active"><span class="step-tag" data-morph="s06-t1-dst">06.1</span><span class="step-label" data-morph="s06-l1-dst">Conclusion</span></div>
+      <div class="step-sep" data-morph="s06-sep1-dst"></div>
+      <div class="step-item"><span class="step-tag" data-morph="s06-t2-dst">06.2</span><span class="step-label" data-morph="s06-l2-dst">Perspectives</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="32" cy="32" r="22"/><path d="M23 32l6 6 12-14"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">Conclusion</h2>
+      </div>
+      <div class="sub-body s2-body">
+        <div class="deck-eyebrow">WHAT WE DELIVERED</div>
+        <div class="problem-cards cols-3 reveal-item" data-reveal-step="1">
+          <div class="p-card">
+            <div class="p-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="10" width="44" height="44" rx="8"/><path d="M32 10v44M10 32h44"/></svg></div>
+            <div class="p-title">One Integrated Platform</div>
+            <p class="p-desc">Ten operational domains inside one authenticated, bilingual system.</p>
+          </div>
+          <div class="p-card">
+            <div class="p-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l19 8v13c0 14-8.5 24-19 31C21.5 51 13 41 13 27V14z"/></svg></div>
+            <div class="p-title">One Access Model</div>
+            <p class="p-desc">A single centralized RBAC model spans ~31 role types across two business units.</p>
+          </div>
+          <div class="p-card">
+            <div class="p-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="27" cy="27" r="15"/><path d="M38 38l14 14"/></svg></div>
+            <div class="p-title">One Measured AI Layer</div>
+            <p class="p-desc">Permission-scoped RAG copilot &mdash; zero cross-role leakage, MRR 0.57 &rarr; 1.00.</p>
+          </div>
+        </div>
+        <div class="concl-foot reveal-item" data-reveal-step="2">
+          <div class="concl-scale"><b>10</b> domains &middot; <b>55</b> models &middot; <b>147</b> endpoints &middot; <b>6</b> sprints</div>
+          <p class="s1-closing">Known gaps are documented, prioritized, and actionable &mdash; see Perspectives.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : 06.2 — Perspectives ===== -->
+  <section class="slide slide-perspectives sub-section-slide" data-steps="4">
+    <div class="stepper">
+      <div class="step-item"><span class="step-tag">06.1</span><span class="step-label">Conclusion</span></div>
+      <div class="step-sep"></div>
+      <div class="step-item active"><span class="step-tag">06.2</span><span class="step-label">Perspectives</span></div>
+    </div>
+    <div class="sub-stagewrap">
+      <div class="sub-intro">
+        <div class="sub-intro-icon-box">
+          <svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="32" cy="32" r="22"/><path d="M40 24l-6 14-14 6 6-14z"/>
+          </svg>
+        </div>
+        <h2 class="sub-intro-title">Perspectives</h2>
+      </div>
+      <div class="sub-body">
+        <div class="deck-eyebrow">WHERE TAWER GOES NEXT</div>
+        <div class="problem-cards cols-3">
+          <div class="p-card reveal-item" data-reveal-step="1">
+            <div class="p-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="26" r="10"/><path d="M14 54c0-11 8-18 18-18s18 7 18 18"/></svg></div>
+            <div class="p-title">Human Evaluation</div>
+            <p class="p-desc">Move beyond the LLM-judge gold sets to real user sessions with the copilot.</p>
+          </div>
+          <div class="p-card reveal-item" data-reveal-step="2">
+            <div class="p-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><path d="M32 6l19 8v13c0 14-8.5 24-19 31C21.5 51 13 41 13 27V14z"/><rect x="24" y="29" width="16" height="12" rx="2"/><path d="M27 29v-5a5 5 0 0110 0v5"/></svg></div>
+            <div class="p-title">Hardening Backlog</div>
+            <p class="p-desc">Execute the prioritized security &amp; testing backlog.</p>
+          </div>
+          <div class="p-card reveal-item" data-reveal-step="3">
+            <div class="p-icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"><rect x="10" y="22" width="44" height="30" rx="5"/><path d="M22 22v-6a10 10 0 0120 0v6"/></svg></div>
+            <div class="p-title">Deployment Maturity</div>
+            <p class="p-desc">CI/CD, containerized orchestration, persistent storage, configurable deploy targets.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SLIDE : THANK YOU / Q&A ===== -->
+  <section class="slide slide-thanks" data-steps="1">
+    <div class="thanks-content">
+      <div class="thanks-label">Thank You</div>
+      <h2 class="thanks-title">Questions &amp; Discussion</h2>
+      <p class="thanks-project"><em>Tawer Management</em></p>
     </div>
   </section>
 
@@ -2343,43 +2733,56 @@
   </div>
   <div class="counter"><span id="cur">1</span> / <span id="tot">2</span></div>
 
-  <!-- floating quick-nav: jump straight to any slide's title/subtitle.
-       Toggle SHOW_QUICKNAV in the script below to show/hide it. -->
-  <button class="quicknav-btn" id="quicknavBtn" aria-label="Jump to section" title="Jump to section">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="14" y2="18"/></svg>
-  </button>
-  <div class="quicknav-panel" id="quicknavPanel">
-    <div class="quicknav-item" data-si="0">Title</div>
-    <div class="quicknav-item" data-si="1">Agenda</div>
-    <div class="quicknav-item" data-si="2">01 · Context &amp; Host Organization</div>
-    <div class="quicknav-item" data-si="3">Host Organization</div>
-    <div class="quicknav-item" data-si="4">The Problem</div>
-    <div class="quicknav-item" data-si="5">Existing Solutions</div>
-    <div class="quicknav-item" data-si="6">Proposed Solution</div>
-    <div class="quicknav-item" data-si="7">02 · Requirements &amp; Design</div>
-    <div class="quicknav-item" data-si="8">Requirements</div>
-    <div class="quicknav-item" data-si="9">Methodology</div>
-    <div class="quicknav-item" data-si="10">Six-Sprint Roadmap</div>
-    <div class="quicknav-item" data-si="11">Architecture</div>
-    <div class="quicknav-item" data-si="12">Use Cases</div>
-    <div class="quicknav-item" data-si="13">Tech Stack</div>
-    <div class="quicknav-item" data-si="14">03 &middot; Implementation &amp; Sprints</div>
-    <div class="quicknav-item" data-si="15">Foundations &amp; Auth</div>
-    <div class="quicknav-item" data-si="16">Projects &amp; Membership</div>
-    <div class="quicknav-item" data-si="17">Agile Backlog</div>
-    <div class="quicknav-item" data-si="18">Tasks &amp; Kanban Engine</div>
-    <div class="quicknav-item" data-si="19">Productivity Suite</div>
-    <div class="quicknav-item" data-si="20">Communication &amp; Operations</div>
-    <div class="quicknav-item" data-si="21">04 &middot; AI Copilot &amp; Estimation</div>
-    <div class="quicknav-item" data-si="22">Methodology (CRISP-DM)</div>
-    <div class="quicknav-item" data-si="23">RAG Architecture</div>
-    <div class="quicknav-item" data-si="24">Task Effort Estimation</div>
-    <div class="quicknav-item" data-si="25">Security &amp; Grounding</div>
-    <div class="quicknav-item" data-si="26">Evaluation &amp; Results</div>
-    <div class="quicknav-item" data-si="27">Capstone: The Whole System</div>
   </div>
 
 </div>
+
+<!-- table-of-contents sidebar: visible while windowed (for building /
+     rehearsing), auto-hidden in fullscreen (F11 or Fullscreen API) so the
+     projected deck looks like a normal full-screen presentation. Sibling of
+     .stage on purpose - the stage's transform would break position:fixed. -->
+<nav class="toc-sidebar" id="tocSidebar" aria-label="Slides">
+  <div class="toc-head">
+    <span class="toc-title">Slides</span>
+    <button class="toc-collapse" id="tocCollapse" title="Hide sidebar">&lsaquo;</button>
+  </div>
+  <div class="quicknav-item" data-si="0">Title</div>
+  <div class="quicknav-item" data-si="1">Agenda</div>
+  <div class="quicknav-item" data-si="2">01 · Context &amp; Host Organization</div>
+  <div class="quicknav-item" data-si="3">Host Organization</div>
+  <div class="quicknav-item" data-si="4">The Problem</div>
+  <div class="quicknav-item" data-si="5">Existing Solutions</div>
+  <div class="quicknav-item" data-si="6">Proposed Solution</div>
+  <div class="quicknav-item" data-si="7">02 · Requirements &amp; Design</div>
+  <div class="quicknav-item" data-si="8">Requirements</div>
+  <div class="quicknav-item" data-si="9">Methodology</div>
+  <div class="quicknav-item" data-si="10">Six-Sprint Roadmap</div>
+  <div class="quicknav-item" data-si="11">Architecture</div>
+  <div class="quicknav-item" data-si="12">Use Cases</div>
+  <div class="quicknav-item" data-si="13">Tech Stack</div>
+  <div class="quicknav-item" data-si="14">03 &middot; Implementation &amp; Sprints</div>
+  <div class="quicknav-item" data-si="15">Foundations &amp; Auth</div>
+  <div class="quicknav-item" data-si="16">Projects &amp; Membership</div>
+  <div class="quicknav-item" data-si="17">Agile Backlog</div>
+  <div class="quicknav-item" data-si="18">Tasks &amp; Kanban Engine</div>
+  <div class="quicknav-item" data-si="19">Productivity Suite</div>
+  <div class="quicknav-item" data-si="20">Communication &amp; Operations</div>
+  <div class="quicknav-item" data-si="21">04 &middot; AI Copilot &amp; Estimation</div>
+  <div class="quicknav-item" data-si="22">Methodology (CRISP-DM)</div>
+  <div class="quicknav-item" data-si="23">RAG Architecture</div>
+  <div class="quicknav-item" data-si="24">Task Effort Estimation</div>
+  <div class="quicknav-item" data-si="25">Security &amp; Grounding</div>
+  <div class="quicknav-item" data-si="26">Evaluation &amp; Results</div>
+  <div class="quicknav-item" data-si="27">Capstone: The Whole System</div>
+  <div class="quicknav-item" data-si="28">05 &middot; Testing &amp; Demo</div>
+  <div class="quicknav-item" data-si="29">Testing</div>
+  <div class="quicknav-item" data-si="30">Demo</div>
+  <div class="quicknav-item" data-si="31">06 &middot; Outcomes &amp; Perspectives</div>
+  <div class="quicknav-item" data-si="32">Conclusion</div>
+  <div class="quicknav-item" data-si="33">Perspectives</div>
+  <div class="quicknav-item" data-si="34">Thank You / Q&amp;A</div>
+</nav>
+<button class="toc-reopen" id="tocReopen" title="Show sidebar">&rsaquo;</button>
 
 <!-- hover-zoom lightbox for every screenshot in the deck (see .s2-shot-frame /
      .s3-shot-frame / .s4td-shot img — bound generically in defense.js so any

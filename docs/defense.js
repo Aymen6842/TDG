@@ -1,10 +1,27 @@
-/* ---------- stage scaling ---------- */
+/* ---------- stage scaling ----------
+   The stage centers in whatever width the TOC sidebar leaves it: full
+   viewport when fullscreen (F11 or Fullscreen API) or collapsed, viewport
+   minus sidebar otherwise. F11 fullscreen never fires fullscreenchange, so
+   it's detected geometrically on resize. */
+var TOC_W = 252;
+function isFullscreen() {
+  return !!document.fullscreenElement ||
+    (innerHeight >= screen.height - 2 && innerWidth >= screen.width - 2);
+}
+function tocVisible() {
+  return !isFullscreen() && !document.body.classList.contains('toc-collapsed');
+}
 function scaleStage() {
-  var s = Math.min(innerWidth / 1280, innerHeight / 720);
-  document.querySelector('.stage').style.setProperty('--s', s);
+  document.body.classList.toggle('is-fullscreen', isFullscreen());
+  var off = tocVisible() ? TOC_W : 0;
+  var s = Math.min((innerWidth - off) / 1280, innerHeight / 720);
+  var stage = document.querySelector('.stage');
+  stage.style.setProperty('--s', s);
+  stage.style.left = 'calc(50% + ' + (off / 2) + 'px)';
 }
 scaleStage();
 addEventListener('resize', scaleStage);
+document.addEventListener('fullscreenchange', scaleStage);
 
 /* ---------- TDG-style asterisk (reused for title + agenda mark) ---------- */
 function drawAsterisk(canvas, size, alpha) {
@@ -67,7 +84,14 @@ var GEAR_TARGETS = {
   'slide-ai-estimate': { cx: 1235, cy: 66,  s: 0.34 },
   'slide-ai-security': { cx: 1235, cy: 66,  s: 0.34 },
   'slide-ai-eval':     { cx: 1235, cy: 66,  s: 0.34 },
-  'slide-ai-capstone': { cx: 1235, cy: 66,  s: 0.34 }
+  'slide-ai-capstone': { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-hero05':      { cx: 1110, cy: 360, s: 1.00 },
+  'slide-testing':     { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-demo':        { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-hero06':      { cx: 1110, cy: 360, s: 1.00 },
+  'slide-conclusion':  { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-perspectives':{ cx: 1235, cy: 66,  s: 0.34 },
+  'slide-thanks':      { cx: 1110, cy: 360, s: 1.00 }
 };
 var gearEl = document.querySelector('.deck-gear');
 function applyGear(slideEl) {
@@ -86,29 +110,33 @@ if (!SHOW_CONTROLS) {
   var ctr = document.querySelector('.counter'); if (ctr) ctr.style.display = 'none';
 }
 
-var SHOW_QUICKNAV = true;   // set false to hide the floating "jump to section" button
-var quicknavBtn = document.getElementById('quicknavBtn');
-var quicknavPanel = document.getElementById('quicknavPanel');
-if (!SHOW_QUICKNAV) {
-  if (quicknavBtn) quicknavBtn.style.display = 'none';
-  if (quicknavPanel) quicknavPanel.style.display = 'none';
-} else if (quicknavBtn && quicknavPanel) {
-  quicknavBtn.addEventListener('click', function (e) {
-    e.stopPropagation();
-    quicknavPanel.classList.toggle('open');
-  });
-  quicknavPanel.querySelectorAll('.quicknav-item').forEach(function (el) {
+/* ---------- TOC sidebar (windowed mode only; see scaleStage) ---------- */
+var tocSidebar = document.getElementById('tocSidebar');
+if (tocSidebar) {
+  tocSidebar.querySelectorAll('.quicknav-item').forEach(function (el) {
+    // section-divider rows ("01 · …") get the heavier style
+    if (/^\d\d\s*·/.test(el.textContent.trim())) el.classList.add('toc-section');
     el.addEventListener('click', function () {
       si = parseInt(el.getAttribute('data-si'), 10);
       step = 0;
       render();
-      quicknavPanel.classList.remove('open');
     });
   });
-  document.addEventListener('click', function (e) {
-    if (!quicknavPanel.contains(e.target) && e.target !== quicknavBtn) {
-      quicknavPanel.classList.remove('open');
-    }
+  var tocCollapse = document.getElementById('tocCollapse');
+  var tocReopen = document.getElementById('tocReopen');
+  if (tocCollapse) tocCollapse.addEventListener('click', function () {
+    document.body.classList.add('toc-collapsed'); scaleStage();
+  });
+  if (tocReopen) tocReopen.addEventListener('click', function () {
+    document.body.classList.remove('toc-collapsed'); scaleStage();
+  });
+}
+function syncToc() {
+  if (!tocSidebar) return;
+  tocSidebar.querySelectorAll('.quicknav-item').forEach(function (el) {
+    var active = parseInt(el.getAttribute('data-si'), 10) === si;
+    el.classList.toggle('toc-active', active);
+    if (active && tocVisible()) el.scrollIntoView({ block: 'nearest' });
   });
 }
 
@@ -172,7 +200,7 @@ function runCounts(scope, step) {
     if (step < at) { el.textContent = from.toFixed(dec); el._counted = false; return; }
     if (el._counted) return;
     el._counted = true;
-    var dur = 900, t0 = performance.now();
+    var dur = 1500, t0 = performance.now();
     (function tick(now) {
       var p = Math.min(1, (now - t0) / dur);
       var v = from + (to - from) * (1 - Math.pow(1 - p, 3));
@@ -235,6 +263,7 @@ function render() {
   if (cur.querySelector('.uc-tabs')) runTabConveyor(cur, step);
   syncMetricViewers(cur);
   applyGear(cur);
+  syncToc();
   document.getElementById('cur').textContent = si + 1;
 }
 
@@ -321,8 +350,8 @@ var skipActiveMorph = null; // finishes the in-flight morph instantly; set while
 
 function runMorphBatch(jobs, targetSlideIndex, opts) {
   opts = opts || {};
-  var stagger = opts.stagger != null ? opts.stagger : 110;
-  var duration = opts.duration != null ? opts.duration : 2000;
+  var stagger = opts.stagger != null ? opts.stagger : 80;
+  var duration = opts.duration != null ? opts.duration : 1200;
   jobs = jobs.filter(Boolean);
   var fromSlide = slides[si];
   var toSlide = slides[targetSlideIndex];
@@ -487,6 +516,24 @@ function advance() {
     setTimeout(function () { aiMethodSlide.classList.add('body-reveal'); }, 500);
     return;
   }
+  /* Section 05: same hero-subs-into-stepper morph, 2 items (05.1..05.2). */
+  if (slides[si].classList.contains('slide-hero05') && step === stepsOf(si) - 1 && slides[si + 1] && slides[si + 1].classList.contains('slide-testing')) {
+    var testingSlide = slides[si + 1];
+    var testingStepper = testingSlide.querySelector('.stepper');
+    testingSlide.classList.remove('body-reveal', 'content-shown');
+    runMorphBatch(buildStepperJobs('s05', 2), si + 1, { revealAncestors: testingStepper ? [testingStepper] : [] });
+    setTimeout(function () { testingSlide.classList.add('body-reveal'); }, 500);
+    return;
+  }
+  /* Section 06: same hero-subs-into-stepper morph, 2 items (06.1..06.2). */
+  if (slides[si].classList.contains('slide-hero06') && step === stepsOf(si) - 1 && slides[si + 1] && slides[si + 1].classList.contains('slide-conclusion')) {
+    var conclusionSlide = slides[si + 1];
+    var conclusionStepper = conclusionSlide.querySelector('.stepper');
+    conclusionSlide.classList.remove('body-reveal', 'content-shown');
+    runMorphBatch(buildStepperJobs('s06', 2), si + 1, { revealAncestors: conclusionStepper ? [conclusionStepper] : [] });
+    setTimeout(function () { conclusionSlide.classList.add('body-reveal'); }, 500);
+    return;
+  }
   if (step < stepsOf(si) - 1) { step++; render(); }
   else if (si < slides.length - 1) {
     si++; step = 0;
@@ -513,6 +560,7 @@ function back() {
    panel gets first refusal (see syncMetricViewers doc comment above) */
 addEventListener('click', function (e) {
   if (e.target.closest('.navbtn')) return;
+  if (e.target.closest('.toc-sidebar') || e.target.closest('.toc-reopen')) return;
   var mv = activeMetricViewer();
   if (mv && stepMetricViewer(mv, 1)) return;
   advance();
@@ -524,6 +572,7 @@ document.getElementById('prev').addEventListener('click', back);
 var lock = false;
 addEventListener('wheel', function (e) {
   if (lock) return;
+  if (e.target.closest && e.target.closest('.toc-sidebar')) return;
   var dir = e.deltaY > 0 ? 1 : -1;
   var mv = activeMetricViewer();
   lock = true; setTimeout(function () { lock = false; }, 620);
@@ -558,7 +607,9 @@ var SECTION_LABELS = {
   '01': ['Host Organization', 'The Problem', 'Existing Solutions', 'Proposed Solution'],
   '02': ['Requirements', 'Methodology', 'Architecture', 'Use Cases', 'Tech Stack'],
   '03': ['Foundations', 'Projects', 'Agile Backlog', 'Tasks & Kanban', 'Productivity', 'Communication'],
-  '04': ['Methodology', 'RAG Architecture', 'Task Estimation', 'Security', 'Evaluation', 'Capstone']
+  '04': ['Methodology', 'RAG Architecture', 'Task Estimation', 'Security', 'Evaluation', 'Capstone'],
+  '05': ['Testing', 'Demo'],
+  '06': ['Conclusion', 'Perspectives']
 };
 function syncSectionLabels(scopeSel, tagSel, labelSel) {
   document.querySelectorAll(scopeSel).forEach(function (scope) {
@@ -573,7 +624,7 @@ function syncSectionLabels(scopeSel, tagSel, labelSel) {
   });
 }
 syncSectionLabels('.stepper', '.step-tag', '.step-label');
-syncSectionLabels('.slide-hero01, .slide-hero02, .slide-hero03, .slide-hero04', '.hs-tag', '.hs-label');
+syncSectionLabels('.slide-hero01, .slide-hero02, .slide-hero03, .slide-hero04, .slide-hero05, .slide-hero06', '.hs-tag', '.hs-label');
 
 /* ---------- metric viewer (03.3 Metrics tab) ----------
    A [data-metric-viewer="key"] block pages through a set of screenshots in
