@@ -80,7 +80,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 > **[CLICK]** So no existing tool checks all the boxes. **That is the gap Tawer
 > Management fills** — and this is the column we built.
 
-*(This last click reveals the purple Tawer column. Pause one second — let them see it.)*
+*(This last click reveals the purple Tawer Management column. Pause one second — let them see it.)*
 
 ---
 
@@ -148,6 +148,11 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 > **[CLICK]** The architecture has three layers.
 > On the left, the **presentation layer**: a Next.js application in the browser.
+> Everything sits under one **language segment**, with two areas — one for guests
+> (login, register) and one for the dashboard. Each feature folder there
+> **mirrors a module of the API**, so the two sides have the same shape.
+> Server data is cached with TanStack Query, small UI state with Zustand, and
+> forms are validated with Zod — in both languages.
 > It talks to the API with REST and JWT tokens.
 > In the middle, the **application layer**: a NestJS REST API — controller, service,
 > repository. 147 endpoints.
@@ -160,7 +165,30 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 13 — Use Cases (3 clicks, one per role)
+## Slide 13 — Why a modular monolith (2 clicks)
+
+> A jury question I expect: **why one application, and not microservices?**
+>
+> On the left, what splitting would have cost us. I was **one developer for
+> 21 weeks** — every service you add is one more thing to deploy and keep in
+> sync. Our **permission model would break apart**: 31 roles and 120
+> permissions guard ten domains, so every service would have to re-implement
+> them. And our **55 tables are joined by foreign keys** — splitting them turns
+> simple joins into network calls.
+>
+> **[CLICK]** On the right, what we get instead. The **boundaries still exist**,
+> but in the code: NestJS modules, and the same controller–service–repository
+> split in every feature. There is **one place to secure** — a single guard on
+> every route, and the AI copilot inherits that same filter. And it is **one
+> thing to self-host**, which is what the company asked for.
+>
+> **[CLICK]** So: modular, not monolithic by accident. The seams are already
+> there, so a domain can be split out later if the load ever needs it.
+> And the honest cost today: one deploy unit, one failure domain.
+
+---
+
+## Slide 14 — Use Cases (3 clicks, one per role)
 
 > Quickly, the main use cases by role.
 > **[CLICK]** A **manager** plans projects, manages the backlog, and follows the team.
@@ -172,7 +200,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 14 — Tech Stack (clicks reveal 4 cards)
+## Slide 15 — Tech Stack (clicks reveal 4 cards)
 
 > **[CLICK]** The stack, in one view.
 > **Frontend**: Next.js and React, TypeScript, bilingual.
@@ -185,13 +213,13 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 15 — Section 03 Hero (Implementation, Sprints 1–5)
+## Slide 16 — Section 03 Hero (Implementation, Sprints 1–5)
 
 > Now the implementation. Five sprints, 210 story points — the backbone of the platform.
 
 ---
 
-## Slide 16 — Sprint 1: Foundations & Auth (3 tabs)
+## Slide 17 — Sprint 1: Foundations & Auth (3 tabs)
 
 > **[CLICK]** Sprint one built the foundation: **31 roles**, about **120 permissions**,
 > and today 147 routes protected by them.
@@ -205,7 +233,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 17 — Sprint 2: Projects & Membership (3 tabs)
+## Slide 18 — Sprint 2: Projects & Membership (3 tabs)
 
 > **[CLICK]** Sprint two: projects. A project is the **aggregate root** — the object
 > that owns everything else: members, sprints, tasks.
@@ -217,7 +245,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 18 — Sprint 3: Agile Backlog (4 tabs)
+## Slide 19 — Sprint 3: Agile Backlog (4 tabs)
 
 > **[CLICK]** Sprint three, the biggest: the agile backlog.
 > **Epics, sprints, and milestones** — the planning objects.
@@ -230,7 +258,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 19 — Sprint 3, part two: Tasks & Kanban (6 tabs — move fast, ~90 seconds total)
+## Slide 20 — Sprint 3, part two: Tasks & Kanban (6 tabs — move fast, ~90 seconds total)
 
 > **[CLICK]** Still sprint three — its second module: the task engine and the Kanban board.
 > The columns are **data-driven** — they come from the database, not from the code.
@@ -245,7 +273,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 20 — Sprint 4: Productivity Suite (4 tabs)
+## Slide 21 — Sprint 4: Productivity Suite (4 tabs)
 
 > **[CLICK]** Sprint four added four daily-work modules: personal **to-dos**,
 > **attendance**, **calendar and events**, and **reminders**.
@@ -256,7 +284,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 21 — Sprint 5: Communication & Operations (3 tabs)
+## Slide 22 — Sprint 5: Communication & Operations (3 tabs)
 
 > **[CLICK]** Sprint five: the communication layer. **Notifications** go to four channels:
 > in-app, email, push, and Telegram. One shared entry point creates them —
@@ -269,13 +297,13 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 22 — Section 04 Hero (AI Copilot)
+## Slide 23 — Section 04 Hero (AI Copilot)
 
 > Now the part I am most proud of: the **AI copilot**, sprint six.
 
 ---
 
-## Slide 23 — AI Methodology: CRISP-DM (2 clicks)
+## Slide 24 — AI Methodology: CRISP-DM (2 clicks)
 
 > **[CLICK]** For the AI work we did not improvise. We used **CRISP-DM** — the standard
 > process for data projects — as a sub-process inside the Scrum sprint.
@@ -286,7 +314,40 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 24 — RAG Architecture (4 tabs)
+## Slide 25 — Why RAG, and which RAG (2 clicks)
+
+> Before the architecture, one question the jury may ask: **why RAG at all?**
+> We had three options.
+> **Fine-tune the model?** Then every new task means retraining. The answers
+> have no sources. And our data would leave the company. No.
+> **Put everything in the prompt?** The company data is far too big for that,
+> we pay for every call, and there is no way to apply permissions. No.
+> **Retrieve, then generate** — this is RAG. The data is always fresh, every
+> claim has a source, and the permission filter runs inside the search query.
+>
+> **[CLICK]** Then: which kind of RAG? There is a family of them.
+> We chose **Hybrid RAG** — dense vectors **and** keyword search, combined.
+> **[CLICK]** And here is why we did not take the others.
+> **Graph RAG** builds a graph of relations — but our relations are already in
+> SQL. **Agentic RAG** turns retrieval into a multi-step plan — too slow and
+> too expensive per answer. **Corrective RAG** grades and retries — we prefer
+> to refuse honestly. **Multimodal RAG** indexes images and tables — our
+> content is text.
+>
+> The reason Hybrid wins for us is simple: project work is **half normal
+> sentences, half codes**. A code like NDF-24 means nothing to a vector model.
+> And pure keyword search misses a question asked in different words.
+> So we run both and merge them with a method called **RRF**.
+> And we did not just assume it: on our own test set, hybrid raised the score
+> **MRR from 0.42 to 0.73**, and **Recall-at-1 from 0.22 to 0.73**, compared to
+> vectors alone.
+
+*(If a jury member asks "what is RRF?": it is a simple, standard formula that
+merges two ranked lists — an item ranked high by either search moves to the top.)*
+
+---
+
+## Slide 26 — RAG Architecture (4 tabs)
 
 > **[CLICK]** How does the copilot know the company's data? First, the **indexing
 > pipeline**. Every time someone writes a task, a comment, a sprint — the change is
@@ -305,7 +366,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 25 — Task Estimation (1 click)
+## Slide 27 — Task Estimation (1 click)
 
 > **[CLICK]** The second AI feature: **task effort estimation**.
 > The idea is called **reference-class forecasting**: to estimate a new task,
@@ -318,7 +379,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 26 — AI Security (2 clicks)
+## Slide 28 — AI Security (2 clicks)
 
 > **[CLICK]** Security was the hardest question: the copilot must **never** show you
 > data you are not allowed to see.
@@ -331,7 +392,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 27 — AI Evaluation (3 tabs)
+## Slide 29 — AI Evaluation (3 tabs)
 
 > **[CLICK]** We measured everything. **Retrieval**: with a gold set of questions,
 > hybrid search beats vector-only search clearly.
@@ -345,7 +406,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 28 — Capstone (1 click)
+## Slide 30 — Capstone (1 click)
 
 > **[CLICK]** The whole AI package touches the rest of the platform in only one place:
 > a one-line, fire-and-forget call. **High cohesion inside, loose coupling outside.**
@@ -353,13 +414,13 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 29 — Section 05 Hero (Testing & Demo)
+## Slide 31 — Section 05 Hero (Testing & Demo)
 
 > Before the demo — how do we know it works?
 
 ---
 
-## Slide 30 — Testing (clicks reveal 3 cards)
+## Slide 32 — Testing (clicks reveal 3 cards)
 
 > **[CLICK]** Three levels of testing.
 > **Unit tests** on the services — the project lifecycle fully tested with mocks.
@@ -371,7 +432,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 
 ---
 
-## Slide 31 — Demo
+## Slide 33 — Demo
 
 > **[CLICK]** And here is the platform in action.
 
@@ -386,13 +447,13 @@ estimate. See `docs/demo-recording-plan.md`. While it plays, narrate:)*
 
 ---
 
-## Slide 32 — Section 06 Hero (Outcomes)
+## Slide 34 — Section 06 Hero (Outcomes)
 
 > To conclude.
 
 ---
 
-## Slide 33 — Conclusion (2 clicks)
+## Slide 35 — Conclusion (2 clicks)
 
 > **[CLICK]** What was delivered: **one integrated platform** — ten domains, bilingual,
 > behind one login. **One access model** — 31 roles across two business units.
@@ -402,7 +463,7 @@ estimate. See `docs/demo-recording-plan.md`. While it plays, narrate:)*
 
 ---
 
-## Slide 34 — Perspectives (clicks reveal 3 cards)
+## Slide 36 — Perspectives (clicks reveal 3 cards)
 
 > **[CLICK]** Three honest next steps.
 > **[CLICK]** **Human evaluation**: today the AI is judged by gold sets and an LLM
@@ -414,7 +475,7 @@ estimate. See `docs/demo-recording-plan.md`. While it plays, narrate:)*
 
 ---
 
-## Slide 35 — Thank You
+## Slide 37 — Thank You
 
 > Thank you for your attention. I am ready for your questions.
 

@@ -57,41 +57,43 @@ document.querySelectorAll('.dim-mark').forEach(function (c) { drawAsterisk(c, 56
    Big & central on the hero dividers, small & tucked in the corner on the
    content/list slides — that contrast gives the transitions their rhythm. */
 var GEAR_TARGETS = {
-  'slide-title':    { cx: 1055, cy: 360, s: 0.92 },
+  'slide-title':    { cx: 1055, cy: 490, s: 0.92 },
   'slide-agenda':   { cx: 1235, cy: 66,  s: 0.50 },
-  'slide-hero01':   { cx: 1110, cy: 360, s: 1.00 },
+  'slide-hero01':   { cx: 1110, cy: 540, s: 1.00 },
   'slide-hostorg':  { cx: 1235, cy: 66,  s: 0.34 },
   'slide-problem':  { cx: 1235, cy: 66,  s: 0.34 },
   'slide-existing': { cx: 1235, cy: 66,  s: 0.34 },
   'slide-proposed': { cx: 1235, cy: 66,  s: 0.34 },
-  'slide-hero02':   { cx: 1110, cy: 360, s: 1.00 },
+  'slide-hero02':   { cx: 1110, cy: 540, s: 1.00 },
   'slide-req':             { cx: 1235, cy: 66,  s: 0.34 },
   'slide-method-why':      { cx: 1235, cy: 66,  s: 0.34 },
   'slide-method-roadmap':  { cx: 1235, cy: 66,  s: 0.34 },
   'slide-arch':      { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-why-mono':  { cx: 1235, cy: 66,  s: 0.34 },
   'slide-usecases':  { cx: 1235, cy: 66,  s: 0.34 },
   'slide-stack':     { cx: 1235, cy: 66,  s: 0.34 },
-  'slide-hero03':    { cx: 1110, cy: 360, s: 1.00 },
+  'slide-hero03':    { cx: 1110, cy: 540, s: 1.00 },
   'slide-sprint1':   { cx: 1235, cy: 66,  s: 0.34 },
   'slide-sprint2':   { cx: 1235, cy: 66,  s: 0.34 },
   'slide-sprint3':   { cx: 1235, cy: 66,  s: 0.34 },
   'slide-sprint4':   { cx: 1235, cy: 66,  s: 0.34 },
   'slide-sprint5':   { cx: 1235, cy: 66,  s: 0.34 },
   'slide-sprint6':   { cx: 1235, cy: 66,  s: 0.34 },
-  'slide-hero04':      { cx: 1110, cy: 360, s: 1.00 },
+  'slide-hero04':      { cx: 1110, cy: 540, s: 1.00 },
   'slide-ai-method':   { cx: 1235, cy: 66,  s: 0.34 },
+  'slide-why-rag':     { cx: 1235, cy: 66,  s: 0.34 },
   'slide-ai-arch':     { cx: 1235, cy: 66,  s: 0.34 },
   'slide-ai-estimate': { cx: 1235, cy: 66,  s: 0.34 },
   'slide-ai-security': { cx: 1235, cy: 66,  s: 0.34 },
   'slide-ai-eval':     { cx: 1235, cy: 66,  s: 0.34 },
   'slide-ai-capstone': { cx: 1235, cy: 66,  s: 0.34 },
-  'slide-hero05':      { cx: 1110, cy: 360, s: 1.00 },
+  'slide-hero05':      { cx: 1110, cy: 540, s: 1.00 },
   'slide-testing':     { cx: 1235, cy: 66,  s: 0.34 },
   'slide-demo':        { cx: 1235, cy: 66,  s: 0.34 },
-  'slide-hero06':      { cx: 1110, cy: 360, s: 1.00 },
+  'slide-hero06':      { cx: 1110, cy: 540, s: 1.00 },
   'slide-conclusion':  { cx: 1235, cy: 66,  s: 0.34 },
   'slide-perspectives':{ cx: 1235, cy: 66,  s: 0.34 },
-  'slide-thanks':      { cx: 1110, cy: 360, s: 1.00 }
+  'slide-thanks':      { cx: 1110, cy: 540, s: 1.00 }
 };
 var gearEl = document.querySelector('.deck-gear');
 function applyGear(slideEl) {
@@ -240,6 +242,42 @@ function runTabConveyor(scope, step) {
   });
 }
 
+/* ---------- eyebrow "appear big at centre, then take its place" ----------
+   FLIP, same idea as defense-deck.html's heroTitle: measure the label in its
+   real resting spot, work out how far it is from the stage centre and how much
+   it can grow without running off the stage, hand both to the CSS animation,
+   then restart it. Fixed values can't work here — the labels differ in length,
+   so a single scale would overflow the long ones. */
+function playEyebrow(slideEl) {
+  var eb = slideEl.querySelector('.deck-eyebrow') || slideEl.querySelector('.roadmap-title');
+  if (!eb) return;
+  eb.classList.remove('eb-play');
+  eb.style.removeProperty('--eby');
+  eb.style.removeProperty('--ebs');
+  var isSub = slideEl.classList.contains('sub-section-slide');
+  if (isSub && !slideEl.classList.contains('content-shown')) return; // still on the intro beat
+  var stage = document.querySelector('.stage');
+  var sc = parseFloat(getComputedStyle(stage).getPropertyValue('--s')) || 1;
+  var sr = stage.getBoundingClientRect();
+  /* tightRect, not getBoundingClientRect: the eyebrow box is stretched edge to
+     edge (left:0;right:0) with the text centred inside, so the element rect is
+     always the full 1280 and would scale everything down to the floor. */
+  var r = tightRect(eb);
+  if (!r.width) return;
+  var wStage = r.width / sc;                   // label width in 1280x720 units
+  var scale = Math.min(2.6, (1280 * 0.76) / wStage);
+  if (scale < 1.3) scale = 1.3;
+  var dy = (sr.top + sr.height / 2 - (r.top + r.height / 2)) / sc;
+  eb.style.setProperty('--eby', dy.toFixed(1) + 'px');
+  eb.style.setProperty('--ebs', scale.toFixed(3));
+  void eb.offsetWidth;                          // commit before re-adding
+  eb.classList.add('eb-play');
+}
+/* replay only when the label should newly appear: on arriving at a slide, and
+   on the click that swaps a subsection's intro beat for its content — not on
+   every step within the slide. */
+var ebKey = null;
+
 function render() {
   slides.forEach(function (s, i) {
     s.classList.toggle('active', i === si);
@@ -263,6 +301,8 @@ function render() {
   if (cur.querySelector('.uc-tabs')) runTabConveyor(cur, step);
   syncMetricViewers(cur);
   applyGear(cur);
+  var ebNow = si + '|' + (cur.classList.contains('sub-section-slide') ? cur.classList.contains('content-shown') : true);
+  if (ebNow !== ebKey) { ebKey = ebNow; playEyebrow(cur); }
   syncToc();
   document.getElementById('cur').textContent = si + 1;
 }

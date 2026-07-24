@@ -110,20 +110,34 @@ body { font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 }
 .toc-collapse:hover, .toc-reopen:hover { color: #fff; border-color: rgba(255,255,255,.35); }
 .toc-reopen {
-  position: fixed; left: 10px; bottom: 12px; z-index: 50; display: none;
+  /* same row as .toc-collapse — the control slides to the edge, it does not
+     jump from the top of the panel to the bottom of the screen. */
+  position: fixed; left: 10px; top: 14px; z-index: 50; display: none;
   background: #131020; width: 30px; height: 30px;
 }
+/* slide rows: indented children, quiet until hovered/active */
 .quicknav-item {
-  padding: 7px 10px 7px 12px; border-radius: 8px; font-size: 13.5px; line-height: 1.3;
-  color: #b6aecd; cursor: pointer; transition: background .15s ease, color .15s ease;
+  position: relative; padding: 7px 10px 7px 22px; border-radius: 8px;
+  font-size: 13.5px; line-height: 1.3; color: #9a92b5; cursor: pointer;
+  transition: background .15s ease, color .15s ease;
 }
 .quicknav-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+/* section rows: brighter, mono, ruled off — unmistakably the parent level */
 .quicknav-item.toc-section {
-  margin-top: 10px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .06em;
-  text-transform: uppercase; color: #8f87ab; font-weight: 700;
+  margin: 15px 0 5px; padding: 9px 10px 5px 10px; border-radius: 0;
+  border-top: 1px solid rgba(255,255,255,.11);
+  font-family: var(--mono); font-size: 11px; letter-spacing: .13em;
+  text-transform: uppercase; color: #b9a6ff; font-weight: 700;
 }
-.quicknav-item.toc-active { background: var(--brand); color: #fff; }
-.quicknav-item.toc-active:hover { background: var(--brand); }
+.quicknav-item.toc-section:hover { background: transparent; color: #d6c9ff; }
+.quicknav-item.toc-active { background: var(--brand); color: #fff; font-weight: 600; }
+.quicknav-item.toc-active::before {
+  content: ""; position: absolute; left: 8px; top: 9px; bottom: 9px;
+  width: 3px; border-radius: 2px; background: #fff;
+}
+.quicknav-item.toc-active:hover { background: var(--brand); color: #fff; }
+.quicknav-item.toc-section.toc-active { background: transparent; color: #d6c9ff; }
+.quicknav-item.toc-section.toc-active::before { display: none; }
 /* hidden states: collapsed by hand, or any fullscreen mode */
 body.toc-collapsed .toc-sidebar { transform: translateX(-100%); }
 body.toc-collapsed .toc-reopen { display: block; }
@@ -434,7 +448,7 @@ body.is-fullscreen .toc-reopen { display: none; }
   /* single consistent frame for EVERY sub-section content area — the same
      comfortable gap below the stepper on every slide (per-body padding-top
      overrides were removed so nothing hugs the title). */
-  padding: 20px 56px 14px;
+  padding: 48px 56px 14px;
   opacity: 0; transform: translateX(960px); pointer-events: none;
   transition: transform 1.2s cubic-bezier(.35,.02,.14,1), opacity 1.2s ease-in-out;
 }
@@ -847,7 +861,11 @@ body.is-fullscreen .toc-reopen { display: none; }
 .arch-link.is-revealed { stroke-dashoffset: 0; }
 .arch-link.dash { stroke: var(--chart-b); stroke-width: 1.6; stroke-dasharray: 5 4; stroke-dashoffset: 0; opacity: 0; transition: opacity .5s ease .2s; }
 .arch-link.dash.is-revealed { opacity: .95; }
-.arch-linklabel { font-family: var(--mono); font-size: 13px; font-weight: 600; fill: var(--faint); opacity: 0; transition: opacity .5s ease; }
+/* halo: paints a background-coloured outline behind the glyphs so a connector
+   or a dashed tier border passing behind can never run through the text. */
+.arch-linklabel { font-family: var(--mono); font-size: 13px; font-weight: 600; fill: var(--faint);
+  paint-order: stroke fill; stroke: var(--bg); stroke-width: 5px; stroke-linejoin: round;
+  opacity: 0; transition: opacity .5s ease; }
 .arch-linklabel.is-revealed { opacity: 1; }
 .arch-linklabel.dash { fill: var(--chart-b); }
 
@@ -1225,7 +1243,7 @@ body.is-fullscreen .toc-reopen { display: none; }
 .s2c-lifecycle { display: flex; flex-direction: column; align-items: center; gap: 14px; }
 .s2c-fsm-wrap { width: 900px; height: 390px; }
 .s2c-invite { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.s2c-invite-wrap { width: 1050px; height: 200px; }
+.s2c-invite-wrap { width: 1050px; height: 300px; }
 
 /* ---- 03.4 Sprint 4: Productivity Suite.
    Reuses .s1-flow / .s1-node / .s1-arrow / .s1-kicker / .s1-closing verbatim
@@ -1401,32 +1419,111 @@ body.is-fullscreen .toc-reopen { display: none; }
 /* shared slide eyebrow: one-line uppercase framing label at the top of a
    content slide that has no tab row. Absolutely placed so it never
    disturbs the body's vertical centering. */
-.deck-eyebrow { position: absolute; top: 40px; left: 0; right: 0; z-index: 4;
+.deck-eyebrow { position: absolute; top: 58px; left: 0; right: 0; z-index: 6;
   text-align: center; font-family: var(--mono); font-size: 15px; font-weight: 700;
-  letter-spacing: .14em; text-transform: uppercase; color: var(--brand); pointer-events: none; }
+  letter-spacing: .14em; text-transform: uppercase; color: var(--brand);
+  pointer-events: none; opacity: 0; }
 
 /* two slides whose content starts high (tall table / wide diagram): nudge the
    centered content down so the eyebrow keeps a clean gap above it. */
-.slide-existing .cmp-wrap { box-sizing: border-box; padding-top: 34px; }
-.slide-arch .arch-body { box-sizing: border-box; padding-top: 30px; }
 
 /* Foundations is the one tab slide with a stats row above its tabs, so its
    content starts high; nudge it down to clear the top-band eyebrow. */
-.slide-sprint1 .uc-body { box-sizing: border-box; padding-top: 56px; }
 
-/* per-slide eyebrow "zoom in, then settle" — the slide's label appears large
-   toward the centre, holds a beat, then glides up into its header position
-   (ported from defense-deck.html's heroIn title move). Uniform across slides
-   because .deck-eyebrow always sits at the same top-centre spot. */
+/* per-slide eyebrow: enters BIG at stage centre, holds, then glides into its
+   band while the body content waits underneath (same beat as defense-deck.html's
+   heroIn). playEyebrow() in defense.js measures the real offset and picks a
+   scale that keeps even the longest label inside the stage. */
 @keyframes deckEyebrowIn {
-  0%   { opacity: 0; transform: scale(1.85); }
-  28%  { opacity: 1; }
-  52%  { opacity: 1; transform: scale(1.85); }
-  100% { opacity: 1; transform: scale(1); }
+  0%   { opacity: 0; transform: translateY(var(--eby, 280px)) scale(var(--ebs, 2.2)); }
+  10%  { opacity: 1; transform: translateY(var(--eby, 280px)) scale(var(--ebs, 2.2)); }
+  58%  { opacity: 1; transform: translateY(var(--eby, 280px)) scale(var(--ebs, 2.2)); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
 }
-.slide.active .deck-eyebrow { animation: deckEyebrowIn 1s cubic-bezier(.22,.9,.24,1) both; transform-origin: center top; }
-@media (prefers-reduced-motion: reduce) { .slide.active .deck-eyebrow { animation: none; } }
+/* visible-without-JS fallbacks (the animation overrides these once it runs) */
+.sub-section-slide.content-shown .deck-eyebrow { opacity: 1; }
+.slide-method-roadmap .roadmap-title { opacity: 0; }
+.slide-method-roadmap.active .roadmap-title { opacity: 1; }
+.deck-eyebrow.eb-play, .roadmap-title.eb-play {
+  animation: deckEyebrowIn 1.9s cubic-bezier(.22,.9,.24,1) both;
+}
+/* the body conveyor waits for the label to land */
+.sub-section-slide.content-shown .sub-body { transition-delay: 1.25s; }
+@media (prefers-reduced-motion: reduce) {
+  .deck-eyebrow.eb-play, .roadmap-title.eb-play { animation: none; opacity: 1; }
+  .sub-section-slide.content-shown .sub-body { transition-delay: 0s; }
+}
 
-/* roadmap's centered title zooms in like the other slide eyebrows (transform
-   only, so the pipeline layout below is unaffected). */
-.slide-method-roadmap.active .roadmap-title { animation: deckEyebrowIn 1s cubic-bezier(.22,.9,.24,1) both; transform-origin: center top; }
+
+/* ============================================================= */
+/* SLIDE — WHY RAG (standalone, between 04.1 and 04.2)           */
+/* ============================================================= */
+.whyrag-body {
+  position: relative; flex: 1 1 auto; box-sizing: border-box;
+  padding: 40px 64px 18px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+}
+.whyrag-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; width: 1090px; }
+.whyrag-opt {
+  background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  padding: 14px 18px; box-shadow: 0 8px 20px rgba(40,30,80,.05);
+}
+.whyrag-opt-x { font-size: 17px; font-weight: 800; color: #c0475a; line-height: 1; }
+.whyrag-opt-t { font-size: 18px; font-weight: 750; color: var(--text); margin: 5px 0 3px; letter-spacing: -.01em; }
+.whyrag-opt-d { font-size: 14.5px; color: var(--muted); line-height: 1.35; }
+/* the option that won: same card, brand-tinted, so the eye lands on it */
+.whyrag-opt.pick { border-color: rgba(122,100,188,.45); background: var(--brand-soft); }
+.whyrag-opt.pick .whyrag-opt-x { color: #3f9d5f; }
+.whyrag-opt.pick .whyrag-opt-t { color: var(--brand-deep); }
+
+.whyrag-fam-title {
+  font-family: var(--mono); font-size: 13.5px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--faint);
+}
+.whyrag-fam { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; width: 1090px; }
+.whyrag-arch {
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  padding: 12px 14px; display: flex; flex-direction: column; gap: 4px;
+}
+.whyrag-arch-n { font-size: 16.5px; font-weight: 750; color: var(--text); }
+.whyrag-arch-d { font-size: 13.5px; color: var(--muted); line-height: 1.3; flex: 1 1 auto; }
+.whyrag-arch-v { font-family: var(--mono); font-size: 12.5px; color: var(--faint); }
+/* the one that ships is filled, not just outlined — it reads at a glance */
+.whyrag-arch.chosen { background: var(--brand-deep); border-color: var(--brand-deep); box-shadow: 0 12px 26px rgba(91,63,160,.22); }
+.whyrag-arch.chosen .whyrag-arch-n { color: #fff; }
+.whyrag-arch.chosen .whyrag-arch-d { color: rgba(255,255,255,.86); }
+.whyrag-arch.chosen .whyrag-arch-v { color: #fff; font-weight: 700; }
+
+.whyrag-close { margin: 0; max-width: 940px; text-align: center; font-size: 16.5px; line-height: 1.45; color: var(--muted); }
+.whyrag-close b { color: var(--brand-deep); font-weight: 700; }
+.whyrag-close code { font-family: var(--mono); font-size: 15px; color: var(--brand); }
+
+/* standalone slides (no .sub-body conveyor to delay) still have to wait for the
+   centred label to land, or the enlarged eyebrow prints over live content. */
+@keyframes contentAfterLabel { from { opacity: 0; } to { opacity: 1; } }
+.slide-why-rag.active .whyrag-body,
+.slide-why-mono.active .whyrag-body,
+.slide-method-roadmap.active .roadmap-stage { animation: contentAfterLabel .45s ease 1.25s both; }
+@media (prefers-reduced-motion: reduce) {
+  .slide-why-rag.active .whyrag-body,
+  .slide-why-mono.active .whyrag-body,
+  .slide-method-roadmap.active .roadmap-stage { animation: none; }
+}
+
+/* inline identifiers inside the architecture tier rows */
+.arch-sub code { font-family: var(--mono); font-size: 11.5px; color: var(--brand); }
+
+/* ---- WHY A MODULAR MONOLITH (02.3b) — two facing columns: the cost of
+   splitting on the left, what we get instead on the right. ---- */
+.wm-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; width: 1090px; }
+.wm-col { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 16px 20px 18px; box-shadow: 0 10px 24px rgba(40,30,80,.05); }
+.wm-col.pick { border-color: rgba(122,100,188,.45); background: var(--brand-soft); }
+.wm-col-h { font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin-bottom: 12px; }
+.wm-col.pick .wm-col-h { color: var(--brand-deep); }
+.wm-item { margin-top: 11px; }
+.wm-item b { display: block; font-size: 16.5px; font-weight: 750; color: var(--text); letter-spacing: -.01em; }
+.wm-col.pick .wm-item b { color: var(--brand-deep); }
+.wm-item span { display: block; font-size: 14.5px; color: var(--muted); line-height: 1.35; margin-top: 2px; }
+.wm-item code { font-family: var(--mono); font-size: 13.5px; color: var(--brand); }
+.whyrag-arch-d b { color: var(--brand-deep); font-weight: 750; }
+.whyrag-arch.chosen .whyrag-arch-d b { color: #fff; }
