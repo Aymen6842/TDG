@@ -1,545 +1,829 @@
-\chapter{Sprint 6: AI Copilot \& Estimation (RAG)}
+% ch4.tex — Chapter 4: The Operational Layer (V2) — Sprints 4 & 5.
+% Compile with XeLaTeX/LuaLaTeX + fontspec (unicode kept verbatim).
 
-Five sprints built the platform: identity, projects, the agile and task engines, the productivity suite, and
-the communication and monitoring backbone. Since Sprint~1, the platform has been accumulating one thing that
-this last sprint finally puts to work: \emph{project data}. Tasks, comments, epics, sprints, and milestones
-together form a written record of how the team actually works: what was decided, what is blocking whom, how
-long a piece of work really took. Sprint 6 turns that record into two assistive features without installing a
-separate machine-learning stack: a copilot that answers natural-language questions grounded strictly in the
-team's own content, and an estimator that bases a draft task's effort on the measured outcomes of similar
-completed work. It is the project's main technical contribution and, unlike the earlier sprints, it comes
-with quantitative evidence that it works. For this reason, this chapter treats it in more depth.
+\chapter{The Operational Layer (V2): Sprints 4 and 5}
 
-\section{Sprint goal}
+Chapter~3 delivered V1: a platform a team can plan and execute work in. This chapter covers the
+second increment --- \textbf{V2, the operational layer} --- built by Sprints~4 and~5.
 
-\textbf{Sprint goal.} Give the platform two features that read its own data back to the user. The first is a
-\textbf{copilot} that answers questions like ``why did we choose X?'' or ``what is blocking Y?'' grounded only in
-retrieved project content, with clickable citations back to the exact task or comment, and that refuses
-honestly when the corpus cannot support an answer. The second is an \textbf{estimation} feature that predicts a
-draft task's effort from the real \texttt{actualHours} of the most similar completed tasks. Both are strictly
-permission-scoped: a user can only ever retrieve from projects they may access. One design principle runs
-through the whole subsystem, \emph{honesty over coverage}: refuse rather than guess, show an uncertainty band
-instead of a false point estimate, and cite the source instead of just stating it.
+Where V1 was about the work, V2 is about the people doing it and the platform's ability to reach
+them. Sprint~4 adds the personal routines that sit around project delivery: a private to-do list,
+the daily check-in and check-out that records attendance, the shared calendar, and the reminder
+engine that ties them together. Sprint~5 then takes the delivery mechanism those four modules had
+each been improvising, fanning a message out to a user across their enabled channels, and turns
+it into a first-class notification module, before proving it end to end with the one consumer
+that exists purely to feed it: infrastructure monitoring, where a cron detecting a dead ping
+raises an alert that travels the whole backbone to a manager's chosen channel.
 
-\textbf{Why RAG, and why not a bare LLM.} The naive design --- sending the question straight to a large language
-model --- fails for exactly the reason this platform exists: the model knows nothing about \emph{this} company's
-projects, and asked about them, it will invent a plausible answer. Retrieval-Augmented
-Generation~\cite{lewis2020rag} fixes that by reversing the flow. We first \emph{retrieve} the few real project
-chunks most relevant to the question, then give only those to the model as its sources, with an instruction to
-answer from them and cite them by number. The model becomes a summarizer of retrieved evidence rather than an
-oracle. An answer can therefore always be traced back to a source the user can open. Most importantly, when
-nothing relevant is retrieved, the system can \emph{decline} instead of inventing. We enforce that decline with
-a confidence gate: if the best retrieved chunk is not similar enough to the question, the copilot refuses
-without ever calling the generation model.
+These two sprints belong together because they are one architectural story told twice. Sprint~4
+discovers the pattern, a per-minute job under a PostgreSQL distributed lock that scans for due
+items and fans them out, by needing it in four places at once. Sprint~5 formalizes it, adds
+the outbox that decouples detecting a problem from delivering news of it, and demonstrates that
+the result is general enough to carry a class of event nobody had in mind when it was designed.
+At \textbf{79 story points} across seven weeks, V2 is broader than V1 but shallower per module:
+six self-contained aggregates rather than one deeply-coupled engine.
 
-The same logic drives estimation. Rather than ask an LLM to guess ``how many hours will this
-take?'' --- a question it has no real basis to answer --- we treat estimation as \textbf{reference-class
-forecasting}~\cite{kahneman1977reference}: find the completed tasks most similar to the draft, and base the estimate on how long \emph{they}
-actually took. The suggestion is backed by evidence and comes with the neighbour tasks attached, so the user
-sees where the number comes from and can judge it. In both features, the point is not that AI is
-present. The value is that its output stays grounded in real data, scoped to a user's permissions, and honest
-about what it does not know.
+The sprint structure is the same as in Chapter~3. Chapter~5 then covers Sprint~6, the AI copilot,
+which reads back everything the five preceding sprints accumulated.
 
-\section{Sprint backlog}
+\clearpage
+\section{Sprint 4: Productivity Suite}
 
-The stories below are drawn from the product backlog (Section~2.2). At \textbf{42 story points} it is a large
-sprint even though it touches only one module, because that module is deep: an asynchronous indexing pipeline,
-a hybrid retrieval engine, a grounded-generation orchestrator, an estimator, and an evaluation harness.
+Sprint~4 adds the personal, day-to-day features: to-dos, attendance, calendar, and reminders.
+
+\subsection{Sprint goal}
+
+The first three sprints built the shared backbone: identity, projects, and the agile/task
+engine. Sprint~4 turns to the personal features each person uses every day: a private
+to-do list, the daily check-in/out attendance routine, the shared calendar, and the reminders
+that tie it all together. Four modules are delivered in one sprint because they share a
+\textbf{cron-driven, multi-channel notification backbone}: each runs a scheduled job that fans
+out to the same four delivery channels (in-app push, email, Telegram, ntfy) according to the
+user's enabled settings, and the per-minute jobs are guarded by a single PostgreSQL-backed
+distributed lock. Where Sprint~3's authorization was project-scoped and role-tiered, most of
+this sprint is personal: the to-do, calendar and attendance data is \texttt{.own}-scoped and
+enforced in the data layer. At \textbf{44 story points} it is a broad rather than deep sprint:
+four self-contained aggregates, each small on its own, unified by the notification backbone.
+
+\subsection{Sprint backlog}
+
+The user stories for this sprint, taken from the product backlog in Section~2.2:
 
 \begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
-\caption{Sprint 6 backlog.}\label{tab:s6-backlog-detail} \\
+\caption{Sprint 4 backlog.}\label{tab:s4-backlog-detail} \\
 \tableheaderrow
 \thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
-\caption[]{Sprint 6 backlog (continued).} \\
+\caption[]{Sprint 4 backlog (continued).} \\
 \tableheaderrow
 \thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
 \bottomrule
 \endfoot
-US-S6-01 & As a user, I want to ask the copilot a natural-language question about project content, so that I get answers without manual digging. & 5 & 2.5d & Must \\
-US-S6-02 & As a user, I want the answer streamed with clickable citations to the source items, so that I can trust and verify it. & 8 & 4d & Must \\
-US-S6-03 & As a user, I want the copilot to refuse honestly when the corpus cannot support an answer, so that I am never misled by a hallucination. & 5 & 2d & Must \\
-US-S6-04 & As a member, I want the system to estimate a draft task's effort from similar completed tasks, so that planning is data-driven. & 8 & 3.5d & Should \\
-US-S6-05 & As the platform, I want project content indexed automatically via a write-path outbox, so that the copilot stays current without slowing saves. & 8 & 4d & Must \\
-US-S6-06 & As an admin, I want to trigger a reindex and view copilot telemetry, so that I can operate the AI subsystem. & 3 & 1.5d & Should \\
-US-S6-07 & As the platform, I want retrieval scoped by permissions in SQL, so that no user can surface content from a project they cannot access. & 5 & 2.5d & Must \\
+US-S4-01 & As a user, I want a private to-do list with sub-tasks, priorities, and statuses, so that I track my own work separately from project tasks. & 5 & 2.5d & Should \\
 \midrule
- & \textbf{Sprint 6 subtotal} & \textbf{42} & \textbf{4w} & \\
+US-S4-02 & As a user, I want due/reminder dates on my to-dos that notify me across my channels, so that nothing slips. & 5 & 2d & Should \\
+\midrule
+US-S4-03 & As an employee, I want to check in and out (remote/onsite) to open and close work sessions, so that attendance is recorded. & 8 & 4d & Must \\
+\midrule
+US-S4-04 & As an employee, I want my worked time computed per business day, so that I can see my hours. & 3 & 1.5d & Should \\
+\midrule
+US-S4-05 & As a manager, I want per-user and per-team attendance statistics, so that I can review presence. & 5 & 2.5d & Should \\
+\midrule
+US-S4-06 & As a user, I want to create calendar events and meetings with participants, so that schedules are shared. & 8 & 3.5d & Should \\
+\midrule
+US-S4-07 & As a user, I want multi-channel reminders before each event, so that I attend on time. & 3 & 1.5d & Should \\
+\midrule
+US-S4-08 & As a user, I want to schedule project and personal reminders delivered on my channels, so that I am nudged at the right moment. & 5 & 2.5d & Should \\
+\midrule
+US-S4-09 & As a user, I want to see and dismiss my pending reminders, so that I can manage them. & 2 & 1d & Could \\
+\midrule
+ & \textbf{Sprint 4 subtotal} & \textbf{44} & \textbf{4w} & \\
 \end{longtable}
 
-\section{Requirements analysis}
+\subsection{Requirements analysis}
 
-The sprint delivers a single AI module with two user-facing features --- a copilot and a task
-estimator --- sharing the same indexing infrastructure and retrieval engine.
+The sprint delivers four modules. The features, actors, and use cases appear in
+Figure~\ref{fig:3-23}. Two actor archetypes appear: a \textbf{User} (any authenticated employee)
+who manages their own to-dos, attendance, calendar events, and reminders, and a
+\textbf{Manager} (CEO, CTO, CMO, or Project Manager) who additionally reviews their team's
+attendance and schedules project-scoped reminders. The shared ``notify across channels'' use
+case is drawn explicitly because it is the piece that connects the four modules: all of them
+\texttt{<<include>>} it from their reminder paths.
 
-Figure~\ref{fig:4-1} shows the features, actors, and use cases. A plain \textbf{User} (holding \texttt{TASKS.TASK\_READ\_MANY}) asks the copilot; a \textbf{task
-author} (holding \texttt{TASKS.TASK\_CREATE}) triggers an estimate while drafting a task; an \textbf{admin / executive}
-(holding \texttt{PROJECTS.PROJECT\_CREATE}) operates the subsystem by reindexing and reading telemetry. A \textbf{Scheduler}
-actor represents the automated indexer --- no human triggers embedding; content flows into the index
-automatically after a write. The two user-facing features both \texttt{<<include>>} a permission-scoped \emph{retrieve} use case, and
-an honest refusal \texttt{<<extend>>}s the streamed, cited answer when retrieval cannot support one.
+% Figure 3.23 — render diagrams-src/fig_3_23.puml -> figures/fig_3_23.(png|pdf)
+{\renewcommand{\figmaxheight}{0.75\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_23}{Sprint 4 use-case diagram.}{3-23}}
 
-% Figure 4.1 — render diagrams-src/fig_4_1.puml -> figures/fig_4_1.(png|pdf)
-\reportfigure{figures/fig_4_1}{Sprint 6 use-case diagram with RBAC-labelled actors.}{4-1}
+\subsubsection{Module A --- Personal To-Dos}
 
-\subsubsection{Module A --- Copilot}
+\textbf{Functional description.} This module is a private per-user checklist, kept deliberately
+separate from the project \texttt{Task} engine of Sprint~3 --- its own tables, its own status and
+priority enums (\texttt{Pending}/\texttt{InProgress}/\texttt{Completed},
+\texttt{Low}/\texttt{Medium}/\texttt{High}), so personal and project tasks can evolve independently. A
+to-do can carry sub-tasks through a self-relation (cascade-deleted with the parent), favourites,
+an archive flag, a due date, an optional reminder date, manual drag-ordering via
+\texttt{displayOrder}, attachments and comments. The module offers many features without new
+infrastructure because it reuses the existing upload, locking, and notification modules. Every
+read and write is scoped by \texttt{userId} in the repository layer --- the \texttt{.own} permissions
+are enforced in the data query, not by the guard --- so a user cannot fetch another user's list.
 
-\textbf{Functional description.} The copilot lets any team member ask a natural-language question
-about their project's content --- tasks, comments, epics, milestones, and sprints --- and receive
-a streamed answer grounded strictly in retrieved project data, with clickable citations back
-to the exact source items. When the corpus cannot support an answer, the copilot refuses
-honestly rather than generating a plausible but unfounded response. An admin can trigger a
-full reindex and view copilot telemetry. The indexing pipeline runs asynchronously via an
-outbox pattern: content changes are enqueued alongside their domain writes and processed by a
-background sweeper, so a failure in the AI subsystem can never break a task save.
-
-\textbf{Actors.} A \textbf{User} (\texttt{TASK\_READ\_MANY}) asks questions and receives grounded
-answers. An \textbf{Admin / Executive} (\texttt{PROJECT\_CREATE}) triggers a reindex and views
-telemetry. A \textbf{Scheduler} (system) runs the indexing sweeper and nightly reconcile
-automatically.
+\textbf{Actors.} A \textbf{User} (all authenticated roles) creates, reads, updates, deletes, and
+reorders their own personal tasks and comments. The module has no manager surface; every
+personal-task permission carries the \texttt{.own} suffix and is granted to all roles through
+\texttt{DEFAULT\_PERMISSIONS\_FOR\_ALL\_ROLES}.
 
 \textbf{Business rules.}
 \begin{itemize}
-  \item Retrieval is \textbf{permission-scoped in SQL}: a user can only retrieve content from
-    projects they may access; out-of-scope rows are never returned to rank, making
-    cross-project leakage impossible by construction rather than merely checked.
-  \item A \textbf{confidence gate} refuses without calling the generation model when the best
-    retrieved chunk is insufficiently similar to the question (cosine $< 0.5$).
-  \item Answers are streamed with numbered \textbf{citation markers} (\texttt{[n]}) linking back
-    to the source entity; each citation resolves to a deep-link the user can open.
-  \item The system instruction and retrieved (untrusted) sources are passed in
-    \textbf{separate turns}, establishing a prompt-injection boundary.
-  \item Five entity types are indexed: tasks, task comments, epics, milestones, and sprints.
-  \item The outbox has a \texttt{@@unique(entityType, entityId)} constraint, \textbf{collapsing
-    repeated edits} to a single pending row.
-  \item A nightly reconcile re-queues any source newer than its embedding and enqueues deletes
-    for orphans, so the index \textbf{self-heals} from any missed write.
+  \item Every read and write filters by \texttt{userId} in the repository, enforcing
+    \textbf{strict read isolation}: \texttt{findUniqueOrThrow(\{ id, userId \})} returns 404 for
+    any task the caller does not own.
+  \item Sub-tasks are a \textbf{self-referencing relation} on \texttt{parentTaskId} with
+    \texttt{onDelete: Cascade}, so deleting a parent removes its children atomically.
+  \item Multilingual content follows the platform-wide i18n content-table pattern
+    (\texttt{UserTaskContent} keyed by \texttt{@@unique([taskId, language])}).
+  \item If file uploads fail after the database write, the service rolls back by deleting the
+    already-uploaded files --- a cleanup guard not present in the project task module.
+  \item The \texttt{reminderDate} field is optional; once the per-minute cron detects it has
+    passed, it fans out to the owner's enabled channels and marks \texttt{notified = true} so the
+    reminder fires exactly once.
 \end{itemize}
 
-\subsubsection{Module B --- Task Estimation}
+\textbf{Reminder cron sequence.} The main background behaviour is the due-date engine
+(Figure~\ref{fig:3-24}). A per-minute \texttt{@Cron} acquires a Postgres-backed distributed
+lock (55-second TTL) so only one instance runs it, fetches to-dos whose \texttt{reminderDate} has
+passed and are still un-notified, fans each one out to the owner's enabled channels, and marks
+\texttt{notified = true}. All four Sprint~4 crons use this same lock-then-scan structure.
 
-\textbf{Functional description.} The estimation feature predicts a draft task's effort from the
-measured outcomes of similar completed tasks, treating effort prediction as reference-class
-forecasting~\cite{kahneman1977reference} rather than asking a language model to guess. It reuses the copilot's
-scoped retrieval to find the nearest completed tasks by semantic similarity, and reports a
-data-driven suggestion with the evidence tasks attached, so the user sees the basis for the
-number and can judge it. No generation model is called --- the feature is pure retrieval.
+% Figure 3.24 — render diagrams-src/fig_3_24.puml -> figures/fig_3_24.(png|pdf)
+\reportsideways{figures/fig_3_24}{Personal-task reminder cron sequence.}{3-24}
 
-\textbf{Actors.} A \textbf{Task Author} (\texttt{TASK\_CREATE}) triggers an estimate while
-drafting or editing a task.
+\textbf{Class diagram.} Figure~\ref{fig:3-25} shows a small, cohesive aggregate: a
+\texttt{UserTask} root with the content-table split for i18n, comments carrying their own author
+\texttt{userId}, and attachments stored as disk paths.
+
+% Figure 3.25 — render diagrams-src/fig_3_25.puml -> figures/fig_3_25.(png|pdf)
+\reportfigure{figures/fig_3_25}{Personal To-Dos class diagram.}{3-25}
+
+\subsubsection{Module B --- Time \& Attendance}
+
+\textbf{Functional description.} Attendance is enforced as a daily routine. On entering any
+authenticated dashboard route, a full-screen gate blocks the app until the user checks
+in --- choosing Remote or Onsite --- or explicitly chooses ``join as viewer''. Checking in opens a
+\texttt{WorkSession}; checking out closes the latest open session, computes worked minutes, and
+optionally captures a mood and a journey note. Sessions roll up under one \texttt{WorkDay} per
+user per business day, which also holds day-level attributes (mood, a manager's performance
+rating, notes). Beyond recording presence, the module also encourages compliance --- late starts
+and forgotten sessions trigger notifications --- and reports per-user and per-manager attendance
+statistics.
+
+\textbf{Actors.} A \textbf{Worker} (all authenticated roles) checks in and out, views their own
+work days and statistics, and adds daily mood or notes. A \textbf{Manager} (CEO, CTO, CMO,
+Project Manager) reviews team attendance, views per-user and per-team statistics, and adds a
+performance rating or manager notes --- access gated by
+\texttt{canUserManageUsers}/\texttt{canUserManageTeams} inside the service.
 
 \textbf{Business rules.}
 \begin{itemize}
-  \item Only completed tasks with recorded actual hours (\texttt{actualHours > 0}) are considered
-    as neighbours.
-  \item If the target project yields fewer than \textbf{three neighbours}, the search widens to
-    the same business unit.
-  \item Two prediction modes: \textbf{size-aware} (when the draft and neighbours carry story
-    points) computes draft points $\times$ a similarity-weighted hours-per-point percentile,
-    reported as a median with a 10th/90th band; \textbf{size-agnostic} (fallback) computes a
-    similarity-weighted median of \texttt{actualHours} with a 25th/75th IQR band.
-  \item The suggestion is \textbf{never a bare number}: the neighbour tasks are always returned
-    as evidence.
+  \item \textbf{Only one open session per day}: the service rejects a check-in if the current
+    \texttt{WorkDay} already contains a session with no \texttt{endTime}.
+  \item \textbf{Late-start detection} fires at two thresholds --- morning (08:45~UTC) and
+    afternoon (12:30~UTC) --- with a single-notification-per-half-day guard to prevent duplicate
+    alerts.
+  \item A nightly \textbf{auto-close cron} at 03:00~UTC closes all open sessions, capping each
+    session's \texttt{endTime} at shift end (16:15~UTC weekdays, 12:30~UTC Saturdays) rather than
+    at 03:00, so workers are not penalized for after-hours time.
+  \item \textbf{Workers cannot modify} \texttt{endTime} or \texttt{timeSpentInMinutes} on their
+    own sessions; the service strips those fields before persisting.
+  \item Manager statistics endpoints correctly add a \texttt{canUserManageUsers} check before
+    querying, so a manager sees only the users they actually manage (business-unit-scoped).
+  \item Location and device are recorded per session via \texttt{WorkSessionLocation}
+    (\texttt{REMOTE}/\texttt{ONSITE}) and \texttt{WorkSessionDevice}
+    (\texttt{DESKTOP}/\texttt{MOBILE}/\texttt{TABLET}/\texttt{OTHER}).
 \end{itemize}
 
-\section{Methodology note --- a CRISP-DM sub-process}
+\textbf{Check-in sequence.} Figure~\ref{fig:3-26} shows the check-in path: the service resolves
+the current business day (creating one if none exists), verifies no session is already open,
+opens a new \texttt{WorkSession} with the chosen location and device, and returns the updated
+work day.
 
-Scrum organizes the project as a whole, but the AI work inside this sprint is a data-mining task, and we
-organized it using the vocabulary of \textbf{CRISP-DM}~\cite{shearer2000crisp} (Cross-Industry Standard Process for Data Mining) as a
-sub-process inside Sprint 6. The mapping is direct, and it explains the shape of the subsystem:
+% Figure 3.26 — render diagrams-src/fig_3_26.puml -> figures/fig_3_26.(png|pdf)
+\reportsideways{figures/fig_3_26}{Check-in sequence diagram.}{3-26}
 
+\textbf{Class diagram.} Figure~\ref{fig:3-27} shows the two-level \texttt{WorkDay} \textrightarrow{}
+\texttt{WorkSession} split. The single documented seam into Sprint~3 is visible: a
+\texttt{WorkSession} owns the \texttt{TaskTimeEntry} rows the Tasks module attaches to it, so
+logged task time is anchored to an attendance session.
+
+% Figure 3.27 — render diagrams-src/fig_3_27.puml -> figures/fig_3_27.(png|pdf)
+{\renewcommand{\figmaxheight}{0.60\textheight}%
+\reportfigure[0.90\textwidth]{figures/fig_3_27}{Time \& Attendance class diagram.}{3-27}}
+
+\subsubsection{Module C --- Events \& Calendar}
+
+\textbf{Functional description.} This is the shared company calendar. Three kinds of entry are
+distinguished by an \texttt{EventType} enum --- \texttt{Meeting} and \texttt{Event}
+(organizational, targetable at named participants or the whole company via \texttt{toAllUsers})
+and \texttt{PersonalEvent} (a private per-user entry) --- each shown on its own calendar page.
+The calendar is a custom month/week/day/agenda view built on \texttt{date-fns} and
+\texttt{@dnd-kit} drag-and-drop. The module's second concern is reminders: a per-minute cron
+computes \emph{escalating} notification thresholds --- 24~hours before the event, then
+2.5~hours, then 30~minutes, then a final 15-minute window --- and fans each one out to the
+resolved audience across the four delivery channels.
+
+\textbf{Actors.} A \textbf{User} (all authenticated roles) creates, reads, and manages their own
+events (including personal events). An \textbf{Executive} (CEO, CTO, CMO) can additionally
+modify or delete organizational events created by others. Read visibility is enforced in the
+query: a user sees only events where \texttt{toAllUsers} is true, they created it, or they are a
+participant.
+
+\textbf{Business rules.}
 \begin{itemize}
-  \item \textbf{Business understanding.} The goal is assistive, not autonomous: help a user find and estimate, never
-  decide for them. This is what makes \emph{honesty over coverage} the governing rule.
-  \item \textbf{Data understanding.} The corpus is the platform's own content --- five entity types (tasks, task comments,
-  epics, milestones, sprints) --- small, clean, permission-partitioned, and already relational. There is no
-  external dataset to clean; the data understanding step is really \emph{scope} understanding (who may see what).
-  \item \textbf{Data preparation.} Chunking (\textasciitilde2000-character windows with 300-character overlap, per entity type), sha256
-  hashing to skip unchanged content, and embedding into 1536-dimensional vectors. This is the indexing
-  pipeline of Section~4.5.
-  \item \textbf{Modeling.} Not a trained model but a \emph{retrieval} model: hybrid vector + lexical search fused by Reciprocal
-  Rank Fusion~\cite{cormack2009rrf}, an optional LLM reranker, and a k-NN estimator over completed-task outcomes.
-  \item \textbf{Evaluation.} An offline harness with committed gold sets measuring Recall@k, MRR, nDCG, faithfulness,
-  citation precision/recall, refusal correctness, and estimation error --- the subject of Section~4.8.
+  \item \textbf{Escalating notification thresholds}: the cron evaluates remaining time to the
+    event start and advances \texttt{nextNotificationTime} through four bands (24h, 2.5h, 30min,
+    15min). Once remaining time drops below 25~minutes, \texttt{isNotified} is set to \texttt{true}
+    and no further notifications fire.
+  \item The \texttt{EventParticipant} join uses a \textbf{composite primary key}
+    \texttt{@@id([eventId, userId])}, preventing duplicate invitations.
+  \item A \texttt{PersonalEvent} is editable and deletable \textbf{only by its creator}; the
+    service checks \texttt{event.createdById === req.user.id}.
+  \item \texttt{EventContent} follows the platform-wide i18n content-table pattern, consistent
+    with \texttt{ProjectContent} and \texttt{SprintContent} from earlier sprints.
+  \item Event colours are constrained to a six-value enum (\texttt{Sky}, \texttt{Amber},
+    \texttt{Violet}, \texttt{Rose}, \texttt{Emerald}, \texttt{Orange}).
 \end{itemize}
 
-We did not build a \emph{deployment} step in the CRISP-DM sense of shipping a model artefact, because there is no
-model to ship: the ``model'' is Google Gemini~\cite{gemini} behind an API, and our contribution is the retrieval,
-grounding, and scoping around it. Naming these phases gives the work an explicit structure --- it makes clear
-that the evaluation harness is the quality gate that plays the role of a trained model's validation curve.
+\textbf{Event reminder cron.} Figure~\ref{fig:3-28} shows the escalating reminder cron: on each
+tick it queries events whose \texttt{nextNotificationTime} has passed, resolves the audience
+(creator, explicit participants, or all users if \texttt{toAllUsers}), fans out to each
+recipient's enabled channels, computes the next threshold, and updates the event row.
 
-\section{RAG architecture}
+% Figure 3.28 — render diagrams-src/fig_3_28.puml -> figures/fig_3_28.(png|pdf)
+\reportsideways{figures/fig_3_28}{Event reminder cron with escalating thresholds.}{3-28}
 
-The subsystem follows the project's layering convention (controller \textrightarrow{} service \textrightarrow{} repository), with two
-Prisma-raw repositories isolating the pgvector~\cite{pgvector} and tsvector SQL that Prisma cannot type. It is three
-tables, five endpoints, nine single-responsibility services, and one cron worker carrying two schedules (the
-per-minute sweep and the nightly reconcile). Figure~\ref{fig:4-2} presents the
-whole pipeline in one view; the two sequence diagrams and the class diagram that follow detail the write path,
-the read path, and the data model.
+\textbf{Class diagram.} Figure~\ref{fig:3-29} shows a clean three-table aggregate ---
+\texttt{Event}, its i18n \texttt{EventContent}, and the \texttt{EventParticipant} join. The
+denormalized \texttt{nextNotificationTime}/\texttt{isNotified} fields on \texttt{Event} let the
+cron find events due to notify with a single indexed scan rather than recomputing per event
+each minute.
 
-% Figure 4.2 — render diagrams-src/fig_4_2.puml -> figures/fig_4_2.(png|pdf)
-\reportsideways{figures/fig_4_2}{RAG pipeline overview.}{4-2}
+% Figure 3.29 — render diagrams-src/fig_3_29.puml -> figures/fig_3_29.(png|pdf)
+\reportfigure{figures/fig_3_29}{Events \& Calendar class diagram.}{3-29}
 
-\textbf{The indexing pipeline (write path).} The central design choice is that \textbf{no Gemini call ever happens on a
-user's request}. When a task is created, updated, or deleted, the task service calls a one-line
-\texttt{enqueueUpsert} / \texttt{enqueueDelete} into an \textbf{outbox} table alongside its other side effects, and returns
-immediately. The enqueue is deliberately fire-and-forget --- its failures are caught and logged, never
-propagated --- so a problem in the AI subsystem can never break a task save. A separate
-\texttt{IndexSweeperJob} cron runs every minute under a Postgres distributed lock (so only one instance sweeps, the
-same pattern as the reminder scheduler), claims up to 25 due rows, and for each one re-reads the \emph{live} source
-row, rebuilds its chunks, embeds only the chunks whose sha256 hash changed, and upserts them. Success marks
-the row done; a transient failure schedules a retry with exponential backoff (30 s up to \textasciitilde15 min); when
-the retry budget is exhausted, the row is marked failed. A nightly reconcile re-queues any source newer than its embedding and
-enqueues deletes for orphaned embeddings, so the index self-heals from any missed write.
-Two properties make this safe under repeated edits: the outbox has a \texttt{@@unique(entityType, entityId)}
-constraint, so a task edited ten times before the next sweep collapses to a single pending row and is embedded
-once; and re-reading the live row at sweep time means a stale queued edit always embeds the \emph{current} content.
-Figure~\ref{fig:4-3} follows one task through this path.
+\subsubsection{Module D --- Reminders}
 
-% Figure 4.3 — render diagrams-src/fig_4_3.puml -> figures/fig_4_3.(png|pdf)
-\reportsideways{figures/fig_4_3}{Asynchronous index-a-task sequence.}{4-3}
+\textbf{Functional description.} The Reminders module connects the whole sprint: a
+time-triggered, multi-channel reminder table that other modules also write into. It serves two
+workflows. \textbf{Manual} reminders let a project manager schedule one for a specific user,
+linked to a task, sprint, milestone, project, or free-form \texttt{CUSTOM} target, delivered
+over chosen channels at a future time. \textbf{Automatic} reminders are created by the Tasks,
+Sprints and Milestones services when those artefacts are created (the due-date reminders seen
+in Sprint~3), plus crons that scan for overdue tasks (due date passed) and stuck tasks (no
+update for five days). A per-minute scheduler is the delivery engine: it finds \texttt{PENDING}
+reminders whose \texttt{reminderAt} has passed and dispatches them. Authorization follows the
+Projects module exactly --- the same BusinessUnit-scoped executive model (CEO global, CTO
+TawerDev, CMO TawerCreative) plus project membership --- which keeps the codebase consistent.
 
-\textbf{The retrieval and answer pipeline (read path).} A copilot question runs through \texttt{RetrievalService}, which
-first resolves the user's \texttt{allowedProjectIds} (an executive CEO sees all projects; a CTO sees the Tawer Dev
-unit, a CMO Tawer Creative; everyone else sees only projects they are a member of), then embeds the question
-as a retrieval query and runs two searches under the identical permission filter. The \textbf{vector arm}
-(\texttt{searchVector}) does a cosine approximate-nearest-neighbour scan over the HNSW index; the \textbf{lexical arm}
-(\texttt{searchLexical}) does a Postgres full-text \texttt{ts\_rank\_cd} scan over the GIN index. Their two ranked lists are
-fused by \textbf{Reciprocal Rank Fusion}~\cite{cormack2009rrf} --- each candidate scores \texttt{$\Sigma$ 1/(60 + rank)} across the arms, which rewards
-items ranked highly by either signal without needing the two scores to be on the same scale. An optional LLM
-reranker can re-order the fused pool, and falls back safely to the fused order if the model is unavailable.
+\textbf{Actors.} A \textbf{Team Member} (all project members) can read reminders for their
+projects and dismiss their own reminders. A \textbf{Manager / Executive} (PM, PO, CEO, CTO, CMO)
+can create, update, and delete reminders for projects they manage, following the same
+business-unit-scoped access model introduced in Sprint~2.
 
-Then the \textbf{confidence gate}: if the best cosine score is below 0.5, retrieval reports \texttt{sufficient: false} and
-the copilot refuses \emph{without ever calling the generation model} --- the cheapest possible way to maintain honesty.
-Otherwise the service builds a numbered-sources prompt, passing the system instruction and the retrieved
-(untrusted) sources in \textbf{separate turns} so injected instructions inside project text are treated as data,
-and streams a grounded answer at low temperature (0.2). It parses the \texttt{[n]} citation markers the model emits
-back to their source entities, batch-resolves their human-readable labels and deep-links, and writes a
-telemetry receipt. Figure~\ref{fig:4-4} traces the streaming path.
-
-% Figure 4.4 — render diagrams-src/fig_4_4.puml -> figures/fig_4_4.(png|pdf)
-\reportsideways{figures/fig_4_4}{Copilot query sequence diagram.}{4-4}
-
-\textbf{Estimation (read path, no generation).} Estimation reuses the same scoped retrieval but never calls the
-generation model. It embeds the draft's \texttt{title} + \texttt{description}, runs a k-NN search restricted to \texttt{status = 'DONE' AND actualHours > 0} tasks (taking each task's single nearest chunk), and if the project yields fewer
-than three neighbours widens the search to the same business unit. From the neighbours it predicts in two ways:
-with draft story points present and pointed neighbours, it computes a \textbf{size-aware} estimate --- draft points \texttimes{}
-a similarity-weighted hours-per-point percentile, reported as a median with a 10/90 band; otherwise it falls
-back to a \textbf{size-agnostic} similarity-weighted median of \texttt{actualHours} with a 25/75 IQR band. Either way the
-neighbours are returned as evidence, so the suggestion is never a bare number.
-
-\textbf{The data model.} Three tables support the subsystem, modeled together in a dedicated Prisma schema file; the
-vector column, the generated \texttt{tsvector} column, and the HNSW and GIN indexes are created in hand-written
-migration SQL because Prisma cannot emit them. Figure~\ref{fig:4-5} presents the class diagram.
-\texttt{DocumentEmbedding} holds one embedded chunk --- a \texttt{vector(1536)} column indexed by HNSW for cosine ANN, a
-\emph{generated, stored} \texttt{tsvector} column indexed by GIN for full-text search (generated-and-stored means it
-back-fills every existing row at migration time and self-maintains on write, with no write-path change), and a
-\texttt{contentHash} so an unchanged chunk skips the Gemini~\cite{gemini} call. \texttt{IndexOutbox} is the async work queue with its
-collapse-to-one \texttt{@@unique(entityType, entityId)} key and its backoff fields. \texttt{CopilotQueryLog} is one
-telemetry receipt per copilot call. One structural note: \texttt{entityId} on the first two tables is a \textbf{soft
-reference} --- a bare id column with no foreign key --- because it is polymorphic across the five entity types;
-referential integrity is maintained by the write-path producers and the nightly reconcile rather than by the
-database.
-
-% Figure 4.5 — render diagrams-src/fig_4_5.puml -> figures/fig_4_5.(png|pdf)
-\reportfigure{figures/fig_4_5}{AI module class diagram.}{4-5}
-
-\section{Security considerations}
-
-Security is a real strength of this module, and the reason is structural rather than procedural: the
-protection comes from the query design, not from checks added afterwards.
-\textbf{Retrieval permission scoping is enforced in SQL, before ranking.} \texttt{AiAccessService.allowedProjectIds}
-resolves the caller's scope, and every search --- vector and lexical alike --- applies \texttt{projectId = ANY(\$allowedIds)} inside the query itself. There is no code path that can surface a chunk from a project the
-user cannot access, because the out-of-scope rows are never returned to rank in the first place; the main
-safety property is not just checked --- it is impossible by construction. An explicit out-of-scope
-\texttt{projectId} returns 403. This is the property the evaluation independently confirmed with zero
-cross-role leaks (Section~4.8).
-
-Four further controls reinforce it:
-
+\textbf{Business rules.}
 \begin{itemize}
-  \item \textbf{Endpoint RBAC} on every route via \texttt{HasPermissionGuard}: copilot requires \texttt{TASK\_READ\_MANY}, estimate
-  \texttt{TASK\_CREATE}, and reindex/telemetry \texttt{PROJECT\_CREATE} (executive-only).
-  \item \textbf{A prompt-injection boundary.} The system instruction and the untrusted retrieved sources are passed in
-  separate turns, and the instruction explicitly tells the model to treat source text as data and never obey
-  instructions embedded in it --- the same rule applies in the reranker. Temperature is held at 0.2 for faithful,
-  low-variance answers.
-  \item \textbf{DTO validation} bounds every input (question 3--1000 chars, story points 1--100, UUIDs).
-  \item \textbf{No SQL-injection surface despite raw SQL.} Every raw query is a parameterized tagged template; the
-  lexical arm parses user input with \texttt{websearch\_to\_tsquery}, which tolerates arbitrary text without throwing;
-  the only interpolated value is the app-built numeric vector literal.
+  \item \texttt{reminderAt} must be \textbf{in the future}; the service rejects any value
+    \texttt{<= now()}.
+  \item The reminder follows a \textbf{status machine}: \texttt{PENDING \textrightarrow{} SENT} on
+    delivery, and \texttt{PENDING \textrightarrow{} DISMISSED} when the user dismisses it --- SENT
+    is not a prerequisite, a still-pending reminder can be dismissed directly.
+    \texttt{PENDING \textrightarrow{} CANCELLED} is not a manual action: it is an automatic side
+    effect scoped to sprint-linked reminders, triggered when the parent sprint is stopped,
+    completed, or deleted. Dismissing an already-dismissed or cancelled reminder is rejected.
+  \item The target is \textbf{polymorphic}: \texttt{entityType} (\texttt{TASK}, \texttt{SPRINT},
+    \texttt{MILESTONE}, \texttt{PROJECT}, \texttt{CUSTOM}) plus \texttt{entityId} links a reminder
+    to any entity kind without requiring a typed foreign key per entity.
+  \item Two distinct \texttt{User} foreign keys separate \emph{who is reminded}
+    (\texttt{userId}) from \emph{who scheduled it} (\texttt{createdById}).
+  \item Overdue and stuck task detection is \textbf{idempotent}: the cron checks for an existing
+    \texttt{PENDING}/\texttt{SENT} reminder with the same entity and message before creating a new
+    one, preventing duplicate notifications.
+  \item Default reminders are seeded automatically: one day before a task's due date, one day
+    before sprint start and two days before sprint end, and seven days plus three days before a
+    milestone's due date.
 \end{itemize}
 
-One limitation must be stated: access control is \textbf{project-level, not entity-level}. Any content in an
-allowed project is retrievable, with no per-task or per-comment visibility check. That matches the tasks
-module's own project-scoped authorization today, but if finer-grained task visibility were ever added,
-retrieval would expose too much until it applied the same rule. This and the telemetry-privacy point
-are carried into the sprint review (Section~4.10).
+\textbf{Pending-reminder delivery sequence.} Figure~\ref{fig:3-30} shows the core delivery path:
+the per-minute scheduler acquires the distributed lock, queries \texttt{PENDING} reminders whose
+\texttt{reminderAt} has passed, resolves each recipient's channel preferences, fans out to the
+enabled channels, and marks the reminder \texttt{SENT}.
 
-\section{Implementation}
+% Figure 3.30 — render diagrams-src/fig_3_30.puml -> figures/fig_3_30.(png|pdf)
+\reportsideways{figures/fig_3_30}{Pending-reminder delivery sequence.}{3-30}
 
-On the frontend the copilot is a project-detail tab: a textarea and an ask button, the answer rendered
-token-by-token behind a blinking caret as the SSE stream arrives, and then a row of citation chips --- or an
-honest ``not found in this project's content'' note when retrieval was insufficient. The stream client is a
-manual \texttt{fetch} + SSE-frame parser rather than the browser \texttt{EventSource}, specifically so it can send the
-\texttt{Authorization} header, with one silent token-refresh retry on a 401. This is a deliberate engineering
-choice: \texttt{EventSource} cannot set request headers, so a permission-scoped streaming endpoint behind JWT
-auth would otherwise have to pass the token through the query string. Instead, the module reads the response
-body as a stream and splits the SSE frames itself. The bearer token stays in the header, and a mid-stream 401
-silently refreshes the token and replays the request, so the user never sees a dropped answer.
-Each \textbf{citation chip} deep-links by
-rewriting the URL's tab and task parameters: a task or comment citation opens the tasks tab and the task
-sheet, while an epic, milestone, or sprint citation switches to the relevant tab, with the source snippet on
-hover. Estimation appears inline in the create/edit task form as a single suggestion line --- ``$\approx$ Xh (low--high) $\cdot$
-N pts --- based on TASK-a\ldots'' --- with a one-click apply, debounced and gated on the title reaching a few
-characters, with appropriate empty and error states.
+\textbf{Class diagram.} Figure~\ref{fig:3-31} shows the two design decisions worth noting: the
+dual-user foreign keys (\texttt{userId} vs \texttt{createdById}) and the polymorphic target
+(\texttt{entityType} + \texttt{entityId}).
 
-% Screenshot P-31
-\reportscreenshot{figures/screenshot_P31}{Copilot panel: grounded answer with citation chips.}{P31}
+% Figure 3.31 — render diagrams-src/fig_3_31.puml -> figures/fig_3_31.(png|pdf)
+\reportfigure{figures/fig_3_31}{Reminders class diagram.}{3-31}
 
-% Screenshot P-32
-\reportscreenshot{figures/screenshot_P32}{Citation chip deep-link opening a referenced task.}{P32}
+\subsection{Implementation}
 
-% Screenshot P-33
-\reportscreenshot{figures/screenshot_P33}{Task estimate suggestion in the create-task form.}{P33}
+The sprint delivered four backend modules and the client screens that consume them.
 
-\section{Evaluation \& testing}
+The \textbf{personal to-do surface} consists of endpoints on
+\texttt{PersonalTasksController} covering CRUD, sub-tasks, reorder, favourites,
+archive, comments, and attachments --- all scoped by the caller's \texttt{userId}.
 
-Unlike every other module, the AI subsystem comes with quantitative evidence. Rather than unit tests it
-carries a substantial \textbf{offline evaluation harness} (\texttt{src/ai/eval/}, run via \texttt{npm run ai:eval:*}) with
-committed gold sets and stable human-readable references, measuring three things: \textbf{retrieval} quality
-(Recall@k, Precision@k, MRR, nDCG@k over 12 semantic and 10 keyword gold questions, comparing vector-only vs
-hybrid vs hybrid+rerank, plus ablations); \textbf{answer} quality (an LLM faithfulness judge, citation
-precision/recall against a \texttt{mustCite} set, and refusal correctness on answerable vs deliberately-unanswerable
-questions); and \textbf{estimation} (leave-one-out MAE/RMSE and within-$\pm$25\% of the k-NN predictor against
-project-mean and story-points baselines). This is measurement rather than regression testing, but it is the
-de-facto quality gate that plays the role of the trained-model validation a CRISP-DM process would expect.
-The three retrieval arms are themselves the ablation: \textbf{vector-only} (baseline),
-\textbf{vector + lexical fused by RRF}~\cite{cormack2009rrf} (hybrid), and \textbf{hybrid followed by the LLM reranker} --- each flag-gated
-(\texttt{AI\_RETRIEVAL\_HYBRID}, \texttt{AI\_RETRIEVAL\_RERANK}), so any arm can be switched off and re-measured in isolation.
+The \textbf{attendance surface} consists of endpoints on \texttt{WorkDaysController}:
+check-in, check-out, current work day, own and manager work-day lists, worker and manager
+updates, and four statistics endpoints (overview/details, each for own and manager views).
 
-The main result is on retrieval. On the \textbf{keyword / identifier} gold set (re-run 2026-07-07) --- bare
-ticket-key lookups like \texttt{NDF-24}, the worst case for a dense embedder because an opaque token carries almost
-no semantic signal --- adding the lexical arm changes the numbers completely:
+The \textbf{calendar surface} consists of endpoints on \texttt{EventsController}: event CRUD,
+participant management, and the three event-type list queries (meetings, events, personal
+events). The calendar is a custom month/week/day/agenda component built on \texttt{date-fns}
+and \texttt{@dnd-kit}.
 
-\begin{longtable}{@{}lcccccc@{}}
-\caption{Keyword/identifier gold-set retrieval metrics.}\label{tab:eval-keyword} \\
+The \textbf{reminders surface} consists of endpoints across two controllers:
+\texttt{RemindersController} (project-scoped CRUD) and \texttt{UserRemindersController}
+(personal \texttt{/reminders/me} list and dismiss action).
+
+On the \textbf{client}, the to-do list is a two-tab page (Personal / Project). Attendance is a
+full-screen gate wrapping the dashboard, plus a header check-out button. The calendar is three
+pages sharing one custom calendar component, and the reminders UI is embedded inside the
+project-detail view.
+
+\reportscreenshot{figures/screenshot_P23}{Personal to-do list with filters and task-detail sheet.}{P23}
+
+\reportscreenshot{figures/screenshot_P24}{Check-in gate.}{P24}
+
+\reportscreenshot{figures/screenshot_P25}{Calendar month view.}{P25}
+
+\reportscreenshot{figures/screenshot_P26}{Project-detail reminders list.}{P26}
+
+\subsection{Validation and testing}
+
+The testing strategy for this sprint focused on two areas: \textbf{property-based frontend
+testing} and \textbf{acceptance scenario verification}.
+
+Two property-based suites (\texttt{fast-check} + \texttt{vitest}) verify client-side invariants
+across the sprint's transform and parsing layers: the reminder Zod schema invariants and the
+caster round-trip. Property-based testing generates hundreds of random inputs per run and
+asserts that an invariant holds across all of them, which is a stronger guarantee than a small
+set of example cases.
+
+The acceptance scenarios below record the Given/When/Then conditions each user story had to
+satisfy:
+
+\begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
+\caption{Sprint 4 acceptance scenarios.}\label{tab:s4-acceptance} \\
 \tableheaderrow
-\thcell{Config} & \thcell{MRR} & \thcell{R@1} & \thcell{nDCG@1} & \thcell{R@3} & \thcell{nDCG@3} & \thcell{R@5} \\
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endfirsthead
-\caption[]{Keyword/identifier gold-set retrieval metrics (continued).} \\
+\caption[]{Sprint 4 acceptance scenarios (continued).} \\
 \tableheaderrow
-\thcell{Config} & \thcell{MRR} & \thcell{R@1} & \thcell{nDCG@1} & \thcell{R@3} & \thcell{nDCG@3} & \thcell{R@5} \\
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
 \midrule
 \endhead
-baseline (vector-only) & 0.570 & 0.300 & 0.300 & 0.900 & 0.639 & 1.000 \\
-\textbf{hybrid} & \textbf{1.000} & \textbf{1.000} & \textbf{1.000} & \textbf{1.000} & \textbf{1.000} & \textbf{1.000} \\
-hybrid + rerank & 1.000 & 1.000 & 1.000 & 1.000 & 1.000 & 1.000 \\
 \bottomrule
+\endfoot
+US-S4-01 & Given a user, When they create a to-do with sub-tasks/priority/status, Then it is stored under their \texttt{userId}, isolated from other users and from project tasks, with sub-tasks cascade-linked. & \pass{} Verified \\
+\midrule
+US-S4-02 & Given a to-do with a \texttt{reminderDate}, When the time passes, Then a locked per-minute cron notifies the owner across enabled channels and marks it notified once. & \pass{} Verified \\
+\midrule
+US-S4-03 & Given an employee, When they check in (remote/onsite) and later check out, Then a \texttt{WorkSession} opens and closes with worked minutes computed; only one session is open at a time. & \pass{} Verified \\
+\midrule
+US-S4-04 & Given a closed session, When the day is viewed, Then worked time is computed per business day. & \pass{} Verified \\
+\midrule
+US-S4-05 & Given a manager, When they open attendance statistics for their users/teams, Then aggregates and per-day hours are returned for the managed users, gated by \texttt{canUserManageUsers}. & \pass{} Verified \\
+\midrule
+US-S4-06 & Given a user, When they create an event/meeting with participants, Then it is stored with content and participants and appears on the shared calendar with correct read visibility (creator, participant, or \texttt{toAllUsers}). & \pass{} Verified \\
+\midrule
+US-S4-07 & Given an upcoming event, When each threshold is reached, Then a reminder fans out over enabled channels at 24h/2.5h/30min/15min, advancing \texttt{nextNotificationTime} until \texttt{isNotified} is set. & \pass{} Verified \\
+\midrule
+US-S4-08 & Given a manager, When they schedule a project or personal reminder for a user with channels and a future time, Then it is stored \texttt{PENDING} and delivered by the per-minute scheduler across enabled channels. & \pass{} Verified \\
+\midrule
+US-S4-09 & Given a user with pending reminders, When they open their list and dismiss one, Then it is marked dismissed (ownership-enforced via \texttt{userId} scoping). & \pass{} Verified \\
 \end{longtable}
 
-That is \textbf{MRR 0.57 \textrightarrow{} 1.00 and Recall@1 0.30 \textrightarrow{} 1.00} at no extra LLM cost --- vector-only put the exact task
-first only 30\% of the time, while the lexical arm matches the identifier every time and RRF fuses it to a
-perfect ranking. On the \textbf{semantic} gold set the result is the opposite and equally informative: the
-bi-encoder is already saturated on this small 73-chunk corpus (MRR 0.958, the first relevant hit at rank 1
-almost every time), so \textbf{hybrid ties the saturated baseline (0.958, no regression); the LLM reranker matches
-or slightly beats it (1.000 this run)}. Because the reranker is an LLM scoring pass, its number varies
-slightly run-to-run, while the deterministic vector and hybrid arms do not --- so the accurate reading is that
-rerank never regresses the semantic set and sometimes improves it. Hybrid is the right default: it is far
-better in the keyword case and equal in the semantic one.
+\subsection{Sprint review}
 
-\begin{longtable}{@{}p{2.6cm}p{2.4cm}p{5.2cm}p{4.2cm}@{}}
-\caption{Retrieval evaluation summary.}\label{tab:eval-summary} \\
+\textbf{Objectives achieved.} The sprint met its goal: the platform has a private task manager
+with per-user isolation, an enforced attendance routine with compliance notifications and
+manager reporting, a shared calendar with escalating multi-channel reminders, and a
+project-aware reminder engine that other modules write into. All four modules share one
+infrastructure contribution: a cron-driven, lock-guarded, multi-channel notification backbone.
+Each per-minute cron acquires a PostgreSQL distributed lock (\texttt{SELECT \ldots{} FOR
+UPDATE SKIP LOCKED} with a 55-second TTL), scans for pending items, fans out to the user's
+enabled channels, and marks the item processed. This backbone is exactly what Sprint~5 will
+formalize into a first-class notification module.
+
+\textbf{Remaining work.} Hardening items identified during the sprint --- centralizing the
+duplicated four-channel fan-out into a single dispatcher service, deeper backend coverage of the
+cron timing logic, and tightening several access-control scopes --- are logged and prioritized for
+future work (Annex~A).
+
+\subsection{Sprint retrospective}
+
+\textbf{Difficulties encountered.} The sprint's infrastructure challenge was designing the
+PostgreSQL-based distributed lock without a Redis dependency. The lock had to guarantee that
+only one API instance processes a given cron job in a horizontally-scaled deployment, survive
+process crashes via a 55-second TTL, and be reusable across all four modules. The escalating
+event notification thresholds (24h / 2.5h / 30min / 15min) required careful time arithmetic,
+and the attendance module's business-day boundaries --- weekday shift-end at 16:15~UTC vs
+Saturday half-day at 12:30~UTC, morning and afternoon late thresholds --- added more
+time-related complexity. Coordinating four modules that each produce notifications but share one
+delivery backbone required establishing a consistent pattern before any module could be
+delivered.
+
+\textbf{Lessons learned.} The lock-then-scan cron pattern proved highly reusable: once
+established in the to-do reminder cron, the same structure (acquire lock, query pending items,
+fan out, mark processed) was adopted by the event, reminder, and attendance crons with little
+change. Gating each channel on the user's preference booleans independently --- rather than
+a single ``notify me'' flag --- gave fine-grained control without complicating the sender logic.
+The polymorphic reminder target (\texttt{entityType} + \texttt{entityId}) also proved its value:
+a single table and delivery path serve tasks, sprints, milestones, projects, and custom
+reminders without extra code per entity type.
+
+\textbf{Improvements planned.} The four-channel fan-out logic is duplicated across several
+consumers; a single \texttt{NotificationDispatcherService} would centralize channel selection
+and delivery. Backend coverage of the cron timing logic (threshold bands, business-day
+boundaries) is the natural next step. These items are carried forward as prioritized future work (Annex~A).
+
+\subsection{Cumulative class diagram}
+
+Figure~\ref{fig:3-32} focuses on the entities introduced in this sprint, following the
+convention of the earlier cumulative views: the anchor classes from previous sprints ---
+\texttt{User} (Sprint~1), \texttt{Project} (Sprint~2), and \texttt{Task}, \texttt{Milestone} and
+\texttt{TaskTimeEntry} (Sprint~3) --- are shown in plain style and compacted to their
+identifying fields, so the attachment points are clear, while this sprint's four new
+aggregates are highlighted and grouped by module. The
+connections are what complete the picture: every new aggregate is attached to \texttt{User}; a
+\texttt{WorkSession} owns the \texttt{TaskTimeEntry} rows from Sprint~3 (attendance
+anchors logged task time); and a \texttt{Reminder} reaches back into \texttt{Project},
+\texttt{Task} and \texttt{Milestone} through its \texttt{projectId} and its polymorphic
+\texttt{entityId}, tying the new personal layer to the project engine built in Sprints~2 and~3.
+
+% Figure 3.32 — render diagrams-src/fig_3_32.puml -> figures/fig_3_32.(png|pdf)
+\reportsideways{figures/fig_3_32}{Cumulative class diagram after Sprint 4.}{3-32}
+
+\subsection{Sprint conclusion}
+
+Sprint~4 delivered the everyday personal surface --- private tasks, enforced attendance, a
+shared calendar, and a project-aware reminder engine --- unified by a cron-driven, lock-guarded,
+multi-channel notification backbone. The lock-then-scan pattern and per-user channel gating
+introduced here become the delivery layer that Sprint~5 formalizes into a first-class
+notification module.
+
+\clearpage
+\section{Sprint 5: Communication \& Operations}
+
+Sprint~5 delivers the communication and operations backbone: notifications and infrastructure
+monitoring.
+
+\subsection{Sprint goal}
+
+Sprint~4 proved the multi-channel delivery pattern inside each module. Sprint~5 turns that
+backbone into a module of its own and adds the one consumer that exists only to
+feed it. Two modules are delivered together because they are the two halves of one concern:
+\emph{reaching people}. The \textbf{notifications} module owns the delivery layer: the
+in-app inbox, FCM push, the per-user channel settings, and the Telegram/ntfy account links
+that every other module reads before it sends. The \textbf{infrastructure monitoring} module
+is the platform watching itself: it registers the company's servers and the services running
+on them, health-checks them every minute, and turns any outage or approaching subscription
+expiry into an alert routed to the responsible managers over those same four channels. Pairing
+them in one sprint is deliberate: monitoring is the clearest end-to-end demonstration of the
+notification backbone, because an alert travels from a cron detecting a dead ping all the way
+to a manager's Telegram message, reusing the exact settings the notifications module defines.
+At \textbf{35 story points} it is a focused sprint: one module that is broad but shallow (many
+channels, thin logic each) and one that is operationally deep (six crons, an outbox,
+escalating expiry bands).
+
+\subsection{Sprint backlog}
+
+The stories below, from the product backlog in Section~2.2, form the sprint backlog:
+
+\begin{longtable}{@{}l>{\raggedright\arraybackslash}p{0.50\textwidth}lll@{}}
+\caption{Sprint 5 backlog.}\label{tab:s5-backlog-detail} \\
 \tableheaderrow
-\thcell{Gold set} & \thcell{Metric} & \thcell{Result} & \thcell{Reading} \\
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endfirsthead
-\caption[]{Retrieval evaluation summary (continued).} \\
+\caption[]{Sprint 5 backlog (continued).} \\
 \tableheaderrow
-\thcell{Gold set} & \thcell{Metric} & \thcell{Result} & \thcell{Reading} \\
+\thcell{US-ID} & \thcell{Story} & \thcell{SP} & \thcell{Est.} & \thcell{Priority} \\
 \midrule
 \endhead
-Keyword (10 Q) & MRR / R@1 & 0.57 \textrightarrow{} \textbf{1.00} / 0.30 \textrightarrow{} \textbf{1.00} (hybrid vs vector) & hybrid closes the keyword gap \\
-Semantic (12 Q) & MRR / R@1 / nDCG@1 & 0.958 / 0.583 / 0.917 (baseline = hybrid); rerank \textbf{1.000} / --- / \textbf{1.000} & embedder saturated; hybrid no regression, rerank slightly better \\
-Cross-role leakage & out-of-scope hits & \textbf{0} in both arms & confirms the in-SQL scoping of Section~4.6 \\
 \bottomrule
+\endfoot
+US-S5-01 & As a user, I want an in-app notification inbox (bell + list), so that I see system events in one place. & 5 & 2.5d & Must \\
+\midrule
+US-S5-02 & As a user, I want push notifications (FCM) on my devices, so that I am alerted while away from the page. & 5 & 2d & Should \\
+\midrule
+US-S5-03 & As a user, I want to configure my delivery channels (email, push, Telegram, ntfy), so that I control how I am reached. & 3 & 1.5d & Should \\
+\midrule
+US-S5-04 & As a user, I want to link my Telegram account, so that I can receive alerts there. & 3 & 1.5d & Could \\
+\midrule
+US-S5-05 & As a DevOps engineer, I want to register servers and services, so that infrastructure is inventoried. & 5 & 2.5d & Should \\
+\midrule
+US-S5-06 & As the platform, I want to health-check servers (ICMP) and services (HTTP) every minute, so that outages are detected automatically. & 8 & 3.5d & Must \\
+\midrule
+US-S5-07 & As a manager, I want multi-channel alerts when a server or service goes down, so that I can react quickly. & 5 & 2d & Must \\
+\midrule
+US-S5-08 & As an operator, I want a public \texttt{/health} endpoint, so that the API's liveness is externally checkable. & 1 & 0.5d & Could \\
+\midrule
+ & \textbf{Sprint 5 subtotal} & \textbf{35} & \textbf{3w} & \\
 \end{longtable}
 
-The cross-role leakage check ran the same query as a CEO (6 projects in scope) and as an intern (1 project)
-and confirmed each actor's candidates came only from their allowed projects --- zero out-of-scope hits in either
-arm, exactly as the shared \texttt{projectId = ANY(\$allowedIds)} filter predicts.
+\subsection{Requirements analysis}
 
-\textbf{What a retrieval miss looks like.} The vector-only failures on the keyword set are not random --- they have a
-single, explainable cause. A bare identifier like \texttt{NDF-24} carries almost no semantic meaning, so the
-dense embedder places it among many unrelated chunks and ranks the true task low (hence R@1 0.30). The lexical
-arm has no such difficulty: \texttt{websearch\_to\_tsquery} matches the token exactly and returns the one chunk that
-contains it. RRF then fuses the two ranked lists and promotes that exact-match hit to rank 1. The failure and
-its fix are therefore structural, not the result of tuning --- the lexical arm exists exactly to cover the type
-of queries the embedder cannot handle.
+The sprint delivers two modules. Figure~\ref{fig:3-33} presents the features, actors, and use
+cases. Four actor archetypes appear: a \textbf{User} (any authenticated
+employee) manages their own inbox and channel preferences and can broadcast a notification; a
+\textbf{DevOps engineer} and the \textbf{CTO} register and manage the infrastructure, with the
+CTO holding global write and the DevOps engineer scoped to the servers they manage; and a
+\textbf{Scheduler} actor represents the automated detectors --- no human triggers a health
+check. The scheduler's alert path \texttt{<<include>>}s the same multi-channel notification
+use case the human-facing broadcast uses, which is exactly why the two modules are paired.
 
-\textbf{Answer quality.} Answer quality was measured with the same hybrid retrieval, re-run on 2026-07-07. Over the
-10-question QA gold set (7 answerable, 3 deliberately unanswerable), the copilot was fully grounded on every
-judged answer (mean faithfulness 1.000), reached citation precision 0.786 and recall 1.000, and handled
-refusal perfectly: all three unanswerable questions were correctly refused (correct-refusal rate 1.000) with a
-zero false-refusal rate (actor CEO, 6 projects in scope).
+% Figure 3.33 — render diagrams-src/fig_3_33.puml -> figures/fig_3_33.(png|pdf)
+{\renewcommand{\figmaxheight}{0.75\textheight}%
+\reportfigure[\textwidth]{figures/fig_3_33}{Sprint 5 use-case diagram.}{3-33}}
 
-\begin{longtable}{@{}p{9cm}p{3cm}@{}}
-\caption{Answer-quality metrics.}\label{tab:eval-answers} \\
-\tableheaderrow
-\thcell{Metric} & \thcell{Result} \\
-\midrule
-\endfirsthead
-\caption[]{Answer-quality metrics (continued).} \\
-\tableheaderrow
-\thcell{Metric} & \thcell{Result} \\
-\midrule
-\endhead
-Mean faithfulness (grounded answers) & 1.000 \\
-Citation precision / recall & 0.786 / 1.000 \\
-Refusal accuracy (all 10) & 1.000 \\
-Correct refusals (3 unanswerable) & 1.000 \\
-False-refusal rate & 0.000 \\
-\bottomrule
-\end{longtable}
+\subsubsection{Module A --- Notifications}
 
-The faithfulness mean is over n = 6: the LLM judge returned no verdict on one otherwise correctly-cited
-answer, which we report rather than silently drop.
+\textbf{Functional description.} This module is the delivery layer the whole platform relies
+on. It owns the in-app inbox (persisted rows behind a bell dropdown and a list page), FCM web
+push with per-device token registration, and the per-user channel configuration ---
+\texttt{UserNotificationSettings}, the Telegram \texttt{chatId} link, and the ntfy topic link
+--- that every other module reads before it sends. It exposes one shared method,
+\texttt{createNotificationFromSystem(userId, payload)}, that seven consumer modules
+(personal-tasks, reminders, work-days, events, servers, sprints, tasks) call to reach a single
+user in-app and by push; the email, Telegram, and ntfy channels are dispatched by each
+consumer through the dedicated \texttt{MailService}, \texttt{TelegramService}, and
+\texttt{NtfyService}, gated on the matching preference flag. Two entry points exist: a
+human-driven \textbf{broadcast} (\texttt{POST /notifications}) that sends a titled, optionally
+imaged notification to a list of users or to everyone, and the \textbf{system-driven} per-user
+path that crons and services use for the reminders and alerts of Sprints~3 and~4.
+Figure~\ref{fig:3-34} gives the component view of the fan-out, and Figure~\ref{fig:3-35}
+follows a single system notification across the channels.
 
-\textbf{Estimation quality.} The estimator was evaluated by \textbf{leave-one-out} over the 43 completed tasks with
-recorded hours: each task is held out in turn, predicted from its neighbours, and compared to its real
-\texttt{actualHours}. Two baselines put the numbers in context: the \emph{project mean} (predict every task at its project's
-average) and a \emph{story-points fit} (a least-squares hours-per-point line --- the best a team could do with points
-alone). The first finding is negative and instructive: \textbf{text similarity alone carries almost no effort
-signal}. The size-agnostic k-NN lands at MAE 3.83\,h --- statistically indistinguishable from the project-mean
-baseline (3.82\,h) --- because text-similar neighbours are often \emph{size}-mismatched, so the estimate regresses to
-the mean. Normalizing by size fixes it: the \textbf{size-aware} mode (draft points \texttimes{} the neighbours'
-similarity-weighted hours-per-point rate) cuts MAE to \textbf{2.12\,h}, matching the story-points baseline
-(2.10\,h). Unlike a regression line, it also returns the neighbour tasks as evidence the user can inspect, and
-an honest uncertainty band that covers the true value 74\% of the time (against the \textasciitilde80\% its 10/90 band
-nominally targets). In the delivered form the suggestion is size-agnostic (a draft being typed carries no
-points yet); the size-aware mode activates whenever a pointed draft is estimated through the API.
+\textbf{Actors.} A \textbf{User} (all authenticated roles) reads and manages their own inbox,
+registers push devices, toggles their four channel flags, links their Telegram account, and
+can broadcast a notification. The \textbf{platform} itself is the second sender: crons and
+services fan system notifications out through the same layer.
 
-\begin{longtable}{@{}lcccc@{}}
-\caption{Estimation leave-one-out results (n = 43 completed tasks).}\label{tab:eval-estimation} \\
-\tableheaderrow
-\thcell{Predictor} & \thcell{MAE (h)} & \thcell{RMSE (h)} & \thcell{Within $\pm$25\%} & \thcell{Band coverage} \\
-\midrule
-\endfirsthead
-\caption[]{Estimation leave-one-out results (continued).} \\
-\tableheaderrow
-\thcell{Predictor} & \thcell{MAE (h)} & \thcell{RMSE (h)} & \thcell{Within $\pm$25\%} & \thcell{Band coverage} \\
-\midrule
-\endhead
-project-mean baseline & 3.82 & 5.22 & 42.9\% & --- \\
-size-agnostic k-NN (text only) & 3.83 & 5.51 & 44.2\% & 0.488 (25/75) \\
-story-points fit baseline & 2.10 & 2.58 & 62.8\% & --- \\
-\textbf{size-aware k-NN (hours-per-point)} & \textbf{2.12} & \textbf{2.77} & \textbf{67.4\%} & \textbf{0.744 (10/90)} \\
-\bottomrule
-\end{longtable}
-
-\section{Challenges \& design decisions}
-
-Several non-obvious choices shaped the subsystem. Each has a clear reason:
-
+\textbf{Business rules.}
 \begin{itemize}
-  \item \textbf{1536-dimensional embeddings, not the model's native 3072.} Gemini's embedding model supports Matryoshka
-  truncation --- the first 1536 dimensions of a 3072-vector are themselves a usable embedding. Halving the
-  dimension halves storage and speeds up the ANN scan for almost no quality loss on this corpus. Because reduced
-  Gemini vectors are not pre-normalized and cosine ANN needs unit vectors, we L2-normalize them in application
-  code before storing.
-  \item \textbf{RRF with k = 60 to fuse the arms.} Reciprocal Rank Fusion~\cite{cormack2009rrf} combines the two ranked lists by rank position
-  (\texttt{$\Sigma$ 1/(60 + rank)}) rather than by raw score, which avoids the problem that cosine similarity and
-  \texttt{ts\_rank\_cd} are on different scales. The constant 60 is the standard damping value that keeps a single
-  arm's top rank from dominating.
-  \item \textbf{A cosine-only confidence gate at 0.5.} Refusing before generation is the cheapest way to avoid a
-  hallucination, and 0.5 is the threshold below which retrieved content is too dissimilar to trust. This gate
-  is effective but has a known limitation --- it ignores the lexical arm --- which we carry into the review (Section~4.10).
-  \item \textbf{Why Gemini.} Using a managed provider~\cite{gemini} for both embeddings and generation avoided installing and
-  operating an inference stack for a single sprint, and Gemini's \texttt{flash-lite} gave us a cheap, fast reranking
-  model on its own quota bucket, separate from the main generation quota. The trade-off is a dependency on an
-  external API and its rate limits --- visible in the evaluation note above.
-  \item \textbf{A generated, stored \texttt{tsvector} instead of a maintained column.} Declaring the full-text column
-  \texttt{GENERATED ALWAYS AS (...) STORED} means Postgres back-fills every existing row when the migration runs and
-  keeps it current on every write, with no application code on the write path and no backfill script.
-  \item \textbf{The outbox boundary, fire-and-forget.} Making index enqueues catch their own errors is a deliberate
-  coupling decision: the AI subsystem depends on the domain (it reads tasks, epics, sprints) but the domain
-  must not depend on it, so a failure in indexing can never appear as a failed task save.
+  \item Channel defaults reflect the intended use: email and push are \textbf{opt-out}
+    (\texttt{@default(true)}), Telegram and ntfy are \textbf{opt-in} (\texttt{@default(false)}),
+    because the latter two need extra per-user setup.
+  \item Every read, mark-seen, and delete on the inbox is \textbf{ownership-scoped} in the
+    query: a user cannot read, mark, or delete another user's notifications.
+  \item The per-recipient inbox row (\texttt{UserNotification}) carries
+    \texttt{@@unique([notificationId, userId])}, making fan-out re-sends \textbf{idempotent
+    per user}.
+  \item The notification \emph{envelope} (\texttt{Notification}) is split from its
+    translatable \emph{content} (\texttt{NotificationContent}), following the platform-wide
+    i18n content-table pattern.
+  \item FCM delivery is \textbf{best-effort}: the multicast send survives dead or expired
+    device tokens without failing the write path.
+  \item Telegram routing is per-user (\texttt{chatId}) over a single shared bot token, so no
+    per-user secret management is needed.
 \end{itemize}
 
-\section{Sprint review}
+% Figure 3.34 — render diagrams-src/fig_3_34.puml -> figures/fig_3_34.(png|pdf)
+\reportsideways{figures/fig_3_34}{Multi-channel delivery pipeline component view.}{3-34}
 
-The subsystem is the cleanest module in the codebase --- each concern (embedding, chunking, the outbox boundary,
-retrieval, reranking, generation, access control, telemetry) is a single-responsibility class, the raw SQL is
-isolated in two repositories, and the docstrings explain \emph{why} as well as \emph{what}. It delivers all seven
-stories, and it is the only feature backed by measured results. The same review also documents its
-verified gaps:
+\textbf{System notification sequence.} Figure~\ref{fig:3-35} traces one system notification
+across the channels: the consumer loads the target user's settings and integrations, persists
+the in-app row and pushes by FCM through \texttt{createNotificationFromSystem} when push is
+enabled, then dispatches email, Telegram, and ntfy directly, each gated on its preference
+flag.
 
+% Figure 3.35 — render diagrams-src/fig_3_35.puml -> figures/fig_3_35.(png|pdf)
+\reportsideways{figures/fig_3_35}{Single system notification across all channels.}{3-35}
+
+\textbf{Class diagram.} Figure~\ref{fig:3-36} shows the module's seven tables. The key design
+is the three-way split between the notification envelope (\texttt{Notification}), its
+content (\texttt{NotificationContent}), and the per-recipient inbox row
+(\texttt{UserNotification}). The three settings/integration tables are linked one-to-one to
+\texttt{User} and are the configuration every consumer reads before it sends.
+
+% Figure 3.36 — render diagrams-src/fig_3_36.puml -> figures/fig_3_36.(png|pdf)
+\reportsideways{figures/fig_3_36}{Notifications class diagram with channel-configuration tables.}{3-36}
+
+\subsubsection{Module B --- Infrastructure Monitoring}
+
+\textbf{Functional description.} This is the platform monitoring the company's own
+infrastructure --- an internal inventory plus an uptime and expiry watcher. It registers each
+\textbf{server} (a VPS or bare-metal host with capacity fields and an \texttt{ip}) and each
+\textbf{service} hosted on a server (the API, PostgreSQL, Redis, MinIO, with SSL/backup
+settings and a \texttt{domain}), records who is responsible via a
+\texttt{UserServerManagement} join, and runs \textbf{six per-minute cron jobs} that do the
+actual monitoring: two detectors (ICMP-ping every running server, HTTP-probe every running
+service), two expiry watchers that send escalating notifications as each row approaches its
+\texttt{expiredAt}, before a paid subscription expires, and two senders that deliver the alerts.
+The design that ties detection to delivery is an \textbf{outbox}: a detector never sends
+anything itself --- on a failed ping it inserts a \texttt{ServerNotification} row with
+\texttt{isSent:\,false}, and a separate sender cron picks up the unsent rows, fans them out to
+each responsible manager's enabled channels (reusing the exact
+\texttt{UserNotificationSettings} from Module~A), and sets \texttt{isSent:\,true}.
+Figure~\ref{fig:3-37} shows the health-check cycle, and Figure~\ref{fig:3-38} shows the
+outbox-to-channels fan-out.
+
+\textbf{Actors.} The \textbf{CTO} holds global write over the inventory; the \textbf{CEO}
+additionally holds global read. A \textbf{DevOps engineer} is scoped by the management join to
+the servers they manage. The \textbf{Scheduler} runs the six detector/sender crons, and an
+external \textbf{operator} can probe the public \texttt{/health} liveness endpoint without
+authentication.
+
+\textbf{Business rules.}
 \begin{itemize}
-  \item \textbf{Comment edits and deletes are not enqueued on the write path.} Only comment \emph{create} enqueues an index
-  job; edits and deletes rely on the nightly reconcile. The consequence is the one property that undermines the
-  ``never cite what does not exist'' promise: a \textbf{deleted comment stays retrievable and citable for up to \textasciitilde24 h}
-  until reconcile runs, and the copilot can then cite content that is gone. This is the module's most
-  important known issue and the first item to address --- copy the task producers and enqueue a
-  \texttt{TASK\_COMMENT} upsert on edit and a delete on removal.
-  \item \textbf{The confidence gate is cosine-only.} Because \texttt{sufficient} is derived solely from the top cosine score, a
-  bare-keyword query that the \emph{lexical} arm answers perfectly but the \emph{dense} arm scores below 0.5 is still
-  refused --- so the copilot's answer path does not fully inherit the hybrid keyword improvement demonstrated in Section~4.8. Making
-  the gate consider ``any arm produced a hit above its own threshold'' would close this gap.
+  \item \textbf{Outbox pattern}: detection and delivery are decoupled --- detectors only insert
+    \texttt{isSent:\,false} rows; a separate sender cron delivers and flips the flag, so a
+    delivery failure never blocks detection.
+  \item The \texttt{isSent:\,false} flag also acts as \textbf{natural deduplication}: the detector query
+    skips any server that already has an undelivered alert, so a persistently-down host
+    re-alerts once per delivery cycle rather than every minute.
+  \item All six crons run under the platform's PostgreSQL \textbf{distributed lock} (55-second
+    TTL), so multiple API replicas never double-alert.
+  \item Authorization is decided \textbf{in the service}: the CTO gets global write, the CTO or
+    CEO get global read, and every other caller is scoped through \texttt{server.managers} to
+    the servers they manage.
+  \item Managers attach to \textbf{servers only}: a service inherits its responsible people
+    from its parent server, a fact the alert fan-out relies on.
+  \item \texttt{status} (\texttt{Running}/\texttt{Stopped}/\texttt{Maintenance}) is an
+    operator-set lifecycle label; health checks send alerts over the channels \textbf{without
+    writing to the row}, and only \texttt{Running} resources are probed.
+  \item A \texttt{Service} cascade-deletes with its parent \texttt{Server}.
 \end{itemize}
 
-That these two gaps were found by the module's own review is the point: the same evaluation discipline that
-measured the retrieval also showed where the answer path falls behind it. The remaining, smaller gaps from the same
-review --- cancelled SSE streams that skip their telemetry receipt, the plaintext \texttt{CopilotQueryLog}, source-text
-truncation shorter than the chunk, the reranker's scoring of omitted candidates, in-memory reindex/reconcile,
-a missing fail-fast on the Gemini key, and the absence of unit tests around the pure functions (RRF fusion,
-weighted percentiles, citation parsing) --- are collected with their fixes in Annex A. In priority order, the
-two items above come first: enqueue comment edits and deletes so the copilot never cites content that is gone
-(correctness), then make the confidence gate arm-aware so the answer path inherits the proven keyword improvement (UX).
+% Figure 3.37 — render diagrams-src/fig_3_37.puml -> figures/fig_3_37.(png|pdf)
+\reportsideways{figures/fig_3_37}{Server health-check cycle with outbox pattern.}{3-37}
 
-\section{Sprint retrospective}
+\textbf{Alert fan-out.} Figure~\ref{fig:3-38} shows the two halves of the outbox working
+together: the detector and expiry crons insert unsent notification rows, and the sender crons poll them,
+deliver to each responsible manager's enabled channels, and mark them sent.
 
-\textbf{Difficulties encountered.} The main challenge was working with raw SQL inside a
-Prisma-managed codebase. Prisma cannot type pgvector or tsvector columns, so the embedding and
-full-text search queries had to be written as parameterized raw templates and quarantined in
-dedicated repositories. Ensuring these raw queries remained injection-safe while handling the
-polymorphic \texttt{entityId} soft reference required careful attention. The asynchronous nature
-of the indexing pipeline --- with its outbox boundary, retry backoff, and nightly reconcile --- also
-made end-to-end verification more difficult than for synchronous modules.
+% Figure 3.38 — render diagrams-src/fig_3_38.puml -> figures/fig_3_38.(png|pdf)
+\reportsideways{figures/fig_3_38}{Alert fan-out from outbox to manager channels.}{3-38}
 
-\textbf{Lessons learned.} Building the offline evaluation harness early proved extremely useful: it
-caught the keyword retrieval gap before the feature was delivered and validated the hybrid fix
-quantitatively. The CRISP-DM framing also helped --- naming the phases made it explicit that
-the evaluation harness is the quality gate playing the role of a trained model's validation curve,
-which guided both design and review discussions.
+\textbf{Class diagram.} Figure~\ref{fig:3-39} shows the module's five tables plus the shared
+status enum. \texttt{Server} and \texttt{Service} mirror each other on billing, status, and
+expiry fields; the two \texttt{*Notification} tables are the outbox rows; and
+\texttt{UserServerManagement} is the responsibility join between \texttt{User} and
+\texttt{Server}.
 
-\textbf{Improvements planned.} Enqueue comment edits and deletes on the write path so the
-copilot never cites deleted content. Make the confidence gate arm-aware so the answer path
-fully inherits the proven hybrid keyword improvement.
+% Figure 3.39 — render diagrams-src/fig_3_39.puml -> figures/fig_3_39.(png|pdf)
+\reportfigure[\textwidth]{figures/fig_3_39}{Infrastructure monitoring class diagram.}{3-39}
 
-\section{Final cumulative class diagram}
+\subsection{Implementation}
 
-Figure~\ref{fig:4-6} completes the picture: the whole system after six sprints, with the earlier sprints
-compacted to their identifying anchor classes and the new \textbf{AI / RAG} package highlighted in yellow. The AI package
-attaches to the rest in a deliberately loose manner. \texttt{DocumentEmbedding} and
-\texttt{IndexOutbox} are attached to \texttt{Project} by their \texttt{projectId} scope key, and \texttt{CopilotQueryLog} to \texttt{User}; but the
-link to the \emph{content} --- tasks, comments, epics, sprints, milestones --- is drawn as a dashed \textbf{soft reference},
-because those \texttt{entityId} columns carry no foreign key (they are polymorphic across the five types). The only
-inbound coupling is the write-path enqueue: the task, epic, sprint, and milestone services enqueue into
-\texttt{IndexOutbox}, shown as dependencies, and that is the entire surface the AI subsystem exposes to the domain ---
-fire-and-forget one-line calls that the domain can ignore. High cohesion inside, loose coupling outside.
+The sprint delivered two backend modules and the client surfaces that consume them.
 
-% Figure 4.6 — render diagrams-src/fig_4_6.puml -> figures/fig_4_6.(png|pdf)
-\reportsideways{figures/fig_4_6}{Final cumulative class diagram after six sprints.}{4-6}
+The \textbf{notifications surface} consists of the six guarded routes on
+\texttt{NotificationsController}: the broadcast endpoint, the paginated sent and received
+(inbox) lists, mark-seen, delete, and device-token registration --- all ownership-scoped to
+the caller. The per-user channel flags and the Telegram/ntfy links are updated through the
+profile endpoints of the users module.
 
-\section{Sprint conclusion}
+The \textbf{infrastructure surface} consists of ten guarded routes on a single
+\texttt{ServersController} --- create, list, read, update, and delete, each for servers and
+for their hosted services --- plus the single public \texttt{GET /health} liveness route.
 
-Sprint~6 delivered the platform's AI subsystem: a permission-scoped copilot with grounded,
-citation-backed answers and an evidence-based task estimator, both built on a hybrid retrieval
-engine whose quality is measured by an offline evaluation harness. The module integrates with
-the domain through a deliberately loose outbox boundary and attaches to the cumulative data model
-via soft references, keeping the AI subsystem self-contained while reading from all the project
-content accumulated over the five preceding sprints.
+On the \textbf{client}, notifications are integrated across the whole application shell rather
+than kept on one page: a bell dropdown in the header shows the unseen count and marks everything
+seen on open, a full list page renders the inbox, and a dedicated settings page toggles the
+channels with the Telegram \texttt{chatId} input and the ntfy setup steps. Push registration is
+automatic --- a header hook requests browser permission, obtains an FCM token, and registers
+the device once per session. Infrastructure monitoring is two standard list pages under an
+\texttt{/infrastructure} route --- servers and services --- each a permission-gated table with
+an add/edit dialog and a status badge showing the operator-set lifecycle label; alerts arrive
+over the notification channels.
+
+\reportscreenshot{figures/screenshot_P27}{Notification bell dropdown and inbox list.}{P27}
+
+\reportscreenshot{figures/screenshot_P28}{Notification channel settings page.}{P28}
+
+\reportscreenshot{figures/screenshot_P29}{Infrastructure servers dashboard with add/edit dialog.}{P29}
+
+\reportscreenshot{figures/screenshot_P30}{Services list with status badges.}{P30}
+
+\subsection{Validation and testing}
+
+The testing strategy for this sprint focused on two areas: \textbf{unit testing of the mail
+channel} and \textbf{acceptance scenario verification}.
+
+The mail channel --- the template-rendering and send path every module's email delivery goes
+through --- is covered by a dedicated unit suite (\texttt{mail.service.spec.ts}). The
+acceptance scenarios below record the Given/When/Then conditions each user story had to
+satisfy:
+
+\begin{longtable}{@{}p{1.8cm}p{8.3cm}p{3.8cm}@{}}
+\caption{Sprint 5 acceptance scenarios.}\label{tab:s5-acceptance} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
+\midrule
+\endfirsthead
+\caption[]{Sprint 5 acceptance scenarios (continued).} \\
+\tableheaderrow
+\thcell{US-ID} & \thcell{Acceptance scenario (Given / When / Then)} & \thcell{Result} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+US-S5-01 & Given a system event for a user, When it is created, Then a \texttt{UserNotification} row appears in that user's inbox, the bell shows an unseen count, and opening the list marks it seen (ownership-scoped). & \pass{} Verified \\
+\midrule
+US-S5-02 & Given a user with a registered device, When a notification is sent, Then FCM pushes it to their tokens best-effort, surviving dead tokens. & \pass{} Verified \\
+\midrule
+US-S5-03 & Given a user, When they toggle email/push/Telegram/ntfy, Then subsequent system notifications are gated on those channel flags. & \pass{} Verified \\
+\midrule
+US-S5-04 & Given a user, When they enter their Telegram \texttt{chatId}, Then alerts route to that chat via the shared bot token. & \pass{} Verified \\
+\midrule
+US-S5-05 & Given a DevOps engineer or CTO, When they register a server (with managers) or a service, Then it is inventoried and manager-scoped for later access. & \pass{} Verified \\
+\midrule
+US-S5-06 & Given running servers/services, When the per-minute crons run, Then unreachable ones (ICMP/HTTP) produce an outbox down-notification, guarded by a distributed lock. & \pass{} Verified \\
+\midrule
+US-S5-07 & Given a down or expiring resource, When the sender cron runs, Then each responsible manager is alerted over their enabled channels and the outbox row is marked sent. & \pass{} Verified \\
+\midrule
+US-S5-08 & Given the API is running, When \texttt{GET /health} is called without auth, Then it returns \texttt{\{status:'ok', timestamp\}}. & \pass{} Verified \\
+\end{longtable}
+
+\subsection{Sprint review}
+
+\textbf{Objectives achieved.} The sprint met its goal: the platform's communication layer is
+now explicit and has its most demanding consumer. The notifications module is the documented
+delivery layer --- an in-app inbox, FCM push, per-user channel settings, and Telegram/ntfy links ---
+that every other module reaches through one shared method for in-app/push and the dedicated
+channel services for the rest. Infrastructure monitoring is the proof: a self-monitoring loop
+where a cron detecting a dead ping produces an alert that travels the whole backbone to a
+manager's Telegram, reusing the same settings. The outbox pattern, the distributed lock on all
+six crons, and the ownership scoping on the notification read/write surface are the sprint's
+structural strengths.
+
+\textbf{Remaining work.} Hardening items identified during the sprint --- centralizing the
+per-consumer channel selection into a single dispatcher service, provisioning the ntfy topic
+server-side so the integration is complete end-to-end, normalizing the service \texttt{domain} to
+a full URL before probing, an alert cooldown and acknowledgement flow, persisting a
+\texttt{lastHealthCheckAt} with uptime history, and deeper backend coverage of the fan-out and
+the role scoping --- are logged and prioritized for future work (Annex~A).
+
+\subsection{Sprint retrospective}
+
+\textbf{Difficulties encountered.} The sprint's breadth was in integrations rather than domain
+logic: four external delivery surfaces (SMTP, FCM, the Telegram Bot API, ntfy) each with its
+own credential model, failure modes, and payload shape, plus ICMP probing from Node against
+hosts that do not always respond as expected. Designing the outbox took several
+iterations --- the first idea was to let the detector send directly, but separating detection
+from delivery proved essential so that a slow channel could never block the per-minute probe
+loop. The escalating expiry
+bands (advancing \texttt{nextNotificationAt} through fixed thresholds) required the same
+careful time arithmetic as Sprint~4's event reminders.
+
+\textbf{Lessons learned.} The outbox pattern was the sprint's clearest success: with detection
+and delivery decoupled by a persisted \texttt{isSent} flag, the system gained free deduplication
+(an undelivered alert suppresses re-detection), and multi-instance safety came directly from the
+existing lock pattern. Centralizing the channel \emph{configuration} (one settings row, two
+integration tables) while keeping channel \emph{dispatch} in the consumers made each module
+easy to read, and confirmed the value of the dispatcher consolidation already
+planned. Reusing Sprint~4's lock-then-scan cron structure for all six monitoring crons meant no
+new concurrency design was needed.
+
+\textbf{Improvements planned.} A single \texttt{NotificationDispatcherService} to own channel
+selection for all consumers; server-side provisioning of the ntfy topic; URL normalization for
+the service health probe; an alert cooldown/acknowledgement flow; and persisted health-check
+state (\texttt{lastHealthCheckAt}, uptime history) to surface live status in the UI. These
+items are carried forward as prioritized future work (Annex~A).
+
+\subsection{Cumulative class diagram}
+
+Figure~\ref{fig:3-40} focuses on the entities introduced in this sprint, following the
+convention of the earlier cumulative views: the anchor classes --- \texttt{User} (Sprint~1)
+and \texttt{Reminder} (Sprint~4) --- are shown in plain style and compacted, while this
+sprint's two modules form two highlighted packages, Notifications and Infrastructure
+Monitoring. The connection that completes the picture is the channel configuration:
+\texttt{UserNotificationSettings} (with \texttt{UserTelegramBot} and
+\texttt{UserNtfyIntegration}) is the single place every consumer reads before sending, so both
+the Sprint~4 reminder engine and this sprint's infrastructure alerts depend on it ---
+the two dashed \emph{reads (fan-out)} dependencies make that reuse explicit.
+\texttt{UserServerManagement} joins \texttt{User} to \texttt{Server}, and the two outbox
+\texttt{*Notification} tables are what the monitoring crons write and the fan-out reads.
+
+% Figure 3.40 — render diagrams-src/fig_3_40.puml -> figures/fig_3_40.(png|pdf)
+\reportsideways{figures/fig_3_40}{Cumulative class diagram after Sprint 5.}{3-40}
+
+\subsection{Sprint conclusion}
+
+Sprint~5 turned the notification pattern the earlier sprints relied on into an explicit,
+documented delivery layer --- inbox, push, and per-user channel configuration --- and proved it
+end-to-end with a self-monitoring loop that carries an infrastructure alert from a failed ping
+to a manager's chosen channels.
+
+\section{Chapter Conclusion}
+
+Two sprints and 79 story points produced V2, the layer that surrounds the work rather than
+performing it. Each employee now has a private to-do list, an enforced daily attendance routine
+with worked-hours computation and manager reporting, and a shared calendar with escalating
+reminders (Sprint~4); and the platform now owns an explicit delivery layer --- an in-app inbox,
+FCM push, and per-user channel configuration across email, Telegram and ntfy --- with
+infrastructure monitoring as its proof of generality (Sprint~5).
+
+The chapter's real contribution is architectural rather than functional. Two patterns emerged
+here that the platform now depends on everywhere. The \textbf{lock-then-scan cron} --- acquire a
+PostgreSQL advisory lock via \texttt{SELECT \ldots{} FOR UPDATE SKIP LOCKED} with a 55-second
+TTL, query due items, fan out, mark processed --- is what makes every scheduled behaviour in the
+platform safe to run on more than one replica, and it was reused without modification by all six
+monitoring crons and, in Chapter~5, by the AI index sweeper. The \textbf{outbox pattern} ---
+never send from the detector, only insert an unsent row for a separate sender to deliver ---
+decouples detection from delivery, gains deduplication for free from the unsent flag, and
+guarantees that a slow channel can never block the loop that found the problem. That same shape,
+applied to indexing instead of alerting, is precisely how the AI subsystem keeps itself current
+without ever slowing a user's save.
+
+With the operational surface complete, the platform has been accumulating five sprints of
+content: tasks, comments, epics, sprints and milestones, a written record of how the team
+actually works. Chapter~5 is what finally reads it back.

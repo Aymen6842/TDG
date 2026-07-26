@@ -1,15 +1,26 @@
-% ch3-part1.tex — Chapter 3 intro + Sprints 1–3
+% ch3.tex — Chapter 3: The Delivery Platform (V1) — Sprints 1–3
 % Compile with XeLaTeX / LuaLaTeX + fontspec (unicode arrows, checkmarks, accents kept as-is).
 
-\chapter{Development Sprints}
+\chapter{The Delivery Platform (V1): Sprints 1 to 3}
 
-This chapter describes the five development sprints that built the platform, in the dependency
-order fixed by the sprint plan in Section~2.3. Every sprint follows the same structure. It
-opens with its goal and backlog, analyses the requirements per module, and presents the UML
-design next to the features it describes. It then reports the implementation with screenshots,
-validates the deliverables through testing, and closes with a review, a retrospective, and a
-cumulative class diagram showing how the domain model grew. The AI sprint, the project's main
-technical contribution, is described separately in Chapter~4.
+The six sprints are presented over three chapters, one per delivered increment. This chapter
+covers the first of them --- \textbf{V1, the delivery platform} --- built by Sprints~1 to~3.
+
+The grouping is not arbitrary: these three sprints are what it takes to reach a system a team can
+actually work in. Sprint~1 establishes who a user is and what they may do; Sprint~2 adds the
+project, the container every later feature attaches to; and Sprint~3 adds the work itself --- the
+agile backlog and the Kanban engine. Only at the end of Sprint~3 can someone log in, open a
+project, and move a task to done. Everything before that point is foundation, and everything
+after it (Chapters~4 and~5) extends a platform that already functions. The order is fixed by the
+dependency chain established in the sprint plan of Section~2.3: nothing can be built before
+authentication, and nothing project-scoped before the project exists.
+
+Every sprint in this chapter and the next follows the same structure. It opens with its goal and
+backlog, analyses the requirements per module, and presents the UML design next to the features
+it describes. It then reports the implementation with screenshots, validates the deliverables
+through testing, and closes with a review, a retrospective, and a cumulative class diagram
+showing how the domain model grew. Chapter~4 continues with the operational layer of Sprints~4
+and~5, and Chapter~5 covers the AI sprint, the project's main technical contribution.
 
 %% ====================================================================
 %% SPRINT 1
@@ -47,20 +58,24 @@ sprint can be read on its own:
 \endhead
 \bottomrule
 \endfoot
-\rowcolor{rowalt}
 US-S1-01 & As a developer, I want a layered NestJS backend with a Prisma multi-file schema and migrations, so that every module shares one structure. & 8 & 4d & Must \\
+\midrule
 US-S1-02 & As a user, I want to log in with email + password and receive a JWT, so that I can access the platform. & 3 & 1.5d & Must \\
-\rowcolor{rowalt}
+\midrule
 US-S1-03 & As a user, I want my session refreshed automatically on expiry, so that I stay logged in without re-authenticating. & 3 & 1d & Must \\
+\midrule
 US-S1-04 & As a user, I want to reset a forgotten password via an emailed code, so that I can regain access. & 3 & 2d & Should \\
-\rowcolor{rowalt}
+\midrule
 US-S1-05 & As the platform, I want every protected endpoint gated by a role-permission guard, so that a user only reaches what their role allows. & 8 & 3.5d & Must \\
+\midrule
 US-S1-06 & As an admin/HR, I want to provision user accounts directly with one or more roles, so that staff can be onboarded immediately without going through self-registration's pending-approval step. & 5 & 2.5d & Must \\
-\rowcolor{rowalt}
+\midrule
 US-S1-07 & As an admin, I want to list, search (accent-insensitive), and filter users, so that I can manage the directory. & 3 & 1.5d & Should \\
+\midrule
 US-S1-08 & As an admin, I want to edit and soft-delete (deactivate) a user, so that I manage the account lifecycle. & 3 & 1.5d & Must \\
-\rowcolor{rowalt}
+\midrule
 US-S1-09 & As a user, I want to update my own profile and change my password, so that I manage my account. & 2 & 1d & Should \\
+\midrule
 US-S1-10 & As an admin, I want to create teams and assign members and a manager, so that staff are grouped. & 3 & 1.5d & Should \\
 \midrule
 & \textbf{Sprint 1 subtotal} & \textbf{41} & \textbf{3w} & \\
@@ -102,7 +117,7 @@ logout. The platform itself (via the guard) enforces permissions on every protec
   \item Authorization is a \textbf{static, compile-time role-to-permission map}: approximately
     120 fine-grained permissions mapped to 31 role types in a shared constant
     (\texttt{PERMISSIONS\_FOR\_ROLE}).
-  \item A single \texttt{HasPermissionGuard}, applied on 139 routes across 18 controllers, checks
+  \item A single \texttt{HasPermissionGuard}, applied on 138 routes across 18 controllers, checks
     that at least one of the caller's roles carries at least one of the route's required
     permissions (\textbf{OR} across permissions, \textbf{OR} across roles).
   \item Finer ownership distinctions (\texttt{*.own} vs \texttt{*.any}) are resolved inside each
@@ -228,20 +243,24 @@ satisfy:
 \endhead
 \bottomrule
 \endfoot
-\rowcolor{rowalt}
 US-S1-01 & Given the backend, When any module is inspected, Then it follows the controller → service → repository → DTO layering over a Prisma multi-file schema with applied migrations. & \pass{} Verified \\
+\midrule
 US-S1-02 & Given a valid, active account, When it posts correct email/phone + password, Then a JWT access/refresh pair is returned; wrong password → 401, unknown user → 404. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S1-03 & Given a stored refresh token, When \texttt{/tokens/refresh} is called with it, Then a new access token is minted; a never-issued/revoked token is rejected. & \pass{} Verified \\
+\midrule
 US-S1-04 & Given a registered email, When the 3-step reset is followed with the emailed 5-digit code inside 15 min, Then the password is changed. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S1-05 & Given a protected route with \texttt{@Permissions}, When a caller lacking a matching permission calls it, Then the guard returns 403; a matching role passes. & \pass{} Verified (e2e suite) \\
+\midrule
 US-S1-06 & Given an admin holding \texttt{user.create.by.admin}, When they create a user with roles they may grant, Then the account is created active; granting an unmanageable role → 403. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S1-07 & Given users exist, When an admin lists with a name/role filter, Then results are accent-insensitively matched and paginated. & \pass{} Verified \\
+\midrule
 US-S1-08 & Given a target user, When an admin edits or deletes it, Then edits persist and delete flips \texttt{isActive: false} (soft delete). & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S1-09 & Given a logged-in user, When they update their profile or change their password (old password re-verified), Then the changes persist. & \pass{} Verified \\
+\midrule
 US-S1-10 & Given an admin, When they create a team with members and mark a manager, Then the team and its \texttt{UserTeam} rows (with \texttt{isManager}) are created. & \pass{} Verified \\
 \end{longtable}
 
@@ -249,7 +268,7 @@ US-S1-10 & Given an admin, When they create a team with members and mark a manag
 
 \textbf{Objectives achieved.} The sprint met its goal: the platform has a working layered
 backend, a stateless-JWT authentication core with server-side refresh state, and full user/team
-administration governed by a single declarative RBAC catalogue applied uniformly across 139
+administration governed by a single declarative RBAC catalogue applied uniformly across 138
 routes on 18 controllers. The two-tier authorization pattern introduced here --- a coarse
 permission guard plus a data-scoped service check --- becomes the platform-wide template every
 later module follows.
@@ -260,8 +279,8 @@ and prioritized for future work (Annex~A).
 
 \subsection{Sprint retrospective}
 
-\textbf{Difficulties encountered.} This sprint required a lot of learning, as it was the
-author's first experience with both NestJS and Prisma. Understanding NestJS's decorator-based
+\textbf{Difficulties encountered.} This sprint required a lot of learning, as it was our
+first experience with both NestJS and Prisma. Understanding NestJS's decorator-based
 dependency injection, guard composition, and module wiring took time before productive
 development could begin. Learning Prisma's multi-file schema, migration workflow, and query API
 added to this initial period. Designing the RBAC catalogue --- mapping approximately 120
@@ -330,16 +349,18 @@ The following stories, taken from the product backlog in Section~2.2, form the s
 \endhead
 \bottomrule
 \endfoot
-\rowcolor{rowalt}
 US-S2-01 & As a manager/executive, I want to create a project under a business unit with a type (AGILE/FREESTYLE), so that work is organized by unit and workflow. & 5 & 2.5d & Must \\
+\midrule
 US-S2-02 & As a manager, I want to edit, archive, and delete a project, so that I manage its lifecycle. & 3 & 1.5d & Must \\
-\rowcolor{rowalt}
+\midrule
 US-S2-03 & As a manager, I want to add existing users as project members and mark a manager, so that the team is defined. & 3 & 1.5d & Must \\
+\midrule
 US-S2-04 & As a manager, I want to invite people by email with a single-use token, so that non-members can be brought in. & 5 & 3d & Should \\
-\rowcolor{rowalt}
+\midrule
 US-S2-05 & As an invitee, I want to accept an emailed invitation, so that I become a member. & 3 & 1.5d & Should \\
+\midrule
 US-S2-06 & As a manager, I want to configure the project's kanban settings (WIP limits), so that the board fits our process. & 2 & 1d & Could \\
-\rowcolor{rowalt}
+\midrule
 US-S2-07 & As a member, I want to see only the projects I belong to (executives scoped to their business unit), so that access is isolated. & 5 & 2d & Must \\
 \midrule
  & \textbf{Sprint 2 subtotal} & \textbf{26} & \textbf{2w} & \\
@@ -479,16 +500,18 @@ satisfy:
 \endhead
 \bottomrule
 \endfoot
-\rowcolor{rowalt}
 US-S2-01 & Given an executive, When they POST a project with a business unit and type, Then a Project with nested contents and one manager member is created; a non-executive or wrong-unit caller \textrightarrow{} 403; a duplicate name \textrightarrow{} 409. & \pass{} Verified \\
+\midrule
 US-S2-02 & Given a manager/executive, When they PATCH, archive, or DELETE a project, Then fields update in a transaction, archive flips \texttt{isArchived}, and delete cascades the whole project. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S2-03 & Given an executive, When they add an existing user by \texttt{userId}, Then a \texttt{ProjectMember} is created unless the user is already a member (409). & \pass{} Verified \\
+\midrule
 US-S2-04 & Given an executive or the project manager, When they invite an email, Then a single-use tokenized invitation (7-day expiry) is upserted, emailed, and notified if the invitee has an account. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S2-05 & Given a valid, unexpired invitation, When the authenticated invitee (email matching) accepts, Then a membership is created and the invite marked ACCEPTED; a mismatched email or expired token is rejected. & \pass{} Verified \\
+\midrule
 US-S2-06 & Given a manager, When they PATCH kanban settings, Then WIP-limit keys are validated against the project's status names and stored as JSON. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S2-07 & Given a non-executive, When they list projects, Then only projects they are a member of are returned; a CTO/CMO sees only their business unit; a CEO sees all. & \pass{} Verified \\
 \end{longtable}
 
@@ -580,23 +603,28 @@ The sprint backlog below repeats the relevant stories from the product backlog i
 \endhead
 \bottomrule
 \endfoot
-\rowcolor{rowalt}
 US-S3-01 & As a PM/PO, I want to create epics to group large features, so that the backlog is structured. & 3 & 1.5d & Should \\
+\midrule
 US-S3-02 & As a Scrum Master, I want to create sprints with dates and a capacity, so that work is time-boxed. & 5 & 3d & Must \\
-\rowcolor{rowalt}
+\midrule
 US-S3-03 & As a Scrum Master, I want to run the sprint lifecycle (start/stop/complete, one running at a time), so that iterations are governed. & 8 & 4d & Must \\
+\midrule
 US-S3-04 & As a PM, I want milestones with target dates (also for FREESTYLE projects), so that deadlines are tracked. & 3 & 1.5d & Should \\
-\rowcolor{rowalt}
+\midrule
 US-S3-05 & As a PM, I want burndown, velocity, and Gantt analytics, so that I can monitor progress. & 8 & 3.5d & Should \\
+\midrule
 US-S3-06 & As a member, I want to create tasks with type, priority, assignee, and estimates, so that work is captured. & 5 & 2.5d & Must \\
-\rowcolor{rowalt}
+\midrule
 US-S3-07 & As a manager, I want a per-project, data-driven kanban with custom columns and WIP limits, so that the board mirrors our workflow. & 8 & 4d & Must \\
+\midrule
 US-S3-08 & As an assignee, I want to move a task across columns with transition, dependency, and WIP validation, so that status stays valid. & 8 & 3.5d & Must \\
-\rowcolor{rowalt}
+\midrule
 US-S3-09 & As a member, I want to declare task dependencies (blocking / blocked-by), so that ordering is explicit. & 5 & 2d & Should \\
+\midrule
 US-S3-10 & As a member, I want to log time against a task, so that effort is recorded. & 3 & 1.5d & Should \\
-\rowcolor{rowalt}
+\midrule
 US-S3-11 & As a member, I want threaded comments with @mentions and likes on a task, so that we collaborate in context. & 5 & 2.5d & Should \\
+\midrule
 US-S3-12 & As a member, I want labels and to assign a task to a sprint/epic/milestone, so that work is categorized. & 3 & 1.5d & Should \\
 \midrule
  & \textbf{Sprint 3 subtotal} & \textbf{64} & \textbf{5w} & \\
@@ -772,7 +800,7 @@ sprint, epic, or story-point value on a \texttt{FREESTYLE} task), and referentia
 sprint, epic, or milestone named must belong to this project). The repository then generates a
 \texttt{TASK-<n>} key and inserts the task with its attachments. Afterwards the service optionally
 creates due-date reminders, fires a fire-and-forget assignment notification if the assignee is
-not the author, and enqueues the AI index upsert.
+not the task's creator, and enqueues the AI index upsert.
 
 % Figure 3.18 — render diagrams-src/fig_3_18.puml -> figures/fig_3_18.(png|pdf)
 \reportsideways{figures/fig_3_18}{Create-task sequence diagram.}{3-18}
@@ -863,23 +891,28 @@ satisfy:
 \endhead
 \bottomrule
 \endfoot
-\rowcolor{rowalt}
 US-S3-01 & Given a PM/PO on an AGILE project, When they create an epic, Then it is stored under the project (unique name per project) and its progress rolls up from DONE task counts; a linked-task epic cannot be deleted. & \pass{} Verified \\
+\midrule
 US-S3-02 & Given a Scrum Master, When they create a sprint with all four dates and a capacity, Then a \texttt{Pending} sprint is stored only if every window sits inside the project window; default reminders are created. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S3-03 & Given a \texttt{Pending}/\texttt{Running} sprint, When the SM starts/stops/completes it, Then only legal transitions apply, at most one sprint runs per project, members are notified, and pending reminders cancel on stop/complete. & \pass{} Verified \\
+\midrule
 US-S3-04 & Given a project (AGILE or FREESTYLE), When a PM creates a milestone with a due date, Then it is stored and can be completed by stamping \texttt{completedAt}. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S3-05 & Given a sprint/project with task points, When a PM opens analytics, Then burndown shows ideal-vs-actual, velocity sums completed-sprint points, and the Gantt fans in milestones/epics/sprints/tasks. & \pass{} Verified \\
+\midrule
 US-S3-06 & Given a member with create rights, When they POST a task with type/priority/assignee/estimate, Then it is created with a generated key after project-type field and FK validation; assignee is notified; the task is indexed. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S3-07 & Given a manager, When they define board columns and WIP limits, Then \texttt{ProjectTaskStatus} rows drive the board and WIP keys are validated against status names. & \pass{} Verified \\
+\midrule
 US-S3-08 & Given an assignee, When they drag a card to a new column, Then the move is rejected unless the transition is legal, no blocking dependency is unfinished, and the column is under its WIP limit; \texttt{completedAt} stamps on DONE. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S3-09 & Given a member, When they add a dependency, Then a circular-dependency guard rejects cycles; a task cannot leave its column while blocked. & \pass{} Verified \\
+\midrule
 US-S3-10 & Given a member, When they log time on a task, Then a \texttt{TaskTimeEntry} is created and \texttt{actualHours} is re-aggregated from the sum. & \pass{} Verified \\
-\rowcolor{rowalt}
+\midrule
 US-S3-11 & Given a member, When they comment with @mentions, Then the comment and its mentions are created in a transaction, mentioned users and the assignee are notified, and the comment is indexed; likes toggle one-per-user. & \pass{} Verified \\
+\midrule
 US-S3-12 & Given a member, When they create/assign labels or move a task to a sprint/epic/milestone, Then project-scoped labels attach via the junction and the FK is set. & \pass{} Verified \\
 \end{longtable}
 
@@ -893,8 +926,8 @@ a circular-dependency guard, all applied under a tiered, project-scoped capabili
 even lets an assignee advance their own card. Every write also feeds the AI index outbox, so the
 whole agile and task corpus is already searchable before Sprint~6.
 
-\textbf{Remaining work.} Hardening items identified during the sprint --- backend service tests
-for the tasks module, transaction-wrapped agile writes, and a shared
+\textbf{Remaining work.} Hardening items identified during the sprint --- deeper backend
+coverage of the tasks module, transaction-wrapped agile writes, and a shared
 \texttt{ProjectAccessService} --- are logged and prioritized for future work (Annex~A).
 
 \subsection{Sprint retrospective}
@@ -917,7 +950,7 @@ critical write path fast without losing user feedback. The AI embedding outbox -
 an index upsert on every agile and task write --- was easy to connect and ensures the
 entire corpus is searchable by the time the copilot arrives in Sprint~6.
 
-\textbf{Improvements planned.} Backend service tests for the tasks module's transition
+\textbf{Improvements planned.} Extend backend coverage of the tasks module's transition
 validation, capability matrix, and circular-dependency guard. A shared
 \texttt{ProjectAccessService} to replace the duplicated executive-scope helpers across the agile
 services. These items are carried forward as prioritized future work (Annex~A).
@@ -942,4 +975,27 @@ columns, transitions, WIP limits, and dependency gates are enforced end-to-end. 
 capability model and the AI embedding outbox introduced here are carried forward into every
 later sprint.
 
-\fi % \ifpartialbuild (Sprints 2-3 guard opened before Sprint 2's heading above)
+\section{Chapter Conclusion}
+
+Three sprints and 131 story points produced V1: a platform a team can actually work in. A user
+authenticates against a stateless JWT core and is authorized by one centralized RBAC catalogue
+(Sprint~1); executives create projects scoped to a business unit and assemble their teams by
+direct membership or tokenized email invitation (Sprint~2); and inside a project, work is planned
+as epics, sprints and milestones and executed on a data-driven Kanban whose columns, transitions,
+WIP limits and dependency gates are enforced end to end, with burndown, velocity and Gantt
+analytics computed server-side from real task data (Sprint~3).
+
+Three patterns established here govern everything that follows. \textbf{Two-tier authorization}
+--- a coarse permission guard at the route, then a data-scoped check inside the service --- is
+the template every later module reuses. \textbf{Query-scoped access}, pushing the permission
+predicate into the Prisma \texttt{where} clause so the check and the fetch are one atomic
+statement, removes any gap between deciding and reading; it is the same principle that later
+makes the copilot's retrieval safe by construction. And the \textbf{AI embedding outbox}, wired
+into every agile and task write from Sprint~3 onward, means the corpus the copilot will answer
+from is already accumulating three sprints before that copilot exists.
+
+What V1 does not yet have is the layer around the work: the personal routines each employee uses
+daily, and the communication backbone that makes the platform reach people rather than wait to be
+opened. That is the subject of Chapter~4.
+
+\fi % \ifpartialbuild (Sprints 2-3 + chapter conclusion guard, opened before Sprint 2's heading)

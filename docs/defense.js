@@ -181,6 +181,53 @@ function syncToc() {
   });
 })();
 
+/* ---------- demo video click-to-fullscreen ----------
+   Mirrors the screenshot zoom above, with three differences the video needs:
+   (1) clicks INSIDE the <video> must not close the overlay, or the native
+       controls would be unusable — only the backdrop closes it;
+   (2) closing pauses and rewinds, so reopening never resumes mid-demo;
+   (3) Esc closes, matching what the on-screen hint promises.
+   The inline <video> on the slide is only a poster: playback happens here. */
+(function () {
+  var frame = document.getElementById('demoFrame');
+  var vzoom = document.getElementById('vidZoom');
+  var vel = document.getElementById('vidZoomEl');
+  if (!frame || !vzoom || !vel) return;
+
+  var SRC = 'assets/demo.mp4';
+
+  function open() {
+    if (!vel.getAttribute('src')) vel.setAttribute('src', SRC);
+    vzoom.classList.add('open');
+    var p = vel.play();
+    if (p && p.catch) p.catch(function () { /* autoplay blocked: controls remain */ });
+  }
+  function close() {
+    vzoom.classList.remove('open');
+    vel.pause();
+    try { vel.currentTime = 0; } catch (err) { /* not seekable yet */ }
+  }
+
+  frame.addEventListener('click', function (e) {
+    e.stopPropagation();   // don't advance the slide
+    open();
+  });
+  frame.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); open(); }
+  });
+
+  // Backdrop closes; the video itself swallows its own clicks.
+  vzoom.addEventListener('click', function (e) {
+    e.stopPropagation();
+    if (e.target === vel) return;
+    close();
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && vzoom.classList.contains('open')) { e.stopPropagation(); close(); }
+  }, true);
+})();
+
 /* ---------- deck navigation ---------- */
 var slides = [].slice.call(document.querySelectorAll('.slide'));
 var si = 0, step = 0;

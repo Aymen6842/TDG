@@ -4,6 +4,39 @@
 % ===========================================================================
 
 % --------------------------------------------------------------------------
+% COVER DETAILS — the only three values still to be supplied.
+% Fill these in and the cover page completes itself; leave any of them empty
+% and the cover keeps printing its loud purple placeholder AND the build ends
+% with an explicit "cover page incomplete" warning, so a final copy can never
+% be printed with them missing by accident.
+% --------------------------------------------------------------------------
+\newcommand{\defensedate}{}    % e.g. 12/09/2026
+\newcommand{\jurychair}{}      % e.g. Mr. Foulen Ben Foulen
+\newcommand{\juryexaminer}{}   % e.g. Mrs. Foulena Ben Foulen
+
+% Prints the value, or the placeholder if it is still empty, and records that
+% the cover is incomplete so the warning can fire at \end{document}.
+\newif\ifcoverincomplete
+\coverincompletefalse
+% \edef is essential: #1 arrives as the macro \defensedate, so testing it
+% unexpanded would always look non-empty and the cover would print SILENTLY
+% BLANK -- the exact failure this guard exists to prevent.
+\newcommand{\coverfieldval}{}
+\newcommand{\coverfield}[2]{%
+  \edef\coverfieldval{#1}%
+  \ifx\coverfieldval\empty
+    \global\coverincompletetrue\authoraction{TO PROVIDE: #2}%
+  \else
+    #1%
+  \fi}
+\AtEndDocument{%
+  \ifcoverincomplete
+    \GenericWarning{}{^^JLaTeX Warning: COVER PAGE INCOMPLETE -- set
+      \string\defensedate, \string\jurychair and \string\juryexaminer at the
+      top of frontmatter.tex before printing the final copy.^^J}%
+  \fi}
+
+% --------------------------------------------------------------------------
 % GUARD PAGE (official IIT graduation-project cover template)
 % --------------------------------------------------------------------------
 \begin{titlepage}
@@ -56,11 +89,11 @@ Entitled:
   {\fontsize{16}{21}\selectfont\bfseries Tawer Management: A Full-Stack Team-Management Platform with a Retrieval-Augmented AI Copilot}}}}
 
 \vspace{0.7cm}
-Defended on: \authoraction{D/M/2026}\\[3mm]
+Defended on: \coverfield{\defensedate}{date}\\[3mm]
 {\bfseries Committee:}\\[3mm]
 \begin{tabular}{r@{\quad---\quad}l}
-\authoraction{TO PROVIDE: full name} & Chairman \\
-\authoraction{TO PROVIDE: full name} & Examiner \\
+\coverfield{\jurychair}{full name} & Chairman \\
+\coverfield{\juryexaminer}{full name} & Examiner \\
 Mr.\ Ahmed Ben Arab & Academic supervisor \\
 Mr.\ Ahmed Awedi \& Mr.\ Mohamed Awedi & Industrial supervisors \\
 \end{tabular}
@@ -78,8 +111,14 @@ Mr.\ Ahmed Awedi \& Mr.\ Mohamed Awedi & Industrial supervisors \\
 % Set in a calligraphic (chancery) face when available; falls back to italic.
 % Loaded by filename (ships with MiKTeX and TeX Live/Overleaf), not by system
 % font name, so no OS font installation is needed.
+% TeX Gyre Chorus is a single-weight face, so the \textbf{...} emphasis used
+% below (parents, brothers, the supervisors' names) rendered as plain medium
+% and the bold was simply invisible. FakeBold synthesises a heavier stroke so
+% that emphasis actually shows.
 \IfFontExistsTF{texgyrechorus-mediumitalic.otf}
-  {\newfontfamily\ackscript{texgyrechorus-mediumitalic.otf}}
+  {\newfontfamily\ackscript{texgyrechorus-mediumitalic.otf}[
+     BoldFont     = {texgyrechorus-mediumitalic.otf},
+     BoldFeatures = {FakeBold=1.5}]}
   {\newcommand{\ackscript}{\itshape}}
 
 \chapter*{Acknowledgements}
@@ -191,42 +230,79 @@ retrieval, embeddings, effort estimation}
 \endlastfoot
 
 \textbf{AGILE / FREESTYLE} & The two \texttt{ProjectType} workflows: agile backlog (Tawer Dev) vs.\ free-form (Tawer Creative) \\
+\midrule
 \textbf{ANN} & Approximate Nearest Neighbour (vector search) \\
+\midrule
 \textbf{API} & Application Programming Interface (here, the REST API) \\
+\midrule
 \textbf{CI/CD} & Continuous Integration / Continuous Delivery \\
+\midrule
 \textbf{CORS} & Cross-Origin Resource Sharing \\
+\midrule
 \textbf{CRISP-DM} & Cross-Industry Standard Process for Data Mining (framing of the AI sub-process, Section~4.4) \\
+\midrule
 \textbf{DTO} & Data Transfer Object (request/response validation layer) \\
+\midrule
 \textbf{FCM} & Firebase Cloud Messaging (push notifications) \\
+\midrule
 \textbf{GIN} & Generalized Inverted Index (Postgres full-text index) \\
+\midrule
 \textbf{HNSW} & Hierarchical Navigable Small World (pgvector ANN index) \\
+\midrule
 \textbf{i18n} & Internationalization (en/fr localization) \\
+\midrule
 \textbf{IDOR} & Insecure Direct Object Reference (an access-control flaw) \\
+\midrule
 \textbf{JTI} & JWT ID (unique token identifier) \\
+\midrule
 \textbf{JWT} & JSON Web Token \\
+\midrule
 \textbf{k-NN} & k-Nearest Neighbours (used for effort estimation) \\
+\midrule
 \textbf{LLM} & Large Language Model \\
+\midrule
 \textbf{MAE / RMSE} & Mean Absolute Error / Root Mean Square Error (estimation metrics) \\
+\midrule
 \textbf{Matryoshka} & Truncatable embeddings --- the first 1536 of 3072 dimensions remain usable \\
+\midrule
 \textbf{MRR} & Mean Reciprocal Rank (retrieval metric) \\
+\midrule
 \textbf{nDCG@k} & Normalized Discounted Cumulative Gain at rank k (retrieval metric) \\
+\midrule
 \textbf{ntfy} & A pub/sub HTTP notification service (a delivery channel) \\
+\midrule
 \textbf{ORM} & Object-Relational Mapper (here, Prisma) \\
+\midrule
 \textbf{PFE} & Projet de Fin d'Études (final-year project) \\
+\midrule
 \textbf{pgvector} & PostgreSQL extension providing the \texttt{vector} type and ANN indexes \\
+\midrule
 \textbf{PM / PO / SM} & Project Manager / Product Owner / Scrum Master (Scrum roles) \\
+\midrule
 \textbf{R@k} & Recall at rank k (retrieval metric) \\
+\midrule
 \textbf{RAG} & Retrieval-Augmented Generation \\
+\midrule
 \textbf{RBAC} & Role-Based Access Control \\
+\midrule
 \textbf{RRF} & Reciprocal Rank Fusion (fuses the vector and lexical ranked lists, k = 60) \\
+\midrule
 \textbf{SMTP} & Simple Mail Transfer Protocol (email channel) \\
+\midrule
 \textbf{SP / US} & Story Points / User Story (backlog units) \\
+\midrule
 \textbf{SSE} & Server-Sent Events (streams the copilot answer) \\
+\midrule
 \textbf{SSR} & Server-Side Rendering \\
+\midrule
 \textbf{TDG} & Tawer Digital Group --- the host organization (the digital agency the platform is built for) \\
+\midrule
 \textbf{tsvector} & Postgres full-text search type (generated, stored) \\
+\midrule
 \textbf{TTL} & Time To Live (token lifetime) \\
+\midrule
 \textbf{UML} & Unified Modeling Language \\
+\midrule
 \textbf{WIP} & Work In Progress (kanban column limit) \\
 \end{longtable}
 \endgroup

@@ -162,6 +162,30 @@ body.is-fullscreen .toc-reopen { display: none; }
 .shot-zoom.open { opacity: 1; visibility: visible; pointer-events: auto; }
 .shot-zoom img { max-width: 92vw; max-height: 92vh; border-radius: 10px; box-shadow: 0 30px 80px rgba(0,0,0,.45); cursor: zoom-out; }
 
+/* Demo video lightbox — same overlay language as the screenshot zoom, but the
+   video needs its own rules: it must not inherit `cursor: zoom-out` (that would
+   fight the native controls) and clicks inside it must not close the overlay. */
+.vid-zoom video {
+  max-width: 94vw; max-height: 94vh; border-radius: 10px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.55); background: #000; outline: none;
+}
+.vid-zoom .vid-hint {
+  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+  font-family: var(--mono, ui-monospace, monospace); font-size: 12px; letter-spacing: .12em;
+  text-transform: uppercase; color: rgba(255,255,255,.62); pointer-events: none;
+}
+.demo-frame { cursor: pointer; position: relative; }
+.demo-frame:hover { filter: brightness(1.04); }
+.demo-frame video.demo-inline {
+  width: 100%; height: 100%; object-fit: cover; border-radius: inherit; display: block;
+}
+.demo-frame .demo-play-badge {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: rgba(13,10,22,.34); border-radius: inherit; transition: background .18s ease;
+}
+.demo-frame:hover .demo-play-badge { background: rgba(13,10,22,.18); }
+.demo-frame .demo-play-badge svg { width: 76px; height: 76px; color: #fff; filter: drop-shadow(0 6px 18px rgba(0,0,0,.5)); }
+
 /* ============================================================= */
 /* SLIDE 1 — TITLE                                                */
 /* ============================================================= */

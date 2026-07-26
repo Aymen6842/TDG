@@ -222,7 +222,7 @@ Total speaking time if you follow this script: **about 20–22 minutes.**
 ## Slide 17 — Sprint 1: Foundations & Auth (3 tabs)
 
 > **[CLICK]** Sprint one built the foundation: **31 roles**, about **120 permissions**,
-> and today 147 routes protected by them.
+> and today 138 routes protected by them.
 > **[CLICK]** The architecture is layered: every request passes through guards —
 > first "who are you?", then "what can you do?".
 > **[CLICK]** Here is the authorization flow. A request brings a JWT token.
@@ -436,14 +436,31 @@ merges two ranked lists — an item ranked high by either search moves to the to
 
 > **[CLICK]** And here is the platform in action.
 
-*(Play the video — 60–75 seconds: login → Kanban → ask the copilot → citation →
-estimate. See `docs/demo-recording-plan.md`. While it plays, narrate:)*
+*(Click the video frame — it opens full screen and starts. Click outside it, or
+press Esc, to close. Runs 7 min 34 s.)*
 
-> Here I log in… this is the Kanban board — I move a card, the server validates it…
-> now I ask the copilot a question about this project… the answer streams in, with
-> citations — I click a citation and it opens the exact task…
-> and here, creating a task, I click "estimate from history" — two similar past
-> tasks, and a suggested estimate with its range.
+**Do not narrate over it.** The video explains itself: each of the six sections
+opens with a title card, and every feature carries an on-screen caption. Let it
+play and stay quiet — talking over the captions makes both harder to follow.
+
+*(What it covers, in order — useful if the jury interrupts and you need to say
+where you are, or to jump back to a moment during questions:)*
+
+| # | Section | Shows |
+|---|---------|-------|
+| 01 | Access & Projects | registration, sign-in, attendance check-in, UI customisation, filters, project creation, email invitation |
+| 02 | Agile Delivery | sprints, epics, task detail, milestones & Gantt, Kanban valid move **and** rejected move, capacity/velocity/burndown |
+| 03 | Daily Work | personal to-dos, attendance, calendar, reminders |
+| 04 | Team & Operations | notifications and channels, users & teams, server monitoring |
+| 05 | AI Copilot | cited answer, citation deep-link, partial answer, refusal on no evidence, estimation, honest empty state |
+| 06 | Access Control | non-member denied in the UI, then 403 Forbidden straight from the API |
+
+*(Two moments worth pointing at if you are asked to defend a single thing:)*
+
+> In section two, the board refuses an illegal move — that rule lives in the
+> backend, so the interface cannot bypass it.
+> In section six, the same request that the interface blocks also returns
+> 403 from the API — the check is in the retrieval layer, not the screen.
 
 ---
 
@@ -516,10 +533,16 @@ estimate. See `docs/demo-recording-plan.md`. While it plays, narrate:)*
 > and the AI had to respect all of it. That is why it is centralized in one place,
 > with one guard per route.
 
-**Q: Redis is in the docker-compose but not used — why?**
-> It is reserved for caching later. Today, locking is done in PostgreSQL with
-> SELECT FOR UPDATE SKIP LOCKED, which is enough at current scale — one less
-> service to operate.
+**Q: Why no Redis? Most stacks this size use it for caching and locking.**
+> We looked at it for exactly those two jobs and decided against both. Locking is
+> a real requirement — a dozen per-minute cron jobs that must each run exactly once
+> across replicas — but PostgreSQL already answers it with SELECT ... FOR UPDATE
+> SKIP LOCKED, with crash-safe expiry and no second datastore to deploy, secure and
+> monitor. Caching we did not need: the query volume of a seven-person agency does
+> not justify the invalidation complexity a cache adds. The rule we applied was to
+> add infrastructure when a measured problem demands it, not in anticipation. If
+> read volume grows, Redis is the natural addition, and the lock lives behind a
+> service that could adopt it without touching any caller.
 
 ---
 

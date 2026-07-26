@@ -1,4 +1,10 @@
-# Local dev stack for the Tawer management platform.
+# Full local stack for the Tawer Management platform — infrastructure *and* both
+# applications. `docker compose up -d --build` gives you:
+#
+#   http://localhost:3000        Next.js frontend (web)
+#   http://localhost:3001        NestJS API (api)
+#   http://localhost:3001/api    Swagger UI
+#   http://localhost:8025        Mailpit inbox (invitation / notification mail)
 #
 # Postgres uses the pgvector image so the `vector` extension the AI features
 # depend on is ALWAYS present (the previous postgres:15 container had pgvector
@@ -6,11 +12,15 @@
 #
 # It reuses the EXISTING data volume, so your seeded data is preserved.
 #
-# One-time swap (stops the ad-hoc containers, recreates from this file):
-#   docker rm -f tdg-postgres tdg-redis tdg-mailpit
-#   docker compose up -d
+# First run (or after changing application code):
+#   docker compose up -d --build
 #
-# Verify afterwards:
+# Seed the demo dataset — WARNING: prisma/seed.ts wipes the database first:
+#   docker compose exec api npm run prisma:seed
+#   docker compose exec api npm run ai:backfill
+#
+# Verify:
+#   curl http://localhost:3001/health
 #   docker exec -it tdg-postgres psql -U tdg -d tdg_db -c "\dx vector"
 #   docker exec -it tdg-postgres psql -U tdg -d tdg_db -c 'SELECT count(*) FROM "DocumentEmbedding";'
 
@@ -33,12 +43,9 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:alpine
-    container_name: tdg-redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
+  # No Redis service: distributed locking is done in PostgreSQL with
+  # SELECT ... FOR UPDATE SKIP LOCKED, so a second datastore would add an
+  # operational dependency the platform does not use. See report Section 2.6.3.
 
   mailpit:
     image: axllent/mailpit
@@ -48,10 +55,71 @@ services:
       - "1025:1025"
       - "8025:8025"
 
+  api:
+    build:
+      context: ./tdg-management-api-backend
+    container_name: tdg-api
+    restart: unless-stopped
+    # Secrets (SECRET_KEY, GEMINI_API_KEY, OAuth credentials, …) stay in the
+    # untracked backend .env; nothing sensitive lives in this file. Copy
+    # tdg-management-api-backend/.env.example if you don't have one yet.
+    env_file:
+      - ./tdg-management-api-backend/.env
+    # These four are the only host-specific values: inside the compose network
+    # the backing services answer to their service names, not to localhost.
+    # `environment` wins over `env_file`, so the .env copies are ignored.
+    environment:
+      DATABASE_URL: postgresql://tdg:tdg1234@postgres:5432/tdg_db
+      MAIL_HOST: mailpit
+      MAIL_PORT: "1025"
+      PORT: "3001"
+    ports:
+      - "3001:3001"
+    volumes:
+      # Uploaded avatars and task attachments, served by ServeStaticModule from
+      # /app/static. A named volume keeps them across image rebuilds.
+      - api_static:/app/static
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      # Generous: the first boot runs `prisma migrate deploy` before listening.
+      start_period: 90s
+
+  web:
+    build:
+      context: ./tawer-management-frontend
+      dockerfile: dockerfile
+      args:
+        # Baked into the client bundle at build time (next.config.ts `env`), so
+        # it must be reachable from the BROWSER. The browser runs on the host, so
+        # this is the published api port — using `http://api:3001` here would
+        # make every request fail with a DNS error in the user's browser.
+        BACKEND_ADDRESS: http://localhost:3001
+    container_name: tdg-web
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
-  # Reuse the current anonymous Postgres volume so existing data is preserved.
-  # If you'd rather start clean, delete this `external`/`name` block and compose
-  # will create a fresh named volume instead.
+  # Compose-managed named volume, so `docker compose up` works on a clean
+  # machine with no prior setup. (It previously pointed at an `external:`
+  # anonymous volume that only existed on the original dev machine, which made
+  # the stack fail with "external volume not found" anywhere else.)
+  #
+  # To migrate data from an older anonymous volume instead of starting fresh:
+  #   docker run --rm -v <OLD_VOLUME>:/from -v pfev1_pgdata:/to alpine \
+  #     sh -c "cd /from && cp -a . /to"
   pgdata:
-    external: true
-    name: fe63321218309117e5be6019d497988be20c2f5bc35f7be879b163f021c69b3e
+  api_static:

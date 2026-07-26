@@ -10,7 +10,15 @@
 
 \usepackage[top=2.5cm,bottom=2.5cm,left=2.5cm,right=2.5cm,headheight=22pt]{geometry}
 \usepackage{fontspec}
-\setmainfont{Latin Modern Roman}
+% SmallCapsFont is required: Latin Modern Roman itself carries no `smcp`
+% feature, so without this every \textsc / \scshape (the "IIT Sfax" running
+% head and the "Chapter N" line on each chapter opener) silently fell back to
+% regular upright text. The caps face ships as a SEPARATE font file, loaded by
+% filename rather than family name because MiKTeX's name lookup is unreliable
+% here (same reason texgyrechorus is loaded by filename in frontmatter.tex).
+\setmainfont{Latin Modern Roman}[
+  SmallCapsFont = {lmromancaps10-regular.otf}
+]
 
 \usepackage[dvipsnames,table]{xcolor}
 \usepackage{graphicx}
@@ -29,9 +37,9 @@
 
 % --- Partial-build toggle -----------------------------------------------------
 % False in main.tex (full report). main-partial.tex sets this true before
-% \begin{document} to skip Sprints 2-5 (see the \ifpartialbuild guard inside
-% ch3-part1.tex). Chapter 4 and ch3-part2 (Sprints 4-5) are simply not \input
-% by main-partial.tex, so no guard is needed for those.
+% \begin{document} to skip Sprints 2-3 (see the \ifpartialbuild guard inside
+% ch3.tex). Chapters 4 (Sprints 4-5) and 5 (AI) are simply not \input by
+% main-partial.tex, so no guard is needed for those.
 \newif\ifpartialbuild
 \partialbuildfalse
 
@@ -79,6 +87,12 @@
 \widowpenalty=10000
 \clubpenalty=10000
 \raggedbottom
+
+% Last-resort inter-word stretch. Without it, a line TeX cannot break well
+% (long \texttt{} identifiers, URLs) is set overfull and juts into the margin.
+% 3em lets TeX loosen spacing instead, which is far less visible than text
+% hanging outside the text block.
+\emergencystretch=3em
 
 % --- Chapter title pages (titlesec) -----------------------------------------
 % nobottomtitles* pushes any section/subsection heading that would land within
@@ -151,14 +165,21 @@
 % Uses pdflscape so the page appears exactly where it is in the source
 % (no floating). The PDF viewer rotates the page; print output is landscape.
 % \reportsideways{path}{caption}{label}
+% The \vspace*{\fill} pair centres the figure vertically on the rotated page.
+% Without them the figure sits flush at the top (\raggedbottom suppresses the
+% usual stretch), leaving the whole lower half of the landscape page blank.
+% \fill (1fill) outranks \raggedbottom's trailing \vfil (1fil), so the two
+% \fill glues split the leftover space evenly instead of fighting it.
 \newcommand{\reportsideways}[3]{%
   \begin{landscape}
+  \vspace*{\fill}
   \begin{figure}[H]\centering
   \IfFileExists{#1.pdf}{\includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{#1.pdf}}{%
   \IfFileExists{#1.png}{\includegraphics[width=\linewidth,height=0.85\textheight,keepaspectratio]{#1.png}}{%
   \fbox{\begin{minipage}{0.8\linewidth}\centering\vspace{10pt}{\color{RoyalPurple}\bfseries\Large FIGURE PENDING}\\[6pt]{\small #2}\vspace{10pt}\end{minipage}}}}
   \caption{#2}\label{fig:#3}
   \end{figure}
+  \vspace*{\fill}
   \end{landscape}}
 
 % --- Screenshot macro -------------------------------------------------------
@@ -173,9 +194,14 @@
   \caption{#3}\label{fig:#4}\end{figure}}
 
 % --- Styled table helpers ---------------------------------------------------
-% Plain booktabs style: the header row carries no fill; header cells are
-% simply bold. The macro names are kept so the chapter files need no edits.
-\newcommand{\tableheaderrow}{}
+% Table style: booktabs HORIZONTAL rules only, never vertical, with a \midrule
+% between every data row so wrapped multi-line cells stay easy to track.
+%
+% \tableheaderrow expands to \toprule so every table in the chapters is closed
+% at the top. The chapters use \tableheaderrow; the annex and the glossary
+% write \toprule directly. The two sets do not overlap, so nothing is
+% double-ruled. Header cells are simply bold -- no fill.
+\newcommand{\tableheaderrow}{\toprule}
 \newcommand{\thcell}[1]{\textbf{#1}}
 
 % Slightly open up table rows for readability

@@ -6,26 +6,26 @@
 Over six sprints this project delivered \textbf{Tawer Management}, a two-application platform that consolidates
 an agency's operational work into one authenticated, bilingual system: a stateless NestJS~11 REST API of
 147~endpoints across 20~controllers, and a Next.js~16 / React~19 client, backed by PostgreSQL + pgvector. The four objectives set out in Section~1.6 were met. The breadth objective is visible in
-the ten operational domains that Chapters~3 and~4 present sprint by sprint: projects and membership,
+the ten operational domains that Chapters~3 to~5 present sprint by sprint: projects and membership,
 the agile backlog, a data-driven kanban, personal to-dos, attendance, calendar, reminders, multi-channel
 notifications, infrastructure monitoring, and the AI copilot. The access-control objective is met by a
 single centralized RBAC model that lets roughly 31 role types share one API across the two business units,
 refined per-resource in the services rather than only at the guard (Chapter~3, Section~3.1). The maintainability
 objective shows in the uniform four-layer, per-feature convention (controller → service → repository →
 DTO) that gives every module the same structure, easy to read once the pattern is learned (Section~2.4). The
-fourth objective --- the intelligent layer --- is met by the RAG subsystem of Chapter~4, and it is the one the
+fourth objective --- the intelligent layer --- is met by the RAG subsystem of Chapter~5, and it is the one the
 project achieves most fully.
 
 Three things make the AI sprint the main contribution rather than a simple add-on. Its retrieval is
 \textbf{permission-scoped in SQL}, so the same \texttt{projectId = ANY(\$allowedIds)} filter that governs the rest of
 the platform also governs what the copilot can see. A CEO and an intern asking the identical question
-retrieve from disjoint candidate sets, and the evaluation measured \textbf{zero cross-role leakage} (Sections~4.6
-and~4.8). Its freshness is maintained by a \textbf{transactional-outbox boundary} processed by a locked sweeper, with a
-self-healing nightly reconcile, so the domain never depends on the AI subsystem to save its data (Section~4.5).
+retrieve from disjoint candidate sets, and the evaluation measured \textbf{zero cross-role leakage} (Sections~5.6
+and~5.8). Its freshness is maintained by a \textbf{transactional-outbox boundary} processed by a locked sweeper, with a
+self-healing nightly reconcile, so the domain never depends on the AI subsystem to save its data (Section~5.5).
 And its quality is \textbf{measured rather than asserted}: an offline evaluation harness with committed gold
 sets showed hybrid retrieval lifting MRR from 0.57 to 1.00 and Recall@1 from 0.30 to 1.00 on the
 identifier gold set, while tying the already-saturated semantic set. That is the evidence that justifies the
-hybrid lexical+vector design (Section~4.8). In a report built entirely from evidence, this is the one
+hybrid lexical+vector design (Section~5.8). In a report built entirely from evidence, this is the one
 feature backed by numbers.
 
 \section*{Limitations \& Perspectives}
@@ -50,13 +50,18 @@ issues fall into five themes:
   consolidate behind a shared \texttt{ProjectAccessService} and a single notification dispatcher; a set of unused
   structures (the single-value \texttt{Language} enum, the dead \texttt{RedisModule}/\texttt{RolesGuard}/\texttt{UserManager}/
   \texttt{Task.statusType}, stale branding) should be connected or removed rather than left misleading.
-  \item \textbf{Testing.} Backend behavioural coverage is near-zero outside the projects module (the 854-line
-  \texttt{projects.service.spec.ts}, cited as genuine coverage in Section~3.2.5) and the frontend property-based suites;
-  the highest-value missing tests are the ones the bugs above name, and a business-day-boundary test would
-  have caught the check-in dead zone.
-  \item \textbf{DevOps.} No CI/CD, app Dockerfiles not yet orchestrated by compose, uploads stored on a
-  non-persistent local filesystem, and a frontend \texttt{BACKEND\_ADDRESS} hard-coded to \texttt{localhost}, so the
-  platform runs locally but is not yet ready to deploy elsewhere.
+  \item \textbf{Testing.} The suite pairs unit tests, an end-to-end RBAC permission matrix, property-based
+  suites over the client transform layers, and the AI evaluation harness. The natural next step is to
+  extend behavioural coverage across the remaining domain modules, targeting the paths the correctness
+  items above name --- a business-day-boundary test, for instance, is what would pin the check-in dead zone.
+  \item \textbf{DevOps.} The platform is fully containerized --- one \texttt{docker compose up} builds and
+  starts both applications and their backing services, provisions the schema through
+  \texttt{prisma migrate deploy}, and persists uploads in a named volume --- so the stack is reproducible
+  on any machine with Docker. What remains is the step beyond reproducibility: there is no CI/CD
+  pipeline, and the client's \texttt{BACKEND\_ADDRESS} is inlined into the browser bundle at build time,
+  so retargeting the platform at a non-local host means rebuilding the web image rather than changing a
+  runtime variable. The platform has therefore been run and validated locally but is not deployed to a
+  public environment --- the security items above are the prerequisite for that step.
 \end{itemize}
 
 None of these weaken the architecture. They are the finishing work that separates a working platform
@@ -80,8 +85,10 @@ The roadmap starts with the most damaging issues:
    introduce a central notification dispatcher to replace the duplicated four-channel fan-out, and add an
    axios interceptor to remove the \textasciitilde60× duplicated frontend auth/refresh logic. Add the cheap unit tests
    around the AI subsystem's pure functions (RRF fusion, weighted percentiles, citation parsing).
-  \item \textbf{DevOps.} Add CI (lint + build + \texttt{prisma validate} + the existing suites), a multi-stage Dockerfile,
-   persistent upload storage, and a runtime-configurable \texttt{BACKEND\_ADDRESS}.
+  \item \textbf{DevOps.} Building on the existing compose stack: add CI (lint + build +
+   \texttt{prisma validate} + the existing suites), make \texttt{BACKEND\_ADDRESS} runtime-configurable
+   so the web image no longer has to be rebuilt per environment, and move uploads to object storage
+   once the platform runs on more than one host.
   \item \textbf{AI depth.} Make the confidence gate hybrid-aware so the answer path inherits the proven keyword improvement,
    add a retention/redaction policy for the plaintext \texttt{CopilotQueryLog}, and refresh the answer-quality
    evaluation figures.
